@@ -1,0 +1,181 @@
+---
+title: 从零开始搭建属于自己的博客系列教程三-主题选择与CommentToMail插件介绍
+date: 2019-05-04 13:59:11
+categories: 博客搭建
+toc: true
+tags: 
+---
+
+## 1.  写在最前面
+
+> 折腾了整整一个五一，总算是完成了自己的博客系统。为了给想要搭建自己的博客，但是又和我一样是技术小白的人铺点路，所以准备开个博客搭建的系列教程，避免后来人像我一样走了一大堆弯路。
+
+先贴上自己的博客网站：https://www.ravenxrz.ink   
+
+系列教程目录：
+
+- [从零开始搭建属于自己的博客系列教程零 -- 绪论](https://www.ravenxrz.ink/archives/start-from-scratch-to-build-your-own-blog-series-of-tutorials-zerointroduction.html)
+- [从零开始搭建属于自己的博客系列教程一 -- 博客系统搭建](https://www.ravenxrz.ink/archives/build-your-own-blog-series-of-tutorials-from-scratch-blog-system-building.html)
+- [从零开始搭建属于自己的博客系列教程二 -- 域名绑定](https://www.ravenxrz.ink/archives/start-from-scratch-to-build-your-own-blog-tutorial-series-ii-domain-name-binding.html)
+- [从零开始搭建属于自己的博客系列教程三 -- 主题选择与CommentToMail插件介绍](https://ravenxrz.ink/archives/from-scratch-build-your-own-blog-series-tutorial-three-theme-selection-and-introduction-of-ccommentomail-plugin.html)
+- [从零开始搭建属于自己的博客系列教程四 -- 去掉烦人的index.php后缀与常用插件介绍](https://www.ravenxrz.ink/archives/build-your-own-blog-tutorial-series-from-scratch-4-remove-annoying-index-php-suffixes-and-introductions-to-common-plugins-1.html)
+- [从零开始搭建属于自己的博客系列教程五 -- 图床选择与博客迁移](https://www.ravenxrz.ink/archives/starting-from-scratch-to-build-your-own-blog-series-of-tutorials-5-graphic-bed-selection-and-blog-migration.html)
+- [从零开始搭建属于自己的博客系列教程六 -- 博客系统备份](https://www.ravenxrz.ink/archives/start-from-scratch-to-build-your-own-blog-series-of-tutorials-vi-blog-system-backup.html)
+- [从零开始搭建属于自己的博客系列教程七 -- 开启全站HTTPS](https://ravenxrz.ink/archives/start-from-scratch-to-build-your-own-blog-series-of-tutorials-7-open-the-whole-site-https.html)
+
+<!-- more -->
+## 2. 主题选择
+
+### 2.1  主题选择
+
+typecho不像wordpress支持在线安装主题，但是手动安装方法也很简单。下面这里以我安装的主题为例，特别[感谢作者将主题开源](https://eriri.ink/)，介绍两种方法
+
+再给一个typecho主题站：https://typecho.me/
+
+### 2.1.1 Git 方式
+
+很多个人主题开发者都对其主题进行了开源，可以在从Github上clone下来，这样更新就很方便了（git pull就行）。
+
+具体的安装方法如下：
+
+- 找到开源地址，https://github.com/Siphils/Typecho-Theme-Aria.git
+- 进入`typecho`安装目录下的`usr/themes`
+  - `cd /home/wwwroot/default/usr/themes`
+- 执行 `git clone https://github.com/Siphils/Typecho-Theme-Aria.git`
+- 打开的博客后台控制面板，进入主题然后开启即可。
+- ![](https://pic.superbed.cn/item/5cfbaccc451253d178d941eb.png)
+
+### 2.1.2 下载安装包的方式
+
+安装方式如下：
+
+- 找到下载链接：https://codeload.github.com/Siphils/Typecho-Theme-Aria/zip/master
+- 进入`typecho`安装目录下的`usr/themes` 
+  - `cd /home/wwwroot/default/usr/themes`
+- 执行 `wget https://codeload.github.com/Siphils/Typecho-Theme-Aria/zip/master`
+- 解压对应压缩包 `unzip xxx.zip`。没有unzip命令，请自行安装。
+- 有些包可能需要更改名字，看作者说明。
+- 打开的博客后台控制面板，进入主题然后开启即可。
+
+## 3. CommentToMail插件介绍
+
+### 3.1 CommentToMail 安装与设置
+
+通过主题安装，你已经有自己喜欢的主题了。
+
+现在想象一个场景，somebody想要给你的博文加点评论，但是你的网站可不能像简书、`csdn`一样给你推送，你回信后也没办法通知对方。那么该怎么样才能让双方都得到及时的通知呢? 好在有大佬开发了·CommentToMail`插件，这个插件通过邮件通知双方。
+
+网上普遍流行的`CommentToMail`配置上分两步，一个是`CommentToMail`自己插件的配置，如SMTP配置，另一个是定时检索评论并发送邮件。这样有点繁琐，涉及到crontab设置。好在有篇博客（实在找不到那篇博文了，没办法贴出链接）给出了一个集成的插件:https://www.moerats.com/usr/down/CommentToMail-2.1.0.zip
+
+安装方法和主题安装方法一样，只不过需要进入`usr/plugins`目录下安装，然后在控制面板开启即可。现在讲讲一些设置:
+
+![](https://pic3.superbed.cn/item/5cfbaccd451253d178d94224.png)
+
+进入`QQ`邮箱设置，账户设置:
+
+![](https://pic.superbed.cn/item/5cfbacce451253d178d9425b.png)
+
+会提示你发送短信，发送短信后会得到一串密码，然后复制到上上图中去。注意其中标注的框就好了。
+
+最后就是自己测试一下咯。
+
+### 3.2 CommentToMail界面优化
+
+如果你对发送与接收的邮件中的界面感觉到不足，可对其进行优化。感谢[**左岸**](https://www.zrahh.com/archives/173.html/comment-page-1#comment-1266)提供的模板。
+
+自己接收到的效果图如下:
+
+![](https://www.zrahh.com/usr/uploads/2019/02/971238368.png?imageView2/2/w/1366/q/75/format/webp)
+
+更改CommentToMail设置中的owner.html
+
+![](https://pic.superbed.cn/item/5cfbacd0451253d178d94290.png)
+
+代码：
+
+```
+<div style="width: 550px;height: auto;border-radius: 5px;margin:0 auto;border:1px solid #ffb0b0;box-shadow: 0px 0px 20px #888888;position: relative;">
+    <div style="background-image: url(https://cdn.zrahh.com/img/mail.png);width:550px;height: 250px;background-size: cover;background-repeat: no-repeat;border-radius: 5px 5px 0px 0px;"></div>
+    <div style="background-color:white;line-height:180%;padding:0 15px 12px;width:520px;margin:10px auto;color:#555555;font-family:'Century Gothic','Trebuchet MS','Hiragino Sans GB',微软雅黑,'Microsoft Yahei',Tahoma,Helvetica,Arial,'SimSun',sans-serif;font-size:12px;margin-bottom: 0px;">
+        <h2 style="border-bottom:1px solid #DDD;font-size:14px;font-weight:normal;padding:13px 0 10px 8px;"><span style="color: #12ADDB;font-weight: bold;">&gt; </span>您的文章<a style="text-decoration:none;color: #12ADDB;" href="{permalink}" target="_blank">《{title}》</a>有了新的回复耶~</h2>
+        <div style="padding:0 12px 0 12px;margin-top:18px">
+        <p>时间：<span style="border-bottom:1px dashed #ccc;" t="5" times=" 20:42">{time}</span></p> 
+            <p><strong>{author}</strong>&nbsp;给您的评论：</p>
+            <p style="background-color: #f5f5f5;border: 0px solid #DDD;padding: 10px 15px;margin:18px 0">{text}</p>
+            <p>其他信息：</p>
+            <p style="background-color: #f5f5f5;border: 0px solid #DDD;padding: 10px 15px;margin:18px 0">IP：{ip}<br />邮箱：<a href="mailto:{mail}">{mail}</a><br />状态：{status} [<a href='{manage}' target='_blank'>管理评论</a>]</p>
+        </div>
+    </div>
+    <a style="text-decoration: none;color: rgb(255, 255, 255);width: 40%;text-align: center;background-color: rgb(145, 165, 165);height: 40px;line-height: 40px;box-shadow: 3px 3px 3px rgba(0, 0, 0, 0.3);display: block;margin: auto;" href="{permalink}" target="_blank">查看回复的完整內容</a>
+    <div style="color:#8c8c8c;;font-family: 'Century Gothic','Trebuchet MS','Hiragino Sans GB',微软雅黑,'Microsoft Yahei',Tahoma,Helvetica,Arial,'SimSun',sans-serif;font-size: 10px;width: 100%;text-align: center;">
+        <p>©2017-2019 Copyright {author}</p>
+    </div>
+</div>
+```
+
+再来看接收方的效果图
+
+![](https://www.zrahh.com/usr/uploads/2019/02/3161372288.png?imageView2/2/w/1366/q/75/format/webp)
+
+更改guest.html文件
+
+```
+<div style="width: 550px;height: auto;border-radius: 5px;margin:0 auto;border:1px solid #ffb0b0;box-shadow: 0px 0px 20px #888888;position: relative;padding-bottom: 5px;">
+    <div style="background-image: url(https://cdn.zrahh.com/img/mail.png);width:550px;height: 250px;background-size: cover;background-repeat: no-repeat;border-radius: 5px 5px 0px 0px;"></div>
+    <div style="width: 200px;height: 40px;background-color: #91a5a5;margin-top: -20px;margin-left: 20px;box-shadow: 3px 3px 3px rgba(0, 0, 0, 0.3);color: rgb(255, 255, 255);text-align: center;line-height: 40px;">Dear: {author_p}</div>
+    <div style="background-color:white;line-height:180%;padding:0 15px 12px;width:520px;margin:30px auto;color:#555555;font-family:'Century Gothic','Trebuchet MS','Hiragino Sans GB',微软雅黑,'Microsoft Yahei',Tahoma,Helvetica,Arial,'SimSun',sans-serif;font-size:12px;margin-bottom: 0px;">  
+        <h2 style="border-bottom:1px solid #DDD;font-size:14px;font-weight:normal;padding:13px 0 10px 8px;"><span style="color: #12ADDB;font-weight: bold;">&gt; </span>您在<a style="text-decoration:none;color: #12ADDB;" href="{permalink}" target="_blank">《{title}》</a>的评论有了新的回复呐~</h2>  
+        <div style="padding:0 12px 0 12px;margin-top:18px">  
+            <p>时间：<span style="border-bottom:1px dashed #ccc;" t="5" times=" 20:42">{time}</span></p>          
+            <p>您的评论：</p>  
+            <p style="background-color: #f5f5f5;border: 0px solid #DDD;padding: 10px 15px;margin:18px 0">{text_p}</p>  
+            <p><strong>{author}</strong>&nbsp;给您的回复：</p>  
+            <p style="background-color: #f5f5f5;border: 0px solid #DDD;padding: 10px 15px;margin:18px 0">{text}</p>  
+        </div>  
+    </div>
+    <div style="color:#8c8c8c;;font-family: 'Century Gothic','Trebuchet MS','Hiragino Sans GB',微软雅黑,'Microsoft Yahei',Tahoma,Helvetica,Arial,'SimSun',sans-serif;font-size: 10px;width: 100%;text-align: center;word-wrap:break-word;margin-top: -30px;">
+        <p style="padding:20px;">萤火虫消失之后，那光的轨迹仍久久地印在我的脑际。那微弱浅淡的光点，仿佛迷失方向的魂灵，在漆黑厚重的夜幕中彷徨。——《挪威的森林》村上村树</p>
+    </div>
+    <a style="text-decoration:none; color:#FFF;width: 40%;text-align: center;background-color:#91a5a5;height: 40px;line-height: 35px;box-shadow: 3px 3px 3px rgba(0, 0, 0, 0.30);margin: -10px auto;display: block;" href="{permalink}" target="_blank">查看回复的完整內容</a>
+    <div style="color:#8c8c8c;;font-family: 'Century Gothic','Trebuchet MS','Hiragino Sans GB',微软雅黑,'Microsoft Yahei',Tahoma,Helvetica,Arial,'SimSun',sans-serif;font-size: 10px;width: 100%;text-align: center;margin-top: 30px;">
+        <p>本邮件为系统自动发送，请勿直接回复~</p>
+    </div>
+    <div style="color:#8c8c8c;;font-family: 'Century Gothic','Trebuchet MS','Hiragino Sans GB',微软雅黑,'Microsoft Yahei',Tahoma,Helvetica,Arial,'SimSun',sans-serif;font-size: 10px;width: 100%;text-align: center;">
+        <p>©2017-2019 Copyright {author}</p>
+    </div>
+</div>
+```
+
+**由于我在使用的时候，接收方不会受到邮件，经过反复排查，发现中间Dear xxx有问题，所以将其删除，最后得到可用的代码如下:**
+
+```
+<div style="width: 550px;height: auto;border-radius: 5px;margin:0 auto;border:1px solid #12ADDB;box-shadow: 0px 0px 20px #888888;position: relative;padding-bottom: 5px;">
+    <div style="background-image: url(https://wallroom.io/img/1920x1200/bg-e4aaddb.jpg);width:550px;height: 250px;background-size: cover;background-repeat: no-repeat;border-radius: 5px 5px 0px 0px;"></div>
+
+<div style="background-color:white;padding:0 15px 12px;width:500px;margin-left:50px auto;
+	margin-right: 50px auto;
+color:#555555;font-family:'Century Gothic','Trebuchet MS','Hiragino Sans GB',微软雅黑,'Microsoft Yahei',Tahoma,Helvetica,Arial,'SimSun',sans-serif;font-size:16px;">  
+<!--font-size:控制评标题大小-->        
+        <h1 style="border-bottom:1px solid #DDD;font-size:20px;font-weight:normal;padding:13px 0 10px 8px;"><span style="color: #12ADDB;font-weight: bold;">&gt; </span>您({author_p})在<a style="text-decoration:none;color: #12ADDB;" href="{permalink}" target="_blank">《{title}》</a>的评论有了新的回复</h1>  
+        <div style="padding:0 12px 0 12px;margin-top:18px">  
+            <p>时间：<span style="border-bottom:2px dashed #ccc;" t="5" times=" 20:42">{time}</span></p>  
+          
+			<p>你的评论：</p>  
+            <p style="background-color: #f5f5f5;border: 0px solid #DDD;padding: 10px 15px;margin:18px 0">{text_p}</p>  
+            <p><strong>{author}</strong>&nbsp;回复说：</p>  
+            <p style="background-color: #f5f5f5;border: 0px solid #DDD;padding: 10px 15px;margin:18px 0">{text}</p>  
+<!--font-size:控制评论底部大小-->               
+             <p style="font-size:17px">您可以点击 <a style="text-decoration:none; color:#12ADDB" href="{permalink}" target="_blank">查看回复的完整內容 </a>，本邮件为自动发送，请勿回信，如有疑问，请联系我<a style="text-decoration:none; color:#12ADDB"  href="zhang.xingrui@foxmail.com" target="_blank">zhang.xingrui@foxmail.com</a>，欢迎再次光临 <a style="text-decoration:none; color:#12ADDB" href="https://www.ravenxrz.ink" target="_blank">Raven's Blog </a>。</p>  
+
+        <p style="text-align: center;">©2019 Copyright {author}</p>
+        </div>  
+    </div>
+</div>
+```
+
+OK,这篇博文就这样了。
+
+## 参考
+
+[推荐一款 CommentToMail 邮件插件的模板](https://www.zrahh.com/archives/173.html/comment-page-1#comment-1266)
+

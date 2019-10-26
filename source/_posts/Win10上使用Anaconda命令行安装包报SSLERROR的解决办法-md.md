@@ -1,0 +1,18 @@
+---
+title: Win10上使用Anaconda命令行安装包报SSLERROR的解决办法
+date: 2019-04-20 13:58:23
+categories: 杂文
+toc: true
+tags:
+---
+<!-- more -->
+
+> 最近在使用`conda`命令安装`pytorch`的时候总是出现`像SSL ERROR，ConnectTimeoutError`等等。`google`了一番，试过好多种方法都不行。
+
+**最后发现使用Win系统下安装好的Anaconda Prompt来安装包就好了。**
+如下：
+![在这里插入图片描述](https://pic2.superbed.cn/item/5cfbb5a4451253d178d9cb4b.png)
+
+最后可以成功安装了：
+![在这里插入图片描述](https://pic.superbed.cn/item/5cfbb5a5451253d178d9cb7b.png)
+

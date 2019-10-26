@@ -3,19 +3,19 @@
 ## Source: https://github.com/hexojs/hexo/
 
 # Site
-title: Hexo
+title: Raven's Blog
 subtitle:
-description:
-keywords:
-author: John Doe
+description: 分享技术，记录生活
+keywords: IT
+author: Raven
 language: en
 timezone:
 
 # URL
 ## If your site is put in a subdirectory, set url as 'http://yoursite.com/child' and root as '/child/'
-url: http://yoursite.com
+url: https://wwww/ravenxrz.com
 root: /
-permalink: :year/:month/:day/:title/
+permalink: archives/:id/
 permalink_defaults:
 pretty_urls:
   trailing_index: true # Set to false to remove trailing index.html from permalinks
@@ -84,9 +84,19 @@ pagination_dir: page
 # Extensions
 ## Plugins: https://hexo.io/plugins/
 ## Themes: https://hexo.io/themes/
-theme: landscape
+theme: icarus
 
 # Deployment
 ## Docs: https://hexo.io/docs/deployment.html
 deploy:
-  type:
+  type: git #部署方式
+  repository: git@github.com:ravenxrz/ravenxrz.github.io.git #关联github仓库
+  branch: run-page #部署分支
+
+
+# 自定义
+## for sky theme
+# since: 2018
+
+## for maupassant
+# mathjax: true
