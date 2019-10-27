@@ -171,9 +171,9 @@ document.getElementById("spkj").style.height=document.getElementById("spkj").scr
 - `\documentclass{article}  ` -- 这是latex必备的一条指令，意思是本篇文章使用article模板，除了article以外，常用的还有report、book、ctexart等。一般来说我们只写公式的话，导入article即可。
 - `\usepackage{xeCJK}` -- article模板并不支持中文，\usepackage{xxx}是导入宏包的意思，通过宏包我们可以拓展文章的功能，xeCJK宏包用于支持中文。
 - `usepackage{amsmath}` -- amsmath是拓展数学宏包，一些高级的数学环境需要它的支持。
-- 再看\begin{document} -- \end{document} ， 这就是我们文章的主体了，我们所有需要显示的内容都是在这里书写。
+- 再看`\begin{document} -- \end{document}` ， 这就是我们文章的主体了，我们所有需要显示的内容都是在这里书写。
 
-如果你不懂上面说明的意思，只用记住这就是模板，你所需要的就是修改\begin{document} 到 \end{document}之间的内容。
+如果你不懂上面说明的意思，只用记住这就是模板，你所需要的就是修改`\begin{document}` 到 `\end{document}`之间的内容。
 
 再来说说latex里面如何书写公式。
 

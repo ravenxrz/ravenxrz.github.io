@@ -45,9 +45,6 @@ navbar:
         netease-clound-music:
             icon: fa fa-music
             url: 'https://music.163.com/#/user/home?id=281439693'
-        Douban:
-            icon: fa fa-book
-            url: 'https://www.douban.com/people/201371233/'
 # Footer section link settings
 footer:
     # Links to be shown on the right of the footer section
@@ -64,9 +61,6 @@ footer:
         netease-clound-music:
             icon: fa fa-music
             url: 'https://music.163.com/#/user/home?id=281439693'
-        Douban:
-            icon: fa fa-book
-            url: 'https://www.douban.com/people/201371233/'
 # Article display settings
 article:
     # Code highlight settings
@@ -90,8 +84,16 @@ search:
 # Comment plugin settings
 # https://ppoffice.github.io/hexo-theme-icarus/categories/Plugins/Comment
 comment:
-    # Name of the comment plugin
-    type: 
+    type: gitalk
+    owner: ravenxrz         # (required) GitHub user name
+    repo: BlogComment          # (required) GitHub repository name
+    client_id: b2fd373d2ca2e03e591e     # (required) OAuth application client id
+    client_secret: de4ab066908c1fbd32d3a45e091b3538761d685b # (required) OAuth application client secret
+    admin: ravenxrz         # (required) GitHub repo owner and collaborators who can initialize github issues
+                            #            Can either be a string or an array.
+                            #            admin:
+                            #                - xxxxxx1
+                            #                - xxxxxx2
 # Donation entries
 # https://ppoffice.github.io/hexo-theme-icarus/categories/Donation/
 donate:
@@ -129,12 +131,12 @@ sidebar:
     left:
         # Whether the left sidebar is sticky when page scrolls
         # https://ppoffice.github.io/hexo-theme-icarus/Configuration/Theme/make-a-sidebar-sticky-when-page-scrolls/
-        sticky: false
+        sticky: true
     # right sidebar settings
     right:
         # Whether the right sidebar is sticky when page scrolls
         # https://ppoffice.github.io/hexo-theme-icarus/Configuration/Theme/make-a-sidebar-sticky-when-page-scrolls/
-        sticky: false
+        sticky: true
 # Sidebar widget settings
 # https://ppoffice.github.io/hexo-theme-icarus/categories/Widgets/
 widgets:
@@ -171,9 +173,6 @@ widgets:
             Netease-clound-music:
                 icon: fa fa-music
                 url: 'https://music.163.com/#/user/home?id=281439693'
-            Douban:
-                icon: fa fa-book
-                url: 'https://www.douban.com/people/201371233/'
     -
         # Widget name
         type: toc
@@ -187,7 +186,7 @@ widgets:
         # Links to be shown in the links widget
         links:
             我的资源: 'https://ravenxrz.ink/resources'
-            聚合图床: 'https://github.com/ppoffice'
+            聚合图床: 'https://www.superbed.cn/'
             regex101: 'https://regex101.com'
             菜鸟工具: 'https://c.runoob.com'
             cloudconvert: 'https://cloudconvert.com'

@@ -30,8 +30,12 @@ i> 说好的四个8进制位呢？你切换成root用户再执行umask命令就�
 2. 同理在022中，也就是000 010 010，需要屏蔽掉group和others的w权限。那么创建目录，最终得到的755。创建文件，得到的是644。
 
 值得一提的是，不要理解最终权限是默认权限 **减去** umask的值。真正的**计算公式**是： 
+
+
 $$
-final permission = mode \& \sim umask
+{
+final permission = mode \\& ~umask
+}
 $$
 
 

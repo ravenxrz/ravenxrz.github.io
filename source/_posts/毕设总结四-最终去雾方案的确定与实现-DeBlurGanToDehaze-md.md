@@ -10,12 +10,12 @@ i> 本科毕设题目为《基于深度学习的图像去雾方法研究与实�
 
 
 毕设总结系列：
-- [毕设总结零--绪论](https://www.ravenxrz.ink/archives/ck279phgm003bxkvmfra3dswi/)
-- [毕设总结一--传统去雾理论](https://www.ravenxrz.ink/archives/ck279phgg002xxkvm0snjcn5j/)
-- [毕设总结二--论文复现工作1--暗通道去雾(DCP)](https://www.ravenxrz.ink/archives/ck279phgh0032xkvmbq5rgf01/)
-- [毕设总结三--论文复现工作2--MSCNN去雾](https://www.ravenxrz.ink/archives/ck279phgf002vxkvmb0ic1jk0/)
-- [毕设总结四--最终去雾方案的确定与实现--DeBlurGanToDehaze](https://www.ravenxrz.ink/archives/ck279phgk0037xkvm460z5nus/)
-- [毕设总结五--杂项](https://www.ravenxrz.ink/archives/ck279phgj0034xkvm8yrh7xf0/)
+- [毕设总结零--绪论](https://www.ravenxrz.ink/archives/ck27kp48k00344gvmcq9b8i5j/)
+- [毕设总结一--传统去雾理论](https://www.ravenxrz.ink/archives/ck27kp48e002s4gvm7s5s82xx/)
+- [毕设总结二--论文复现工作1--暗通道去雾(DCP)](https://www.ravenxrz.ink/archives/ck27kp48i002z4gvm5r0m07ge/)
+- [毕设总结三--论文复现工作2--MSCNN去雾](https://www.ravenxrz.ink/archives/ck27kp48g002u4gvmb1uw8rmj/)
+- [毕设总结四--最终去雾方案的确定与实现--DeBlurGanToDehaze](https://www.ravenxrz.ink/archives/ck27kp48m00384gvm2tlq4efw/)
+- [毕设总结五--杂项](https://www.ravenxrz.ink/archives/ck27kp48j00314gvm1uobgc59/)
 <!-- more -->
 ## 1. 前言
 
@@ -95,18 +95,16 @@ DeBlur的论文：《DeblurGAN: Blind Motion Deblurring Using Conditional Advers
 
 这里损失函数由两项构成：
 $$
-L = L_{感知损失} +\lambda L_{对抗损失}
+L = L_{感知损失} +\\lambda L_{对抗损失}
 $$
 在说感知损失(perception loss)前，先来看看简单的MSE损失，我们曾在MSCNN网络结构中提到过MSE损失函数。他比较的是生成图与标签图之间的像素级别均方差。
 $$
-L(t_i(x),t_i^{*}(x)) = \frac{1}{q}\sum_{i=1}^{q}||t_i(x)-t_i^{*}(x)||^2
+L(t_i(x),t_i^{\\delta}(x)) = \\frac{1}{q}\\sum_{i=1}^{q}||t_i(x)-t_i^{\\delta}(x)||^2
 $$
 那什么感知损失？简单的说就是将生成图和标签图在通过一个网络，得到**两张图的特征图**，在这两张特征图上做MSE。一般来说，通过的这个网路会选择VGG网络。感知损失的计算公式如下：
 $$
-\begin{equation}
-	L_{感知损失} = \frac{1}{CHW} \sum_{j=1}^{3}
-	|| \phi_j(I^{Label}) - \phi_j(G(I^{haze})) ||^2	
-    \end{equation}
+	L_{感知损失} = \\frac{1}{CHW} \\sum_{j=1}^{3}
+	|| \\phi_j(I^{Label}) - \\phi_j(G(I^{haze})) ||^2	
 $$
 
 - $\phi$理解为通过网络的等效函数

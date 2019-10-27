@@ -9,12 +9,12 @@ tags: 图像去雾
 i> 本科毕设题目为《基于深度学习的图像去雾方法研究与实现》
 
 毕设总结系列：
-- [毕设总结零--绪论](https://www.ravenxrz.ink/archives/ck279phgm003bxkvmfra3dswi/)
-- [毕设总结一--传统去雾理论](https://www.ravenxrz.ink/archives/ck279phgg002xxkvm0snjcn5j/)
-- [毕设总结二--论文复现工作1--暗通道去雾(DCP)](https://www.ravenxrz.ink/archives/ck279phgh0032xkvmbq5rgf01/)
-- [毕设总结三--论文复现工作2--MSCNN去雾](https://www.ravenxrz.ink/archives/ck279phgf002vxkvmb0ic1jk0/)
-- [毕设总结四--最终去雾方案的确定与实现--DeBlurGanToDehaze](https://www.ravenxrz.ink/archives/ck279phgk0037xkvm460z5nus/)
-- [毕设总结五--杂项](https://www.ravenxrz.ink/archives/ck279phgj0034xkvm8yrh7xf0/)
+- [毕设总结零--绪论](https://www.ravenxrz.ink/archives/ck27kp48k00344gvmcq9b8i5j/)
+- [毕设总结一--传统去雾理论](https://www.ravenxrz.ink/archives/ck27kp48e002s4gvm7s5s82xx/)
+- [毕设总结二--论文复现工作1--暗通道去雾(DCP)](https://www.ravenxrz.ink/archives/ck27kp48i002z4gvm5r0m07ge/)
+- [毕设总结三--论文复现工作2--MSCNN去雾](https://www.ravenxrz.ink/archives/ck27kp48g002u4gvmb1uw8rmj/)
+- [毕设总结四--最终去雾方案的确定与实现--DeBlurGanToDehaze](https://www.ravenxrz.ink/archives/ck27kp48m00384gvm2tlq4efw/)
+- [毕设总结五--杂项](https://www.ravenxrz.ink/archives/ck27kp48j00314gvm1uobgc59/)
 <!-- more -->
 ## 1. 前言
 
@@ -78,9 +78,11 @@ MSCNN,全称：《Single Image Dehazing via Multi-scale Convolutional Neural Net
 每一个长方体代表的是特征图，下面的数字代表的是卷积核的个数，下面的文字代表相应的操作和操作的size。
 
 **训练损失函数上**，MSCNN采用了MSE函数,即：
+
 $$
-L(t_i(x),t_i^{*}(x)) = \frac{1}{q}\sum_{i=1}^{q}||t_i(x)-t_i^{*}(x)||^2
+L(t_i(x),t_i^{\\delta}(x)) = \\frac{1}{q}\\sum_{i=1}^{q}||t_i(x)-t_i^{\\delta}(x)||^2
 $$
+
 其中，q代表的是一个batch size中的雾图个数。
 
 **其余参数：**
@@ -95,16 +97,14 @@ $$
 
 作者采用了NYU数据集来构建训练集。NYU数据集提供了清晰图与对应的深度图。合成公式：
 $$
-\begin{equation}
-	\left\{
-	\begin{array}{l}
-	t(x) = e^{-\beta d(x)}\\
-	I(x) = t(x) J(x) + A(1-t(x))
-	\end{array}
-	\right.
-	\end{equation}
+\\left\\{
+\\begin{array}{l}
+t(x) = e^{-\\beta d(x)}\\\\
+I(x) = t(x) J(x) + A(1-t(x))
+\\end{array}
+\\right.
 $$
-现在已知d(x)和J(x)，通过随机取$\beta$和$A$，即可得到$t(x)$ 进而 获取$I(x)$雾图。详细的合成方法可参考:
+现在已知d(x)和J(x)，通过随机取$\\beta$和$A$，即可得到$t(x)$ 进而 获取$I(x)$雾图。详细的合成方法可参考:
 
 - [Benchmarking Single Image Dehazing and Beyond](https://www.google.com/url?q=https%3A%2F%2Farxiv.org%2Fpdf%2F1712.04143.pdf&sa=D&sntz=1&usg=AFQjCNHzdt3kMDsvuJ7Ef6R4ev59OFeRYA) 
 - [RESIDE](https://sites.google.com/view/reside-dehaze-datasets/reside-v0)

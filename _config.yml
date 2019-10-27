@@ -90,9 +90,9 @@ theme: icarus
 ## Docs: https://hexo.io/docs/deployment.html
 deploy:
   type: git #部署方式
-  repository: git@github.com:ravenxrz/ravenxrz.github.io.git #关联github仓库
-  branch: run-page #部署分支
-
+  repo: 
+    github: git@github.com:ravenxrz/ravenxrz.github.io.git,run-page #关联github仓库
+    coding: git@git.dev.tencent.com:ravenxrz/ravenxrz.coding.me.git,master
 
 # 自定义
 ## for sky theme

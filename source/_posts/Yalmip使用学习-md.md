@@ -78,17 +78,19 @@ optimize(target,constraints,opstions)
 #### 3.1 简单例子
 
 如题
+
+
 $$
-\begin{equation}
-z = max(\frac{x_1+2x_2}{2x_1+x_2})\\
-\left\{
-             \begin{array}{c}
-           	x_1 + x_2 \ge 2	\\
-           	x_2 - x_1 \le 1	\\
+\\begin{equation}
+z = max(\\frac{x_1+2x_2}{2x_1+x_2}) \\\\
+\\left\\{
+             \\begin{array}{c}
+           	x_1 + x_2 \ge 2	\\\\
+           	x_2 - x_1 \le 1	\\\\
            	x_1 \le 1
-             \end{array}
-\right.
-\end{equation}
+             \\end{array}
+\\right.
+\\end{equation}
 $$
 
 
@@ -139,20 +141,21 @@ ans =
 #### 3.2 解决经典的TSP问题
 
 关于TSP的理论，这里我就不详细介绍了，百度有很多。在遇到yalmip之前，我学习的求解TSP的第一解法就是利用lingo来求解，后来学习了几种智能算法，如遗传算法，模拟退火，蚁群算法等等都可以解决这个问题。现在，学习了yalmip之后，我们可以完全抛弃lingo那种简陋的ide。废话不多说，先贴上约束条件：
+
 $$
-\begin{align*}
-	&\min Z = \sum_{i=1}^{n}\sum_{j=1}^{n} d_{ij}x_{ij}	\\
-	s.t. &\left\{	
-	\begin{array}{c}
-		\sum_{i=1,i\neq j}^{n}x_{ij} = 1,\qquad j = 1,\cdots,n		\\
-		\sum_{j=1,j\neq i}^{n}x_{ij} = 1,\qquad i = 1,\cdots,n\\
-		u_i-u_j + nx_{ij} \le n-1,\qquad 1< i\neq j \le n	\\
-		x_{ij} = 0 \text{或} 1,\qquad u,j=1,\cdots,n	\\
-		u_i\text{为实数},\qquad i=1,\cdots,n
-	\end{array}
-	\right.
-\end{align*}
+\\min Z = \\sum_{i=1}^{n}\\sum_{j=1}^{n} d_{ij}x_{ij}   \\\\
+    s.t. \\left\\{  
+    \\begin{array}{c}
+        \\sum_{i=1,i\\neq j}^{n}x_{ij} = 1,\\qquad j = 1,\\cdots,n      \\\\
+        \\sum_{j=1,j\\neq i}^{n}x_{ij} = 1,\\qquad i = 1,\\cdots,n\\\\
+        u_i-u_j + nx_{ij} \\le n-1,\\qquad 1< i\\neq j \\le n   \\\\
+        x_{ij} = 0 \\text{或} 1,\\qquad u,j=1,\\cdots,n  \\\\
+        u_i\\text{为实数},\\qquad i=1,\\cdots,n
+    \\end{array}
+    \\right.
 $$
+
+
 再来看看代码：
 
 ```matlab

@@ -151,16 +151,16 @@ tags:
 ![范围限制](https://pic.superbed.cn/item/5cfbad4d451253d178d951ef.jpg)
 
 OK,知道了这一点，咱们再来看看使用不等式的使用方式。假设我要绘制一个这样的图形:
+
 $$
-\begin{equation}
-\left\{
-\begin{array}{c}
-x \lt 2	\\
-0 \lt y \lt x -1
-\end{array}
-\right.
-\end{equation}
+\\left\\{
+\\begin{array}{c}
+x \\lt 2	\\\\
+0 \\lt y \\lt x -1
+\\end{array}
+\\right.
 $$
+
 那么这样写就画出来啦。
 
 ![不等式绘制](https://pic.superbed.cn/item/5cfbad51451253d178d9523c.jpg)
