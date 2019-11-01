@@ -1,9 +1,10 @@
 ---
 title: 粒子群算法（PSO)及MATLAB实现
-date: 2017-08-25 13:59:09
 categories: 数学建模
 toc: true
 tags: 算法
+abbrlink: 302ae4cb
+date: 2017-08-25 13:59:09
 ---
 
 ### 1.1 PSO算法的基础理论

@@ -1,9 +1,10 @@
 ---
 title: 解决Pandownload连接数限制为1的方法
-date: 2019-05-12 13:59:16
 categories: 杂文
 toc: true
-tags: 
+abbrlink: d808500e
+date: 2019-05-12 13:59:16
+tags:
 ---
 
 

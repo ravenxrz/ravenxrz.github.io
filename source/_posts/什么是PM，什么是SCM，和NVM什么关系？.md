@@ -1,0 +1,54 @@
+---
+title: 什么是PM，什么是SCM，和NVM什么关系？
+tags: 存储
+categories: 存储
+abbrlink: af097aa9
+date: 2019-10-30 22:38:06
+---
+
+## 什么是PM，什么是SCM，和NVM什么关系？
+
+转载自：http://blog.jcix.top/2019-02-18/pm-nvm/#NVMPM_SCM
+
+近几年，不论在学术界还是工业界，NVM 都是比较前沿的技术。其实 NVM 一词并不新，是因为 PM(或称 SCM)这个与 NVM 有关的概念的出现，使得 NVM 这词又 “火” 了一把。在近年的相关文献中，NVM 也经常被和 PM(SCM)混用，让人搞不清。本文捋一捋它们之间的关系。
+
+<!-- more -->
+
+NVM
+---
+
+准确来说，NVM (non-volatile memory) 指的是非易失的物理存储介质，比如 NAND flash、PCM、3D XPoint 等都算是 NVM，这些 NVM 可以做成 SSD 形式，也可以做成 PM (或称 SCM)。
+
+               NVM存储介质
+                   |
+                   V
+               NAND Flash   ---+
+                               |
+        +--     PCM         ---+--> SSD
+     +--+                      |
+     |  +--    3D XPoint    ---+
+     V
+     PM 
+    (SCM)
+
+NVM 与 SSD 的关系
+-------------
+
+我们常见的 SSD，不管是 SATA 接口还是 PCIe 接口，基本都是基于 NAND Flash 的；当然也有例外，Intel 两年前推出的 Optane SSD 就基于 3D XPoint 而非 NAND Flash。不管底层介质是 Flash 还是 3D XPoint，这些介质广义上都是属于 NVM 的。它们都是存储设备，是块设备，是 IO 设备，除了性能，用户软件都可以将它们无差别地看成 SSD。
+
+NVM 与 PM (SCM) 的关系
+------------------
+
+现在，PCM、3D XPoint 等新型的 NVM 也被用于制作 DIMM 接口的内存条，被称为 PM 或 SCM。
+
+其实 PM (persistent memory) 或者 SCM (storage class memory)基本为同义词，指的是内存 DIMM 接口的、可字节寻址的 NVM 设备。新型的 NVM 存储介质相对 NAND Flash 更容易做到细粒度读写，更适合做成可字节寻址 (byte-addressable) 的内存形式。并且，因为密度更大，基于新型 NVM 介质的 PM 可以做到 DRAM 内存条容量几倍；也由于新型 NVM 介质还不及 DRAM 的性能，PM 的读写速度可能比 DRAM 内存条慢几倍。
+
+NVDIMM 又是什么？
+------------
+
+“非易失内存条”其实并非近几年才出现，很久之前就有基于 NAND Flash 的非易失型内存条 (一般被称为 NVDIMM)，不过这种 NVDIMM 通常被做成“电池 + Flash+DRAM” 的形式：通电时，依然是依靠 DRAM 工作，断电时才用电池电量将 DRAM 数据刷回 Flash。Flash 无法直接代替 DRAM 是是因为 Flash 的读写粒度不一致，且存在写前擦除、拷贝等要求，不利于直接进行细粒度存取。这种设计就导致 NVDIMM 只可能比一般 DRAM 内存条更贵，且不可能做的比 DRAM 内存有更大容量密度。
+
+总结
+--
+
+虽然容易有歧义，但近年依然有很多文献称基于 PM 或 SCM 为 NVM。因此阅读文献时我们可以认为：狭义上，NVM 可以指 Flash、PCM 等存储介质；广义上，NVM 也可以指 SCM、PM 等存储设备，其实早年间，也有称 SSD 为 NVM 的。

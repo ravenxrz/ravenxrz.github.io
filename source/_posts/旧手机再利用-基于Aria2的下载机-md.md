@@ -1,8 +1,9 @@
 ---
 title: 旧手机再利用-基于Aria2的下载机
-date: 2018-10-12 13:58:52
 categories: 杂文
 toc: true
+abbrlink: 6b2122f5
+date: 2018-10-12 13:58:52
 tags:
 ---
 

@@ -1,9 +1,10 @@
 ---
 title: 研究僧-在IPAD上阅读文献并与Zotero文献库同步
-date: 2019-07-09 13:59:07
 categories: 杂文
 toc: true
-tags: 
+abbrlink: 1b8fe85b
+date: 2019-07-09 13:59:07
+tags:
 ---
 
 ## 1. 前言

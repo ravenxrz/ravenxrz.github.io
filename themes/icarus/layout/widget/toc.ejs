@@ -3,7 +3,6 @@
     if (toc.hasOwnProperty('id') && toc.hasOwnProperty('index') && toc.hasOwnProperty('text')) {
         result += `<li>
         <a class="is-flex" href="#${toc.id}">
-        <span class="has-mr-6">${toc.index}</span>
         <span>${toc.text}</span>
         </a>`;
     }
@@ -25,7 +24,7 @@
     return result;
 } %>
 <% let tocContent = buildToc(_toc(content)); if (tocContent !== undefined && tocContent !== ''){ %>
-    <div class="card widget" id="toc">
+	<div class="card widget column-left is-sticky" id="toc">
         <div class="card-content">
             <div class="menu">
                 <h3 class="menu-label">

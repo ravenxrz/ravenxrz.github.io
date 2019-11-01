@@ -1,8 +1,9 @@
 ---
 title: Ubuntu包管理的小知识
-date: 2019-08-07 13:58:17
 categories: Linux
 toc: true
+abbrlink: 14ea3ef9
+date: 2019-08-07 13:58:17
 tags:
 ---
 

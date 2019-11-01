@@ -1,8 +1,9 @@
 ---
 title: 半小时搞定方向导数，梯度是什么
-date: 2019-05-03 13:58:42
 categories: 深度学习
 toc: true
+abbrlink: 37f284fc
+date: 2019-05-03 13:58:42
 tags:
 ---
 

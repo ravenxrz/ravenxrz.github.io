@@ -1,9 +1,10 @@
 ---
 title: 利用内网穿透实现Socket外网通信
-date: 2019-07-09 13:58:41
 categories: 杂文
 toc: true
 tags: Socket
+abbrlink: b2d369c2
+date: 2019-07-09 13:58:41
 ---
 
 ## 1. 前言

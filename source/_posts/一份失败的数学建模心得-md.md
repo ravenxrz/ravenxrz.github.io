@@ -1,8 +1,9 @@
 ---
 title: 一份失败的数学建模心得
-date: 2018-09-06 13:58:25
 categories: 数学建模
 toc: true
+abbrlink: 5c3da6c9
+date: 2018-09-06 13:58:25
 tags:
 ---
 

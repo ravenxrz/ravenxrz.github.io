@@ -1,8 +1,9 @@
 ---
 title: Java中的值传递和引用传递
-date: 2018-04-22 13:58:07
 categories: 编程语言
 toc: true
+abbrlink: 41d67bcb
+date: 2018-04-22 13:58:07
 tags:
 ---
 

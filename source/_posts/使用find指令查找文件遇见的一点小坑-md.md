@@ -1,8 +1,9 @@
 ---
 title: 使用find指令查找文件遇见的一点小坑
-date: 2019-05-05 13:58:38
 categories: Linux
 toc: true
+abbrlink: dc78766f
+date: 2019-05-05 13:58:38
 tags:
 ---
 

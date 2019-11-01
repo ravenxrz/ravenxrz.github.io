@@ -1,8 +1,9 @@
 ---
 title: Win10-TensorBoard使用方式及踩坑日记
-date: 2019-04-23 13:58:21
 categories: 深度学习
 toc: true
+abbrlink: b6686206
+date: 2019-04-23 13:58:21
 tags:
 ---
 

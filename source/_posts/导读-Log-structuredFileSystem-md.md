@@ -1,10 +1,11 @@
 ---
 title: 导读-Log-structuredFileSystem
-date: 2019-09-23 13:58:48
 categories: 论文
 toc: true
-tags:
 thumbnail: /thumbnails/deer.jpg
+abbrlink: 9c2ab089
+date: 2019-09-23 13:58:48
+tags:
 ---
 
 

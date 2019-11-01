@@ -1,10 +1,11 @@
 ---
 title: 巧记指针常量和常量指针
-date: 2019-09-17 13:58:51
 categories: 编程语言
 toc: true
-tags:
 thumbnail: /thumbnails/flower.jpg
+abbrlink: e16de5be
+date: 2019-09-17 13:58:51
+tags:
 ---
 
 本文中，你可以学习到：

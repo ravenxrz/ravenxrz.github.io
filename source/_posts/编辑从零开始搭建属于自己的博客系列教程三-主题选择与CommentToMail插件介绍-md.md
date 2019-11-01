@@ -1,9 +1,10 @@
 ---
 title: 从零开始搭建属于自己的博客系列教程三-主题选择与CommentToMail插件介绍
-date: 2019-05-04 13:59:11
 categories: 博客搭建
 toc: true
-tags: 
+abbrlink: 9f4d945c
+date: 2019-05-04 13:59:11
+tags:
 ---
 
 ## 1.  写在最前面

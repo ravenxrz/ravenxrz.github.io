@@ -1,9 +1,10 @@
 ---
 title: 知识整理-分区表MBR与GPT
-date: 2019-08-02 13:59:05
 categories: Linux
 toc: true
 tags: 文件系统
+abbrlink: 7543dac6
+date: 2019-08-02 13:59:05
 ---
 
 本文整理自《鸟哥的Linux私房菜-基础学习篇》及几篇博客。

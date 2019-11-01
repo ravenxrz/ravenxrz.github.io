@@ -1,10 +1,11 @@
 ---
 title: 记录-vmware下linux扩容
-date: 2019-09-06 13:59:18
 categories: Linux
 toc: true
-tags: 
 thumbnail: /thumbnails/sculpture.jpg
+abbrlink: 77b60c50
+date: 2019-09-06 13:59:18
+tags:
 ---
 
 ## 0. 背景

@@ -1,9 +1,10 @@
 ---
 title: 用Android手机作PC的麦克风和摄像头
-date: 2019-07-07 13:59:03
 categories: Android
 toc: true
-tags: 
+abbrlink: fc472545
+date: 2019-07-07 13:59:03
+tags:
 ---
 
 ## 1.麦克风

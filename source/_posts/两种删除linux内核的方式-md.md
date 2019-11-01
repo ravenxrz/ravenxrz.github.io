@@ -1,8 +1,9 @@
 ---
 title: 两种删除linux内核的方式
-date: 2019-05-03 13:58:26
 categories: Linux
 toc: true
+abbrlink: a7295ff5
+date: 2019-05-03 13:58:26
 tags:
 ---
 

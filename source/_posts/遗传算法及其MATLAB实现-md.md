@@ -1,9 +1,10 @@
 ---
 title: 遗传算法及其MATLAB实现
-date: 2017-08-25 13:59:30
 categories: 数学建模
 toc: true
 tags: 算法
+abbrlink: c9ca9c00
+date: 2017-08-25 13:59:30
 ---
 
 

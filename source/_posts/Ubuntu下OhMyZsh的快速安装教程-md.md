@@ -1,8 +1,9 @@
 ---
 title: Ubuntu下OhMyZsh的快速安装教程
-date: 2019-07-31 13:58:16
 categories: Linux
 toc: true
+abbrlink: 6c55eca4
+date: 2019-07-31 13:58:16
 tags:
 ---
 

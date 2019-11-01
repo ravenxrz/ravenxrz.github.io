@@ -1,9 +1,10 @@
 ---
 title: 蚁群算法及其MATLAB实现
-date: 2017-08-25 13:59:13
 categories: 数学建模
 toc: true
 tags: 算法
+abbrlink: 3b36af0a
+date: 2017-08-25 13:59:13
 ---
 
 ## 1. 蚁群算法原理

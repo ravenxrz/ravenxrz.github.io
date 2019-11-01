@@ -1,8 +1,9 @@
 ---
 title: Linux中硬链与软链详解
-date: 2019-08-02 13:58:08
 categories: Linux
 toc: true
+abbrlink: f81072e7
+date: 2019-08-02 13:58:08
 tags:
 ---
 

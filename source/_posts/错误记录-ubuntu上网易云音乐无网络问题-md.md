@@ -1,9 +1,10 @@
 ---
 title: 错误记录-ubuntu上网易云音乐无网络问题
-date: 2019-08-17 13:59:31
 categories: 杂文
 toc: true
-tags: 
+abbrlink: 47cfe70b
+date: 2019-08-17 13:59:31
+tags:
 ---
 
 最近老是遇到网易云音乐没网，但是浏览器却可以上网的问题。

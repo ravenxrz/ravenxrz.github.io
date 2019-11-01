@@ -1,8 +1,9 @@
 ---
 title: Makefile通用模板
-date: 2019-05-03 13:58:12
 categories: 编程语言
 toc: true
+abbrlink: f4639d5e
+date: 2019-05-03 13:58:12
 tags:
 ---
 

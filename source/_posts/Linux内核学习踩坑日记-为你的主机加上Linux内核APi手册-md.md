@@ -1,8 +1,9 @@
 ---
 title: Linux内核学习踩坑日记-为你的主机加上Linux内核APi手册
-date: 2019-04-02 13:58:08
 categories: Linux
 toc: true
+abbrlink: a5232e28
+date: 2019-04-02 13:58:08
 tags:
 ---
 

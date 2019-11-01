@@ -1,9 +1,10 @@
 ---
 title: 转载-计算机组成原理-程序的装载
-date: 2019-08-20 13:59:25
 categories: 知识理论
 toc: true
-tags: 
+abbrlink: 9374b389
+date: 2019-08-20 13:59:25
+tags:
 ---
 
 ## 0. 前言

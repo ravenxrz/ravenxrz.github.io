@@ -1,9 +1,10 @@
 ---
 title: Linux文件系统基础知识
-date: 2019-08-02 13:58:11
 categories: Linux
 toc: true
 tags: 文件系统
+abbrlink: 8d404d4a
+date: 2019-08-02 13:58:11
 ---
 # Linux文件系统基础知识
 

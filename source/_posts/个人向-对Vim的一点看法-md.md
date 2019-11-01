@@ -1,9 +1,10 @@
 ---
 title: 个人向-对Vim的一点看法
-date: 2019-07-11 13:58:28
 categories: 杂文
 toc: true
 tags: vim
+abbrlink: d009831a
+date: 2019-07-11 13:58:28
 ---
 
 

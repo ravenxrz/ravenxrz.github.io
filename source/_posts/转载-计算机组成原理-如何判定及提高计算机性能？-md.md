@@ -1,9 +1,10 @@
 ---
 title: 转载-计算机组成原理-如何判定及提高计算机性能？
-date: 2019-08-19 13:59:24
 categories: 知识理论
 toc: true
-tags: 
+abbrlink: e8ba13ef
+date: 2019-08-19 13:59:24
+tags:
 ---
 
 ## 0. 前言

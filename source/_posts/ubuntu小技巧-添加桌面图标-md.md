@@ -1,8 +1,9 @@
 ---
 title: ubuntu小技巧-添加桌面图标
-date: 2019-07-30 13:58:19
 categories: Linux
 toc: true
+abbrlink: 45ed2e8e
+date: 2019-07-30 13:58:19
 tags:
 ---
 

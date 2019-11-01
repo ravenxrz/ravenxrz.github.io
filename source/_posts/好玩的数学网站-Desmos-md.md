@@ -1,8 +1,9 @@
 ---
 title: 好玩的数学网站-Desmos
-date: 2019-01-25 13:58:47
 categories: 数学建模
 toc: true
+abbrlink: 27d14722
+date: 2019-01-25 13:58:47
 tags:
 ---
 

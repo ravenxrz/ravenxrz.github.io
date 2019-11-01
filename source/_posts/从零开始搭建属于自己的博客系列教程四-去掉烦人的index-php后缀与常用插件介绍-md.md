@@ -1,8 +1,9 @@
 ---
 title: 从零开始搭建属于自己的博客系列教程四-去掉烦人的index-php后缀与常用插件介绍
-date: 2019-05-04 13:59:36
 categories: 博客搭建
 toc: true
+abbrlink: e8deae94
+date: 2019-05-04 13:59:36
 tags:
 ---
 

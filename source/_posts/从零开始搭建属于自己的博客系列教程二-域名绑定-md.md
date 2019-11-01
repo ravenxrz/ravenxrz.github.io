@@ -1,8 +1,9 @@
 ---
 title: 从零开始搭建属于自己的博客系列教程二-域名绑定
-date: 2019-05-04 13:58:32
 categories: 博客搭建
 toc: true
+abbrlink: 1cbfa5af
+date: 2019-05-04 13:58:32
 tags:
 ---
 

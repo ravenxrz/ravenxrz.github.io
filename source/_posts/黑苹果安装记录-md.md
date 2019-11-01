@@ -1,9 +1,10 @@
 ---
 title: 黑苹果安装记录
-date: 2019-05-24 13:59:33
 categories: 杂文
 toc: true
-tags: 
+abbrlink: b8634fa6
+date: 2019-05-24 13:59:33
+tags:
 ---
 
 ## 1. 前言

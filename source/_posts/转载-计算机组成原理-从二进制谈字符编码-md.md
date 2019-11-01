@@ -1,9 +1,10 @@
 ---
 title: 转载-计算机组成原理-从二进制谈字符编码
-date: 2019-08-20 13:59:21
 categories: 知识理论
 toc: true
-tags: 
+abbrlink: e1fc9c68
+date: 2019-08-20 13:59:21
+tags:
 ---
 
 本文中，你将学习到：

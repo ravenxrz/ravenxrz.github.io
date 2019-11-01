@@ -1,9 +1,10 @@
 ---
 title: 转载-计算机组成原理-冯·诺依曼体系结构
-date: 2019-08-19 13:59:22
 categories: 知识理论
 toc: true
-tags: 
+abbrlink: ea4e9caa
+date: 2019-08-19 13:59:22
+tags:
 ---
 
 ## 0. 前言

@@ -1,9 +1,10 @@
 ---
 title: 这些年，我所用过的精品Chrome插件（插件干货篇
-date: 2018-10-25 13:59:26
 categories: 知识理论
 toc: true
-tags: 
+abbrlink: 5cb17766
+date: 2018-10-25 13:59:26
+tags:
 ---
 
 > 个人比较喜欢收集些好用的软件，这里就整理收集一下这些年的chrome插件吧。

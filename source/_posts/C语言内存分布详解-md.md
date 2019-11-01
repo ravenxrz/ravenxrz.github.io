@@ -1,8 +1,9 @@
 ---
 title: C语言内存分布详解
-date: 2019-08-13 13:58:06
 categories: 编程语言
 toc: true
+abbrlink: 2567fa35
+date: 2019-08-13 13:58:06
 tags:
 ---
 

@@ -1,9 +1,10 @@
 ---
 title: 这些年，我所用过的精品软件（网站干货篇)
-date: 2018-10-25 13:59:29
 categories: 知识理论
 toc: true
-tags: 
+abbrlink: b1ec495
+date: 2018-10-25 13:59:29
+tags:
 ---
 
 ## 1. 前言

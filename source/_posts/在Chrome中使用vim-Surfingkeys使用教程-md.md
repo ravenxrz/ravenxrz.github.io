@@ -1,8 +1,9 @@
 ---
 title: 在Chrome中使用vim-Surfingkeys使用教程
-date: 2019-07-07 13:58:43
 categories: 杂文
 toc: true
+abbrlink: bcb78a81
+date: 2019-07-07 13:58:43
 tags:
 ---
 

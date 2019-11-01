@@ -1,8 +1,9 @@
 ---
 title: Win10上使用Anaconda命令行安装包报SSLERROR的解决办法
-date: 2019-04-20 13:58:23
 categories: 杂文
 toc: true
+abbrlink: b0f3833b
+date: 2019-04-20 13:58:23
 tags:
 ---
 <!-- more -->

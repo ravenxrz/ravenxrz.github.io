@@ -1,10 +1,11 @@
 ---
 title: 理解C++中的左值(lvalue)和右值(rvalue)
-date: 2019-10-13 13:59:01
 categories: 编程语言
 toc: true
-tags: 
 thumbnail: /thumbnails/desert.jpg
+abbrlink: c49b3e12
+date: 2019-10-13 13:59:01
+tags:
 ---
 
 i> 翻译自:https://www.internalpointers.com/post/understanding-meaning-lvalues-and-rvalues-c

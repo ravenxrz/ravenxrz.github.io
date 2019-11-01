@@ -1,8 +1,9 @@
 ---
 title: umask命令详解
-date: 2019-08-17 13:58:20
 categories: Linux
 toc: true
+abbrlink: 6802486f
+date: 2019-08-17 13:58:20
 tags:
 ---
 
@@ -34,7 +35,7 @@ i> 说好的四个8进制位呢？你切换成root用户再执行umask命令就�
 
 $$
 {
-final permission = mode \\& ~umask
+final permission = mode \\& \\sim umask
 }
 $$
 

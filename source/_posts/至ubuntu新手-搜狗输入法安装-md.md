@@ -1,9 +1,10 @@
 ---
 title: 至ubuntu新手-搜狗输入法安装
-date: 2019-05-03 13:59:12
 categories: Linux
 toc: true
-tags: 
+abbrlink: 2535dbde
+date: 2019-05-03 13:59:12
+tags:
 ---
 
 

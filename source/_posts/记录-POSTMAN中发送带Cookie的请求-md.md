@@ -1,9 +1,10 @@
 ---
 title: 记录-POSTMAN中发送带Cookie的请求
-date: 2019-08-21 13:59:17
 categories: 杂文
 toc: true
-tags: 
+abbrlink: '41155787'
+date: 2019-08-21 13:59:17
+tags:
 ---
 
 postman是个很出名的接口调试助手，虽然他已经出了独立的应用，但是我依然坚持在使用chrome插件版本。下面说下怎么在postman中调试带cookie的请求。

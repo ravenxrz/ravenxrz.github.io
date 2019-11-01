@@ -1,9 +1,10 @@
 ---
 title: 知识扫盲-RAID0，RAID1，RAID5，RAID6，RAID10简介
-date: 2019-08-07 13:59:04
 categories: 杂文
 toc: true
-tags: 
+abbrlink: f0834f1f
+date: 2019-08-07 13:59:04
+tags:
 ---
 
 整理自youtube视频：

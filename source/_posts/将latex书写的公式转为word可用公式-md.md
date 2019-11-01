@@ -1,9 +1,10 @@
 ---
 title: 将latex书写的公式转为word可用公式
-date: 2019-05-31 13:58:50
 categories: 杂文
 toc: true
 tags: Latex
+abbrlink: dd4a0f03
+date: 2019-05-31 13:58:50
 ---
 
 # 将latex书写的公式转为word可用公式

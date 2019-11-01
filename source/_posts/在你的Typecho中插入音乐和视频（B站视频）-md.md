@@ -1,8 +1,9 @@
 ---
 title: 在你的Typecho中插入音乐和视频（B站视频）
-date: 2019-05-29 13:58:45
 categories: 博客搭建
 toc: true
+abbrlink: 8db6abea
+date: 2019-05-29 13:58:45
 tags:
 ---
 

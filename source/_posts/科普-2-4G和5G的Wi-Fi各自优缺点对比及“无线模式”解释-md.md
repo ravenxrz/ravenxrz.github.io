@@ -1,9 +1,10 @@
 ---
 title: 科普-2-4G和5G的Wi-Fi各自优缺点对比及“无线模式”解释
-date: 2019-08-11 13:59:08
 categories: 杂文
 toc: true
-tags: 
+abbrlink: bf94a76e
+date: 2019-08-11 13:59:08
+tags:
 ---
 
 以下信息均为个人理解，如有错误，还请指正。
