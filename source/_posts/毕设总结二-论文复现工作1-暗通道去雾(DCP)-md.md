@@ -11,12 +11,12 @@ i> 本科毕设题目为《基于深度学习的图像去雾方法研究与实�
 
 
 毕设总结系列：
-- [毕设总结零--绪论](https://www.ravenxrz.ink/archives/ck27kp48k00344gvmcq9b8i5j/)
-- [毕设总结一--传统去雾理论](https://www.ravenxrz.ink/archives/ck27kp48e002s4gvm7s5s82xx/)
-- [毕设总结二--论文复现工作1--暗通道去雾(DCP)](https://www.ravenxrz.ink/archives/ck27kp48i002z4gvm5r0m07ge/)
-- [毕设总结三--论文复现工作2--MSCNN去雾](https://www.ravenxrz.ink/archives/ck27kp48g002u4gvmb1uw8rmj/)
-- [毕设总结四--最终去雾方案的确定与实现--DeBlurGanToDehaze](https://www.ravenxrz.ink/archives/ck27kp48m00384gvm2tlq4efw/)
-- [毕设总结五--杂项](https://www.ravenxrz.ink/archives/ck27kp48j00314gvm1uobgc59/)
+- [毕设总结零--绪论](https://www.ravenxrz.ink/archives/880ba6e.html)
+- [毕设总结一--传统去雾理论](https://www.ravenxrz.ink/archives/a513887d.html)
+- [毕设总结二--论文复现工作1--暗通道去雾(DCP)](https://www.ravenxrz.ink/archives/81fcc536.html)
+- [毕设总结三--论文复现工作2--MSCNN去雾](https://www.ravenxrz.ink/archives/15ae521b.html)
+- [毕设总结四--最终去雾方案的确定与实现--DeBlurGanToDehaze](https://www.ravenxrz.ink/archives/6631bc9b.html)
+- [毕设总结五--杂项](https://www.ravenxrz.ink/archives/2caf6b87.html)
 <!-- more -->
 ## 1. 前言
 

@@ -10,9 +10,9 @@ tags:
 > 个人比较喜欢收集些好用的软件，这里就整理收集一下这些年的PC干货吧。
 
 这里做了一个小系列:
-[这些年，我所用过精品Chrome插件（插件干货篇）](https://www.ravenxrz.ink/archives/ck27cjw8y004qrwvm1hxjbs14/)
-[这些年，我所用过精品软件（PC干货篇）](https://www.ravenxrz.ink/archives/ck27cjw8z004trwvm2lmcfysd/)
-[这些年，我所用精品网站（网站干货篇）](https://www.ravenxrz.ink/archives/ck27cjw8x004orwvmedxl7ha1/)
+[这些年，我所用过精品Chrome插件（插件干货篇）](https://www.ravenxrz.ink/archives/5cb17766.html)
+[这些年，我所用过精品软件（PC干货篇）](https://www.ravenxrz.ink/archives/a014e5e9.html)
+[这些年，我所用精品网站（网站干货篇）](https://www.ravenxrz.ink/archives/b1ec495.html)
 
 
 那么就从我的桌面开截图开始慢慢扫荡好了：

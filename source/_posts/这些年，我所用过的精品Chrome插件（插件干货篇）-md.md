@@ -1,5 +1,5 @@
 ---
-title: 这些年，我所用过的精品Chrome插件（插件干货篇
+title: 这些年，我所用过的精品Chrome插件（插件干货篇）
 categories: 知识理论
 toc: true
 abbrlink: 5cb17766
@@ -10,9 +10,9 @@ tags:
 > 个人比较喜欢收集些好用的软件，这里就整理收集一下这些年的chrome插件吧。
 
 这里做了一个小系列:
-[这些年，我所用过精品Chrome插件（插件干货篇）](https://www.ravenxrz.ink/archives/over-the-years-ive-used-the-premium-chrome-plugins.html)
-[这些年，我所用过精品软件（PC干货篇）](https://www.ravenxrz.ink/archives/over-the-years-i-have-used-the-best-software-pc-dry-chapter.html)
-[这些年，我所用精品网站（网站干货篇）](https://www.ravenxrz.ink/archives/over-the-years-ive-used-top-quality-websites-dry-articles.html)
+[这些年，我所用过精品Chrome插件（插件干货篇）](https://www.ravenxrz.ink/archives/5cb17766.html)
+[这些年，我所用过精品软件（PC干货篇）](https://www.ravenxrz.ink/archives/a014e5e9.html)
+[这些年，我所用精品网站（网站干货篇）](https://www.ravenxrz.ink/archives/b1ec495.html)
 还是从我的插件集合截图开始好了：
 <!-- more -->
 ![1553257153816.png](https://pic2.superbed.cn/item/5cfbb550451253d178d9c265.png)

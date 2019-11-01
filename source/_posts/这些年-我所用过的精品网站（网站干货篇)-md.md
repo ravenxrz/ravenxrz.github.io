@@ -12,9 +12,9 @@ tags:
 闲来无聊，不想学新东西，也不知道干什么。就来分享一波干货网站吧。
 
 这里做了一个小系列：
-[这些年，我所用过精品Chrome插件（插件干货篇）](https://www.ravenxrz.ink/archives/ck27cjw8y004qrwvm1hxjbs14/)
-[这些年，我所用过精品软件（PC干货篇）](https://www.ravenxrz.ink/archives/over-the-years-i-have-used-the-best-software-pc-dry-chapter.html)
-[这些年，我所用精品网站（网站干货篇）](https://www.ravenxrz.ink/archives/over-the-years-ive-used-top-quality-websites-dry-articles.html)
+[这些年，我所用过精品Chrome插件（插件干货篇）](https://www.ravenxrz.ink/archives/5cb17766.html)
+[这些年，我所用过精品软件（PC干货篇）](https://www.ravenxrz.ink/archives/a014e5e9.html)
+[这些年，我所用精品网站（网站干货篇）](https://www.ravenxrz.ink/archives/b1ec495.html)
 
 <!-- more -->
 
