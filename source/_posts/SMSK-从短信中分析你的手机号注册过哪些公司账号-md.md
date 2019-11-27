@@ -82,7 +82,7 @@ SIMCardID分了双卡的。所以我觉得既然可以识别双卡，那就**做
 文字略显多了，总之这个功能无法做到精确。但是也不是说不可以做，cursor的projection字段有一个serveice_center，这个是用来查短信中心的，我看了下，如果短信属于主卡，是有短信中心的信息的，而对于卡2，短信中心号码默认为0。当然了，因为要考虑我在2.2节中说过的问题，所以这只是一种“不完美的解决方案”。
 
 开源地址：
-[hide]https://github.com/ravenxrz/SMSK[/hide]
+https://github.com/ravenxrz/SMSK
 
 APK下载地址：
-[hide]https://github.com/ravenxrz/SMSK/releases/download/v0.2/smsk.apk[/hide]
+https://github.com/ravenxrz/SMSK/releases/download/v0.2/smsk.apk
