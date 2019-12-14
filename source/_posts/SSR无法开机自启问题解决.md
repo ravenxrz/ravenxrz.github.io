@@ -10,6 +10,8 @@ tags:
 
 不知道给电脑设置了什么东西，SSR不开机自启动了，去选项中勾选会提示 **无法修改注册表**的提示，最开始以为是没给管理员权限，但是给了管理员权限也没用。查了很久的资料，最后发现手动添加进开机自动启就OK啦（真实惭愧，用了这么多年Windows，居然怎么手动添加开机自启动都不知道）。
 
+<!-- more -->
+
 手动开启的方法有两种：
 
 1. 将应用的快捷键直接拖入C:\ProgramData\Microsoft\Windows\Start Menu\Programs\StartUp目录下，这样的确会在任务管理器->启动栏下看到ssr的启动项，但是经过我实验，重启后ssr依然不会自启动。
@@ -17,7 +19,7 @@ tags:
 
 按下Win+R，输入 regedit ，然后进入 HKEY_LOCAL_MACHINE/SOFTWARE/Microsoft/Windows/CurrentVersion/Run 目录，在空白区点击右键，新建->字符串值(S)，输入一个名字，这里就取ShadowsocksR吧。然后点击刚才新建的项，右键修改， 在“数据数值”文本框中输入SSR应用程序的绝对路径 。如下图：
 
-![image.png](https://upload-images.jianshu.io/upload_images/3213538-dd9657946d5257c1.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240)
+![](https://pic3.superbed.cn/item/5df4b29aa4fbc8614a513fb1.png)
 
 现在就OK了。
 
