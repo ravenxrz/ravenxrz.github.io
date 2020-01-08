@@ -14,7 +14,7 @@ date: 2020-01-08 17:02:38
 - [English dictionary]( https://extensions.libreoffice.org/extensions/english-dictionaries )，后缀为oxt, 此文件下载后放置于你安装texstudio路径下的dictionaries路径下，如我的是`D:\texstudio\dictionaries`。
 - [Jdk]( https://www.oracle.com/technetwork/java/javase/downloads/index.html ),jdk安装LTS的版本就好，不一定需要最新。
 
-
+<!-- more -->
 
 ## 1. Java环境安装
 
