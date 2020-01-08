@@ -5,7 +5,7 @@ abbrlink: a05d8f5e
 date: 2020-01-08 17:02:38
 ---
 
-今天给大家介绍如何在TexStudio中如何启用Language Tools插件。
+今天给大家介绍如何在TexStudio中启用Language Tools插件。
 
 前提,以下所有软件请都升级到最新版本。
 
