@@ -9,10 +9,11 @@
     "server": "hexo server"
   },
   "hexo": {
-    "version": "4.1.1"
+    "version": "4.2.0"
   },
   "dependencies": {
-    "hexo": "^4.1.1",
+    "cheerio": "^1.0.0-rc.3",
+    "hexo": "^4.2.0",
     "hexo-abbrlink": "^2.0.5",
     "hexo-addlink": "^1.0.4",
     "hexo-deployer-git": "^2.0.0",
