@@ -16,8 +16,8 @@ date: 2019-10-31 16:44:11
 然后打开cmd窗口,输入:
 
 ```
-git config --global http.proxy 'socks5://127.0.0.1:1080'
-git config --global https.proxy 'socks5://127.0.0.1:1080'
+git config --global http.proxy socks5://127.0.0.1:1080
+git config --global https.proxy socks5://127.0.0.1:1080
 ```
 
 注意末尾是1080端口，这是默认ss所会占用的端口，但是如果你非常幸运不是默认的端口，怎么去查看shaowsocksR所占用的端口呢。
