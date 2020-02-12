@@ -84,12 +84,12 @@ search:
 # Comment plugin settings
 # https://ppoffice.github.io/hexo-theme-icarus/categories/Plugins/Comment
 comment:
-    type: gitalk
-    owner: ravenxrz         # (required) GitHub user name
-    repo: BlogComment          # (required) GitHub repository name
-    client_id: b2fd373d2ca2e03e591e     # (required) OAuth application client id
-    client_secret: de4ab066908c1fbd32d3a45e091b3538761d685b # (required) OAuth application client secret
-    admin: ravenxrz         # (required) GitHub repo owner and collaborators who can initialize github issues
+    # type: gitalk
+    # owner: ravenxrz         # (required) GitHub user name
+    # repo: BlogComment          # (required) GitHub repository name
+    # client_id: b2fd373d2ca2e03e591e     # (required) OAuth application client id
+    # client_secret: de4ab066908c1fbd32d3a45e091b3538761d685b # (required) OAuth application client secret
+    # admin: ravenxrz         # (required) GitHub repo owner and collaborators who can initialize github issues
                             #            Can either be a string or an array.
                             #            admin:
                             #                - xxxxxx1
@@ -185,10 +185,10 @@ widgets:
         position: left
         # Links to be shown in the links widget
         links:
-            鎴戠殑璧勬簮: 'https://www.ravenxrz.ink/resources'
-            鑱氬悎鍥惧簥: 'https://www.superbed.cn/'
+            我的资源: 'https://www.ravenxrz.ink/resources'
+            聚合图床: 'https://www.superbed.cn/'
             regex101: 'https://regex101.com'
-            鑿滈笩宸ュ叿: 'https://c.runoob.com'
+            菜鸟工具: 'https://c.runoob.com'
             cloudconvert: 'https://cloudconvert.com'
             iconfont: 'https://www.iconfont.cn'
             processon: 'https://www.processon.com'
