@@ -185,10 +185,10 @@ widgets:
         position: left
         # Links to be shown in the links widget
         links:
-            我的资源: 'https://www.ravenxrz.ink/resources'
-            聚合图床: 'https://www.superbed.cn/'
+            myresources: 'https://www.ravenxrz.ink/resources'
+            superbed: 'https://www.superbed.cn/'
             regex101: 'https://regex101.com'
-            菜鸟工具: 'https://c.runoob.com'
+            runoob: 'https://c.runoob.com'
             cloudconvert: 'https://cloudconvert.com'
             iconfont: 'https://www.iconfont.cn'
             processon: 'https://www.processon.com'
