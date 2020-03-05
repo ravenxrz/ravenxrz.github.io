@@ -4,6 +4,13 @@ abbrlink: 47bf0456
 date: 2020-03-05 17:05:45
 tags: Linux
 ---
+系列文章：
+
+- [linux软riad配置详解](https://www.ravenxrz.ink/archives/b85e04d0.html)
+
+- [Linux配置iSCSI服务](https://www.ravenxrz.ink/archives/e7c30e88.html)
+- [Linux配置Multipath访问iSCSI服务](https://www.ravenxrz.ink/archives/f30ddec7.html)
+
 
 在[《linux软riad配置详解》](https://www.ravenxrz.ink/archives/b85e04d0.html)中讲解了如何在Linux中配置软raid，本文中我们将讲解如何让这个raid5可被客户端通过ISCSI服务访问。
 
