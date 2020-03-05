@@ -67,7 +67,7 @@ article:
     highlight:
         # Code highlight themes
         # https://github.com/highlightjs/highlight.js/tree/master/src/styles
-        theme: monokai #atom-one-light
+        theme: vs2015 #qtcreator_light #atom-one-light monokai solarized-light paraiso-light
         # Show code copying button
         clipboard: true
         # Default folding status of the code blocks. Can be "", "folded", "unfolded"
