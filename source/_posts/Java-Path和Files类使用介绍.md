@@ -133,7 +133,6 @@ C:\Users\Administrator\NIODemo\.
 执行toRealPath()方法之后：C:\Users\Administrator
 ```
 
-![NIODemo.iml文件的位置](https://segmentfault.com/img/remote/1460000014901043?w=577&h=164)
 
 ## 二 拥抱Files类
 
