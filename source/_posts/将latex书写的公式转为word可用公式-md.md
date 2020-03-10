@@ -7,7 +7,6 @@ abbrlink: dd4a0f03
 date: 2019-05-31 13:58:50
 ---
 
-# 将latex书写的公式转为word可用公式
 
 ## 1. 前文
 
@@ -123,7 +122,7 @@ start /b "C:\Program Files (x86)\Microsoft Office\root\Office16\WINWORD.EXE" for
 
 其中需要大家的修改的地方有一处，在最后一行的
 
-```C:\Program Files (x86)\Microsoft Office\root\Office16\WINWORD.EXE"``` 需要修改为你的word程序路径，这个路径怎么找，推荐使用everything这款软件，如下图:
+C:\Program Files (x86)\Microsoft Office\root\Office16\WINWORD.EXE需要修改为你的word程序路径，这个路径怎么找，推荐使用everything这款软件，如下图:
 
 ![](https://pic.superbed.cn/item/5cfbad00451253d178d948f7.png)
 
