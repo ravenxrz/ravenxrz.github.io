@@ -11,13 +11,9 @@ date: 2020-03-16 21:10:36
 
 对应学习视频：https://www.bilibili.com/video/av36557763?from=search&seid=11761678128995793644
 
+hexo 渲染 尖括号有问题，直看github好了:
 
-
-## **hexo 渲染 尖括号有问题，所以本文显示效果有问题！！！！**
-
-直接导向github看好了:
-
-
+https://github.com/ravenxrz/ravenxrz.github.io/blob/master/source/_posts/%E8%BD%AC%E8%BD%BD-Maven%E5%AD%A6%E4%B9%A0%E6%80%BB%E7%BB%93.md
 
 
 

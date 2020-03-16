@@ -12,7 +12,7 @@ date: 2020-02-14 16:07:07
 
 hexo 显示尖括号有问题，导向github:
 
-
+https://github.com/ravenxrz/ravenxrz.github.io/blob/master/source/_posts/ideavim%E9%85%8D%E7%BD%AE%E8%AF%B4%E6%98%8E.md
 
 <!-- more -->
 
