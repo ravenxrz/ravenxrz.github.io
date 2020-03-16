@@ -1,0 +1,261 @@
+---
+title: 可能是Windows上最好用的Cmd窗口--Cmder+MSYS2+zsh
+tags: 工具
+abbrlink: 2202022e
+date: 2020-03-16 21:38:47
+---
+
+本文整理自大佬-“荒野无灯”的微信公众号文章。加了些自己在配置上遇到过的坑。
+
+原文：https://mp.weixin.qq.com/s/O6LHgX8KKmfVWj9LupeLBw
+
+<!-- more -->
+
+## 0. 前言
+
+我想大部分都不喜欢Windows下的Cmd，这篇文章就是让Windows上cmd提升一个阶级，虽然达不到linux般的效果，但是大部分功能都是可以有的。如果你是arch的爱好者，看完本篇后你也可以在windows上使用pacman包管理了。
+
+## 1. 材料准备
+
+- [Cmder ](https://cmder.net/),下载mini或full都可以，后者加了个git包，如果你的系统已经集成了git，那就min就好。下完后，记得配置Cmder的bin目录到环境变量下。
+- [MSYS2 ]( https://www.msys2.org/)
+
+- [antibody](https://f.nanodm.net/Windows/shell/zsh/antibody.exe), zsh的插件管理器。
+
+## 2. 详细配置
+
+antibody暂时不用安装，将cmder和msys2安装即可。
+
+### 2.1 配置msys2
+
+首先要做的是配置msys2的镜像，不然使用pacman就太慢了。
+
+打开msys2安装路径下etc/pacman.d,如我的就是`C:\msys64\etc\pacman.d`
+
+分别编辑其内容，在原文件的第一个 Server = 前一行插入中国镜像配置，结果如下：
+
+mirrorlist.mingw32 内容如下：
+
+```shell
+##
+## 32-bit Mingw-w64 repository mirrorlist
+##
+
+## Primary
+## 清华大学软件镜像
+Server = https://mirrors.tuna.tsinghua.edu.cn/msys2/mingw/i686/
+## 中科大镜像
+Server = http://mirrors.ustc.edu.cn/msys2/mingw/i686/
+## msys2.org
+Server = http://repo.msys2.org/mingw/i686/
+Server = https://sourceforge.net/projects/msys2/files/REPOS/MINGW/i686/
+Server = https://www2.futureware.at/~nickoe/msys2-mirror/mingw/i686/
+Server = https://mirror.yandex.ru/mirrors/msys2/mingw/i686/
+Server = https://mirrors.tuna.tsinghua.edu.cn/msys2/mingw/i686
+Server = http://mirrors.ustc.edu.cn/msys2/mingw/i686
+Server = http://mirror.bit.edu.cn/msys2/REPOS/MINGW/i686
+```
+
+mirrorlist.mingw64 内容如下：
+
+```shell
+##
+## 64-bit Mingw-w64 repository mirrorlist
+##
+
+## Primary
+## 清华大学软件镜像
+Server = https://mirrors.tuna.tsinghua.edu.cn/msys2/mingw/x86_64/
+## 中科大镜像
+Server = http://mirrors.ustc.edu.cn/msys2/mingw/x86_64/
+## msys2.org
+Server = http://repo.msys2.org/mingw/x86_64/
+Server = https://sourceforge.net/projects/msys2/files/REPOS/MINGW/x86_64/
+Server = https://www2.futureware.at/~nickoe/msys2-mirror/mingw/x86_64/
+Server = https://mirror.yandex.ru/mirrors/msys2/mingw/x86_64/
+Server = https://mirrors.tuna.tsinghua.edu.cn/msys2/mingw/x86_64
+Server = http://mirrors.ustc.edu.cn/msys2/mingw/x86_64
+Server = http://mirror.bit.edu.cn/msys2/REPOS/MINGW/x86_64
+```
+
+mirrorlist.msys 内容如下：
+
+```shell
+##
+## MSYS2 repository mirrorlist
+##
+
+## Primary
+## 清华大学软件镜像
+Server = https://mirrors.tuna.tsinghua.edu.cn/msys2/msys/$arch
+## 中科大镜像
+Server = http://mirrors.ustc.edu.cn/msys2/msys/$arch
+## msys2.org
+Server = http://repo.msys2.org/msys/$arch/
+Server = https://sourceforge.net/projects/msys2/files/REPOS/MSYS2/$arch/
+Server = https://www2.futureware.at/~nickoe/msys2-mirror/msys/$arch/
+Server = https://mirror.yandex.ru/mirrors/msys2/msys/$arch/
+Server = https://mirrors.tuna.tsinghua.edu.cn/msys2/mingw/$arch/
+Server = http://mirrors.ustc.edu.cn/msys2/msys/$arch
+Server = http://mirror.bit.edu.cn/msys2/REPOS/MSYS2/$arch
+```
+
+安装完, 修改好镜像之后，打开msys2的64位版本，更新一下软件：
+
+```
+pacman -Syu
+```
+
+**OK，这里可能会有个坑，如果你使用了mactype这款软件，那么上面这条命令是执行不成功**，修复方案：
+
+打开MacType对应的配置文件，我的是IOS.ini。如图：
+
+![](https://pic.downk.cc/item/5e6f8ccce83c3a1e3a9b046b.png)
+在[UnloadDll]条目下增加就可以了。
+
+```
+gpg.exe
+pacman.exe
+ConEmuC.exe
+ConEmuC64.exe
+```
+
+另一个可能的是SSL的问题，上openssl上下载完全版安装即可。
+
+### 2.2 将msys2继承到cmder中
+
+点击Cmder窗口标题栏左边的图标,进入Settings 然后点击: Startup -> Tasks -> +  增加一个Task配置:
+
+![](https://pic.downk.cc/item/5e6f8ceee83c3a1e3a9b1529.jpg)
+
+3： zsh:MinGW64
+
+5: 家目录: 我的就是
+
+```shell
+/dir C:\Users\Raven
+```
+
+6: 启动cmder时会执行的命令：
+
+```shell
+set MSYSTEM=MINGW64 & set MSYSCON=conemu64.exe & set MSYS2_PATH_TYPE=inherit & set CHERE_INVOKING=1  & set "HOME=C:\Users\Raven" & "%ConEmuDir%\..\..\..\msys64\usr\bin\zsh.exe" --login -i -new_console:n
+```
+
+解释一下：
+
+```shell 
+set MSYSTEM=MINGW64 告诉 msys2 我们要启动的是mingw64,  不是mingw32, 也不是默认的msys2
+set MSYSCON=conemu64.exe 告诉msys2 我们的终端是 ConEmu ,  而不是msys2默认的 mintty.exe
+set MSYS2_PATH_TYPE=inherit 表示,我们在mingw64下面的时候, PATH环境变量的值继承自windows系统的环境变量.
+set CHERE_INVOKING=1 这是一个神奇的选项! 这个一定要设置. 不然我们设置的默认启动目录 参数对msys2 mingw64会不生效. (关于这一点,我刚开始也是折腾了好久, 直到后来看到了zyzyz的文章)
+```
+
+设置msys2 mingw64 (task {zsh::MinGW64})为默认的shell:
+
+![](https://pic.downk.cc/item/5e6f8d02e83c3a1e3a9b1db8.jpg)
+
+### 2.3 融合home目录
+
+到目前为之，你已经将msys2整合到cmder中了，但是有个问题就是cmder现在家目录和的windows家目录是不同的，如你可以执行:
+
+```shell
+cd ~
+pwd
+```
+
+看看现在的效果。我们现在要做的是，将cmder的就家目录和windows的家目录结合在一起：
+
+不过在此之前先安装一下zsh:
+
+```shell
+pacman -S zsh
+```
+
+好，现在我们正式来做这个任务：
+
+![](https://pic.downk.cc/item/5e6f8ceee83c3a1e3a9b1529.jpg)
+修改第6出的命令为：
+
+```shell
+set MSYSTEM=MINGW64 & set MSYSCON=conemu64.exe & set MSYS2_PATH_TYPE=inherit & set CHERE_INVOKING=1  & set "HOME=C:\Users\Raven" & "%ConEmuDir%\..\..\..\msys64\usr\bin\zsh.exe" --login -i -new_console:n
+```
+
+修改 `set "HOME=C:\Users\Raven"`为你的家目录即可。
+
+### 2.4 **安装 antibody**
+
+将在前面下好的antibody放到 msys2的usr/bin目录下（其实放到任意Path可识别的环境变量中就好），如我的就是：
+
+```shell
+  C:\msys64\usr\bin
+```
+
+现在就可以创建.zshrc文件来配置自己的终端了，
+
+执行
+
+```shell
+vim ~/.zshrc	 # 如果你不熟悉vim，在家目录下创建.zshrc手动打开就好
+```
+
+我的配置如下:
+
+```shell
+# Created by newuser for 5.8
+autoload -Uz compinit
+compinit
+
+# prompt config
+export AGKOZAK_PROMPT_DIRTRIM=10
+#export AGKOZAK_MULTILINE=0
+
+# Load antibody
+# export ANTIBODY_HOME=/c/Users/hacklog/.antibody
+source <(antibody init)
+antibody bundle < ~/.zsh_plugins.txt
+
+
+[ -e ~/.zsh_alias ] && source ~/.zsh_alias
+[ -e ~/.zsh_compatible ] && source ~/.zsh_compatible
+```
+
+ **.zsh_alias**配置内容如下:
+
+```shell
+alias less='less -r'                          # raw control characters
+alias whence='type -a'                        # where, of a sort
+alias grep='grep --color'                     # show differences in colour
+alias egrep='egrep --color=auto'              # show differences in colour
+alias fgrep='fgrep --color=auto'              # show differences in colour
+#
+# Some shortcuts for different directory listings
+alias ls='ls -hF --color=tty'                 # classify files in colour
+alias dir='ls --color=auto --format=vertical'
+alias ll='ls -l'                              # long list
+alias l='ls -CF'                              #
+```
+
+下面重点来了，配置zsh的插件：
+
+打开.zsh_plugins.txt文件，这里我给个sample:
+
+```
+#oh my zsh 的插件，配置方法
+# robbyrussell/oh-my-zsh path:plugins/ 这里写插件名
+# https://github.com/ohmyzsh/ohmyzsh/tree/master/plugins/git
+robbyrussell/oh-my-zsh path:plugins/git
+# https://github.com/ohmyzsh/ohmyzsh/tree/master/plugins/z
+robbyrussell/oh-my-zsh path:plugins/z
+
+#zsh的插件，配置方法
+#zsh-users/插件名
+zsh-users/zsh-autosuggestions		# 自动提示
+zsh-users/zsh-syntax-highlighting	# 高亮
+zsh-users/zsh-completions			# 补全
+```
+
+然后source ~/.zshrc即可，可能会卡住，这个没关系，因为它需要下载这些插件。
+
+现在就可以愉快的在windows上使用zsh+pacman了。
+
