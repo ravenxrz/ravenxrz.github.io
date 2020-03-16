@@ -8,6 +8,12 @@ date: 2020-02-14 16:07:07
 
 作为一个半vimer：不想用纯vim+各种插件，但实现很喜欢vim的各种键位带来的便捷性。所以很久以前就是使用IDE+vim插件在使用。IDE当然是使用jetbrain家的了。今天就来介绍一下jb家可用的vim插件ideavim以及如何自定义配置ideavim。
 
+
+
+hexo 显示尖括号有问题，导向github:
+
+
+
 <!-- more -->
 
 ## 1. 安装ideavim
