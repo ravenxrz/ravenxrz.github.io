@@ -7,8 +7,7 @@ tags:
 系列文章：
 
 - [linux软riad配置详解](https://www.ravenxrz.ink/archives/b85e04d0.html)
-
-- [Linux配置iSCSI服务](https://www.ravenxrz.ink/archives/e7c30e88.html)
+- [Linux配置iSCSI服务](https://www.ravenxrz.ink/archives/47bf0456.html)
 - [Linux配置Multipath访问iSCSI服务](https://www.ravenxrz.ink/archives/f30ddec7.html)
 
 本文以raid5为例说明如何在linux下配置raid。
