@@ -32,7 +32,7 @@ name   course grade
  王五     数学       100
  王五     英语       90
 
-```csharp
+```sql
 select name from table group by name having min(grade) > 80
 ```
 
@@ -45,7 +45,7 @@ select name from table group by name having min(grade) > 80
 
 
 
-```csharp
+```sql
 delete tablename where 自动编号 not in (
     select min( 自动编号) 
     from tablename 
@@ -70,7 +70,7 @@ where a.name < b.name
 
 
 
-```csharp
+```sql
 select a.*
 from TestDB a, 
     (select Occmonth, max(DebitOccur) as Debit101ccur 
@@ -97,7 +97,7 @@ where a.Occmonth = b.Occmonth and a.DebitOccur > b.Debit101ccur
 
 
 
-```csharp
+```sql
 select year, 
     (select amount from table m where month=1 and m.year=table.year) as m1,
     (select amount from table m where month=2 and m.year=table.year) as m2,
@@ -121,7 +121,7 @@ from table group by year
  3 11 0 8
  其中：s1_id为仓库1的库存量，s2_id为仓库2的库存量，s3_id为仓库3的库存量。如果该产品在某仓库中无库存量，那么就是0代替。
 
-```csharp
+```sql
 select p_id,
     sum(case when s_id=1 then p_num else 0 end) as s1_id,
     sum(case when s_id=2 then p_num else 0 end) as s2_id,
@@ -135,7 +135,7 @@ from myPro group by p_id
 
 **学生表 Student**
 
-```csharp
+```sql
 create table Student(Sid varchar(6), Sname varchar(10), Sage datetime, Ssex varchar(10));
 insert into Student values('01' , '赵雷' , '1990-01-01' , '男');
 insert into Student values('02' , '钱电' , '1990-12-21' , '男');
@@ -149,7 +149,7 @@ insert into Student values('08' , '王菊' , '1990-01-20' , '女')
 
 **成绩表 SC**
 
-```csharp
+```sql
 create table SC(Sid varchar(10), Cid varchar(10), score decimal(18,1));
 insert into SC values('01' , '01' , 80);
 insert into SC values('01' , '02' , 90);
@@ -173,7 +173,7 @@ insert into SC values('07' , '03' , 98)
 
 **课程表 Course**
 
-```csharp
+```sql
 create table Course(Cid varchar(10),Cname varchar(10),Tid varchar(10));
 insert into Course values('01' , '语文' , '02');
 insert into Course values('02' , '数学' , '01');
@@ -182,7 +182,7 @@ insert into Course values('03' , '英语' , '03')
 
 **教师表 Teacher**
 
-```csharp
+```sql
 create table Teacher(Tid varchar(10),Tname varchar(10));
 insert into Teacher values('01' , '张三');
 insert into Teacher values('02' , '李四');
@@ -191,7 +191,7 @@ insert into Teacher values('03' , '王五')
 
 四张表之间的关联很简单：
 
-![img](https:////upload-images.jianshu.io/upload_images/10870953-a9ce8600ab818b63.png?imageMogr2/auto-orient/strip|imageView2/2/w/1200/format/webp)
+![image-20200317113350723](https://i.loli.net/2020/03/17/ru3wo47ezKvGdaO.png)
 
 表格关联
 
@@ -199,7 +199,7 @@ insert into Teacher values('03' , '王五')
 
 **1. 查询" 01 "课程比" 02 "课程成绩高的学生的信息及课程分数**
 
-```csharp
+```sql
 select s.*, a.score as score_01, b.score as score_02
 from student s,
      (select sid, score from sc where cid=01) a,
@@ -219,7 +219,7 @@ where a.sid = b.sid and a.score > b.score and s.sid = a.sid
 
 **2. 查询平均成绩大于等于 60 分的同学的学生编号和学生姓名和平均成绩**
 
-```csharp
+```sql
 select s.sid, sname, avg(score) as avg_score
 from student as s, sc
 where s.sid = sc.sid
@@ -242,7 +242,7 @@ having avg_score > 60
 
 **3. 查询在 SC 表存在成绩的学生信息**
 
-```csharp
+```sql
 select * from student where sid in (select sid from sc where score is not null)
 ```
 
@@ -265,7 +265,7 @@ select * from student where sid in (select sid from sc where score is not null)
 
 这道题得用到left join或者right join，不能用where连接，因为题目说了要求有显示为null的，where是inner join，不会出现null，在这道题里会查不出第08号学生。
 
-```csharp
+```sql
 select s.sid, s.sname, count(cid) as 选课总数, sum(score) as 总成绩
 from student as s left join sc
 on s.sid = sc.sid
@@ -290,7 +290,7 @@ group by s.sid
 
 **4.1 查有成绩的学生信息**
 
-```csharp
+```sql
 select s.sid, s.sname, count(*) as 选课总数, sum(score) as 总成绩,
     sum(case when cid = 01 then score else null end) as score_01,
     sum(case when cid = 02 then score else null end) as score_02,
@@ -317,7 +317,7 @@ group by s.sid
 
 **5. 查询「李」姓老师的数量**
 
-```csharp
+```sql
 select count(tname) from teacher where tname like '李%'
 ```
 
@@ -332,7 +332,7 @@ select count(tname) from teacher where tname like '李%'
 
 **6. 查询学过「张三」老师授课的同学的信息**
 
-```csharp
+```sql
 select * from student where sid in (
     select sid from sc, course, teacher
     where sc.cid = course.cid
@@ -357,7 +357,7 @@ select * from student where sid in (
 
 原作者的写法里面用到了等号 =，虽然得到同样的结果，但是这样写不太好，因为不确定张三老师是不是只教授一门课（只不过现在的数据量太小了而已），in 适用于一个或多个返回结果的情况，适应性比等号更广。
 
-```csharp
+```sql
 select * from Student
 where sid in(select distinct Sid from SC
 where cid=(select Cid from Course
@@ -366,7 +366,7 @@ where Tid=(select Tid from Teacher where Tname='张三')))
 
 **7. 查询没有学全所有课程的同学的信息**
 
-```csharp
+```sql
 select * from student where sid in (select sid from sc group by sid having count(cid) < 3)
 ```
 
@@ -384,7 +384,7 @@ select * from student where sid in (select sid from sc group by sid having count
 **9. 查询和" 01 "号的同学学习的课程完全相同的其他同学的信息**
  这道题号称是所有题目里最难的一道，我虽然做了出来，但是写法很麻烦，不必要。原作者写的很简洁：
 
-```csharp
+```sql
 select * from Student
 where Sid in(
     select Sid from SC
@@ -407,7 +407,7 @@ where Sid in(
 
 我写的就太麻烦啦。。
 
-```csharp
+```sql
 select * from student where sid in (
     select B.sid
     from
@@ -440,7 +440,7 @@ select * from student where sid in (
 
 和第9题基本一致，还是原作者写的好一些
 
-```csharp
+```sql
 select * from Student where Sid in(
     select distinct Sid from SC where Cid in(
         select Cid from SC where Sid='01'
@@ -467,7 +467,7 @@ select * from Student where Sid in(
 
 一般涉及到"任意"的都会用到not in这样的取反的结构：
 
-```csharp
+```sql
 select sname from student
 where sname not in (
     select s.sname
@@ -491,12 +491,15 @@ where sname not in (
 
 **11. 查询两门及其以上不及格课程的同学的学号，姓名及其平均成绩**
 
-```csharp
-select s.sid, s.sname, avg(score)
-from student as s, sc
-where s.sid = sc.sid and score<60
-group by s.sid
-having count(score)>=2
+```sql
+SELECT student.Sid,student.Sname,AVG(sc.score) FROM student,sc WHERE student.Sid = sc.Sid AND
+student.Sid in
+-- 获取 满足两门及其以上不及格的同学的学号，姓名
+(SELECT P1Stu.Sid
+FROM student P1Stu,sc P1sc
+WHERE P1Stu.Sid = P1sc.Sid AND P1sc.score <=60
+GROUP BY Sid HAVING count(score) >= 2)
+GROUP BY sc.Sid;
 ```
 
 ```ruby
@@ -511,7 +514,7 @@ having count(score)>=2
 
 **12. 检索" 01 "课程分数小于 60，按分数降序排列的学生信息**
 
-```csharp
+```sql
 select s.* ,score
 from student as s, sc
 where cid = 01
@@ -532,7 +535,7 @@ order by score desc
 
 **13. 按平均成绩从高到低显示所有学生的所有课程的成绩以及平均成绩**
 
-```csharp
+```sql
 select sid,
     sum(case when cid=01 then score else null end) as score_01,
     sum(case when cid=02 then score else null end) as score_02,
@@ -588,7 +591,7 @@ order by count(*) desc, c.cid asc
 
 原作者的写法本质上和我是相同的，但是用了很多left join看起来有些冗余
 
-```csharp
+```sql
 select distinct A.Cid,Cname,最高分,最低分,平均分,及格率,中等率,优良率,优秀率 from SC A
 left join Course on A.Cid=Course.Cid
 left join (select Cid,MAX(score)最高分,MIN(score)最低分,AVG(score)平均分 from SC group by Cid)B on A.Cid=B.Cid
@@ -603,7 +606,7 @@ from SC group by Cid)F on A.Cid=F.Cid
 
 原题目是按各科成绩进行排序，并显示排名， Score 重复时保留名次空缺。但是我没看明白什么意思，各科成绩如何排序？语文分数和数学分数有可比性吗？作者的写法是`select *,RANK()over(order by score desc)排名 from SC`，把所有的成绩都放到一块儿排序了，这没有意义，不可比。于是我修改了一下题目。
 
-```csharp
+```sql
 select s.*, rank_01, rank_02, rank_03, rank_total
 from student s
 left join (select sid, rank() over(partition by cid order by score desc) as rank_01 from sc where cid=01) A on s.sid=A.sid
@@ -633,7 +636,7 @@ order by rank_total asc
 
 同样修改了一下题目。15题和15.1题的指向很明确了，就是rank()和dense_rank()的区别，也就是两个并列第一名之后的那个人是第三名(rank)还是第二名(dense_rank)的区别。
 
-```csharp
+```sql
 select s.*, rank_01, rank_02, rank_03, rank_total
 from student s
 left join (select sid, dense_rank() over(partition by cid order by score desc) as rank_01 from sc where cid=01) A on s.sid=A.sid
@@ -661,7 +664,7 @@ order by rank_total asc
 
 **17. 统计各科成绩各分数段人数：课程编号，课程名称，[100-85]，[85-70]，[70-60]，[60-0] 及所占百分比**
 
-```csharp
+```sql
 select c.cid as 课程编号, c.cname as 课程名称, A.*
 from course as c,
 (select cid,
@@ -688,7 +691,7 @@ where c.cid = A.cid
 
 这是我比较喜欢的一道题目，非常经典。
 
-```csharp
+```sql
 select * from (select *, rank() over(partition by cid order by score desc) as graderank from sc) A 
 where A.graderank <= 3
 ```
@@ -712,7 +715,7 @@ where A.graderank <= 3
 
 **20. 查询出只选修两门课程的学生学号和姓名**
 
-```csharp
+```sql
 select s.sid, s.sname, count(cid)
 from student s, sc
 where s.sid = sc.sid
@@ -733,7 +736,7 @@ having count(cid)=2
 
 **22. 查询名字中含有「风」字的学生信息**
 
-```csharp
+```sql
 select * from student where sname like '%风%'
 ```
 
@@ -748,7 +751,7 @@ select * from student where sname like '%风%'
 
 **24. 查询 1990 年出生的学生名单**
 
-```csharp
+```sql
 select * from student where year(sage) = 1990
 ```
 
@@ -789,7 +792,7 @@ where s.sid = sc.sid
 
 
 
-```csharp
+```sql
 select * from (
     select *, DENSE_RANK() over (order by score desc) A
     from SC
@@ -811,7 +814,7 @@ where B.A=1
 
 
 
-```csharp
+```sql
 select sname, year(now())-year(sage) as age from student
 ```
 
@@ -833,7 +836,7 @@ select sname, year(now())-year(sage) as age from student
 
 **41. 按照出生日期来算，当前月日 < 出生年月的月日则，年龄减一**
 
-```csharp
+```sql
 select sname, timestampdiff(year, sage, now()) as age from student
 ```
 
@@ -857,7 +860,7 @@ select sname, timestampdiff(year, sage, now()) as age from student
 
 
 
-```csharp
+```sql
 select * from student where week(now()) = week(sage)
 ```
 
@@ -871,7 +874,7 @@ Empty set (0.00 sec)
 
 
 
-```csharp
+```sql
 select * from student where (week(now())+1) = week(sage)
 ```
 
@@ -890,7 +893,7 @@ select * from student where (week(now())+1) = week(sage)
 
 
 
-```csharp
+```sql
 select * from student where month(now()) = month(sage)
 ```
 
@@ -907,7 +910,7 @@ select * from student where month(now()) = month(sage)
 
 **45. 查询下月过生日的学生**
 
-```csharp
+```sql
 select * from student where (month(now())+1) = month(sage)
 ```
 
