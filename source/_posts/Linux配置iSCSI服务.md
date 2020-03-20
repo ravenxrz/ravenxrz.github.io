@@ -157,6 +157,11 @@ vim /etc/iscsi/initiatorname.iscsi
 
 ![](https://pic.downk.cc/item/5e60cc1d98271cb2b8a35c7b.jpg)
 
+修改后重启iscsid服务:
+```shell
+sudo systemctl restart iscsid
+```
+
 *我这里是2020-02，上文中配的是2020-03，因为我之前已经配置过了，所以没有修改*，如果你一直按照之前的教程配置到这里的话，把2020-02替换为2020-03才行。
 
 **查找iSCSItargets主机的targetname**

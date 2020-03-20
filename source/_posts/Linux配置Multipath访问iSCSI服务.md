@@ -109,6 +109,8 @@ multipath -ll # 或者multipath -rr
 可以看到mapthn这个设备有三条路径。
 
 mapthn这个设备在 /dev/mapper下，具体而言为 `/dev/mapper/mapthn`，现在对这个设备操作就是唯一的了。
+同时也仅能对/dev/mapper/mapthn做mount操作，如果mount其余"两个设备",会显示busy。这样就能保证不管是对从哪个接口获取的lun，
+都可能够正确得进行操作。
 
 ### 参考
 
