@@ -99,8 +99,27 @@ deploy:
     #coding: git@git.dev.tencent.com:ravenxrz/ravenxrz.coding.me.git,master
 
 # 自定义
-## for sky theme
-# since: 2018
-
-## for maupassant
-# mathjax: true
+# hexo-neat
+# 博文压缩
+neat_enable: true
+# 压缩html
+neat_html:
+  enable: true
+  exclude:
+# 压缩css  
+neat_css:
+  enable: true
+  exclude:
+    - '**/*.min.css'
+# 压缩js
+neat_js:
+  enable: true
+  mangle: true
+  output:
+  compress:
+  exclude:
+    - '**/*.min.js'
+    - '**/jquery.fancybox.pack.js'
+    - '**/index.js' 
+    - '**/clicklove.js'
+    - '**/fireworks.js'
