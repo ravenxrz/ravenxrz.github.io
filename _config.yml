@@ -4,7 +4,7 @@
 
 # Site
 title: Raven's Blog
-subtitle:
+subtitle: Raven的博客
 description: 分享技术，记录生活
 keywords: IT
 author: Raven
@@ -88,7 +88,7 @@ pagination_dir: page
 # Extensions
 ## Plugins: https://hexo.io/plugins/
 ## Themes: https://hexo.io/themes/
-theme: icarus
+theme: next
 
 # Deployment
 ## Docs: https://hexo.io/docs/deployment.html
