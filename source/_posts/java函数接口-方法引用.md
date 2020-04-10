@@ -1,6 +1,7 @@
 ---
 title: java函数接口&方法引用
-tags: 编程语言 java lambda表达式
+tags: java
+categories: java
 abbrlink: 6bef376f
 date: 2020-04-10 13:27:38
 ---

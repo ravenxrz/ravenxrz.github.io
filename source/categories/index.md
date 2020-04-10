@@ -1,5 +1,5 @@
 ---
-title: categories
-date: 2019-10-25 12:55:07
-layout: categories
+title: 分类
+type: categories
+date: 2020-04-10 22:00:30
 ---
