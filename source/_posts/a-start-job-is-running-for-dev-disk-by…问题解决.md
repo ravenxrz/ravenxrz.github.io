@@ -2,7 +2,7 @@
 title: a start job is running for dev-disk-by…问题解决
 abbrlink: d633803a
 date: 2020-02-17 10:54:49
-categories: linux
+categories: Linux
 tags: 扩容
 ---
 
