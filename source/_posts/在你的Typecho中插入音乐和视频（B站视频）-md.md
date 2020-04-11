@@ -5,6 +5,7 @@ toc: true
 abbrlink: 8db6abea
 date: 2019-05-29 13:58:45
 tags:
+	- Typecho
 ---
 
 # 在你的Typecho中插入音乐和视频（B站视频）

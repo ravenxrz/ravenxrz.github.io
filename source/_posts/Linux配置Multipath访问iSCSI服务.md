@@ -2,7 +2,9 @@
 title: Linux配置Multipath访问iSCSI服务
 abbrlink: f30ddec7
 date: 2020-03-05 18:15:00
-tags: Linux
+tags: 
+	- Multipath
+	- iSCSI
 category: Linux
 ---
 

@@ -1,6 +1,9 @@
 ---
 title: 什么是PM，什么是SCM，和NVM什么关系？
-tags: 存储
+tags: 
+    - PM
+    - SCM
+    - NVM
 categories: 存储
 abbrlink: af097aa9
 date: 2019-10-30 22:38:06

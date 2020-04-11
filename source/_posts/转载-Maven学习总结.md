@@ -1,6 +1,9 @@
 ---
 title: 转载-Maven学习总结
-tags: 编程语言
+categoires:  编程语言
+tags:
+    - Maven
+    - java
 abbrlink: eec6c405
 date: 2020-03-16 21:10:36
 ---

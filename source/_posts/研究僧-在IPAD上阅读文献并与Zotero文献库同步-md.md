@@ -5,6 +5,10 @@ toc: true
 abbrlink: 1b8fe85b
 date: 2019-07-09 13:59:07
 tags:
+	- 文献
+	- 同步
+	- zotero
+	- ipad
 ---
 
 ## 1. 前言

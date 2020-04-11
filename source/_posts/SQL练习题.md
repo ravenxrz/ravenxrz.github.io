@@ -2,7 +2,8 @@
 title: SQL练习题
 abbrlink: 780c7923
 date: 2020-03-16 21:26:30
-tags: 编程语言	
+tags: SQL
+categoires: 编程语言
 ---
 
 最近学了SQL基础，做点题练练手，

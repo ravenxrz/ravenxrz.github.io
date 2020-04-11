@@ -1,8 +1,10 @@
 ---
 title: Ubuntu18修改网卡接口名
-tags: Linux
+tags: 
+	- 网卡接口
 abbrlink: e7c30e88
 date: 2020-03-05 15:40:28
+categoires: Linux
 ---
 
 ubuntu18上的默认网卡名为ens33，添加了网卡后的名字也“没什么规律”，所以这里说一下如何将ens33这类名字更改为原来的eth0,eth1的方法。

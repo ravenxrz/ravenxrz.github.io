@@ -5,6 +5,8 @@ toc: true
 abbrlink: 6c55eca4
 date: 2019-07-31 13:58:16
 tags:
+	- OhMyZsh
+	- Ubuntu
 ---
 
 > 依旧是常用工具补坑，每次重装系统或者更换设备都要安装oh-my-zsh，然后每次都会去百度教程，所以这里简单记录一下。

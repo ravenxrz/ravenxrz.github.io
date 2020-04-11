@@ -6,6 +6,8 @@ thumbnail: /thumbnails/sculpture.jpg
 abbrlink: 77b60c50
 date: 2019-09-06 13:59:18
 tags:
+	- Linux
+	- 扩容
 ---
 
 ## 0. 背景

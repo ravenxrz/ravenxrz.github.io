@@ -6,6 +6,7 @@ thumbnail: /thumbnails/deer.jpg
 abbrlink: 9c2ab089
 date: 2019-09-23 13:58:48
 tags:
+	- Log-structured FileSystem
 ---
 
 

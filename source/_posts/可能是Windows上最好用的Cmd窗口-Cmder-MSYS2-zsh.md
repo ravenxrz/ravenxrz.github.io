@@ -1,6 +1,10 @@
 ---
 title: 可能是Windows上最好用的Cmd窗口--Cmder+MSYS2+zsh
-tags: 工具
+tags:
+	- cmder
+	- on-my-zsh
+	- msys2
+categoires: 杂文
 abbrlink: 2202022e
 date: 2020-03-16 21:38:47
 ---

@@ -1,6 +1,9 @@
 ---
 title: JAVA IO流总结
-tags: 编程语言
+categoires: 编程语言
+tags: 
+    - java
+    - IO流
 abbrlink: a068fc76
 date: 2020-03-05 08:50:06
 ---

@@ -6,6 +6,7 @@ thumbnail: /thumbnails/flower.jpg
 abbrlink: e16de5be
 date: 2019-09-17 13:58:51
 tags:
+	- 指针
 ---
 
 本文中，你可以学习到：

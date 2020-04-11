@@ -1,6 +1,7 @@
 ---
 title: 加快git clone的速度
-tags: Git
+tags: 
+	- git clone
 categories: 杂文
 abbrlink: fd5e897c
 date: 2019-10-31 16:44:11

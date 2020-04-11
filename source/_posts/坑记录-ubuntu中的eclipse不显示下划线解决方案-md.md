@@ -5,6 +5,7 @@ toc: true
 abbrlink: d15edb4a
 date: 2019-07-29 13:58:46
 tags:
+	- eclipse
 ---
 
 最近在ubuntu上安装了eclipse，却发现写代码时，它不显示下划线。like：

@@ -2,7 +2,9 @@
 title: 知识整理-分区表MBR与GPT
 categories: Linux
 toc: true
-tags: 文件系统
+tags: 
+	- 文件系统
+	- 分区表
 abbrlink: 7543dac6
 date: 2019-08-02 13:59:05
 ---

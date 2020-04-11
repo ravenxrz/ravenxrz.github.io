@@ -5,6 +5,7 @@ toc: true
 abbrlink: 37f284fc
 date: 2019-05-03 13:58:42
 tags:
+	- 方向导数
 ---
 
 

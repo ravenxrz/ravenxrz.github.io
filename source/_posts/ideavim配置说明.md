@@ -1,8 +1,13 @@
 ---
 title: ideavim配置说明
-tags: 杂文
+categories: 杂文
 abbrlink: 9cf25d6b
 date: 2020-02-14 16:07:07
+tags: 
+  - idea
+  - vim
+  - ideavim
+  
 ---
 > 由于hexo的渲染机制，本文代码有问题，所以选择隐藏。
 

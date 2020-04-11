@@ -5,6 +5,7 @@ toc: true
 abbrlink: 6802486f
 date: 2019-08-17 13:58:20
 tags:
+	- umask
 ---
 
 umask命令详解

@@ -5,6 +5,8 @@ toc: true
 abbrlink: 2535dbde
 date: 2019-05-03 13:59:12
 tags:
+	- 输入法
+	- Ubuntu
 ---
 
 

@@ -4,7 +4,9 @@ categories: Linux
 toc: true
 abbrlink: f81072e7
 date: 2019-08-02 13:58:08
-tags:
+tags: 
+	- 硬链接
+	- 软链接
 ---
 
 本文整理自《鸟哥的Linux私房菜-基础学习篇》

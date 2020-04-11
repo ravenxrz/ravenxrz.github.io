@@ -2,7 +2,9 @@
 title: linux软riad配置详解
 abbrlink: b85e04d0
 date: 2020-03-01 19:59:04
+categoires: 编程语言
 tags:
+	- raid
 ---
 系列文章：
 

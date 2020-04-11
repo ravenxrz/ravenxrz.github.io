@@ -1,8 +1,12 @@
 ---
 title: TexStudio语法检查插件--Language Tools安装教程
-tags: Latex
+tags: 
+	- Latex
+	- TexStudio
+	- Language Tools
 abbrlink: a05d8f5e
 date: 2020-01-08 17:02:38
+categoires: 杂文
 ---
 
 今天给大家介绍如何在TexStudio中启用Language Tools插件。

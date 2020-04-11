@@ -1,6 +1,9 @@
 ---
 title: Java泛型通配符详解
-tags: 编程语言
+tags: 
+	- java
+	- 泛型
+categoires: 编程语言
 abbrlink: d17d42b
 date: 2020-03-02 17:24:41
 ---
