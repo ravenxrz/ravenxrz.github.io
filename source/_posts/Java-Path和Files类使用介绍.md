@@ -5,7 +5,7 @@ date: 2020-03-05 10:53:17
 tags: 
     - java
     - Path和Files
-categoires: 编程语言
+categories: 编程语言
 ---
 
 文本转载自: [Java NIO之拥抱Path和Files](https://segmentfault.com/a/1190000014901038)

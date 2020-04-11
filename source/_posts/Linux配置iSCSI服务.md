@@ -3,7 +3,7 @@ title: Linux配置iSCSI服务
 abbrlink: 47bf0456
 date: 2020-03-05 17:05:45
 tags: iSCSI
-categoires: Linux
+categories: Linux
 ---
 系列文章：
 

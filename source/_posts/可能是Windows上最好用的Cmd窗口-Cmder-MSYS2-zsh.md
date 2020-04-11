@@ -4,7 +4,7 @@ tags:
 	- cmder
 	- on-my-zsh
 	- msys2
-categoires: 杂文
+categories: 杂文
 abbrlink: 2202022e
 date: 2020-03-16 21:38:47
 ---

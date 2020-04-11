@@ -1,6 +1,6 @@
 ---
 title: 转载-Maven学习总结
-categoires:  编程语言
+categories:  编程语言
 tags:
     - Maven
     - java

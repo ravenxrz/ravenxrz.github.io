@@ -1,6 +1,6 @@
 ---
 title: 解决Windows高分屏字体模糊问题
-categoires: 杂文
+categories: 杂文
 tags: 高分屏
 abbrlink: bd948cbe
 date: 2020-01-10 22:41:12

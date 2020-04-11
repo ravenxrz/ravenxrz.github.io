@@ -4,10 +4,9 @@ tags:
     - java
     - 函数接口
     - 方法引用
-categories: java
+categories: 编程语言
 abbrlink: 6bef376f
 date: 2020-04-10 13:27:38
-categoires: 编程语言
 ---
 
 相信不少同学在学习java 1.8新特性时，都对java函数接口和方法引用有些困惑。在查询资料加上一些自己的理解后整理出本文，希望能够帮过理清这其中的“奥秘”。

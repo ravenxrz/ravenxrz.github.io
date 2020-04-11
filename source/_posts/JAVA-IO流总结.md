@@ -1,6 +1,6 @@
 ---
 title: JAVA IO流总结
-categoires: 编程语言
+categories: 编程语言
 tags: 
     - java
     - IO流
