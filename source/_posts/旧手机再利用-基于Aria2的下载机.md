@@ -213,7 +213,7 @@ udp://retracker.lanta-net.ru:2710/announce
 
 ```
 
-**不过，tracker更新的很快，当你看到这篇文章的时候，应该已经过时了**，所以这里贴出一个trakcer更新的仓库，需要的时候自己去看看吧:https://github.com/ngosang/trackerslist。
+**不过，tracker更新的很快，当你看到这篇文章的时候，应该已经过时了**，所以这里贴出一个trakcer更新的仓库，需要的时候自己去看看吧:https://github.com/ngosang/trackerslist
 
 每次更改设置后，**记住重启aria服务**。
 
