@@ -124,7 +124,7 @@ jpackage --name Non-modular-installer --input lib --main-class com.raven.App --m
 
 - --win-dir-chooser, 安装时添加“选择安装路路径”
 - --win-shortcut,安装后自动在桌面添加快捷键
-- --win-menu-group,启动该应用程序所在的菜单组(实测无效，但是必须有这条命令，只有--win-menu会报311错误)
+- --win-menu-group,启动该应用程序所在的菜单组(实测无效，但是必须有这条命令，没有--win-menu会报311错误)
 - --win-menu，添加到系统菜单中
 
 ![image-20200506091723697](https://cdn.jsdelivr.net/gh/ravenxrz/PicBed/img/image-20200506091723697.png)
@@ -231,7 +231,7 @@ jpackage --name "Modular-installer" --module-path classes;C:\Users\Raven\.m2\rep
 
 ![image-20200506100019571](https://cdn.jsdelivr.net/gh/ravenxrz/PicBed/img/image-20200506100019571.png)
 
-现在还会遇到的问题，在”非模块程序打包“下都已经作了说明，现在不全所有命令：
+现在还会遇到的问题，在”非模块程序打包“下都已经作了说明，现在补全所有命令：
 
 ```shell
 jpackage --name "Modular-installer" --module-path classes;C:\Users\Raven\.m2\repository\org\openjfx\javafx-controls\14\javafx-controls-14-win.jar;C:\Users\Raven\.m2\repository\org\openjfx\javafx-base\14\javafx-base-14-win.jar;C:\Users\Raven\.m2\repository\org\openjfx\javafx-graphics\14\javafx-graphics-14-win.jar -m app/com.raven.App --vendor raven --win-dir-chooser --win-shortcut --win-menu-group "Modular-packaging" --win-menu
