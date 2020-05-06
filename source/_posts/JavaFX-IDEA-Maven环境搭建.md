@@ -16,7 +16,7 @@ date: 2020-05-06 11:09:00
 
 ## Start
 
-要搭建环境，最重要的肯定是参看官方文档了，https://openjfx.io/openjfx-docs/
+要搭建环境，最直接的肯定是参看官方文档了，https://openjfx.io/openjfx-docs/
 
 ![image-20200506111205459](https://cdn.jsdelivr.net/gh/ravenxrz/PicBed/img/image-20200506111205459.png)
 
@@ -35,7 +35,7 @@ date: 2020-05-06 11:09:00
 
 ### step2 创建项目
 
-![image-20200506112115982](C:\Users\Raven\Pictures\blog\image-20200506112115982.png)
+![image-20200506112115982](https://cdn.jsdelivr.net/gh/ravenxrz/PicBed/img/image-20200506112115982.png)
 
 ![image-20200506112145436](https://cdn.jsdelivr.net/gh/ravenxrz/PicBed/img/image-20200506112145436.png)
 
@@ -56,7 +56,7 @@ value中填写：
 
 Finish即可。第一次创建可能有点慢，因为maven需要下载一些依赖包。
 
-打开pom文件，修改javafx插件为0.03：
+打开pom文件，修改javafx插件版本为0.03：
 
 ```java
 <plugin>
