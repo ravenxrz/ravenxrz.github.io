@@ -246,7 +246,7 @@ find . -newer file1 -delete	# 这种方式在删除大量文件时，效率更�
 有了find指令再加上sed指令，我们就可以实现批量替换:
 
 ```shell
-find . -name "*.md" -exec sed -i 's/categrioes/categories' {} \;
+find . -name "*.md" -exec sed -i 's/categrioes/categories/g' {} \;
 ```
 
 OK, find的常用使用方法就总结到这里。更多的使用方法请参照`man find`
