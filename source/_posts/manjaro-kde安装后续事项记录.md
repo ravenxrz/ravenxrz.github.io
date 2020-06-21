@@ -76,6 +76,8 @@ ok，有了上述软件，其余的就比较简单了。
 
 终端主要是配置 颜色方案和字体大小，按照个人喜好即可。
 
+update: 个人将Breath2 换为 Breath。
+
 ![](https://pic.downk.cc/item/5edda5ebc2a9a83be5dc28d1.png)
 
 5. netease-music, vscode及相关配置。
@@ -128,6 +130,14 @@ xdman ，类似于windows平台的idm
 ```shell
 sudo pacman -S deepin-screenshot  
 ```
+
+update: 改用flameshot
+
+```
+sudo pacman -S flameshot
+```
+
+下面的命令改用flameshot gui即可。
 
 配置快捷键：
 
