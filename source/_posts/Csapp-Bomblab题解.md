@@ -6,7 +6,7 @@ abbrlink: 7915569e
 date: 2020-06-21 23:06:10
 ---
 
-今天继续csapp学习.
+今天继续学习csapp.
 
 前一个lab: [Csapp-Datalab 详解 ](https://www.ravenxrz.ink/archives/2d758396.html)
 
