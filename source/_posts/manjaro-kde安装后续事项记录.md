@@ -121,6 +121,8 @@ xdman ，类似于windows平台的idm
 
 和idm差不多，多线程下载，支持代理，支持视频抓取，集成浏览器插件，代理所有下载。very nice~。
 
+update: xdman似乎不支持高分屏, 目前已更换为**Persepolis**.
+
 8. 截图工具
 
 这里暂时用了deepin的截图工具，等待snipaste的linux版本。
