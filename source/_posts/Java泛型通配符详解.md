@@ -3,7 +3,7 @@ title: Java泛型通配符详解
 tags: 
 	- java
 	- 泛型
-categories: 编程语言
+categories: Java
 abbrlink: d17d42b
 date: 2020-03-02 17:24:41
 ---

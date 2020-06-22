@@ -2,7 +2,6 @@
 title: JavaFX+IDEA+Maven环境搭建
 categories:
   - JavaFX
-  - Java
 tags: 环境搭建
 abbrlink: dba39b2f
 date: 2020-05-06 11:09:00

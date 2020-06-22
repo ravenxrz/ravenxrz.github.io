@@ -1,7 +1,6 @@
 ---
 title: IDEA添加Maven framework时出现Error reading /pom.xml错误解决方案
 categories:
-  - 错误记录
   - Maven
 tags: Maven
 abbrlink: 36f93f50

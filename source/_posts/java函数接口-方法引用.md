@@ -4,7 +4,7 @@ tags:
     - java
     - 函数接口
     - 方法引用
-categories: 编程语言
+categories: Java
 abbrlink: 6bef376f
 date: 2020-04-10 13:27:38
 ---

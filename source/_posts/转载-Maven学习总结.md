@@ -1,6 +1,6 @@
 ---
 title: 转载-Maven学习总结
-categories:  编程语言
+categories: Maven
 tags:
     - Maven
     - java
@@ -48,7 +48,7 @@ https://github.com/ravenxrz/ravenxrz.github.io/blob/master/source/_posts/%E8%BD%
    构建工具的发展：Make→Ant→Maven→Gradle
 
 2. 构建：就是以我们编写的Java代码、框架配置文件、国际化等其他资源文件、jsp页面和图片等静态资源作为“原材料”，去“生产”出一个可以运行的项目的过程。
-   
+  
 
 eclipse中的项目与tomcat中编译结果对比：
 
