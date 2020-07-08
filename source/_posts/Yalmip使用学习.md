@@ -109,9 +109,7 @@ C = [
     x(2)-x(1) <=1
     x(1)<=1
     ];
-% 配置 找不到lpsolve求解器请检查是否安装，或者直接不适用'solver'字段。
-% ops = sdpsettings('verbose',1);
-ops = sdpsettings('verbose',1,'solver','lpsolve');
+ops = sdpsettings('verbose',1);
 % 目标函数
 z = -(x(1)+2*x(2))/(2*x(1)+x(2)); % 注意这是求解最大值
 % 求解
