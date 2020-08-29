@@ -22,8 +22,6 @@ malloclab，简单明了的说就是实现一个自己的 malloc,free,realloc函
 
 首先，为了写一个alloctor,需要解决哪些问题。csapp本章的ppt中列出了一些关键问题：
 
-[[Back to Top\]](onenote:#动态分配1-基础&section-id={FEC86F20-C39F-4718-BBC4-332F4A9696CD}&page-id={3399A6C6-E525-48B4-A7CA-1FE074BBEE7F}&object-id={702A7255-EBA9-0649-2738-B6E675969E4F}&11&base-path=https://d.docs.live.net/e8732b70e5d7b974/文档/书籍/csapp.one)
-
 ![Implementation Issues  How do we know how much memory to free given just a  pointer?  How do we keep track of the free blocks?  What do we do with the extra space when allocating a  structure that is smaller than the free block it is placed in?  How do we pick a block to use for allocation — many  might fit?  How do we reinsert freed block? ](https://cdn.jsdelivr.net/gh/ravenxrz/PicBed/img/clip_image001.png)
 
 第一个问题，free(ptr)这样的routine是如何知道本次释放的block的大小的？
@@ -249,7 +247,7 @@ static void *find_fit(size_t size)
 
 place的工作也很简单：
 
-1. 最小块大小（2*DSIZE) < 当前块的大小-检查当前请求的大小 ，则对当前block做split
+1. 最小块大小（2*DSIZE) <= 当前块的大小-当前请求的块大小 ，则对当前block做split
 2. 否则，直接place即可。
 
 现在继续看看free：
@@ -395,13 +393,13 @@ explicit list和implicit list的区别在于前者在 **逻辑空间** 中维护
 
 ![image-20200826211059458](https://pic.downk.cc/item/5f465f75160a154a6791b829.png)
 
-可以看到,explicit比较implicit,每一个块只是多了两个字段,用于保存下一个free block的地址(next)和上一个free block的地址(free).
+可以看到,explicit比较implicit,每一个块只是多了两个字段,用于保存下一个free block的地址(next)和上一个free block的地址(prev).
 
 想一下,explict的优点: 大大提高搜索free block的效率. 但是实现复杂度比implicit难,因为多一个逻辑空间的操作.
 
 首先第一个问题,next和prev占用多大空间? 对于32位的os来说,地址空间的编址大小的32位(4字节), 64位的os则位64位(8字节). 为了简单起见,本文中只考虑32位的情况(gcc编译时加上-m32的参数,默认的makefile已经给出).
 
-好的现在确定了next和prev的大小,再来确定一个最小块的大小,最小块应该包含header+footer+next+prev+payload,其中payload最小位1个字节, 同时最小块应该保证8字节对齐要求,综合以下所述,一个最小块为:
+好的现在确定了next和prev的大小,再来确定一个最小块的大小,最小块应该包含header+footer+next+prev+payload,其中payload最小为1个字节, 同时最小块应该保证8字节对齐要求,综合以上所述,一个最小块为:
 $$
 4+4+4+1+4=17,向上取8字节对齐,则\\
 MIN\_BLOCK = 24
@@ -460,7 +458,7 @@ ok,现在再说明代码中做的一些规定:
 #define PREV_BLKP(bp) ((char *)(bp)-GET_SIZE(HDRP(bp) - WSIZE))
 ```
 
-可以看到, 基本上和implicit的宏差不多, 支部多多了NEXT_FREE_BLKP这类宏, 由于调整了每个block的具体layout(多了next和prev), 所以一些运算,如HDRP等需要对应调整.
+可以看到, 基本上和implicit的宏差不多, 只是多了NEXT_FREE_BLKP这类宏, 由于调整了每个block的具体layout(多了next和prev), 所以一些运算,如HDRP等需要对应调整.
 
 然后就是各个函数:
 
