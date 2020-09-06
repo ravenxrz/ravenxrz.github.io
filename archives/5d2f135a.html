@@ -1,0 +1,706 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 5.1.1">
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+  <meta http-equiv="Cache-Control" content="no-transform">
+  <meta http-equiv="Cache-Control" content="no-siteapp">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+<link rel="stylesheet" href="//cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@5/css/all.min.css">
+  <link rel="stylesheet" href="//cdn.jsdelivr.net/npm/pace-js@1/themes/blue/pace-theme-minimal.css">
+  <script src="//cdn.jsdelivr.net/npm/pace-js@1/pace.min.js"></script>
+
+<script id="hexo-configurations">
+    var NexT = window.NexT || {};
+    var CONFIG = {"hostname":"www.ravenxrz.ink","root":"/","scheme":"Mist","version":"7.8.0","exturl":true,"sidebar":{"position":"left","display":"always","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":true,"show_result":true,"style":"flat"},"back2top":{"enable":true,"sidebar":false,"scrollpercent":true},"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":true,"lazyload":true,"pangu":true,"comments":{"style":"tabs","active":"gitalk","storage":true,"lazyload":true,"nav":null,"activeClass":"gitalk"},"algolia":{"hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":true,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},"motion":{"enable":false,"async":true,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}}};
+  </script>
+
+  <meta name="description" content="本次lab Proxylab。 也是csapp的最后一个lab。 1.实验目的proxylab, 从最终目的来看，我们实现的是一个代理服务器。proxy接收来client的请求，转发给server，并从server中取得数据后，返回给client。另外，proxy从server中取回数据后还需要做cache，这样，当另一个client请求相同的数据时，就不用从server端请求数据，降低了serv">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Csapp-Proxylab题解">
+<meta property="og:url" content="https://www.ravenxrz.ink/archives/5d2f135a.html">
+<meta property="og:site_name" content="Raven&#39;s Blog">
+<meta property="og:description" content="本次lab Proxylab。 也是csapp的最后一个lab。 1.实验目的proxylab, 从最终目的来看，我们实现的是一个代理服务器。proxy接收来client的请求，转发给server，并从server中取得数据后，返回给client。另外，proxy从server中取回数据后还需要做cache，这样，当另一个client请求相同的数据时，就不用从server端请求数据，降低了serv">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="https://cdn.jsdelivr.net/gh/ravenxrz/PicBed/img/image-20200906094312362.png">
+<meta property="og:image" content="https://cdn.jsdelivr.net/gh/ravenxrz/PicBed/img/image-20200906101718082.png">
+<meta property="article:published_time" content="2020-09-06T04:27:25.000Z">
+<meta property="article:modified_time" content="2020-09-06T07:20:46.393Z">
+<meta property="article:author" content="Raven">
+<meta property="article:tag" content="proxylab">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://cdn.jsdelivr.net/gh/ravenxrz/PicBed/img/image-20200906094312362.png">
+
+<link rel="canonical" href="https://www.ravenxrz.ink/archives/5d2f135a.html">
+
+
+<script id="page-configurations">
+  // https://hexo.io/docs/variables.html
+  CONFIG.page = {
+    sidebar: "",
+    isHome : false,
+    isPost : true,
+    lang   : 'zh-CN'
+  };
+</script>
+
+  <title>Csapp-Proxylab题解 | Raven's Blog</title>
+  
+
+
+
+
+
+
+  <noscript>
+  <style>
+  .use-motion .brand,
+  .use-motion .menu-item,
+  .sidebar-inner,
+  .use-motion .post-block,
+  .use-motion .pagination,
+  .use-motion .comments,
+  .use-motion .post-header,
+  .use-motion .post-body,
+  .use-motion .collection-header { opacity: initial; }
+
+  .use-motion .site-title,
+  .use-motion .site-subtitle {
+    opacity: initial;
+    top: initial;
+  }
+
+  .use-motion .logo-line-before i { left: initial; }
+  .use-motion .logo-line-after i { right: initial; }
+  </style>
+</noscript>
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage">
+  <div class="container">
+    <div class="headband"></div>
+
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切换导航栏">
+      <span class="toggle-line toggle-line-first"></span>
+      <span class="toggle-line toggle-line-middle"></span>
+      <span class="toggle-line toggle-line-last"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <span class="logo-line-before"><i></i></span>
+      <h1 class="site-title">Raven's Blog</h1>
+      <span class="logo-line-after"><i></i></span>
+    </a>
+      <p class="site-subtitle" itemprop="description">zhang.xingrui@foxmail.com</p>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger">
+        <i class="fa fa-search fa-fw fa-lg"></i>
+    </div>
+  </div>
+</div>
+
+
+
+
+<nav class="site-nav">
+  <ul id="menu" class="menu">
+        <li class="menu-item menu-item-home">
+
+    <a href="/" rel="section"><i class="fa fa-fw fa-fa fa-home"></i>首页</a>
+
+  </li>
+        <li class="menu-item menu-item-archives">
+
+    <a href="/archives/" rel="section"><i class="fa fa-fw fa-fa fa-archive"></i>归档<span class="badge">120</span></a>
+
+  </li>
+        <li class="menu-item menu-item-categories">
+
+    <a href="/categories/" rel="section"><i class="fa fa-fw fa-fa fa-th"></i>分类<span class="badge">17</span></a>
+
+  </li>
+        <li class="menu-item menu-item-tags">
+
+    <a href="/tags/" rel="section"><i class="fa fa-fw fa-fa fa-tags"></i>标签<span class="badge">114</span></a>
+
+  </li>
+        <li class="menu-item menu-item-about">
+
+    <a href="/about/" rel="section"><i class="fa fa-fw fa-fa fa-user"></i>关于</a>
+
+  </li>
+      <li class="menu-item menu-item-search">
+        <a role="button" class="popup-trigger"><i class="fa fa-search fa-fw"></i>搜索
+        </a>
+      </li>
+  </ul>
+</nav>
+
+
+
+  <div class="search-pop-overlay">
+    <div class="popup search-popup">
+        <div class="search-header">
+  <span class="search-icon">
+    <i class="fa fa-search"></i>
+  </span>
+  <div class="search-input-container">
+    <input autocomplete="off" autocapitalize="off"
+           placeholder="搜索..." spellcheck="false"
+           type="search" class="search-input">
+  </div>
+  <span class="popup-btn-close">
+    <i class="fa fa-times-circle"></i>
+  </span>
+</div>
+<div id="search-result">
+  <div id="no-result">
+    <i class="fa fa-spinner fa-pulse fa-5x fa-fw"></i>
+  </div>
+</div>
+
+    </div>
+  </div>
+
+</div>
+    </header>
+
+    
+  <div class="back-to-top">
+    <i class="fa fa-arrow-up"></i>
+    <span>0%</span>
+  </div>
+
+  <span class="exturl github-corner" data-url="aHR0cHM6Ly9naXRodWIuY29tL3JhdmVueHJ6" title="Follow me on GitHub" aria-label="Follow me on GitHub"><svg width="80" height="80" viewBox="0 0 250 250" aria-hidden="true"><path d="M0,0 L115,115 L130,115 L142,142 L250,250 L250,0 Z"></path><path d="M128.3,109.0 C113.8,99.7 119.0,89.6 119.0,89.6 C122.0,82.7 120.5,78.6 120.5,78.6 C119.2,72.0 123.4,76.3 123.4,76.3 C127.3,80.9 125.5,87.3 125.5,87.3 C122.9,97.6 130.6,101.9 134.4,103.2" fill="currentColor" style="transform-origin: 130px 106px;" class="octo-arm"></path><path d="M115.0,115.0 C114.9,115.1 118.7,116.5 119.8,115.4 L133.7,101.6 C136.9,99.2 139.9,98.4 142.2,98.6 C133.8,88.0 127.5,74.4 143.8,58.0 C148.5,53.4 154.0,51.2 159.7,51.0 C160.3,49.4 163.2,43.6 171.4,40.1 C171.4,40.1 176.1,42.5 178.8,56.2 C183.1,58.6 187.2,61.8 190.9,65.4 C194.5,69.0 197.7,73.2 200.1,77.6 C213.8,80.2 216.3,84.9 216.3,84.9 C212.7,93.1 206.9,96.0 205.4,96.6 C205.1,102.4 203.0,107.8 198.3,112.5 C181.9,128.9 168.3,122.5 157.7,114.1 C157.9,116.9 156.7,120.9 152.7,124.9 L141.0,136.5 C139.8,137.7 141.6,141.9 141.8,141.8 Z" fill="currentColor" class="octo-body"></path></svg></span>
+
+
+    <main class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          
+
+          <div class="content post posts-expand">
+            
+
+    
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="https://www.ravenxrz.ink/archives/5d2f135a.html">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="https://pic.downk.cc/item/5e907515504f4bcb04b6f798.jpg">
+      <meta itemprop="name" content="Raven">
+      <meta itemprop="description" content="分享技术，记录生活">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Raven's Blog">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          Csapp-Proxylab题解
+        </h1>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+              
+
+              <time title="创建时间：2020-09-06 12:27:25 / 修改时间：15:20:46" itemprop="dateCreated datePublished" datetime="2020-09-06T12:27:25+08:00">2020-09-06</time>
+            </span>
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              <span class="post-meta-item-text">分类于</span>
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/Csapp/" itemprop="url" rel="index"><span itemprop="name">Csapp</span></a>
+                </span>
+            </span>
+
+          
+            <span class="post-meta-item" title="阅读次数" id="busuanzi_container_page_pv" style="display: none;">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-fa fa-eye"></i>
+              </span>
+              <span class="post-meta-item-text">阅读次数：</span>
+              <span id="busuanzi_value_page_pv"></span>
+            </span>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+        <p>本次lab Proxylab。 也是csapp的最后一个lab。</p>
+<h2 id="1-实验目的"><a href="#1-实验目的" class="headerlink" title="1.实验目的"></a>1.实验目的</h2><p>proxylab, 从最终目的来看，我们实现的是一个代理服务器。proxy接收来client的请求，转发给server，并从server中取得数据后，返回给client。另外，proxy从server中取回数据后还需要做cache，这样，当另一个client请求相同的数据时，就不用从server端请求数据，降低了server的压力。</p>
+<p>再看看一些细节的要求，要求支持多线程请求，多线程涉及一些同步的问题，所以做的时候一定要考虑哪些是互斥资源，用什么方式同步等。</p>
+<a id="more"></a>
+
+<h2 id="2-个人实现"><a href="#2-个人实现" class="headerlink" title="2.个人实现"></a>2.个人实现</h2><p>下面是整个处理流程图：</p>
+<p><img data-src="https://cdn.jsdelivr.net/gh/ravenxrz/PicBed/img/image-20200906094312362.png" alt="image-20200906094312362"></p>
+<p>client向proxy请求数据，proxy将请求放入到一个任务队列中，交由子线程处理。线程负责参数解析，首先看cache中是否有满足的数据，有则直接返回给client，没有则向server请求，server返回数据后，线程将数据插入到cache中，并返回给client。</p>
+<p>ok，整个处理流程知道后就可以开始写代码了。</p>
+<p><strong>下文不会给出所有代码，具体代码已贴github:</strong></p>
+<p><span class="exturl" data-url="aHR0cHM6Ly9naXRodWIuY29tL3JhdmVuLWJvb2tzLXNvdXJjZS1jb2Rlcy9jc2FwcF9sYWIvYmxvYi9tYXN0ZXIvcHJveHlsYWIvcHJveHlsYWItaGFuZG91dC9wcm94eS5j" title="https://github.com/raven-books-source-codes/csapp_lab/blob/master/proxylab/proxylab-handout/proxy.c">proxy.c<i class="fa fa-external-link"></i></span></p>
+<h3 id="1-主线程工作"><a href="#1-主线程工作" class="headerlink" title="1. 主线程工作"></a>1. 主线程工作</h3><p>先看看主线程做的工作，主线程的工作相对简单，除了一些必要的初始化工作外，只需要开启socket监听，一旦有新连接就将该连接的文件描述符(fd)放入到任务队列中：</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br></pre></td><td class="code"><pre><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">int</span> <span class="title">main</span><span class="params">(<span class="keyword">int</span> argc, <span class="keyword">char</span> <span class="keyword">const</span> *argv[])</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">    <span class="keyword">int</span> listenfd, connfd;</span><br><span class="line">    <span class="keyword">char</span> proxy_port[<span class="number">10</span>];</span><br><span class="line">    <span class="keyword">char</span> client_hostname[BUF_SIZE];</span><br><span class="line">    <span class="keyword">char</span> client_port[<span class="number">10</span>];</span><br><span class="line">    <span class="keyword">socklen_t</span> clientlen;</span><br><span class="line">    <span class="class"><span class="keyword">struct</span> <span class="title">sockaddr_storage</span> <span class="title">clientaddr</span>;</span></span><br><span class="line">    </span><br><span class="line">    <span class="comment">/* init */</span></span><br><span class="line">    log_set_level(LOG_INFO);</span><br><span class="line">    sbuf_init(&amp;sbuf, WORKER_NUM * <span class="number">3</span>);</span><br><span class="line">    cache_init(&amp;mycache);</span><br><span class="line">    create_thread_workers(WORKER_NUM);</span><br><span class="line">    </span><br><span class="line">    <span class="comment">/* parse port from cmd */</span></span><br><span class="line">    <span class="keyword">if</span> (argc != <span class="number">2</span>) &#123;</span><br><span class="line">        <span class="built_in">fprintf</span>(<span class="built_in">stderr</span>, <span class="string">&quot;usage: %s &lt;port&gt;\n&quot;</span>, argv[<span class="number">0</span>]);</span><br><span class="line">        log_error(<span class="string">&quot;need specify proxy port\n&quot;</span>);</span><br><span class="line">        <span class="built_in">exit</span>(<span class="number">1</span>);</span><br><span class="line">    &#125; <span class="keyword">else</span> &#123;</span><br><span class="line">        <span class="built_in">strcpy</span>(proxy_port, argv[<span class="number">1</span>]);</span><br><span class="line">    &#125;</span><br><span class="line">    </span><br><span class="line">    <span class="comment">/* start listen */</span></span><br><span class="line">    listenfd = Open_listenfd(proxy_port);</span><br><span class="line">    <span class="keyword">while</span> (<span class="number">1</span>) &#123;</span><br><span class="line">        clientlen = <span class="keyword">sizeof</span>(clientaddr);</span><br><span class="line">        connfd = Accept(listenfd, (SA *) &amp;clientaddr, &amp;clientlen);</span><br><span class="line">        Getnameinfo((SA *) &amp;clientaddr, clientlen, client_hostname, BUF_SIZE,</span><br><span class="line">                    client_port, BUF_SIZE, <span class="number">0</span>);</span><br><span class="line">        log_info(<span class="string">&quot;Accepted connection from (%s, %s)\n&quot;</span>, client_hostname,</span><br><span class="line">                 client_port);</span><br><span class="line">        <span class="comment">/* put task into task queue */</span></span><br><span class="line">        sbuf_insert(&amp;sbuf, connfd);</span><br><span class="line">    &#125;</span><br><span class="line">    </span><br><span class="line">    <span class="comment">/* free resource  */</span></span><br><span class="line">    cache_deinit(&amp;mycache);</span><br><span class="line">    <span class="keyword">return</span> <span class="number">0</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h3 id="2-子线程工作"><a href="#2-子线程工作" class="headerlink" title="2. 子线程工作"></a>2. 子线程工作</h3><p>子线程从任务队列中获取一个“任务“，然后doit</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">static</span> <span class="keyword">void</span> *<span class="title">thread_routinue</span><span class="params">(<span class="keyword">void</span> *vargs)</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">    <span class="keyword">int</span> connfd;</span><br><span class="line">    pthread_detach(pthread_self());</span><br><span class="line">    </span><br><span class="line">    <span class="keyword">while</span> (<span class="number">1</span>) &#123;</span><br><span class="line">        connfd = sbuf_remove(&amp;sbuf);</span><br><span class="line">        doit(connfd);</span><br><span class="line">        close(connfd);</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">return</span> <span class="literal">NULL</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>doit就复杂些了，因为基本包含了所有工作：</p>
+<ol>
+<li>负责获取client请求</li>
+<li>解析client请求</li>
+<li>转换成可以发送给server的请求</li>
+<li>获取数据，可能从cache中获取，也可能从server中获取</li>
+</ol>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br><span class="line">75</span><br><span class="line">76</span><br><span class="line">77</span><br><span class="line">78</span><br><span class="line">79</span><br><span class="line">80</span><br><span class="line">81</span><br><span class="line">82</span><br><span class="line">83</span><br><span class="line">84</span><br><span class="line">85</span><br><span class="line">86</span><br><span class="line">87</span><br><span class="line">88</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">static</span> <span class="keyword">void</span> <span class="title">doit</span><span class="params">(<span class="keyword">int</span> fd)</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">    <span class="keyword">char</span> src_uri[BUF_SIZE], dest_uri[BUF_SIZE], src_version[BUF_SIZE],</span><br><span class="line">            dest_version[BUF_SIZE], src_headers[BUF_SIZE], dest_headers[BUF_SIZE],</span><br><span class="line">            hostname[BUF_SIZE], server_port[BUF_SIZE];</span><br><span class="line">    <span class="keyword">char</span> *buf = (<span class="keyword">char</span> *) <span class="built_in">malloc</span>(<span class="keyword">sizeof</span>(<span class="keyword">char</span>) * BUF_SIZE);</span><br><span class="line">    <span class="keyword">char</span> *request_to_server = (<span class="keyword">char</span> *) <span class="built_in">malloc</span>(<span class="keyword">sizeof</span>(<span class="keyword">char</span>) * BUF_SIZE);</span><br><span class="line">    <span class="keyword">if</span> (!buf || !request_to_server) &#123;</span><br><span class="line">        log_error(</span><br><span class="line">                <span class="string">&quot;allocate memory for request which is sending to server faild\n&quot;</span>);</span><br><span class="line">        <span class="keyword">return</span>;</span><br><span class="line">    &#125;</span><br><span class="line">    </span><br><span class="line">    <span class="comment">/* init */</span></span><br><span class="line">    <span class="built_in">memset</span>(src_uri, <span class="number">0</span>, BUF_SIZE);</span><br><span class="line">    <span class="built_in">memset</span>(src_version, <span class="number">0</span>, BUF_SIZE);</span><br><span class="line">    <span class="built_in">memset</span>(src_headers, <span class="number">0</span>, BUF_SIZE);</span><br><span class="line">    <span class="built_in">memset</span>(hostname, <span class="number">0</span>, BUF_SIZE);</span><br><span class="line">    <span class="built_in">memset</span>(buf, <span class="number">0</span>, BUF_SIZE);</span><br><span class="line">    <span class="built_in">memset</span>(request_to_server, <span class="number">0</span>, BUF_SIZE);</span><br><span class="line">    <span class="built_in">memset</span>(server_port, <span class="number">0</span>, BUF_SIZE);</span><br><span class="line">    </span><br><span class="line">    <span class="comment">/* parse request from client */</span></span><br><span class="line">    <span class="keyword">if</span> (parse_client_request(fd, src_uri, src_version, src_headers, hostname,</span><br><span class="line">                             server_port)) &#123;</span><br><span class="line">        log_error(<span class="string">&quot;parse client request error\n&quot;</span>);</span><br><span class="line">        <span class="keyword">return</span>;</span><br><span class="line">    &#125;</span><br><span class="line">    log_info(<span class="string">&quot;request: %s\n&quot;</span>, src_uri);</span><br><span class="line">    log_info(<span class="string">&quot;http version: %s\n&quot;</span>, src_version);</span><br><span class="line">    log_info(<span class="string">&quot;headers: %s\n&quot;</span>, src_headers);</span><br><span class="line">    log_info(<span class="string">&quot;hostname: %s\n&quot;</span>, hostname);</span><br><span class="line">    </span><br><span class="line">    <span class="comment">/* convert uri , headers, version to the uri headers version that will be</span></span><br><span class="line"><span class="comment">     * send to server */</span></span><br><span class="line">    <span class="comment">/* append HOSTNAME first */</span></span><br><span class="line">    <span class="built_in">sprintf</span>(buf, <span class="string">&quot;Host: %s\r\n&quot;</span>, hostname);</span><br><span class="line">    <span class="built_in">strcat</span>(src_headers, buf);</span><br><span class="line">    <span class="keyword">if</span> (convert_request(src_uri, src_headers, src_version, dest_uri,</span><br><span class="line">                        dest_headers, dest_version)) &#123;</span><br><span class="line">        log_error(<span class="string">&quot;convert request failed\n&quot;</span>);</span><br><span class="line">        <span class="keyword">return</span>;</span><br><span class="line">    &#125;</span><br><span class="line">    </span><br><span class="line">    <span class="comment">/* constrcut request sending to server */</span></span><br><span class="line">    <span class="built_in">sprintf</span>(buf, <span class="string">&quot;GET %s %s\r\n&quot;</span>, dest_uri, dest_version);</span><br><span class="line">    <span class="built_in">strcat</span>(request_to_server, buf);</span><br><span class="line">    <span class="built_in">strcat</span>(request_to_server, dest_headers);</span><br><span class="line">    <span class="built_in">strcat</span>(request_to_server, <span class="string">&quot;\r\n&quot;</span>); <span class="comment">/* end of requst */</span></span><br><span class="line">    log_info(<span class="string">&quot;coneverted request to server:\n%s\n&quot;</span>, request_to_server);</span><br><span class="line">    </span><br><span class="line">    <span class="comment">/* fetch data  */</span></span><br><span class="line">    <span class="comment">/* is data in cache? */</span></span><br><span class="line">    cache_item *ci;</span><br><span class="line">    ci = cache_get(&amp;mycache, dest_uri);</span><br><span class="line">    <span class="keyword">int</span> read_len = <span class="number">-1</span>;</span><br><span class="line">    <span class="keyword">if</span> (ci == <span class="literal">NULL</span>) &#123;</span><br><span class="line">        <span class="comment">/* fetch from server*/</span></span><br><span class="line">        <span class="keyword">if</span> ((read_len = fetch_data_from_server(request_to_server,</span><br><span class="line">                                               <span class="built_in">strlen</span>(request_to_server) + <span class="number">1</span>,</span><br><span class="line">                                               hostname, server_port, buf)) == <span class="number">-1</span>) &#123;</span><br><span class="line">            log_error(<span class="string">&quot;fetch data from server failed\n&quot;</span>);</span><br><span class="line">            <span class="keyword">return</span>;</span><br><span class="line">        &#125;</span><br><span class="line">        log_info(<span class="string">&quot;fetch data from server sucess %d\n&quot;</span>, read_len);</span><br><span class="line">        </span><br><span class="line">        <span class="comment">/* save to cache */</span></span><br><span class="line">        log_debug(<span class="string">&quot;put data into cache\n&quot;</span>);</span><br><span class="line">        cache_put(&amp;mycache, dest_uri, buf, read_len);</span><br><span class="line">    &#125; <span class="keyword">else</span> &#123;</span><br><span class="line">        <span class="comment">/* fetch from cache */</span></span><br><span class="line">        log_debug(<span class="string">&quot;fetch data from cache\n&quot;</span>);</span><br><span class="line">        read_len = ci-&gt;effect_size;</span><br><span class="line">        <span class="built_in">memcpy</span>(buf, ci-&gt;data, read_len);</span><br><span class="line">    &#125;</span><br><span class="line">    </span><br><span class="line">    <span class="comment">/* send data to client */</span></span><br><span class="line">    <span class="keyword">int</span> write_len = <span class="number">-1</span>;</span><br><span class="line">    <span class="keyword">if</span> ((write_len = send_data_to_client(fd, buf, read_len)) == <span class="number">-1</span>) &#123;</span><br><span class="line">        log_error(<span class="string">&quot;send data to client failed\n&quot;</span>);</span><br><span class="line">        <span class="keyword">return</span>;</span><br><span class="line">    &#125;</span><br><span class="line">    log_info(<span class="string">&quot;send data to client sucess %d\n&quot;</span>, write_len);</span><br><span class="line">    </span><br><span class="line">    <span class="comment">/* free resource */</span></span><br><span class="line">    <span class="built_in">free</span>(request_to_server);</span><br><span class="line">    <span class="built_in">free</span>(buf);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>整个流程就是这样，处理起来不算来。下面我们主要看看整个流程中设计到的一些互斥资源。</p>
+<ol>
+<li>sbuf，互斥队列，这个是csapp提供了，我们可以直接用，内部采用“生产者-消费者”的思想+信号量的实现。</li>
+<li>cache，典型的”读写锁“实现，个人这里采用的是写优先的读写锁信号量实现。</li>
+</ol>
+<h3 id="3-cache的实现"><a href="#3-cache的实现" class="headerlink" title="3. cache的实现"></a>3. cache的实现</h3><p>那下面就说一下cache的实现吧。</p>
+<p>文中定义了cache的最大size和一个object的最大size。为了简单起见，我们按照max object size来分块，然后采用LRU算法来替换cache block。</p>
+<p>首先看看用到的数据结构:</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">typedef</span> <span class="class"><span class="keyword">struct</span>&#123;</span></span><br><span class="line">   <span class="keyword">char</span> key[<span class="number">100</span>] ;     <span class="comment">/* use request uri as key */</span></span><br><span class="line">   <span class="keyword">char</span> data[MAX_OBJECT_SIZE];</span><br><span class="line">   <span class="keyword">size_t</span> effect_size;      <span class="comment">/* effect size */</span></span><br><span class="line">   <span class="keyword">unsigned</span> <span class="keyword">long</span> <span class="keyword">long</span> age;      <span class="comment">/* use to implement LRU */</span></span><br><span class="line">&#125;cache_item;</span><br><span class="line"></span><br><span class="line"><span class="keyword">typedef</span> <span class="class"><span class="keyword">struct</span>&#123;</span></span><br><span class="line">    cache_item *ci;</span><br><span class="line">    <span class="keyword">size_t</span> ci_num;     <span class="comment">/* cache item pair_num */</span></span><br><span class="line">&#125;cache;</span><br></pre></td></tr></table></figure>
+
+<p>cache_item定义了一个cache block的数据及元数据。</p>
+<p>cache则由多个cache_item组成了。</p>
+<p>然后是要用到的一些函数：</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">int</span> <span class="title">cache_init</span><span class="params">(cache *cp)</span></span>;</span><br><span class="line"><span class="comment">/* cache_put */</span></span><br><span class="line"><span class="function"><span class="keyword">int</span> <span class="title">cache_put</span><span class="params">(cache *cp, <span class="keyword">char</span> *key, <span class="keyword">char</span> *data, <span class="keyword">size_t</span> size)</span></span>;</span><br><span class="line"><span class="comment">/* cache_get */</span></span><br><span class="line"><span class="function">cache_item *<span class="title">cache_get</span><span class="params">(cache *cp, <span class="keyword">char</span> *key)</span></span>;</span><br><span class="line"><span class="function"><span class="keyword">int</span> <span class="title">cache_deinit</span><span class="params">(cache *cp)</span></span>;</span><br></pre></td></tr></table></figure>
+
+<p>接口很简单，就get、put。</p>
+<p>先看看简单的init和deinit：</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">/**</span></span><br><span class="line"><span class="comment"> * cache init</span></span><br><span class="line"><span class="comment"> * @param cp</span></span><br><span class="line"><span class="comment"> * @return 0 sucess</span></span><br><span class="line"><span class="comment"> *         -1 failed</span></span><br><span class="line"><span class="comment"> */</span></span><br><span class="line"><span class="function"><span class="keyword">int</span> <span class="title">cache_init</span><span class="params">(cache *cp)</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">	<span class="keyword">if</span>(!cp) <span class="keyword">return</span> <span class="number">-1</span>;</span><br><span class="line">    <span class="comment">/* cache_get cache item pair_num */</span></span><br><span class="line">    <span class="keyword">const</span> <span class="keyword">int</span> ci_num = MAX_CACHE_SIZE / MAX_OBJECT_SIZE;</span><br><span class="line">    cp-&gt;ci = (cache_item *) <span class="built_in">malloc</span>(<span class="keyword">sizeof</span>(cache_item) * ci_num);</span><br><span class="line">    cp-&gt;ci_num = ci_num;</span><br><span class="line">    <span class="comment">/* init every cache block */</span></span><br><span class="line">    <span class="keyword">for</span> (<span class="keyword">size_t</span> i = <span class="number">0</span>; i &lt; cp-&gt;ci_num; i++) &#123;</span><br><span class="line">        cp-&gt;ci[i].effect_size = <span class="number">0</span>;</span><br><span class="line">    &#125;</span><br><span class="line">    </span><br><span class="line">    <span class="comment">/* semaphore init */</span></span><br><span class="line">    sem_init(&amp;rcounter_mutex, <span class="number">0</span>, <span class="number">1</span>);</span><br><span class="line">    sem_init(&amp;res_mutex, <span class="number">0</span>, <span class="number">1</span>);</span><br><span class="line">    sem_init(&amp;w_mutex, <span class="number">0</span>, <span class="number">1</span>);</span><br><span class="line">    <span class="keyword">return</span> <span class="number">0</span>;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="comment">/**</span></span><br><span class="line"><span class="comment"> * deinit</span></span><br><span class="line"><span class="comment"> * @param cp</span></span><br><span class="line"><span class="comment"> * @return</span></span><br><span class="line"><span class="comment"> */</span></span><br><span class="line"><span class="function"><span class="keyword">int</span> <span class="title">cache_deinit</span><span class="params">(cache *cp)</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">    <span class="keyword">if</span> (!cp) <span class="keyword">return</span> <span class="number">-1</span>;</span><br><span class="line">    </span><br><span class="line">    <span class="keyword">for</span> (<span class="keyword">size_t</span> i = <span class="number">0</span>; i &lt; cp-&gt;ci_num; i++) &#123;</span><br><span class="line">        <span class="built_in">free</span>(&amp;cp-&gt;ci[i]);</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">return</span> <span class="number">0</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>说get和put之前，先说说读写锁-写优先的操作。</p>
+<ol>
+<li>写-写互斥</li>
+<li>写-读互斥</li>
+<li>读-读共享</li>
+<li>读加锁时，后续有读线程又有写线程时，写线程优先。</li>
+</ol>
+<p>看PV实现：</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">int</span> read_counter = <span class="number">0</span>;		<span class="comment">// 记录读者数</span></span><br><span class="line"><span class="keyword">sem_t</span> rc_mutex;				<span class="comment">// 读者数的操作锁</span></span><br><span class="line"><span class="keyword">sem_t</span> res_mutex;			<span class="comment">// 互斥资源锁</span></span><br><span class="line"><span class="keyword">sem_t</span> w_mutex;				<span class="comment">// 实现写优先</span></span><br><span class="line"></span><br><span class="line"><span class="comment">// 写者</span></span><br><span class="line"><span class="keyword">while</span>(<span class="number">1</span>)&#123;</span><br><span class="line">	P(&amp;w_mutex);				<span class="comment">// 占用w_mutex, 阻塞读者</span></span><br><span class="line">	P(&amp;res_mutex);</span><br><span class="line">	<span class="keyword">do</span> write</span><br><span class="line">	V(&amp;res_mutex);</span><br><span class="line">	V(&amp;w_mutex);</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="comment">// 读着</span></span><br><span class="line"><span class="keyword">while</span>(<span class="number">1</span>)&#123;</span><br><span class="line">	P(&amp;w_mutex);</span><br><span class="line">	P(&amp;rc_mutex);</span><br><span class="line">	read_counter++;</span><br><span class="line">	<span class="keyword">if</span>(read_counter == <span class="number">1</span>)</span><br><span class="line">		P(&amp;res_mutex);</span><br><span class="line">	V(&amp;rc_mutex);</span><br><span class="line">	V(&amp;w_mutex);</span><br><span class="line">	<span class="keyword">do</span> read</span><br><span class="line">	P(&amp;rc_mutex);</span><br><span class="line">	read_counter--;</span><br><span class="line">	<span class="keyword">if</span>(read_counter == <span class="number">0</span>)</span><br><span class="line">		V(&amp;res_mutex);</span><br><span class="line">	V(&amp;rc_mutex);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>ok, 有了以上基础知识，写cache_get和cache_put就会很简单了。</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br><span class="line">75</span><br><span class="line">76</span><br><span class="line">77</span><br><span class="line">78</span><br><span class="line">79</span><br><span class="line">80</span><br><span class="line">81</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">/**</span></span><br><span class="line"><span class="comment"> * put data into cache</span></span><br><span class="line"><span class="comment"> * @param cp</span></span><br><span class="line"><span class="comment"> * @param key</span></span><br><span class="line"><span class="comment"> * @param data</span></span><br><span class="line"><span class="comment"> * @param size</span></span><br><span class="line"><span class="comment"> * @return  0 sucess</span></span><br><span class="line"><span class="comment"> */</span></span><br><span class="line"><span class="function"><span class="keyword">int</span> <span class="title">cache_put</span><span class="params">(cache *cp, <span class="keyword">char</span> *key, <span class="keyword">char</span> *data, <span class="keyword">size_t</span> size)</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">    <span class="keyword">static</span> <span class="keyword">unsigned</span> <span class="keyword">long</span> <span class="keyword">long</span> age_counter = <span class="number">0</span>;</span><br><span class="line">    <span class="keyword">int</span> empty_block_idx = <span class="number">-1</span>;</span><br><span class="line">    cache_item *ci;</span><br><span class="line">    </span><br><span class="line">    <span class="comment">/* write start */</span></span><br><span class="line">    P(&amp;w_mutex);</span><br><span class="line">    P(&amp;res_mutex);</span><br><span class="line">    </span><br><span class="line">    <span class="comment">/* increment age counter */</span></span><br><span class="line">    age_counter++;</span><br><span class="line">    <span class="comment">/* first try to find an empty block */</span></span><br><span class="line">    <span class="keyword">for</span> (<span class="keyword">size_t</span> i = <span class="number">0</span>; i &lt; cp-&gt;ci_num; i++) &#123;</span><br><span class="line">        <span class="keyword">if</span> (cp-&gt;ci[i].effect_size == <span class="number">0</span>) &#123;</span><br><span class="line">            empty_block_idx = i;</span><br><span class="line">            <span class="keyword">break</span>;</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">    </span><br><span class="line">    <span class="comment">/* need evict ?*/</span></span><br><span class="line">    <span class="keyword">if</span> (empty_block_idx == <span class="number">-1</span>) &#123;</span><br><span class="line">        empty_block_idx = evict(cp);</span><br><span class="line">    &#125;</span><br><span class="line">    </span><br><span class="line">    ci = &amp;cp-&gt;ci[empty_block_idx];</span><br><span class="line">    <span class="built_in">memcpy</span>(ci-&gt;key, key, <span class="built_in">strlen</span>(key));</span><br><span class="line">    <span class="built_in">memcpy</span>(ci-&gt;data, data, size);</span><br><span class="line">    ci-&gt;effect_size = size;</span><br><span class="line">    ci-&gt;age = age_counter;</span><br><span class="line">    </span><br><span class="line">    <span class="comment">/* write end*/</span></span><br><span class="line">    V(&amp;res_mutex);</span><br><span class="line">    V(&amp;w_mutex);</span><br><span class="line">    <span class="keyword">return</span> <span class="number">0</span>;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="comment">/**</span></span><br><span class="line"><span class="comment"> * get data from cache in terms of key</span></span><br><span class="line"><span class="comment"> * @param cp</span></span><br><span class="line"><span class="comment"> * @param key</span></span><br><span class="line"><span class="comment"> * @return</span></span><br><span class="line"><span class="comment"> *         NULL not found</span></span><br><span class="line"><span class="comment"> */</span></span><br><span class="line"><span class="function">cache_item *<span class="title">cache_get</span><span class="params">(cache *cp, <span class="keyword">char</span> *key)</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">    cache_item *ci = <span class="literal">NULL</span>;</span><br><span class="line">    </span><br><span class="line">    <span class="comment">/* read start*/</span></span><br><span class="line">    P(&amp;w_mutex);</span><br><span class="line">    P(&amp;rcounter_mutex);</span><br><span class="line">    rcounter++;</span><br><span class="line">    <span class="keyword">if</span> (rcounter == <span class="number">1</span>)</span><br><span class="line">        P(&amp;res_mutex);</span><br><span class="line">    V(&amp;rcounter_mutex);</span><br><span class="line">    V(&amp;w_mutex);</span><br><span class="line">    </span><br><span class="line">    <span class="keyword">for</span> (<span class="keyword">size_t</span> i = <span class="number">0</span>; i &lt; cp-&gt;ci_num; i++) &#123;</span><br><span class="line">        <span class="keyword">if</span> (cp-&gt;ci[i].effect_size != <span class="number">0</span> &amp;&amp;</span><br><span class="line">            !<span class="built_in">strcmp</span>(cp-&gt;ci[i].key, key)) &#123;</span><br><span class="line">            ci = &amp;cp-&gt;ci[i];</span><br><span class="line">            <span class="keyword">break</span>;</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">    </span><br><span class="line">    P(&amp;rcounter_mutex);</span><br><span class="line">    rcounter--;</span><br><span class="line">    <span class="keyword">if</span> (rcounter == <span class="number">0</span>)</span><br><span class="line">        V(&amp;res_mutex);</span><br><span class="line">    V(&amp;rcounter_mutex);</span><br><span class="line">    <span class="keyword">return</span> ci;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h3 id="4-cache实现的额外想法"><a href="#4-cache实现的额外想法" class="headerlink" title="4. cache实现的额外想法"></a>4. cache实现的额外想法</h3><p>其实cache最开始我是准备用Log-Strucutre的实现，但是发现实现起来很复杂，而且csapp的测试跑不了太久，Log-Sturcutre的优点没法充分利用。下面简单说一下思路。Log-Strucutre的特点就是Only-Append. 题目的要求是缓存从server返回的数据，而这些数据的大小不一，如果按照上文的实现，<strong>必然会导致很多内部碎片</strong>。而采用only-append的思想，则不存在内部碎片的问题，如下图：</p>
+<p><img data-src="https://cdn.jsdelivr.net/gh/ravenxrz/PicBed/img/image-20200906101718082.png" alt="image-20200906101718082"></p>
+<p>但是这样又会存在一个新问题，那就是cache空间是有限的，我们最后总会evict掉某些块，<strong>那就很容产生外部碎片问题，</strong>这该怎么解决呢？开启一个compact线程就好了，compact线程可以周期性的对整个内存空间做压缩处理，去掉外部碎片问题。compact的触发点可以有两个：</p>
+<ol>
+<li>周期性触发</li>
+<li>当前cache已满</li>
+</ol>
+<p>但是每次compact可能也会成为cache的读写性能瓶颈。 所以现在又该怎么办？</p>
+<p>可以考虑<strong>“分页思想”，</strong>操作系统里面最经典的知识之一，要想提高系统的内存利用率，降低外部碎片和内部碎片，那就将内存分页，将每个取回的file进行分页,然后插入到“虚拟内存页”，不过这样需要维护页表了。实现难度较大，所以我也没做了，实在没时间继续耗在csapp上，不过还是想将这个思路写在这里，说不定未来我就回来写了呢。</p>
+<h2 id="3-总结"><a href="#3-总结" class="headerlink" title="3. 总结"></a>3. 总结</h2><p>这个实验涉及的知识较多，网络编程（c语言的socket一言难尽啊，特别写过python和java后。。。），多线程并发，同步信号量，cache替换策略，每一个都是重要的知识点。所以也还是挺有收获的。</p>
+<p>当然了，这也是csapp的最后一个lab，也就意味着我的csapp之旅告一段落了，但是csapp这本书是真的值得每个程序员多看几遍的，里面的每个知识点都相当重要。</p>
+<p>下一波实验：<span class="exturl" data-url="aHR0cDovL3d3dy5saW51eGZyb21zY3JhdGNoLm9yZy9sZnMv" title="http://www.linuxfromscratch.org/lfs/">LFS<i class="fa fa-external-link"></i></span></p>
+
+    </div>
+
+    
+    
+    
+        <div class="reward-container">
+  <div>文章对你有帮助?打赏一下作者吧</div>
+  <button onclick="var qr = document.getElementById('qr'); qr.style.display = (qr.style.display === 'none') ? 'block' : 'none';">
+    打赏
+  </button>
+  <div id="qr" style="display: none;">
+      
+      <div style="display: inline-block;">
+        <img src="https://pic.downk.cc/item/5d064208451253d178a15b27.png" alt="Raven 微信支付">
+        <p>微信支付</p>
+      </div>
+      
+      <div style="display: inline-block;">
+        <img src="https://pic.downk.cc/item/5d0641c7451253d178a15376.png" alt="Raven 支付宝">
+        <p>支付宝</p>
+      </div>
+
+  </div>
+</div>
+
+        
+
+<div>
+<ul class="post-copyright">
+  <li class="post-copyright-author">
+    <strong>本文作者： </strong>Raven
+  </li>
+  <li class="post-copyright-link">
+    <strong>本文链接：</strong>
+    <a href="https://www.ravenxrz.ink/archives/5d2f135a.html" title="Csapp-Proxylab题解">https://www.ravenxrz.ink/archives/5d2f135a.html</a>
+  </li>
+  <li class="post-copyright-license">
+    <strong>版权声明： </strong>本博客所有文章除特别声明外，均采用 <span class="exturl" data-url="aHR0cHM6Ly9jcmVhdGl2ZWNvbW1vbnMub3JnL2xpY2Vuc2VzL2J5LW5jLXNhLzQuMC8="><i class="fa fa-fw fa-creative-commons"></i>BY-NC-SA</span> 许可协议。转载请注明出处！
+  </li>
+</ul>
+</div>
+
+
+      <footer class="post-footer">
+          
+          <div class="post-tags">
+              <a href="/tags/proxylab/" rel="tag"><i class="fa fa-tag"></i> proxylab</a>
+          </div>
+
+        
+
+
+        
+    <div class="post-nav">
+      <div class="post-nav-item">
+    <a href="/archives/undefined.html" rel="prev" title="Hello World">
+      <i class="fa fa-chevron-left"></i> Hello World
+    </a></div>
+      <div class="post-nav-item"></div>
+    </div>
+      </footer>
+    
+  </article>
+  
+  
+  
+
+
+
+          </div>
+          
+    <div class="comments" id="gitalk-container"></div>
+
+<script>
+  window.addEventListener('tabs:register', () => {
+    let { activeClass } = CONFIG.comments;
+    if (CONFIG.comments.storage) {
+      activeClass = localStorage.getItem('comments_active') || activeClass;
+    }
+    if (activeClass) {
+      let activeTab = document.querySelector(`a[href="#comment-${activeClass}"]`);
+      if (activeTab) {
+        activeTab.click();
+      }
+    }
+  });
+  if (CONFIG.comments.storage) {
+    window.addEventListener('tabs:click', event => {
+      if (!event.target.matches('.tabs-comment .tab-content .tab-pane')) return;
+      let commentClass = event.target.classList[1];
+      localStorage.setItem('comments_active', commentClass);
+    });
+  }
+</script>
+
+        </div>
+          
+  
+  <div class="toggle sidebar-toggle">
+    <span class="toggle-line toggle-line-first"></span>
+    <span class="toggle-line toggle-line-middle"></span>
+    <span class="toggle-line toggle-line-last"></span>
+  </div>
+
+  <aside class="sidebar">
+    <div class="sidebar-inner">
+
+      <ul class="sidebar-nav motion-element">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          站点概览
+        </li>
+      </ul>
+
+      <!--noindex-->
+      <div class="post-toc-wrap sidebar-panel">
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#1-%E5%AE%9E%E9%AA%8C%E7%9B%AE%E7%9A%84"><span class="nav-text">1.实验目的</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#2-%E4%B8%AA%E4%BA%BA%E5%AE%9E%E7%8E%B0"><span class="nav-text">2.个人实现</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#1-%E4%B8%BB%E7%BA%BF%E7%A8%8B%E5%B7%A5%E4%BD%9C"><span class="nav-text">1. 主线程工作</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#2-%E5%AD%90%E7%BA%BF%E7%A8%8B%E5%B7%A5%E4%BD%9C"><span class="nav-text">2. 子线程工作</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#3-cache%E7%9A%84%E5%AE%9E%E7%8E%B0"><span class="nav-text">3. cache的实现</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#4-cache%E5%AE%9E%E7%8E%B0%E7%9A%84%E9%A2%9D%E5%A4%96%E6%83%B3%E6%B3%95"><span class="nav-text">4. cache实现的额外想法</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#3-%E6%80%BB%E7%BB%93"><span class="nav-text">3. 总结</span></a></li></ol></div>
+      </div>
+      <!--/noindex-->
+
+      <div class="site-overview-wrap sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+    <img class="site-author-image" itemprop="image" alt="Raven"
+      src="https://pic.downk.cc/item/5e907515504f4bcb04b6f798.jpg">
+  <p class="site-author-name" itemprop="name">Raven</p>
+  <div class="site-description" itemprop="description">分享技术，记录生活</div>
+</div>
+<div class="site-state-wrap motion-element">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+          <a href="/archives/">
+        
+          <span class="site-state-item-count">120</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+            <a href="/categories/">
+          
+        <span class="site-state-item-count">17</span>
+        <span class="site-state-item-name">分类</span></a>
+      </div>
+      <div class="site-state-item site-state-tags">
+            <a href="/tags/">
+          
+        <span class="site-state-item-count">114</span>
+        <span class="site-state-item-name">标签</span></a>
+      </div>
+  </nav>
+</div>
+  <div class="links-of-author motion-element">
+      <span class="links-of-author-item">
+        <span class="exturl" data-url="aHR0cHM6Ly9naXRodWIuY29tL3JhdmVueHJ6" title="GitHub → https:&#x2F;&#x2F;github.com&#x2F;ravenxrz"><i class="fa fa-fw fa-fab fa-github"></i>GitHub</span>
+      </span>
+      <span class="links-of-author-item">
+        <span class="exturl" data-url="bWFpbHRvOnpoYWduLnhpbmdydWlAZm94bWFpbC5jb20=" title="E-Mail → mailto:zhagn.xingrui@foxmail.com"><i class="fa fa-fw fa-fa fa-envelope"></i>E-Mail</span>
+      </span>
+  </div>
+  <div class="cc-license motion-element" itemprop="license">
+    <span class="exturl cc-opacity" data-url="aHR0cHM6Ly9jcmVhdGl2ZWNvbW1vbnMub3JnL2xpY2Vuc2VzL2J5LW5jLXNhLzQuMC8="><img src="/images/cc-by-nc-sa.svg" alt="Creative Commons"></span>
+  </div>
+
+
+  <div class="links-of-blogroll motion-element">
+    <div class="links-of-blogroll-title">
+      <i class="fa fa-fw fa-fa fa-link"></i>
+      Links
+    </div>
+    <ul class="links-of-blogroll-list">
+        <li class="links-of-blogroll-item">
+          <a href="/resources" title="&#x2F;resources">我的资源</a>
+        </li>
+    </ul>
+  </div>
+
+      </div>
+
+    </div>
+  </aside>
+  <div id="sidebar-dimmer"></div>
+
+
+      </div>
+    </main>
+
+    <footer class="footer">
+      <div class="footer-inner">
+        
+
+        
+
+<div class="copyright">
+  
+  &copy; 2017 – 
+  <span itemprop="copyrightYear">2020</span>
+  <span class="with-love">
+    <i class="fa fa-fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">Raven</span>
+</div>
+  <div class="powered-by">由 <span class="exturl theme-link" data-url="aHR0cHM6Ly9oZXhvLmlv">Hexo</span> & <span class="exturl theme-link" data-url="aHR0cHM6Ly9taXN0LnRoZW1lLW5leHQub3Jn">NexT.Mist</span> 强力驱动
+  </div>
+
+        
+<div class="busuanzi-count">
+  <script async src="https://busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+    <span class="post-meta-item" id="busuanzi_container_site_uv" style="display: none;">
+      <span class="post-meta-item-icon">
+        <i class="fa fa-fa fa-user"></i>
+      </span>
+      <span class="site-uv" title="总访客量">
+        <span id="busuanzi_value_site_uv"></span>
+      </span>
+    </span>
+    <span class="post-meta-divider">|</span>
+    <span class="post-meta-item" id="busuanzi_container_site_pv" style="display: none;">
+      <span class="post-meta-item-icon">
+        <i class="fa fa-fa fa-eye"></i>
+      </span>
+      <span class="site-pv" title="总访问量">
+        <span id="busuanzi_value_site_pv"></span>
+      </span>
+    </span>
+</div>
+
+
+
+
+
+
+
+
+      </div>
+    </footer>
+  </div>
+
+  
+  <script src="//cdn.jsdelivr.net/npm/animejs@3.1.0/lib/anime.min.js"></script>
+  <script src="//cdn.jsdelivr.net/npm/medium-zoom@1/dist/medium-zoom.min.js"></script>
+  <script src="//cdn.jsdelivr.net/npm/lozad@1/dist/lozad.min.js"></script>
+  <script src="//cdn.jsdelivr.net/npm/pangu@4/dist/browser/pangu.min.js"></script>
+
+<script src="/js/utils.js"></script>
+
+
+<script src="/js/schemes/muse.js"></script>
+
+
+<script src="/js/next-boot.js"></script>
+
+
+
+
+  
+  <script>
+    (function(){
+      var bp = document.createElement('script');
+      var curProtocol = window.location.protocol.split(':')[0];
+      bp.src = (curProtocol === 'https') ? 'https://zz.bdstatic.com/linksubmit/push.js' : 'http://push.zhanzhang.baidu.com/push.js';
+      var s = document.getElementsByTagName("script")[0];
+      s.parentNode.insertBefore(bp, s);
+    })();
+  </script>
+
+
+
+
+  
+<script src="/js/local-search.js"></script>
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+  
+      
+
+<script>
+  if (typeof MathJax === 'undefined') {
+    window.MathJax = {
+      loader: {
+        source: {
+          '[tex]/amsCd': '[tex]/amscd',
+          '[tex]/AMScd': '[tex]/amscd'
+        }
+      },
+      tex: {
+        inlineMath: {'[+]': [['$', '$']]},
+        tags: 'ams'
+      },
+      options: {
+        renderActions: {
+          findScript: [10, doc => {
+            document.querySelectorAll('script[type^="math/tex"]').forEach(node => {
+              const display = !!node.type.match(/; *mode=display/);
+              const math = new doc.options.MathItem(node.textContent, doc.inputJax[0], display);
+              const text = document.createTextNode('');
+              node.parentNode.replaceChild(text, node);
+              math.start = {node: text, delim: '', n: 0};
+              math.end = {node: text, delim: '', n: 0};
+              doc.math.push(math);
+            });
+          }, '', false],
+          insertedScript: [200, () => {
+            document.querySelectorAll('mjx-container').forEach(node => {
+              let target = node.parentNode;
+              if (target.nodeName.toLowerCase() === 'li') {
+                target.parentNode.classList.add('has-jax');
+              }
+            });
+          }, '', false]
+        }
+      }
+    };
+    (function () {
+      var script = document.createElement('script');
+      script.src = '//cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js';
+      script.defer = true;
+      document.head.appendChild(script);
+    })();
+  } else {
+    MathJax.startup.document.state(0);
+    MathJax.texReset();
+    MathJax.typeset();
+  }
+</script>
+
+    
+
+  
+  <script src="//cdn.jsdelivr.net/npm/quicklink@1/dist/quicklink.umd.js"></script>
+  <script>
+      window.addEventListener('load', () => {
+      quicklink({
+        timeout : 3000,
+        priority: true,
+        ignores : [uri => uri.includes('#'),uri => uri === 'https://www.ravenxrz.ink/archives/5d2f135a.html',]
+      });
+      });
+  </script>
+
+<link rel="stylesheet" href="//cdn.jsdelivr.net/npm/gitalk@1/dist/gitalk.min.css">
+
+<script>
+NexT.utils.loadComments(document.querySelector('#gitalk-container'), () => {
+  NexT.utils.getScript('//cdn.jsdelivr.net/npm/gitalk@1/dist/gitalk.min.js', () => {
+    var gitalk = new Gitalk({
+      clientID    : 'b2fd373d2ca2e03e591e',
+      clientSecret: 'de4ab066908c1fbd32d3a45e091b3538761d685b',
+      repo        : 'BlogComment',
+      owner       : 'ravenxrz',
+      admin       : ['ravenxrz'],
+      id          : '1881291eede2bbe9ef286e13f98dfe1c',
+        language: '',
+      distractionFreeMode: true
+    });
+    gitalk.render('gitalk-container');
+  }, window.Gitalk);
+});
+</script>
+
+</body>
+</html>

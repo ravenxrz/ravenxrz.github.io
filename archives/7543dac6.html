@@ -1,0 +1,717 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 5.1.1">
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+  <meta http-equiv="Cache-Control" content="no-transform">
+  <meta http-equiv="Cache-Control" content="no-siteapp">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+<link rel="stylesheet" href="//cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@5/css/all.min.css">
+  <link rel="stylesheet" href="//cdn.jsdelivr.net/npm/pace-js@1/themes/blue/pace-theme-minimal.css">
+  <script src="//cdn.jsdelivr.net/npm/pace-js@1/pace.min.js"></script>
+
+<script id="hexo-configurations">
+    var NexT = window.NexT || {};
+    var CONFIG = {"hostname":"www.ravenxrz.ink","root":"/","scheme":"Mist","version":"7.8.0","exturl":true,"sidebar":{"position":"left","display":"always","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":true,"show_result":true,"style":"flat"},"back2top":{"enable":true,"sidebar":false,"scrollpercent":true},"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":true,"lazyload":true,"pangu":true,"comments":{"style":"tabs","active":"gitalk","storage":true,"lazyload":true,"nav":null,"activeClass":"gitalk"},"algolia":{"hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":true,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},"motion":{"enable":false,"async":true,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}}};
+  </script>
+
+  <meta name="description" content="本文整理自《鸟哥的Linux私房菜-基础学习篇》及几篇博客。 咱们拿到一个块磁盘是不能马上使用的，需要对磁盘进行分区，再格式化为某个文件系统（如windows上常用的NTFS和Linux下的Ext家族）才能使用。今天咱们的重点就放在磁盘分区上。当然了本文可不是教你怎么用工具或命令去分区，而是分区当中的重要部分–分区表。">
+<meta property="og:type" content="article">
+<meta property="og:title" content="知识整理-分区表MBR与GPT">
+<meta property="og:url" content="https://www.ravenxrz.ink/archives/7543dac6.html">
+<meta property="og:site_name" content="Raven&#39;s Blog">
+<meta property="og:description" content="本文整理自《鸟哥的Linux私房菜-基础学习篇》及几篇博客。 咱们拿到一个块磁盘是不能马上使用的，需要对磁盘进行分区，再格式化为某个文件系统（如windows上常用的NTFS和Linux下的Ext家族）才能使用。今天咱们的重点就放在磁盘分区上。当然了本文可不是教你怎么用工具或命令去分区，而是分区当中的重要部分–分区表。">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="https://ae01.alicdn.com/kf/Hcdfe9f680f0b4053afbe408bfb7d9180m.jpg">
+<meta property="og:image" content="https://ae01.alicdn.com/kf/Hcdcf64418a0a4159a0515d7cc54666f58.jpg">
+<meta property="og:image" content="https://ae01.alicdn.com/kf/H7359a44216a9468c827931a3f0bdbc64P.jpg">
+<meta property="og:image" content="https://ae01.alicdn.com/kf/H6a919019923c4603a9f71c83fb9fb52bM.jpg">
+<meta property="og:image" content="https://ae01.alicdn.com/kf/Hf27869b886d14f14afb707d117d41cc4X.jpg">
+<meta property="og:image" content="https://ae01.alicdn.com/kf/H3c7e85f849a54a18adcdeae56ed082801.jpg">
+<meta property="og:image" content="https://ae01.alicdn.com/kf/Hce86538a27294788b5ccf384496cf4ae0.jpg">
+<meta property="article:published_time" content="2019-08-02T05:59:05.000Z">
+<meta property="article:modified_time" content="2020-09-06T02:45:08.064Z">
+<meta property="article:author" content="Raven">
+<meta property="article:tag" content="文件系统">
+<meta property="article:tag" content="分区表">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://ae01.alicdn.com/kf/Hcdfe9f680f0b4053afbe408bfb7d9180m.jpg">
+
+<link rel="canonical" href="https://www.ravenxrz.ink/archives/7543dac6.html">
+
+
+<script id="page-configurations">
+  // https://hexo.io/docs/variables.html
+  CONFIG.page = {
+    sidebar: "",
+    isHome : false,
+    isPost : true,
+    lang   : 'zh-CN'
+  };
+</script>
+
+  <title>知识整理-分区表MBR与GPT | Raven's Blog</title>
+  
+
+
+
+
+
+
+  <noscript>
+  <style>
+  .use-motion .brand,
+  .use-motion .menu-item,
+  .sidebar-inner,
+  .use-motion .post-block,
+  .use-motion .pagination,
+  .use-motion .comments,
+  .use-motion .post-header,
+  .use-motion .post-body,
+  .use-motion .collection-header { opacity: initial; }
+
+  .use-motion .site-title,
+  .use-motion .site-subtitle {
+    opacity: initial;
+    top: initial;
+  }
+
+  .use-motion .logo-line-before i { left: initial; }
+  .use-motion .logo-line-after i { right: initial; }
+  </style>
+</noscript>
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage">
+  <div class="container">
+    <div class="headband"></div>
+
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切换导航栏">
+      <span class="toggle-line toggle-line-first"></span>
+      <span class="toggle-line toggle-line-middle"></span>
+      <span class="toggle-line toggle-line-last"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <span class="logo-line-before"><i></i></span>
+      <h1 class="site-title">Raven's Blog</h1>
+      <span class="logo-line-after"><i></i></span>
+    </a>
+      <p class="site-subtitle" itemprop="description">zhang.xingrui@foxmail.com</p>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger">
+        <i class="fa fa-search fa-fw fa-lg"></i>
+    </div>
+  </div>
+</div>
+
+
+
+
+<nav class="site-nav">
+  <ul id="menu" class="menu">
+        <li class="menu-item menu-item-home">
+
+    <a href="/" rel="section"><i class="fa fa-fw fa-fa fa-home"></i>首页</a>
+
+  </li>
+        <li class="menu-item menu-item-archives">
+
+    <a href="/archives/" rel="section"><i class="fa fa-fw fa-fa fa-archive"></i>归档<span class="badge">120</span></a>
+
+  </li>
+        <li class="menu-item menu-item-categories">
+
+    <a href="/categories/" rel="section"><i class="fa fa-fw fa-fa fa-th"></i>分类<span class="badge">17</span></a>
+
+  </li>
+        <li class="menu-item menu-item-tags">
+
+    <a href="/tags/" rel="section"><i class="fa fa-fw fa-fa fa-tags"></i>标签<span class="badge">114</span></a>
+
+  </li>
+        <li class="menu-item menu-item-about">
+
+    <a href="/about/" rel="section"><i class="fa fa-fw fa-fa fa-user"></i>关于</a>
+
+  </li>
+      <li class="menu-item menu-item-search">
+        <a role="button" class="popup-trigger"><i class="fa fa-search fa-fw"></i>搜索
+        </a>
+      </li>
+  </ul>
+</nav>
+
+
+
+  <div class="search-pop-overlay">
+    <div class="popup search-popup">
+        <div class="search-header">
+  <span class="search-icon">
+    <i class="fa fa-search"></i>
+  </span>
+  <div class="search-input-container">
+    <input autocomplete="off" autocapitalize="off"
+           placeholder="搜索..." spellcheck="false"
+           type="search" class="search-input">
+  </div>
+  <span class="popup-btn-close">
+    <i class="fa fa-times-circle"></i>
+  </span>
+</div>
+<div id="search-result">
+  <div id="no-result">
+    <i class="fa fa-spinner fa-pulse fa-5x fa-fw"></i>
+  </div>
+</div>
+
+    </div>
+  </div>
+
+</div>
+    </header>
+
+    
+  <div class="back-to-top">
+    <i class="fa fa-arrow-up"></i>
+    <span>0%</span>
+  </div>
+
+  <span class="exturl github-corner" data-url="aHR0cHM6Ly9naXRodWIuY29tL3JhdmVueHJ6" title="Follow me on GitHub" aria-label="Follow me on GitHub"><svg width="80" height="80" viewBox="0 0 250 250" aria-hidden="true"><path d="M0,0 L115,115 L130,115 L142,142 L250,250 L250,0 Z"></path><path d="M128.3,109.0 C113.8,99.7 119.0,89.6 119.0,89.6 C122.0,82.7 120.5,78.6 120.5,78.6 C119.2,72.0 123.4,76.3 123.4,76.3 C127.3,80.9 125.5,87.3 125.5,87.3 C122.9,97.6 130.6,101.9 134.4,103.2" fill="currentColor" style="transform-origin: 130px 106px;" class="octo-arm"></path><path d="M115.0,115.0 C114.9,115.1 118.7,116.5 119.8,115.4 L133.7,101.6 C136.9,99.2 139.9,98.4 142.2,98.6 C133.8,88.0 127.5,74.4 143.8,58.0 C148.5,53.4 154.0,51.2 159.7,51.0 C160.3,49.4 163.2,43.6 171.4,40.1 C171.4,40.1 176.1,42.5 178.8,56.2 C183.1,58.6 187.2,61.8 190.9,65.4 C194.5,69.0 197.7,73.2 200.1,77.6 C213.8,80.2 216.3,84.9 216.3,84.9 C212.7,93.1 206.9,96.0 205.4,96.6 C205.1,102.4 203.0,107.8 198.3,112.5 C181.9,128.9 168.3,122.5 157.7,114.1 C157.9,116.9 156.7,120.9 152.7,124.9 L141.0,136.5 C139.8,137.7 141.6,141.9 141.8,141.8 Z" fill="currentColor" class="octo-body"></path></svg></span>
+
+
+    <main class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          
+
+          <div class="content post posts-expand">
+            
+
+    
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="https://www.ravenxrz.ink/archives/7543dac6.html">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="https://pic.downk.cc/item/5e907515504f4bcb04b6f798.jpg">
+      <meta itemprop="name" content="Raven">
+      <meta itemprop="description" content="分享技术，记录生活">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Raven's Blog">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          知识整理-分区表MBR与GPT
+        </h1>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+
+              <time title="创建时间：2019-08-02 13:59:05" itemprop="dateCreated datePublished" datetime="2019-08-02T13:59:05+08:00">2019-08-02</time>
+            </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-calendar-check-o"></i>
+                </span>
+                <span class="post-meta-item-text">更新于</span>
+                <time title="修改时间：2020-09-06 10:45:08" itemprop="dateModified" datetime="2020-09-06T10:45:08+08:00">2020-09-06</time>
+              </span>
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              <span class="post-meta-item-text">分类于</span>
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/Linux/" itemprop="url" rel="index"><span itemprop="name">Linux</span></a>
+                </span>
+            </span>
+
+          
+            <span class="post-meta-item" title="阅读次数" id="busuanzi_container_page_pv" style="display: none;">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-fa fa-eye"></i>
+              </span>
+              <span class="post-meta-item-text">阅读次数：</span>
+              <span id="busuanzi_value_page_pv"></span>
+            </span>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+        <p>本文整理自《鸟哥的Linux私房菜-基础学习篇》及几篇博客。</p>
+<p>咱们拿到一个块磁盘是不能马上使用的，需要对磁盘进行分区，再格式化为某个文件系统（如windows上常用的NTFS和Linux下的Ext家族）才能使用。今天咱们的重点就放在<strong>磁盘分区</strong>上。当然了本文可不是教你怎么用工具或命令去分区，而是分区当中的重要部分–分区表。</p>
+<a id="more"></a>
+<h2 id="1-传统磁盘结构"><a href="#1-传统磁盘结构" class="headerlink" title="1. 传统磁盘结构"></a>1. 传统磁盘结构</h2><p>常用的分区表有MBR何GPT两种。但是在说这两者之前我们需要了解传统磁盘的物理结构:磁盘的组成主要有盘片、机械手臂、磁头与主轴马达所组成， 而数据的写入其实是在盘片上。所以我们主要关注的也就是这个存储数据的<strong>盘片</strong>。</p>
+<p><em>以下解释来自文章：<a target="_blank" rel="noopener" href="https://blog.csdn.net/xiaominthere/article/details/19756551">https://blog.csdn.net/xiaominthere/article/details/19756551</a></em></p>
+<p><img src="https://ae01.alicdn.com/kf/Hcdfe9f680f0b4053afbe408bfb7d9180m.jpg" width="300"/><img src="https://ae01.alicdn.com/kf/Hcdcf64418a0a4159a0515d7cc54666f58.jpg" width="300"/><img src="https://ae01.alicdn.com/kf/H7359a44216a9468c827931a3f0bdbc64P.jpg" width="300"/></p>
+<ul>
+<li>磁头：磁头是硬盘中对盘片进行读写工作的工具，是硬盘中最精密的部位之一。硬盘的磁头是用线圈缠绕在磁芯上制成的，最初的磁头是读写合一的，通过电流变化去感应信号的幅度。</li>
+<li>磁道：<strong>当磁盘旋转时,磁头若保持在一个位置上,则每个磁头都会在磁盘表面划出一个圆形轨迹,这些圆形轨迹就叫做磁道</strong>。这些磁道用肉眼是根本看不到的,因为它们仅是盘面上以特殊方式磁化了的一些磁化区,磁盘上的信息便是沿着这样的轨道存放的。相邻磁道之间并不是紧挨着的,这是因为磁化单元相隔太近时磁性会相互产生影响,同时也为磁头的读写带来困难。</li>
+<li>扇区：磁盘上的每个磁道被等分为若干个弧段,这些<strong>弧段便是磁盘的扇区</strong>。</li>
+<li>柱面：<strong>硬盘通常由重叠的一组盘片构成,每个盘面都被划分为数目相等的磁道,并从外缘的“0”开始编号,具有相同编号的磁道形成一个圆柱,称之为磁盘的柱面。</strong></li>
+<li>簇：“簇”是 DOS 进行分配的最小单位。当创建一个很小的文件时,如是一个字节,则它在磁盘上并不是只占一个字节的空间,而是占有整个一簇。DOS 视不同的存储介质(如软盘,硬盘),不同容量的硬盘,簇的大小也不一样。簇的大小可在称为磁盘参数块(BPB)中获取。簇的概念仅适用于数据区。</li>
+</ul>
+<p>i&gt; tips：每个盘片都有两面，两面都可以存数据。</p>
+<p>一般来说，我们要进行分区，其实就是<strong>规划柱面的范围</strong>，柱面是分区的最小单位（最新的GPT也可用扇区作为最小分区单位）。比如100-200柱面是分区1,200-400柱面是分区2。</p>
+<h2 id="2-MBR分区表"><a href="#2-MBR分区表" class="headerlink" title="2. MBR分区表"></a>2. MBR分区表</h2><p>MBR这个概念首次出现，是在1983年的IBM PC DOS 2.0操作系统当中，因此也被称为DOS分区结构。实际上，MBR分区结构是一种应用非常广泛的硬盘分区结构，不仅仅是DOS，包括windows系列操作系统、Linux以及基于X86架构的UNIX操作系统等平台均有使用。</p>
+<p>MBR的英文全称是Main Boot Record（一说Master Boot Record），翻译过来的中文名称是主引导记录。</p>
+<p><strong>它主要有以下几个特点：</strong></p>
+<p>1、在我们常见的电脑中，一般是BIOS+MBR、(U)efi+GPT的组合；</p>
+<p>2、MBR分区表中单个分区最大仅支持2TB，而整个分区表最大也是仅支持2TB的硬盘；</p>
+<p>3、MBR分区表最大只支持四个主分区（可少不可多），如果觉得四个不够用，可以使用三个主分区+一个扩展分区的组合（扩展分区仅能存在一个，但扩展分区下可以分出无数个逻辑分区）；</p>
+<p><img src="https://ae01.alicdn.com/kf/H6a919019923c4603a9f71c83fb9fb52bM.jpg"></p>
+<p>可能有朋友对主分区、扩展分区、逻辑分区的概念有点懵逼，这里再说一下：</p>
+<ul>
+<li>主要分区与延伸分区最多可以有四笔（硬盘的限制）</li>
+<li><strong>延伸分区最多只能有一个</strong>（操作系统的限制）</li>
+<li>逻辑分区是由延伸分区持续切割出来的分区；</li>
+<li><strong>能够被格式化后，作为数据存取的分区为主要分区与逻辑分区。延伸分区无法格式化</strong>；</li>
+<li>逻辑分区的数量依操作系统而不同，在Linux系统中SATA硬盘已经可以突破63个以上的分区限制； </li>
+</ul>
+<p>i&gt; tips: 假设上面的硬盘设备文件名为/dev/sda：</p>
+<ul>
+<li>对于四个分区都是主分区时，其命名为/dev/sda1,/dev/sda2,/dev/sda3,/dev/sda4。</li>
+<li>对于三个主分区+一个扩展分区（扩展分区又分出了3个逻辑分区），其命名为/dev/sda1,/dev/sda2,/dev/sda3,<strong>/dev/sda5,/dev/sda6,/dev/sda7。</strong>注意没有/dev/sda4，因为该命名仅给主分区使用。</li>
+</ul>
+<p>MBR分区表占用一个扇区，这个扇区中有三种数据：</p>
+<ul>
+<li>主要开机记录区（Master Boot Record, MBR）：可以<strong>安装开机管理程序</strong>的地方，有<strong>446 Bytes</strong> </li>
+<li>分区表（partition table）：<strong>记录整颗硬盘分区的状态，有64 Bytes</strong> </li>
+<li>主引导记录签名：2Bytes</li>
+</ul>
+<p>详细信息可参见下图。</p>
+<p><img src="https://ae01.alicdn.com/kf/Hf27869b886d14f14afb707d117d41cc4X.jpg"></p>
+<p>i&gt; 上图也说明了为什么MBR分区格式最大只支持2TB的数据。</p>
+<p>借助鸟哥书中的一个例题，我们来加深一下MBR中的分区表的概念及特点：</p>
+<p>√&gt; 在Windows操作系统当中，如果你想要将D与E盘整合成为一个新的分区，而如果有两种分区的情况如下图所示， 图中的特殊颜色区块为D与E盘的示意，请问这两种方式是否均可将D与E整合成为一个新的分区？ </p>
+<p><img src="https://ae01.alicdn.com/kf/H3c7e85f849a54a18adcdeae56ed082801.jpg"></p>
+<p>答：</p>
+<ol>
+<li>上图可以整合：因为上图的D与E同属于延伸分区内的逻辑分区，因此只要将两个分区删除，然后再重新创建一个新的分区， 就能够在不影响其他分区的情况下，将两个分区的容量整合成为一个 。</li>
+<li>下图不可整合：因为D与E分属主分区与逻辑分区，两者不能够整合在一起。除非将延伸分区破坏掉后再重新分区。 但如此一来会影响到所有的逻辑分区，要注意的是<strong>：如果延伸分区被破坏，所有逻辑分区将会被删除。</strong> 因为逻辑分区的信息都记录在延伸分区里面嘛 。</li>
+</ol>
+<h2 id="3-GPT（GUID-partition-table"><a href="#3-GPT（GUID-partition-table" class="headerlink" title="3. GPT（GUID partition table )"></a>3. GPT（GUID partition table )</h2><p>因为过去一个扇区大小就是 512Bytes 而已，不过目前已经有 4K 的扇区设计出现！为了相容于所有的磁盘，因此在扇区的定义上面，大多会使用所谓的逻辑区块位址（Logical Block Address, LBA）来处理。GPT 将磁盘所有区块以此 LBA（默认为 512Bytes 喔！） 来规划，而第一个 LBA 称为 LBA0 （从 0 开始编号）。 </p>
+<p><strong>说白了就是用LBA来统一不同大小的扇区。</strong></p>
+<p>与 MBR 仅使用第一个 512Bytes 区块来纪录不同， GPT 使用了 34 个 LBA 区块来纪录分区信息 ，除了前面 34 个 LBA 之外，整个磁盘的最后 34个 LBA 也拿来作为另一个备份 。详细的结构如下图：</p>
+<p><img src="https://ae01.alicdn.com/kf/Hce86538a27294788b5ccf384496cf4ae0.jpg"></p>
+<h4 id="3-1-LBA0（MBR-相容区块）"><a href="#3-1-LBA0（MBR-相容区块）" class="headerlink" title="3.1 LBA0（MBR 相容区块）"></a>3.1 LBA0（MBR 相容区块）</h4><p>与 MBR 模式相似的，这个相容区块也分为两个部份，一个就是跟之前 446 Bytes 相似的区块，储存了第一阶段的开机管理程序！而<strong>在原本的分区表的纪录区内，这个相容模式仅放入一个特殊标志的分区</strong>，用来表示此磁盘为 GPT 格式之意。而不懂 GPT 分区表的磁盘管理程序， 就不会认识这颗磁盘 。从而<strong>防止那些不识别GPT的磁盘管理工具破坏整个GPT磁盘的信息。</strong></p>
+<h4 id="3-2-LBA1-（GPT-表头纪录）"><a href="#3-2-LBA1-（GPT-表头纪录）" class="headerlink" title="3.2 LBA1 （GPT 表头纪录）"></a>3.2 LBA1 （GPT 表头纪录）</h4><p>这个部份纪录了分区表本身的位置与大小，同时纪录了备份用的 GPT 分区 （就是前面谈到的在最后 34个 LBA 区块） 放置的位置， 同时放置了分区表的<strong>检验机制码 （CRC32），操作系统可以根据这个检验码来判断 GPT 是否正确</strong>。若有错误，还可以通过这个纪录区来取得备份的 GPT（磁盘最后的那个备份区块） 来恢复 GPT 的正常运行！ </p>
+<h4 id="3-3-LBA2-33-（实际纪录分区信息处）"><a href="#3-3-LBA2-33-（实际纪录分区信息处）" class="headerlink" title="3.3 LBA2-33 （实际纪录分区信息处）"></a>3.3 LBA2-33 （实际纪录分区信息处）</h4><p>从 LBA2 区块开始，<strong>每个 LBA 都可以纪录 4 笔分区纪录</strong>，所以在默认的情况下，总共可以有 4<em>32 = 128 笔分区纪录喔！因为每个 LBA 有 512Bytes，因此每笔纪录用到 128 Bytes 的空间，除了每笔纪录所需要的识别码与相关的纪录之外，GPT 在每笔纪录中分别提供了 <strong>64bits 来记载开始/结束的扇区号码，</strong>因此，GPT 分区表对于单一分区来说， 他的最大容量限制就会在“ 264 * 512Bytes = 263 *1KBytes = 233\</em>TB = 8 ZB ”，要注意 1ZB = 230TB 啦！ </p>
+<h2 id="参考"><a href="#参考" class="headerlink" title="参考"></a>参考</h2><ul>
+<li>鸟哥的linux的私房菜</li>
+<li><a target="_blank" rel="noopener" href="https://blog.csdn.net/hyy5801965/article/details/51136395">MBR为什么最大只能用2TB</a></li>
+<li><a target="_blank" rel="noopener" href="https://blog.csdn.net/xiaominthere/article/details/19756551">硬盘概念：扇区，磁道，磁头，柱面，簇</a></li>
+<li><a target="_blank" rel="noopener" href="https://www.tiny777.com/170808MBR/">MBR分区表</a></li>
+</ul>
+
+    </div>
+
+    
+    
+    
+        <div class="reward-container">
+  <div>文章对你有帮助?打赏一下作者吧</div>
+  <button onclick="var qr = document.getElementById('qr'); qr.style.display = (qr.style.display === 'none') ? 'block' : 'none';">
+    打赏
+  </button>
+  <div id="qr" style="display: none;">
+      
+      <div style="display: inline-block;">
+        <img src="https://pic.downk.cc/item/5d064208451253d178a15b27.png" alt="Raven 微信支付">
+        <p>微信支付</p>
+      </div>
+      
+      <div style="display: inline-block;">
+        <img src="https://pic.downk.cc/item/5d0641c7451253d178a15376.png" alt="Raven 支付宝">
+        <p>支付宝</p>
+      </div>
+
+  </div>
+</div>
+
+        
+
+<div>
+<ul class="post-copyright">
+  <li class="post-copyright-author">
+    <strong>本文作者： </strong>Raven
+  </li>
+  <li class="post-copyright-link">
+    <strong>本文链接：</strong>
+    <a href="https://www.ravenxrz.ink/archives/7543dac6.html" title="知识整理-分区表MBR与GPT">https://www.ravenxrz.ink/archives/7543dac6.html</a>
+  </li>
+  <li class="post-copyright-license">
+    <strong>版权声明： </strong>本博客所有文章除特别声明外，均采用 <span class="exturl" data-url="aHR0cHM6Ly9jcmVhdGl2ZWNvbW1vbnMub3JnL2xpY2Vuc2VzL2J5LW5jLXNhLzQuMC8="><i class="fa fa-fw fa-creative-commons"></i>BY-NC-SA</span> 许可协议。转载请注明出处！
+  </li>
+</ul>
+</div>
+
+
+      <footer class="post-footer">
+          
+          <div class="post-tags">
+              <a href="/tags/%E6%96%87%E4%BB%B6%E7%B3%BB%E7%BB%9F/" rel="tag"><i class="fa fa-tag"></i> 文件系统</a>
+              <a href="/tags/%E5%88%86%E5%8C%BA%E8%A1%A8/" rel="tag"><i class="fa fa-tag"></i> 分区表</a>
+          </div>
+
+        
+
+
+        
+    <div class="post-nav">
+      <div class="post-nav-item">
+    <a href="/archives/8d404d4a.html" rel="prev" title="Linux文件系统基础知识">
+      <i class="fa fa-chevron-left"></i> Linux文件系统基础知识
+    </a></div>
+      <div class="post-nav-item">
+    <a href="/archives/14ea3ef9.html" rel="next" title="Ubuntu包管理的小知识">
+      Ubuntu包管理的小知识 <i class="fa fa-chevron-right"></i>
+    </a></div>
+    </div>
+      </footer>
+    
+  </article>
+  
+  
+  
+
+
+
+          </div>
+          
+    <div class="comments" id="gitalk-container"></div>
+
+<script>
+  window.addEventListener('tabs:register', () => {
+    let { activeClass } = CONFIG.comments;
+    if (CONFIG.comments.storage) {
+      activeClass = localStorage.getItem('comments_active') || activeClass;
+    }
+    if (activeClass) {
+      let activeTab = document.querySelector(`a[href="#comment-${activeClass}"]`);
+      if (activeTab) {
+        activeTab.click();
+      }
+    }
+  });
+  if (CONFIG.comments.storage) {
+    window.addEventListener('tabs:click', event => {
+      if (!event.target.matches('.tabs-comment .tab-content .tab-pane')) return;
+      let commentClass = event.target.classList[1];
+      localStorage.setItem('comments_active', commentClass);
+    });
+  }
+</script>
+
+        </div>
+          
+  
+  <div class="toggle sidebar-toggle">
+    <span class="toggle-line toggle-line-first"></span>
+    <span class="toggle-line toggle-line-middle"></span>
+    <span class="toggle-line toggle-line-last"></span>
+  </div>
+
+  <aside class="sidebar">
+    <div class="sidebar-inner">
+
+      <ul class="sidebar-nav motion-element">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          站点概览
+        </li>
+      </ul>
+
+      <!--noindex-->
+      <div class="post-toc-wrap sidebar-panel">
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#1-%E4%BC%A0%E7%BB%9F%E7%A3%81%E7%9B%98%E7%BB%93%E6%9E%84"><span class="nav-text">1. 传统磁盘结构</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#2-MBR%E5%88%86%E5%8C%BA%E8%A1%A8"><span class="nav-text">2. MBR分区表</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#3-GPT%EF%BC%88GUID-partition-table"><span class="nav-text">3. GPT（GUID partition table )</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#3-1-LBA0%EF%BC%88MBR-%E7%9B%B8%E5%AE%B9%E5%8C%BA%E5%9D%97%EF%BC%89"><span class="nav-text">3.1 LBA0（MBR 相容区块）</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#3-2-LBA1-%EF%BC%88GPT-%E8%A1%A8%E5%A4%B4%E7%BA%AA%E5%BD%95%EF%BC%89"><span class="nav-text">3.2 LBA1 （GPT 表头纪录）</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#3-3-LBA2-33-%EF%BC%88%E5%AE%9E%E9%99%85%E7%BA%AA%E5%BD%95%E5%88%86%E5%8C%BA%E4%BF%A1%E6%81%AF%E5%A4%84%EF%BC%89"><span class="nav-text">3.3 LBA2-33 （实际纪录分区信息处）</span></a></li></ol></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%8F%82%E8%80%83"><span class="nav-text">参考</span></a></li></ol></div>
+      </div>
+      <!--/noindex-->
+
+      <div class="site-overview-wrap sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+    <img class="site-author-image" itemprop="image" alt="Raven"
+      src="https://pic.downk.cc/item/5e907515504f4bcb04b6f798.jpg">
+  <p class="site-author-name" itemprop="name">Raven</p>
+  <div class="site-description" itemprop="description">分享技术，记录生活</div>
+</div>
+<div class="site-state-wrap motion-element">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+          <a href="/archives/">
+        
+          <span class="site-state-item-count">120</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+            <a href="/categories/">
+          
+        <span class="site-state-item-count">17</span>
+        <span class="site-state-item-name">分类</span></a>
+      </div>
+      <div class="site-state-item site-state-tags">
+            <a href="/tags/">
+          
+        <span class="site-state-item-count">114</span>
+        <span class="site-state-item-name">标签</span></a>
+      </div>
+  </nav>
+</div>
+  <div class="links-of-author motion-element">
+      <span class="links-of-author-item">
+        <span class="exturl" data-url="aHR0cHM6Ly9naXRodWIuY29tL3JhdmVueHJ6" title="GitHub → https:&#x2F;&#x2F;github.com&#x2F;ravenxrz"><i class="fa fa-fw fa-fab fa-github"></i>GitHub</span>
+      </span>
+      <span class="links-of-author-item">
+        <span class="exturl" data-url="bWFpbHRvOnpoYWduLnhpbmdydWlAZm94bWFpbC5jb20=" title="E-Mail → mailto:zhagn.xingrui@foxmail.com"><i class="fa fa-fw fa-fa fa-envelope"></i>E-Mail</span>
+      </span>
+  </div>
+  <div class="cc-license motion-element" itemprop="license">
+    <span class="exturl cc-opacity" data-url="aHR0cHM6Ly9jcmVhdGl2ZWNvbW1vbnMub3JnL2xpY2Vuc2VzL2J5LW5jLXNhLzQuMC8="><img src="/images/cc-by-nc-sa.svg" alt="Creative Commons"></span>
+  </div>
+
+
+  <div class="links-of-blogroll motion-element">
+    <div class="links-of-blogroll-title">
+      <i class="fa fa-fw fa-fa fa-link"></i>
+      Links
+    </div>
+    <ul class="links-of-blogroll-list">
+        <li class="links-of-blogroll-item">
+          <a href="/resources" title="&#x2F;resources">我的资源</a>
+        </li>
+    </ul>
+  </div>
+
+      </div>
+
+    </div>
+  </aside>
+  <div id="sidebar-dimmer"></div>
+
+
+      </div>
+    </main>
+
+    <footer class="footer">
+      <div class="footer-inner">
+        
+
+        
+
+<div class="copyright">
+  
+  &copy; 2017 – 
+  <span itemprop="copyrightYear">2020</span>
+  <span class="with-love">
+    <i class="fa fa-fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">Raven</span>
+</div>
+  <div class="powered-by">由 <span class="exturl theme-link" data-url="aHR0cHM6Ly9oZXhvLmlv">Hexo</span> & <span class="exturl theme-link" data-url="aHR0cHM6Ly9taXN0LnRoZW1lLW5leHQub3Jn">NexT.Mist</span> 强力驱动
+  </div>
+
+        
+<div class="busuanzi-count">
+  <script async src="https://busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+    <span class="post-meta-item" id="busuanzi_container_site_uv" style="display: none;">
+      <span class="post-meta-item-icon">
+        <i class="fa fa-fa fa-user"></i>
+      </span>
+      <span class="site-uv" title="总访客量">
+        <span id="busuanzi_value_site_uv"></span>
+      </span>
+    </span>
+    <span class="post-meta-divider">|</span>
+    <span class="post-meta-item" id="busuanzi_container_site_pv" style="display: none;">
+      <span class="post-meta-item-icon">
+        <i class="fa fa-fa fa-eye"></i>
+      </span>
+      <span class="site-pv" title="总访问量">
+        <span id="busuanzi_value_site_pv"></span>
+      </span>
+    </span>
+</div>
+
+
+
+
+
+
+
+
+      </div>
+    </footer>
+  </div>
+
+  
+  <script src="//cdn.jsdelivr.net/npm/animejs@3.1.0/lib/anime.min.js"></script>
+  <script src="//cdn.jsdelivr.net/npm/medium-zoom@1/dist/medium-zoom.min.js"></script>
+  <script src="//cdn.jsdelivr.net/npm/lozad@1/dist/lozad.min.js"></script>
+  <script src="//cdn.jsdelivr.net/npm/pangu@4/dist/browser/pangu.min.js"></script>
+
+<script src="/js/utils.js"></script>
+
+
+<script src="/js/schemes/muse.js"></script>
+
+
+<script src="/js/next-boot.js"></script>
+
+
+
+
+  
+  <script>
+    (function(){
+      var bp = document.createElement('script');
+      var curProtocol = window.location.protocol.split(':')[0];
+      bp.src = (curProtocol === 'https') ? 'https://zz.bdstatic.com/linksubmit/push.js' : 'http://push.zhanzhang.baidu.com/push.js';
+      var s = document.getElementsByTagName("script")[0];
+      s.parentNode.insertBefore(bp, s);
+    })();
+  </script>
+
+
+
+
+  
+<script src="/js/local-search.js"></script>
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+  
+      
+
+<script>
+  if (typeof MathJax === 'undefined') {
+    window.MathJax = {
+      loader: {
+        source: {
+          '[tex]/amsCd': '[tex]/amscd',
+          '[tex]/AMScd': '[tex]/amscd'
+        }
+      },
+      tex: {
+        inlineMath: {'[+]': [['$', '$']]},
+        tags: 'ams'
+      },
+      options: {
+        renderActions: {
+          findScript: [10, doc => {
+            document.querySelectorAll('script[type^="math/tex"]').forEach(node => {
+              const display = !!node.type.match(/; *mode=display/);
+              const math = new doc.options.MathItem(node.textContent, doc.inputJax[0], display);
+              const text = document.createTextNode('');
+              node.parentNode.replaceChild(text, node);
+              math.start = {node: text, delim: '', n: 0};
+              math.end = {node: text, delim: '', n: 0};
+              doc.math.push(math);
+            });
+          }, '', false],
+          insertedScript: [200, () => {
+            document.querySelectorAll('mjx-container').forEach(node => {
+              let target = node.parentNode;
+              if (target.nodeName.toLowerCase() === 'li') {
+                target.parentNode.classList.add('has-jax');
+              }
+            });
+          }, '', false]
+        }
+      }
+    };
+    (function () {
+      var script = document.createElement('script');
+      script.src = '//cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js';
+      script.defer = true;
+      document.head.appendChild(script);
+    })();
+  } else {
+    MathJax.startup.document.state(0);
+    MathJax.texReset();
+    MathJax.typeset();
+  }
+</script>
+
+    
+
+  
+  <script src="//cdn.jsdelivr.net/npm/quicklink@1/dist/quicklink.umd.js"></script>
+  <script>
+      window.addEventListener('load', () => {
+      quicklink({
+        timeout : 3000,
+        priority: true,
+        ignores : [uri => uri.includes('#'),uri => uri === 'https://www.ravenxrz.ink/archives/7543dac6.html',]
+      });
+      });
+  </script>
+
+<link rel="stylesheet" href="//cdn.jsdelivr.net/npm/gitalk@1/dist/gitalk.min.css">
+
+<script>
+NexT.utils.loadComments(document.querySelector('#gitalk-container'), () => {
+  NexT.utils.getScript('//cdn.jsdelivr.net/npm/gitalk@1/dist/gitalk.min.js', () => {
+    var gitalk = new Gitalk({
+      clientID    : 'b2fd373d2ca2e03e591e',
+      clientSecret: 'de4ab066908c1fbd32d3a45e091b3538761d685b',
+      repo        : 'BlogComment',
+      owner       : 'ravenxrz',
+      admin       : ['ravenxrz'],
+      id          : '78e8f69fa4eb9e69c7379e33196238a8',
+        language: '',
+      distractionFreeMode: true
+    });
+    gitalk.render('gitalk-container');
+  }, window.Gitalk);
+});
+</script>
+
+</body>
+</html>

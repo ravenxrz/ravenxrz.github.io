@@ -1,0 +1,697 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 5.1.1">
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+  <meta http-equiv="Cache-Control" content="no-transform">
+  <meta http-equiv="Cache-Control" content="no-siteapp">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+<link rel="stylesheet" href="//cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@5/css/all.min.css">
+  <link rel="stylesheet" href="//cdn.jsdelivr.net/npm/pace-js@1/themes/blue/pace-theme-minimal.css">
+  <script src="//cdn.jsdelivr.net/npm/pace-js@1/pace.min.js"></script>
+
+<script id="hexo-configurations">
+    var NexT = window.NexT || {};
+    var CONFIG = {"hostname":"www.ravenxrz.ink","root":"/","scheme":"Mist","version":"7.8.0","exturl":true,"sidebar":{"position":"left","display":"always","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":true,"show_result":true,"style":"flat"},"back2top":{"enable":true,"sidebar":false,"scrollpercent":true},"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":true,"lazyload":true,"pangu":true,"comments":{"style":"tabs","active":"gitalk","storage":true,"lazyload":true,"nav":null,"activeClass":"gitalk"},"algolia":{"hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":true,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},"motion":{"enable":false,"async":true,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}}};
+  </script>
+
+  <meta name="description" content="yalmip学习1. yalmip简介1.1 什么是yalmip yalmip是由Lofberg开发的一种免费的优化求解工具，其最大特色在于集成许多外部的最优化求解器，形成一种统一的建模求解语言，提供了Matlab的调用API，减少学习者学习成本。">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Yalmip使用学习">
+<meta property="og:url" content="https://www.ravenxrz.ink/archives/8df54bf5.html">
+<meta property="og:site_name" content="Raven&#39;s Blog">
+<meta property="og:description" content="yalmip学习1. yalmip简介1.1 什么是yalmip yalmip是由Lofberg开发的一种免费的优化求解工具，其最大特色在于集成许多外部的最优化求解器，形成一种统一的建模求解语言，提供了Matlab的调用API，减少学习者学习成本。">
+<meta property="og:locale" content="zh_CN">
+<meta property="article:published_time" content="2018-04-25T05:58:24.000Z">
+<meta property="article:modified_time" content="2020-09-06T02:45:08.042Z">
+<meta property="article:author" content="Raven">
+<meta property="article:tag" content="Yalmip">
+<meta name="twitter:card" content="summary">
+
+<link rel="canonical" href="https://www.ravenxrz.ink/archives/8df54bf5.html">
+
+
+<script id="page-configurations">
+  // https://hexo.io/docs/variables.html
+  CONFIG.page = {
+    sidebar: "",
+    isHome : false,
+    isPost : true,
+    lang   : 'zh-CN'
+  };
+</script>
+
+  <title>Yalmip使用学习 | Raven's Blog</title>
+  
+
+
+
+
+
+
+  <noscript>
+  <style>
+  .use-motion .brand,
+  .use-motion .menu-item,
+  .sidebar-inner,
+  .use-motion .post-block,
+  .use-motion .pagination,
+  .use-motion .comments,
+  .use-motion .post-header,
+  .use-motion .post-body,
+  .use-motion .collection-header { opacity: initial; }
+
+  .use-motion .site-title,
+  .use-motion .site-subtitle {
+    opacity: initial;
+    top: initial;
+  }
+
+  .use-motion .logo-line-before i { left: initial; }
+  .use-motion .logo-line-after i { right: initial; }
+  </style>
+</noscript>
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage">
+  <div class="container">
+    <div class="headband"></div>
+
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切换导航栏">
+      <span class="toggle-line toggle-line-first"></span>
+      <span class="toggle-line toggle-line-middle"></span>
+      <span class="toggle-line toggle-line-last"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <span class="logo-line-before"><i></i></span>
+      <h1 class="site-title">Raven's Blog</h1>
+      <span class="logo-line-after"><i></i></span>
+    </a>
+      <p class="site-subtitle" itemprop="description">zhang.xingrui@foxmail.com</p>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger">
+        <i class="fa fa-search fa-fw fa-lg"></i>
+    </div>
+  </div>
+</div>
+
+
+
+
+<nav class="site-nav">
+  <ul id="menu" class="menu">
+        <li class="menu-item menu-item-home">
+
+    <a href="/" rel="section"><i class="fa fa-fw fa-fa fa-home"></i>首页</a>
+
+  </li>
+        <li class="menu-item menu-item-archives">
+
+    <a href="/archives/" rel="section"><i class="fa fa-fw fa-fa fa-archive"></i>归档<span class="badge">120</span></a>
+
+  </li>
+        <li class="menu-item menu-item-categories">
+
+    <a href="/categories/" rel="section"><i class="fa fa-fw fa-fa fa-th"></i>分类<span class="badge">17</span></a>
+
+  </li>
+        <li class="menu-item menu-item-tags">
+
+    <a href="/tags/" rel="section"><i class="fa fa-fw fa-fa fa-tags"></i>标签<span class="badge">114</span></a>
+
+  </li>
+        <li class="menu-item menu-item-about">
+
+    <a href="/about/" rel="section"><i class="fa fa-fw fa-fa fa-user"></i>关于</a>
+
+  </li>
+      <li class="menu-item menu-item-search">
+        <a role="button" class="popup-trigger"><i class="fa fa-search fa-fw"></i>搜索
+        </a>
+      </li>
+  </ul>
+</nav>
+
+
+
+  <div class="search-pop-overlay">
+    <div class="popup search-popup">
+        <div class="search-header">
+  <span class="search-icon">
+    <i class="fa fa-search"></i>
+  </span>
+  <div class="search-input-container">
+    <input autocomplete="off" autocapitalize="off"
+           placeholder="搜索..." spellcheck="false"
+           type="search" class="search-input">
+  </div>
+  <span class="popup-btn-close">
+    <i class="fa fa-times-circle"></i>
+  </span>
+</div>
+<div id="search-result">
+  <div id="no-result">
+    <i class="fa fa-spinner fa-pulse fa-5x fa-fw"></i>
+  </div>
+</div>
+
+    </div>
+  </div>
+
+</div>
+    </header>
+
+    
+  <div class="back-to-top">
+    <i class="fa fa-arrow-up"></i>
+    <span>0%</span>
+  </div>
+
+  <span class="exturl github-corner" data-url="aHR0cHM6Ly9naXRodWIuY29tL3JhdmVueHJ6" title="Follow me on GitHub" aria-label="Follow me on GitHub"><svg width="80" height="80" viewBox="0 0 250 250" aria-hidden="true"><path d="M0,0 L115,115 L130,115 L142,142 L250,250 L250,0 Z"></path><path d="M128.3,109.0 C113.8,99.7 119.0,89.6 119.0,89.6 C122.0,82.7 120.5,78.6 120.5,78.6 C119.2,72.0 123.4,76.3 123.4,76.3 C127.3,80.9 125.5,87.3 125.5,87.3 C122.9,97.6 130.6,101.9 134.4,103.2" fill="currentColor" style="transform-origin: 130px 106px;" class="octo-arm"></path><path d="M115.0,115.0 C114.9,115.1 118.7,116.5 119.8,115.4 L133.7,101.6 C136.9,99.2 139.9,98.4 142.2,98.6 C133.8,88.0 127.5,74.4 143.8,58.0 C148.5,53.4 154.0,51.2 159.7,51.0 C160.3,49.4 163.2,43.6 171.4,40.1 C171.4,40.1 176.1,42.5 178.8,56.2 C183.1,58.6 187.2,61.8 190.9,65.4 C194.5,69.0 197.7,73.2 200.1,77.6 C213.8,80.2 216.3,84.9 216.3,84.9 C212.7,93.1 206.9,96.0 205.4,96.6 C205.1,102.4 203.0,107.8 198.3,112.5 C181.9,128.9 168.3,122.5 157.7,114.1 C157.9,116.9 156.7,120.9 152.7,124.9 L141.0,136.5 C139.8,137.7 141.6,141.9 141.8,141.8 Z" fill="currentColor" class="octo-body"></path></svg></span>
+
+
+    <main class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          
+
+          <div class="content post posts-expand">
+            
+
+    
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="https://www.ravenxrz.ink/archives/8df54bf5.html">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="https://pic.downk.cc/item/5e907515504f4bcb04b6f798.jpg">
+      <meta itemprop="name" content="Raven">
+      <meta itemprop="description" content="分享技术，记录生活">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Raven's Blog">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          Yalmip使用学习
+        </h1>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+
+              <time title="创建时间：2018-04-25 13:58:24" itemprop="dateCreated datePublished" datetime="2018-04-25T13:58:24+08:00">2018-04-25</time>
+            </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-calendar-check-o"></i>
+                </span>
+                <span class="post-meta-item-text">更新于</span>
+                <time title="修改时间：2020-09-06 10:45:08" itemprop="dateModified" datetime="2020-09-06T10:45:08+08:00">2020-09-06</time>
+              </span>
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              <span class="post-meta-item-text">分类于</span>
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/%E6%95%B0%E5%AD%A6%E5%BB%BA%E6%A8%A1/" itemprop="url" rel="index"><span itemprop="name">数学建模</span></a>
+                </span>
+            </span>
+
+          
+            <span class="post-meta-item" title="阅读次数" id="busuanzi_container_page_pv" style="display: none;">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-fa fa-eye"></i>
+              </span>
+              <span class="post-meta-item-text">阅读次数：</span>
+              <span id="busuanzi_value_page_pv"></span>
+            </span>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+        <h2 id="yalmip学习"><a href="#yalmip学习" class="headerlink" title="yalmip学习"></a>yalmip学习</h2><h3 id="1-yalmip简介"><a href="#1-yalmip简介" class="headerlink" title="1. yalmip简介"></a>1. yalmip简介</h3><h4 id="1-1-什么是yalmip"><a href="#1-1-什么是yalmip" class="headerlink" title="1.1 什么是yalmip"></a>1.1 什么是yalmip</h4><blockquote>
+<p>yalmip是由Lofberg开发的一种免费的优化求解工具，其最大特色在于集成许多外部的最优化求解器，形成一种统一的建模求解语言，提供了Matlab的调用API，减少学习者学习成本。</p>
+</blockquote>
+<a id="more"></a>
+<h4 id="1-2-yalmip安装方式"><a href="#1-2-yalmip安装方式" class="headerlink" title="1.2 yalmip安装方式"></a>1.2 yalmip安装方式</h4><p>这里以<strong>MATLAB</strong>的安装方式为例，在<a target="_blank" rel="noopener" href="https://yalmip.github.io/">官网</a>上下载最新包，将其解压至<code>matlab</code>的<code>toolbox</code>文件夹下（当然也放置在其他文件夹），打开<code>matlab</code>软件添加Path路径即可。最后键入<code>which sdpvar</code>命令，显示<code>sdpvar</code>路径则安装成功。</p>
+<h3 id="2-yalmip求解优化问题的四部曲"><a href="#2-yalmip求解优化问题的四部曲" class="headerlink" title="2.yalmip求解优化问题的四部曲"></a>2.yalmip求解优化问题的四部曲</h3><h4 id="2-1-创建决策变量"><a href="#2-1-创建决策变量" class="headerlink" title="2.1 创建决策变量"></a>2.1 创建决策变量</h4><p><code>yalmip</code>一共有三种方式创建决策变量，分别为:</p>
+<ol>
+<li><code>sdpvar</code>-创建实数型决策变量</li>
+<li><code>intbar</code>-创建整数型决策变量</li>
+<li><code>binvar</code>-创建<code>0/1</code>型决策变量</li>
+</ol>
+<p>不过值得注意的是，在创建<code>n*n</code>的决策变量时，<code>yalmip</code>默认是对称方阵，所以要创建非对称方针时，需要这样写：</p>
+<figure class="highlight"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">xxxvar(n,n,&#x27;full&#x27;)</span><br></pre></td></tr></table></figure>
+
+<h4 id="2-2-添加约束条件"><a href="#2-2-添加约束条件" class="headerlink" title="2.2 添加约束条件"></a>2.2 添加约束条件</h4><p>比起<code>matlab</code>自带的各种优化函数所要写明的约束条件，<code>yalmip</code>的约束条件写起来是非常舒适直观的。</p>
+<p>比如要写入<code>0&lt;=x1+x2+x3&lt;=1</code>。</p>
+<p>那么可以这样写:</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">% 创建决策变量</span><br><span class="line">x = sdpvar(<span class="number">1</span>,<span class="number">3</span>);</span><br><span class="line">% 添加约束条件</span><br><span class="line">C = [<span class="number">0</span>&lt;=x(<span class="number">1</span>)+x(<span class="number">2</span>)+x(<span class="number">3</span>)&lt;=<span class="number">1</span>];</span><br></pre></td></tr></table></figure>
+
+<p>是不是非常爽呢。这才是人类语言（和我初见python的感觉差不多）</p>
+<h4 id="2-3-参数配置"><a href="#2-3-参数配置" class="headerlink" title="2.3 参数配置"></a>2.3 参数配置</h4><p>关于参数设置，我们大多数是用来设置求解器<code>solver</code>的，当然还有其它的选项，可以通过<code>doc sdpsettings</code>查看。</p>
+<h4 id="2-4-求解问题"><a href="#2-4-求解问题" class="headerlink" title="2.4 求解问题"></a>2.4 求解问题</h4><p>最后就是求解问题了。</p>
+<p>首先要明确求解目标<code>z</code>，<code>yalmip</code>默认是求解最小值问题，所以遇到求解最大值的问题，只需要在原问题的基础上添加一个负号即可。</p>
+<p>求解调用格式：</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">optimize(target,constraints,opstions)</span><br></pre></td></tr></table></figure>
+
+<h4 id="2-5-几个常用的其它指令"><a href="#2-5-几个常用的其它指令" class="headerlink" title="2.5 几个常用的其它指令"></a>2.5 几个常用的其它指令</h4><ol>
+<li><code>check</code>：可以检查约束条件是否被满足（检查约束条件的余值）</li>
+<li><code>value</code>：可以查看变量或表达式的值</li>
+<li><code>assign</code>: 可以给变量赋值，这个命令调试时很重要</li>
+</ol>
+<h3 id="3-举两个栗子"><a href="#3-举两个栗子" class="headerlink" title="3.举两个栗子"></a>3.举两个栗子</h3><h4 id="3-1-简单例子"><a href="#3-1-简单例子" class="headerlink" title="3.1 简单例子"></a>3.1 简单例子</h4><p>如题</p>
+<p>$$<br>\begin{equation}<br>z = max(\frac{x_1+2x_2}{2x_1+x_2}) \\<br>\left\{<br>             \begin{array}{c}<br>               x_1 + x_2 \ge 2    \\<br>               x_2 - x_1 \le 1    \\<br>               x_1 \le 1<br>             \end{array}<br>\right.<br>\end{equation}<br>$$</p>
+<p>代码如下，附有详细解释，就不说明了：</p>
+<figure class="highlight matlab"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">% 清除工作区</span></span><br><span class="line">clear;clc;close all;</span><br><span class="line"><span class="comment">% 创建决策变量</span></span><br><span class="line">x = sdpvar(<span class="number">1</span>,<span class="number">2</span>);</span><br><span class="line"><span class="comment">% 添加约束条件</span></span><br><span class="line">C = [</span><br><span class="line">    x(<span class="number">1</span>) + x(<span class="number">2</span>)  &gt;= <span class="number">2</span></span><br><span class="line">    x(<span class="number">2</span>)-x(<span class="number">1</span>) &lt;=<span class="number">1</span></span><br><span class="line">    x(<span class="number">1</span>)&lt;=<span class="number">1</span></span><br><span class="line">    ];</span><br><span class="line">ops = sdpsettings(<span class="string">&#x27;verbose&#x27;</span>,<span class="number">1</span>);</span><br><span class="line"><span class="comment">% 目标函数</span></span><br><span class="line">z = -(x(<span class="number">1</span>)+<span class="number">2</span>*x(<span class="number">2</span>))/(<span class="number">2</span>*x(<span class="number">1</span>)+x(<span class="number">2</span>)); <span class="comment">% 注意这是求解最大值</span></span><br><span class="line"><span class="comment">% 求解</span></span><br><span class="line">result = optimize(C,z,ops);</span><br><span class="line"><span class="keyword">if</span> result.problem == <span class="number">0</span> <span class="comment">% problem =0 代表求解成功</span></span><br><span class="line">    value(x)</span><br><span class="line">    -value(z)   <span class="comment">% 反转</span></span><br><span class="line"><span class="keyword">else</span></span><br><span class="line">    <span class="built_in">disp</span>(<span class="string">&#x27;求解出错&#x27;</span>);</span><br><span class="line"><span class="keyword">end</span></span><br></pre></td></tr></table></figure>
+
+<p>求解结果:</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">ans =</span><br><span class="line"></span><br><span class="line">   <span class="number">0.500000999998279</span>   <span class="number">1.500000333331623</span></span><br><span class="line"></span><br><span class="line"></span><br><span class="line">ans =</span><br><span class="line"></span><br><span class="line">   <span class="number">1.399999360001426</span></span><br><span class="line"></span><br></pre></td></tr></table></figure>
+
+
+
+<h4 id="3-2-解决经典的TSP问题"><a href="#3-2-解决经典的TSP问题" class="headerlink" title="3.2 解决经典的TSP问题"></a>3.2 解决经典的TSP问题</h4><p>关于TSP的理论，这里我就不详细介绍了，百度有很多。在遇到yalmip之前，我学习的求解TSP的第一解法就是利用lingo来求解，后来学习了几种智能算法，如遗传算法，模拟退火，蚁群算法等等都可以解决这个问题。现在，学习了yalmip之后，我们可以完全抛弃lingo那种简陋的ide。废话不多说，先贴上约束条件：</p>
+<p>$$<br>\min Z = \sum_{i=1}^{n}\sum_{j=1}^{n} d_{ij}x_{ij}   \\<br>    s.t. \left\{<br>    \begin{array}{c}<br>        \sum_{i=1,i\neq j}^{n}x_{ij} = 1,\qquad j = 1,\cdots,n      \\<br>        \sum_{j=1,j\neq i}^{n}x_{ij} = 1,\qquad i = 1,\cdots,n\\<br>        u_i-u_j + nx_{ij} \le n-1,\qquad 1&lt; i\neq j \le n   \\<br>        x_{ij} = 0 \text{或} 1,\qquad u,j=1,\cdots,n  \\<br>        u_i\text{为实数},\qquad i=1,\cdots,n<br>    \end{array}<br>    \right.<br>$$</p>
+<p>再来看看代码：</p>
+<figure class="highlight matlab"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">% 利用yamlip求解TSP问题</span></span><br><span class="line">clear;clc;close all;</span><br><span class="line">d = load(<span class="string">&#x27;tsp_dist_matrix.txt&#x27;</span>)&#x27;;</span><br><span class="line">n = <span class="built_in">size</span>(d,<span class="number">1</span>);</span><br><span class="line"><span class="comment">% 决策变量</span></span><br><span class="line">x = binvar(n,n,<span class="string">&#x27;full&#x27;</span>);</span><br><span class="line">u = sdpvar(<span class="number">1</span>,n);</span><br><span class="line"><span class="comment">% 目标</span></span><br><span class="line">z = sum(sum(d.*x));</span><br><span class="line"><span class="comment">% 约束添加</span></span><br><span class="line">C = [];</span><br><span class="line"><span class="keyword">for</span> <span class="built_in">j</span> = <span class="number">1</span>:n</span><br><span class="line">    s = sum(x(:,<span class="built_in">j</span>))-x(<span class="built_in">j</span>,<span class="built_in">j</span>);</span><br><span class="line">    C = [C,   s  == <span class="number">1</span>];</span><br><span class="line"><span class="keyword">end</span></span><br><span class="line"><span class="keyword">for</span> <span class="built_in">i</span> = <span class="number">1</span>:n</span><br><span class="line">    s = sum(x(<span class="built_in">i</span>,:)) - x(<span class="built_in">i</span>,<span class="built_in">i</span>);</span><br><span class="line">    C = [C, s  == <span class="number">1</span>];</span><br><span class="line"><span class="keyword">end</span></span><br><span class="line"><span class="keyword">for</span> <span class="built_in">i</span> = <span class="number">2</span>:n</span><br><span class="line">    <span class="keyword">for</span> <span class="built_in">j</span> = <span class="number">2</span>:n</span><br><span class="line">        <span class="keyword">if</span> <span class="built_in">i</span>~=<span class="built_in">j</span></span><br><span class="line">            C = [C,u(<span class="built_in">i</span>)-u(<span class="built_in">j</span>) + n*x(<span class="built_in">i</span>,<span class="built_in">j</span>)&lt;=n<span class="number">-1</span>];</span><br><span class="line">        <span class="keyword">end</span></span><br><span class="line">    <span class="keyword">end</span></span><br><span class="line"><span class="keyword">end</span></span><br><span class="line"><span class="comment">% 参数设置</span></span><br><span class="line">ops = sdpsettings(<span class="string">&#x27;verbose&#x27;</span>,<span class="number">0</span>);</span><br><span class="line"><span class="comment">% 求解</span></span><br><span class="line">result= optimize(C,z,ops);</span><br><span class="line"><span class="keyword">if</span> result.problem == <span class="number">0</span></span><br><span class="line">    value(x)</span><br><span class="line">    value(z)</span><br><span class="line"><span class="keyword">else</span></span><br><span class="line">    <span class="built_in">disp</span>(<span class="string">&#x27;求解过程中出错&#x27;</span>);</span><br><span class="line"><span class="keyword">end</span></span><br><span class="line"></span><br></pre></td></tr></table></figure>
+
+<p>这里用到的<code>tsp_dist_matrix.txt</code>如下：</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"><span class="number">0</span> <span class="number">7</span> <span class="number">4</span> <span class="number">5</span> <span class="number">8</span> <span class="number">6</span> <span class="number">12</span> <span class="number">13</span> <span class="number">11</span> <span class="number">18</span></span><br><span class="line"><span class="number">7</span> <span class="number">0</span>  <span class="number">3</span> <span class="number">10</span> <span class="number">9</span> <span class="number">14</span> <span class="number">5</span> <span class="number">14</span> <span class="number">17</span> <span class="number">17</span></span><br><span class="line"><span class="number">4</span> <span class="number">3</span> <span class="number">0</span> <span class="number">5</span> <span class="number">9</span> <span class="number">10</span> <span class="number">21</span> <span class="number">8</span> <span class="number">27</span> <span class="number">12</span></span><br><span class="line"><span class="number">5</span> <span class="number">10</span> <span class="number">5</span> <span class="number">0</span> <span class="number">14</span> <span class="number">9</span> <span class="number">10</span> <span class="number">9</span> <span class="number">23</span> <span class="number">16</span></span><br><span class="line"><span class="number">8</span> <span class="number">9</span> <span class="number">9</span> <span class="number">14</span> <span class="number">0</span> <span class="number">7</span> <span class="number">8</span> <span class="number">7</span> <span class="number">20</span> <span class="number">19</span></span><br><span class="line"><span class="number">6</span> <span class="number">14</span> <span class="number">10</span> <span class="number">9</span> <span class="number">7</span> <span class="number">0</span> <span class="number">13</span> <span class="number">5</span> <span class="number">25</span> <span class="number">13</span></span><br><span class="line"><span class="number">12</span> <span class="number">5</span> <span class="number">21</span> <span class="number">10</span> <span class="number">8</span> <span class="number">13</span> <span class="number">0</span> <span class="number">23</span> <span class="number">21</span> <span class="number">18</span></span><br><span class="line"><span class="number">13</span> <span class="number">14</span> <span class="number">8</span> <span class="number">9</span> <span class="number">7</span> <span class="number">5</span> <span class="number">23</span> <span class="number">0</span> <span class="number">18</span> <span class="number">12</span></span><br><span class="line"><span class="number">11</span> <span class="number">17</span> <span class="number">27</span> <span class="number">23</span> <span class="number">20</span> <span class="number">25</span> <span class="number">21</span> <span class="number">18</span> <span class="number">0</span> <span class="number">16</span></span><br><span class="line"><span class="number">18</span> <span class="number">17</span> <span class="number">12</span> <span class="number">16</span> <span class="number">19</span> <span class="number">13</span> <span class="number">18</span> <span class="number">12</span> <span class="number">16</span> <span class="number">0</span></span><br></pre></td></tr></table></figure>
+
+<p>最后来看看结果吧：</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br></pre></td><td class="code"><pre><span class="line">&gt;&gt; value(x)</span><br><span class="line"></span><br><span class="line">ans =</span><br><span class="line"></span><br><span class="line">   NaN     <span class="number">0</span>     <span class="number">0</span>     <span class="number">0</span>     <span class="number">0</span>     <span class="number">0</span>     <span class="number">0</span>     <span class="number">0</span>     <span class="number">1</span>     <span class="number">0</span></span><br><span class="line">     <span class="number">0</span>   NaN     <span class="number">1</span>     <span class="number">0</span>     <span class="number">0</span>     <span class="number">0</span>     <span class="number">0</span>     <span class="number">0</span>     <span class="number">0</span>     <span class="number">0</span></span><br><span class="line">     <span class="number">0</span>     <span class="number">0</span>   NaN     <span class="number">1</span>     <span class="number">0</span>     <span class="number">0</span>     <span class="number">0</span>     <span class="number">0</span>     <span class="number">0</span>     <span class="number">0</span></span><br><span class="line">     <span class="number">1</span>     <span class="number">0</span>     <span class="number">0</span>   NaN     <span class="number">0</span>     <span class="number">0</span>     <span class="number">0</span>     <span class="number">0</span>     <span class="number">0</span>     <span class="number">0</span></span><br><span class="line">     <span class="number">0</span>     <span class="number">0</span>     <span class="number">0</span>     <span class="number">0</span>   NaN     <span class="number">0</span>     <span class="number">1</span>     <span class="number">0</span>     <span class="number">0</span>     <span class="number">0</span></span><br><span class="line">     <span class="number">0</span>     <span class="number">0</span>     <span class="number">0</span>     <span class="number">0</span>     <span class="number">1</span>   NaN     <span class="number">0</span>     <span class="number">0</span>     <span class="number">0</span>     <span class="number">0</span></span><br><span class="line">     <span class="number">0</span>     <span class="number">1</span>     <span class="number">0</span>     <span class="number">0</span>     <span class="number">0</span>     <span class="number">0</span>   NaN     <span class="number">0</span>     <span class="number">0</span>     <span class="number">0</span></span><br><span class="line">     <span class="number">0</span>     <span class="number">0</span>     <span class="number">0</span>     <span class="number">0</span>     <span class="number">0</span>     <span class="number">1</span>     <span class="number">0</span>   NaN     <span class="number">0</span>     <span class="number">0</span></span><br><span class="line">     <span class="number">0</span>     <span class="number">0</span>     <span class="number">0</span>     <span class="number">0</span>     <span class="number">0</span>     <span class="number">0</span>     <span class="number">0</span>     <span class="number">0</span>   NaN     <span class="number">1</span></span><br><span class="line">     <span class="number">0</span>     <span class="number">0</span>     <span class="number">0</span>     <span class="number">0</span>     <span class="number">0</span>     <span class="number">0</span>     <span class="number">0</span>     <span class="number">1</span>     <span class="number">0</span>   NaN</span><br><span class="line"></span><br><span class="line">&gt;&gt; value(z)</span><br><span class="line"></span><br><span class="line">ans =</span><br><span class="line"></span><br><span class="line">    <span class="number">77</span></span><br><span class="line"></span><br></pre></td></tr></table></figure>
+
+
+<p>最后，发现了<code>yalmip</code>的一个<code>bug</code>，在书写<code>yalmip</code>的约束条件时，如下：<br><code>x(1) + x(2)-2 &gt;= 0</code><br>注意x(2)-2这个-2是紧贴x(2)的。这样求解释正确的，如果换成<br><code>x(1) + x(2) -2 &gt;= 0</code><br><code>x(2)-2</code>这个<code>-2</code>不是紧贴<code>x(2)</code>的。这样求解则会出现问题。</p>
+<p><strong>建议把所有常数写在等式的右边</strong></p>
+
+    </div>
+
+    
+    
+    
+        <div class="reward-container">
+  <div>文章对你有帮助?打赏一下作者吧</div>
+  <button onclick="var qr = document.getElementById('qr'); qr.style.display = (qr.style.display === 'none') ? 'block' : 'none';">
+    打赏
+  </button>
+  <div id="qr" style="display: none;">
+      
+      <div style="display: inline-block;">
+        <img src="https://pic.downk.cc/item/5d064208451253d178a15b27.png" alt="Raven 微信支付">
+        <p>微信支付</p>
+      </div>
+      
+      <div style="display: inline-block;">
+        <img src="https://pic.downk.cc/item/5d0641c7451253d178a15376.png" alt="Raven 支付宝">
+        <p>支付宝</p>
+      </div>
+
+  </div>
+</div>
+
+        
+
+<div>
+<ul class="post-copyright">
+  <li class="post-copyright-author">
+    <strong>本文作者： </strong>Raven
+  </li>
+  <li class="post-copyright-link">
+    <strong>本文链接：</strong>
+    <a href="https://www.ravenxrz.ink/archives/8df54bf5.html" title="Yalmip使用学习">https://www.ravenxrz.ink/archives/8df54bf5.html</a>
+  </li>
+  <li class="post-copyright-license">
+    <strong>版权声明： </strong>本博客所有文章除特别声明外，均采用 <span class="exturl" data-url="aHR0cHM6Ly9jcmVhdGl2ZWNvbW1vbnMub3JnL2xpY2Vuc2VzL2J5LW5jLXNhLzQuMC8="><i class="fa fa-fw fa-creative-commons"></i>BY-NC-SA</span> 许可协议。转载请注明出处！
+  </li>
+</ul>
+</div>
+
+
+      <footer class="post-footer">
+          
+          <div class="post-tags">
+              <a href="/tags/Yalmip/" rel="tag"><i class="fa fa-tag"></i> Yalmip</a>
+          </div>
+
+        
+
+
+        
+    <div class="post-nav">
+      <div class="post-nav-item">
+    <a href="/archives/41d67bcb.html" rel="prev" title="Java中的值传递和引用传递">
+      <i class="fa fa-chevron-left"></i> Java中的值传递和引用传递
+    </a></div>
+      <div class="post-nav-item">
+    <a href="/archives/5c3da6c9.html" rel="next" title="一份失败的数学建模心得">
+      一份失败的数学建模心得 <i class="fa fa-chevron-right"></i>
+    </a></div>
+    </div>
+      </footer>
+    
+  </article>
+  
+  
+  
+
+
+
+          </div>
+          
+    <div class="comments" id="gitalk-container"></div>
+
+<script>
+  window.addEventListener('tabs:register', () => {
+    let { activeClass } = CONFIG.comments;
+    if (CONFIG.comments.storage) {
+      activeClass = localStorage.getItem('comments_active') || activeClass;
+    }
+    if (activeClass) {
+      let activeTab = document.querySelector(`a[href="#comment-${activeClass}"]`);
+      if (activeTab) {
+        activeTab.click();
+      }
+    }
+  });
+  if (CONFIG.comments.storage) {
+    window.addEventListener('tabs:click', event => {
+      if (!event.target.matches('.tabs-comment .tab-content .tab-pane')) return;
+      let commentClass = event.target.classList[1];
+      localStorage.setItem('comments_active', commentClass);
+    });
+  }
+</script>
+
+        </div>
+          
+  
+  <div class="toggle sidebar-toggle">
+    <span class="toggle-line toggle-line-first"></span>
+    <span class="toggle-line toggle-line-middle"></span>
+    <span class="toggle-line toggle-line-last"></span>
+  </div>
+
+  <aside class="sidebar">
+    <div class="sidebar-inner">
+
+      <ul class="sidebar-nav motion-element">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          站点概览
+        </li>
+      </ul>
+
+      <!--noindex-->
+      <div class="post-toc-wrap sidebar-panel">
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#yalmip%E5%AD%A6%E4%B9%A0"><span class="nav-text">yalmip学习</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#1-yalmip%E7%AE%80%E4%BB%8B"><span class="nav-text">1. yalmip简介</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#1-1-%E4%BB%80%E4%B9%88%E6%98%AFyalmip"><span class="nav-text">1.1 什么是yalmip</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#1-2-yalmip%E5%AE%89%E8%A3%85%E6%96%B9%E5%BC%8F"><span class="nav-text">1.2 yalmip安装方式</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#2-yalmip%E6%B1%82%E8%A7%A3%E4%BC%98%E5%8C%96%E9%97%AE%E9%A2%98%E7%9A%84%E5%9B%9B%E9%83%A8%E6%9B%B2"><span class="nav-text">2.yalmip求解优化问题的四部曲</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#2-1-%E5%88%9B%E5%BB%BA%E5%86%B3%E7%AD%96%E5%8F%98%E9%87%8F"><span class="nav-text">2.1 创建决策变量</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#2-2-%E6%B7%BB%E5%8A%A0%E7%BA%A6%E6%9D%9F%E6%9D%A1%E4%BB%B6"><span class="nav-text">2.2 添加约束条件</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#2-3-%E5%8F%82%E6%95%B0%E9%85%8D%E7%BD%AE"><span class="nav-text">2.3 参数配置</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#2-4-%E6%B1%82%E8%A7%A3%E9%97%AE%E9%A2%98"><span class="nav-text">2.4 求解问题</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#2-5-%E5%87%A0%E4%B8%AA%E5%B8%B8%E7%94%A8%E7%9A%84%E5%85%B6%E5%AE%83%E6%8C%87%E4%BB%A4"><span class="nav-text">2.5 几个常用的其它指令</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#3-%E4%B8%BE%E4%B8%A4%E4%B8%AA%E6%A0%97%E5%AD%90"><span class="nav-text">3.举两个栗子</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#3-1-%E7%AE%80%E5%8D%95%E4%BE%8B%E5%AD%90"><span class="nav-text">3.1 简单例子</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#3-2-%E8%A7%A3%E5%86%B3%E7%BB%8F%E5%85%B8%E7%9A%84TSP%E9%97%AE%E9%A2%98"><span class="nav-text">3.2 解决经典的TSP问题</span></a></li></ol></li></ol></li></ol></div>
+      </div>
+      <!--/noindex-->
+
+      <div class="site-overview-wrap sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+    <img class="site-author-image" itemprop="image" alt="Raven"
+      src="https://pic.downk.cc/item/5e907515504f4bcb04b6f798.jpg">
+  <p class="site-author-name" itemprop="name">Raven</p>
+  <div class="site-description" itemprop="description">分享技术，记录生活</div>
+</div>
+<div class="site-state-wrap motion-element">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+          <a href="/archives/">
+        
+          <span class="site-state-item-count">120</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+            <a href="/categories/">
+          
+        <span class="site-state-item-count">17</span>
+        <span class="site-state-item-name">分类</span></a>
+      </div>
+      <div class="site-state-item site-state-tags">
+            <a href="/tags/">
+          
+        <span class="site-state-item-count">114</span>
+        <span class="site-state-item-name">标签</span></a>
+      </div>
+  </nav>
+</div>
+  <div class="links-of-author motion-element">
+      <span class="links-of-author-item">
+        <span class="exturl" data-url="aHR0cHM6Ly9naXRodWIuY29tL3JhdmVueHJ6" title="GitHub → https:&#x2F;&#x2F;github.com&#x2F;ravenxrz"><i class="fa fa-fw fa-fab fa-github"></i>GitHub</span>
+      </span>
+      <span class="links-of-author-item">
+        <span class="exturl" data-url="bWFpbHRvOnpoYWduLnhpbmdydWlAZm94bWFpbC5jb20=" title="E-Mail → mailto:zhagn.xingrui@foxmail.com"><i class="fa fa-fw fa-fa fa-envelope"></i>E-Mail</span>
+      </span>
+  </div>
+  <div class="cc-license motion-element" itemprop="license">
+    <span class="exturl cc-opacity" data-url="aHR0cHM6Ly9jcmVhdGl2ZWNvbW1vbnMub3JnL2xpY2Vuc2VzL2J5LW5jLXNhLzQuMC8="><img src="/images/cc-by-nc-sa.svg" alt="Creative Commons"></span>
+  </div>
+
+
+  <div class="links-of-blogroll motion-element">
+    <div class="links-of-blogroll-title">
+      <i class="fa fa-fw fa-fa fa-link"></i>
+      Links
+    </div>
+    <ul class="links-of-blogroll-list">
+        <li class="links-of-blogroll-item">
+          <a href="/resources" title="&#x2F;resources">我的资源</a>
+        </li>
+    </ul>
+  </div>
+
+      </div>
+
+    </div>
+  </aside>
+  <div id="sidebar-dimmer"></div>
+
+
+      </div>
+    </main>
+
+    <footer class="footer">
+      <div class="footer-inner">
+        
+
+        
+
+<div class="copyright">
+  
+  &copy; 2017 – 
+  <span itemprop="copyrightYear">2020</span>
+  <span class="with-love">
+    <i class="fa fa-fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">Raven</span>
+</div>
+  <div class="powered-by">由 <span class="exturl theme-link" data-url="aHR0cHM6Ly9oZXhvLmlv">Hexo</span> & <span class="exturl theme-link" data-url="aHR0cHM6Ly9taXN0LnRoZW1lLW5leHQub3Jn">NexT.Mist</span> 强力驱动
+  </div>
+
+        
+<div class="busuanzi-count">
+  <script async src="https://busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+    <span class="post-meta-item" id="busuanzi_container_site_uv" style="display: none;">
+      <span class="post-meta-item-icon">
+        <i class="fa fa-fa fa-user"></i>
+      </span>
+      <span class="site-uv" title="总访客量">
+        <span id="busuanzi_value_site_uv"></span>
+      </span>
+    </span>
+    <span class="post-meta-divider">|</span>
+    <span class="post-meta-item" id="busuanzi_container_site_pv" style="display: none;">
+      <span class="post-meta-item-icon">
+        <i class="fa fa-fa fa-eye"></i>
+      </span>
+      <span class="site-pv" title="总访问量">
+        <span id="busuanzi_value_site_pv"></span>
+      </span>
+    </span>
+</div>
+
+
+
+
+
+
+
+
+      </div>
+    </footer>
+  </div>
+
+  
+  <script src="//cdn.jsdelivr.net/npm/animejs@3.1.0/lib/anime.min.js"></script>
+  <script src="//cdn.jsdelivr.net/npm/medium-zoom@1/dist/medium-zoom.min.js"></script>
+  <script src="//cdn.jsdelivr.net/npm/lozad@1/dist/lozad.min.js"></script>
+  <script src="//cdn.jsdelivr.net/npm/pangu@4/dist/browser/pangu.min.js"></script>
+
+<script src="/js/utils.js"></script>
+
+
+<script src="/js/schemes/muse.js"></script>
+
+
+<script src="/js/next-boot.js"></script>
+
+
+
+
+  
+  <script>
+    (function(){
+      var bp = document.createElement('script');
+      var curProtocol = window.location.protocol.split(':')[0];
+      bp.src = (curProtocol === 'https') ? 'https://zz.bdstatic.com/linksubmit/push.js' : 'http://push.zhanzhang.baidu.com/push.js';
+      var s = document.getElementsByTagName("script")[0];
+      s.parentNode.insertBefore(bp, s);
+    })();
+  </script>
+
+
+
+
+  
+<script src="/js/local-search.js"></script>
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+  
+      
+
+<script>
+  if (typeof MathJax === 'undefined') {
+    window.MathJax = {
+      loader: {
+        source: {
+          '[tex]/amsCd': '[tex]/amscd',
+          '[tex]/AMScd': '[tex]/amscd'
+        }
+      },
+      tex: {
+        inlineMath: {'[+]': [['$', '$']]},
+        tags: 'ams'
+      },
+      options: {
+        renderActions: {
+          findScript: [10, doc => {
+            document.querySelectorAll('script[type^="math/tex"]').forEach(node => {
+              const display = !!node.type.match(/; *mode=display/);
+              const math = new doc.options.MathItem(node.textContent, doc.inputJax[0], display);
+              const text = document.createTextNode('');
+              node.parentNode.replaceChild(text, node);
+              math.start = {node: text, delim: '', n: 0};
+              math.end = {node: text, delim: '', n: 0};
+              doc.math.push(math);
+            });
+          }, '', false],
+          insertedScript: [200, () => {
+            document.querySelectorAll('mjx-container').forEach(node => {
+              let target = node.parentNode;
+              if (target.nodeName.toLowerCase() === 'li') {
+                target.parentNode.classList.add('has-jax');
+              }
+            });
+          }, '', false]
+        }
+      }
+    };
+    (function () {
+      var script = document.createElement('script');
+      script.src = '//cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js';
+      script.defer = true;
+      document.head.appendChild(script);
+    })();
+  } else {
+    MathJax.startup.document.state(0);
+    MathJax.texReset();
+    MathJax.typeset();
+  }
+</script>
+
+    
+
+  
+  <script src="//cdn.jsdelivr.net/npm/quicklink@1/dist/quicklink.umd.js"></script>
+  <script>
+      window.addEventListener('load', () => {
+      quicklink({
+        timeout : 3000,
+        priority: true,
+        ignores : [uri => uri.includes('#'),uri => uri === 'https://www.ravenxrz.ink/archives/8df54bf5.html',]
+      });
+      });
+  </script>
+
+<link rel="stylesheet" href="//cdn.jsdelivr.net/npm/gitalk@1/dist/gitalk.min.css">
+
+<script>
+NexT.utils.loadComments(document.querySelector('#gitalk-container'), () => {
+  NexT.utils.getScript('//cdn.jsdelivr.net/npm/gitalk@1/dist/gitalk.min.js', () => {
+    var gitalk = new Gitalk({
+      clientID    : 'b2fd373d2ca2e03e591e',
+      clientSecret: 'de4ab066908c1fbd32d3a45e091b3538761d685b',
+      repo        : 'BlogComment',
+      owner       : 'ravenxrz',
+      admin       : ['ravenxrz'],
+      id          : 'f0c3c4c332b16c2839dd2f4fb3ba50cf',
+        language: '',
+      distractionFreeMode: true
+    });
+    gitalk.render('gitalk-container');
+  }, window.Gitalk);
+});
+</script>
+
+</body>
+</html>

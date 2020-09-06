@@ -1,0 +1,729 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 5.1.1">
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+  <meta http-equiv="Cache-Control" content="no-transform">
+  <meta http-equiv="Cache-Control" content="no-siteapp">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+<link rel="stylesheet" href="//cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@5/css/all.min.css">
+  <link rel="stylesheet" href="//cdn.jsdelivr.net/npm/pace-js@1/themes/blue/pace-theme-minimal.css">
+  <script src="//cdn.jsdelivr.net/npm/pace-js@1/pace.min.js"></script>
+
+<script id="hexo-configurations">
+    var NexT = window.NexT || {};
+    var CONFIG = {"hostname":"www.ravenxrz.ink","root":"/","scheme":"Mist","version":"7.8.0","exturl":true,"sidebar":{"position":"left","display":"always","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":true,"show_result":true,"style":"flat"},"back2top":{"enable":true,"sidebar":false,"scrollpercent":true},"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":true,"lazyload":true,"pangu":true,"comments":{"style":"tabs","active":"gitalk","storage":true,"lazyload":true,"nav":null,"activeClass":"gitalk"},"algolia":{"hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":true,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},"motion":{"enable":false,"async":true,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}}};
+  </script>
+
+  <meta name="description" content="这个模式，韩老师讲得非常不好。所以本文整理自各种博文。 1.为什么使用？当需要对一个对象结构类（这个结构由一些不相关的类组成）进行操作扩展，而又不想改变这个对象结构类时，可以考虑使用访问者模式。 举个案例，假设现在我们有一个描述商品的对象结构（想象成购物篮），当前装入了书和水果。那么现在这个结构看起来像这个样子：">
+<meta property="og:type" content="article">
+<meta property="og:title" content="设计模式-访问者模式">
+<meta property="og:url" content="https://www.ravenxrz.ink/archives/b07c35a8.html">
+<meta property="og:site_name" content="Raven&#39;s Blog">
+<meta property="og:description" content="这个模式，韩老师讲得非常不好。所以本文整理自各种博文。 1.为什么使用？当需要对一个对象结构类（这个结构由一些不相关的类组成）进行操作扩展，而又不想改变这个对象结构类时，可以考虑使用访问者模式。 举个案例，假设现在我们有一个描述商品的对象结构（想象成购物篮），当前装入了书和水果。那么现在这个结构看起来像这个样子：">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="https://pic.downk.cc/item/5e8e9f00504f4bcb04f69a73.png">
+<meta property="og:image" content="https://pic.downk.cc/item/5e8ea13d504f4bcb04f8d145.jpg">
+<meta property="og:image" content="https://pic.downk.cc/item/5e8e9f47504f4bcb04f6f0c4.png">
+<meta property="og:image" content="https://pic.downk.cc/item/5e8e9f58504f4bcb04f70557.png">
+<meta property="article:published_time" content="2020-04-09T04:10:29.000Z">
+<meta property="article:modified_time" content="2020-09-06T02:45:08.068Z">
+<meta property="article:author" content="Raven">
+<meta property="article:tag" content="访问者模式">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://pic.downk.cc/item/5e8e9f00504f4bcb04f69a73.png">
+
+<link rel="canonical" href="https://www.ravenxrz.ink/archives/b07c35a8.html">
+
+
+<script id="page-configurations">
+  // https://hexo.io/docs/variables.html
+  CONFIG.page = {
+    sidebar: "",
+    isHome : false,
+    isPost : true,
+    lang   : 'zh-CN'
+  };
+</script>
+
+  <title>设计模式-访问者模式 | Raven's Blog</title>
+  
+
+
+
+
+
+
+  <noscript>
+  <style>
+  .use-motion .brand,
+  .use-motion .menu-item,
+  .sidebar-inner,
+  .use-motion .post-block,
+  .use-motion .pagination,
+  .use-motion .comments,
+  .use-motion .post-header,
+  .use-motion .post-body,
+  .use-motion .collection-header { opacity: initial; }
+
+  .use-motion .site-title,
+  .use-motion .site-subtitle {
+    opacity: initial;
+    top: initial;
+  }
+
+  .use-motion .logo-line-before i { left: initial; }
+  .use-motion .logo-line-after i { right: initial; }
+  </style>
+</noscript>
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage">
+  <div class="container">
+    <div class="headband"></div>
+
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切换导航栏">
+      <span class="toggle-line toggle-line-first"></span>
+      <span class="toggle-line toggle-line-middle"></span>
+      <span class="toggle-line toggle-line-last"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <span class="logo-line-before"><i></i></span>
+      <h1 class="site-title">Raven's Blog</h1>
+      <span class="logo-line-after"><i></i></span>
+    </a>
+      <p class="site-subtitle" itemprop="description">zhang.xingrui@foxmail.com</p>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger">
+        <i class="fa fa-search fa-fw fa-lg"></i>
+    </div>
+  </div>
+</div>
+
+
+
+
+<nav class="site-nav">
+  <ul id="menu" class="menu">
+        <li class="menu-item menu-item-home">
+
+    <a href="/" rel="section"><i class="fa fa-fw fa-fa fa-home"></i>首页</a>
+
+  </li>
+        <li class="menu-item menu-item-archives">
+
+    <a href="/archives/" rel="section"><i class="fa fa-fw fa-fa fa-archive"></i>归档<span class="badge">120</span></a>
+
+  </li>
+        <li class="menu-item menu-item-categories">
+
+    <a href="/categories/" rel="section"><i class="fa fa-fw fa-fa fa-th"></i>分类<span class="badge">17</span></a>
+
+  </li>
+        <li class="menu-item menu-item-tags">
+
+    <a href="/tags/" rel="section"><i class="fa fa-fw fa-fa fa-tags"></i>标签<span class="badge">114</span></a>
+
+  </li>
+        <li class="menu-item menu-item-about">
+
+    <a href="/about/" rel="section"><i class="fa fa-fw fa-fa fa-user"></i>关于</a>
+
+  </li>
+      <li class="menu-item menu-item-search">
+        <a role="button" class="popup-trigger"><i class="fa fa-search fa-fw"></i>搜索
+        </a>
+      </li>
+  </ul>
+</nav>
+
+
+
+  <div class="search-pop-overlay">
+    <div class="popup search-popup">
+        <div class="search-header">
+  <span class="search-icon">
+    <i class="fa fa-search"></i>
+  </span>
+  <div class="search-input-container">
+    <input autocomplete="off" autocapitalize="off"
+           placeholder="搜索..." spellcheck="false"
+           type="search" class="search-input">
+  </div>
+  <span class="popup-btn-close">
+    <i class="fa fa-times-circle"></i>
+  </span>
+</div>
+<div id="search-result">
+  <div id="no-result">
+    <i class="fa fa-spinner fa-pulse fa-5x fa-fw"></i>
+  </div>
+</div>
+
+    </div>
+  </div>
+
+</div>
+    </header>
+
+    
+  <div class="back-to-top">
+    <i class="fa fa-arrow-up"></i>
+    <span>0%</span>
+  </div>
+
+  <span class="exturl github-corner" data-url="aHR0cHM6Ly9naXRodWIuY29tL3JhdmVueHJ6" title="Follow me on GitHub" aria-label="Follow me on GitHub"><svg width="80" height="80" viewBox="0 0 250 250" aria-hidden="true"><path d="M0,0 L115,115 L130,115 L142,142 L250,250 L250,0 Z"></path><path d="M128.3,109.0 C113.8,99.7 119.0,89.6 119.0,89.6 C122.0,82.7 120.5,78.6 120.5,78.6 C119.2,72.0 123.4,76.3 123.4,76.3 C127.3,80.9 125.5,87.3 125.5,87.3 C122.9,97.6 130.6,101.9 134.4,103.2" fill="currentColor" style="transform-origin: 130px 106px;" class="octo-arm"></path><path d="M115.0,115.0 C114.9,115.1 118.7,116.5 119.8,115.4 L133.7,101.6 C136.9,99.2 139.9,98.4 142.2,98.6 C133.8,88.0 127.5,74.4 143.8,58.0 C148.5,53.4 154.0,51.2 159.7,51.0 C160.3,49.4 163.2,43.6 171.4,40.1 C171.4,40.1 176.1,42.5 178.8,56.2 C183.1,58.6 187.2,61.8 190.9,65.4 C194.5,69.0 197.7,73.2 200.1,77.6 C213.8,80.2 216.3,84.9 216.3,84.9 C212.7,93.1 206.9,96.0 205.4,96.6 C205.1,102.4 203.0,107.8 198.3,112.5 C181.9,128.9 168.3,122.5 157.7,114.1 C157.9,116.9 156.7,120.9 152.7,124.9 L141.0,136.5 C139.8,137.7 141.6,141.9 141.8,141.8 Z" fill="currentColor" class="octo-body"></path></svg></span>
+
+
+    <main class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          
+
+          <div class="content post posts-expand">
+            
+
+    
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="https://www.ravenxrz.ink/archives/b07c35a8.html">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="https://pic.downk.cc/item/5e907515504f4bcb04b6f798.jpg">
+      <meta itemprop="name" content="Raven">
+      <meta itemprop="description" content="分享技术，记录生活">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Raven's Blog">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          设计模式-访问者模式
+        </h1>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+
+              <time title="创建时间：2020-04-09 12:10:29" itemprop="dateCreated datePublished" datetime="2020-04-09T12:10:29+08:00">2020-04-09</time>
+            </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-calendar-check-o"></i>
+                </span>
+                <span class="post-meta-item-text">更新于</span>
+                <time title="修改时间：2020-09-06 10:45:08" itemprop="dateModified" datetime="2020-09-06T10:45:08+08:00">2020-09-06</time>
+              </span>
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              <span class="post-meta-item-text">分类于</span>
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/%E8%AE%BE%E8%AE%A1%E6%A8%A1%E5%BC%8F/" itemprop="url" rel="index"><span itemprop="name">设计模式</span></a>
+                </span>
+            </span>
+
+          
+            <span class="post-meta-item" title="阅读次数" id="busuanzi_container_page_pv" style="display: none;">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-fa fa-eye"></i>
+              </span>
+              <span class="post-meta-item-text">阅读次数：</span>
+              <span id="busuanzi_value_page_pv"></span>
+            </span>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+        <p>这个模式，韩老师讲得非常不好。所以本文整理自各种博文。</p>
+<h2 id="1-为什么使用？"><a href="#1-为什么使用？" class="headerlink" title="1.为什么使用？"></a>1.为什么使用？</h2><p>当需要对一个对象结构类（这个结构由一些不相关的类组成）进行操作扩展，而又不想改变这个对象结构类时，可以考虑使用<strong>访问者模式</strong>。</p>
+<p>举个案例，假设现在我们有一个描述商品的对象结构（想象成购物篮），当前装入了书和水果。那么现在这个结构看起来像这个样子：</p>
+<a id="more"></a>
+
+
+
+<p><img src="https://pic.downk.cc/item/5e8e9f00504f4bcb04f69a73.png"></p>
+<p>现在超市由于促销活动，对大于500页的书，打8折活动；水果每买一斤，单位价格下降1%。于是很自然地想到在Book类和Fruit分别添加getPrice方法和buy3Get1()方法，然后实现具体的操作。如下：</p>
+<p><img src="https://pic.downk.cc/item/5e8ea13d504f4bcb04f8d145.jpg"></p>
+<p>这里我只分别对Book和Fruit做了一个操作扩展，考虑如果我们要对Book和Fruit做多个扩展呢？每个扩展我们都要打开实际的Book类或Fruit类来修改吗？这<strong>显然违反了ocp原则，不便于扩展和维护</strong>。</p>
+<p><strong>虽然Book和Fruit都是商品, 但是它们在打折行为上是相互独立的</strong>，这种情况我们该如何去扩展呢？下面就来介绍如何使用访问者模式解决这个问题。</p>
+<h2 id="2-介绍是什么？"><a href="#2-介绍是什么？" class="headerlink" title="2.介绍是什么？"></a>2.介绍是什么？</h2><p>第2部分如果没看懂，没关系，粗略过一下，看完实例再看一遍第2部分应该就懂了。</p>
+<h3 id="2-1-基本介绍"><a href="#2-1-基本介绍" class="headerlink" title="2.1 基本介绍"></a>2.1 基本介绍</h3><p>访问者设计模式是行为设计模式之一。 当我们必须对一组相似类型但的对象执行操作时，可以使用它。 借助访问者模式，我们可以将<strong>操作逻辑从对象移动到另一个类</strong>。</p>
+<p>访问者模式由两部分组成：</p>
+<ol>
+<li>Visitor类：visitor类定义visit方法，这个方法将被所有对象结构中的元素调用。</li>
+<li>被访问类，即对象结构中的元素，提供一个accpet方法，接受一个Visitor类。</li>
+</ol>
+<h3 id="2-2-类图"><a href="#2-2-类图" class="headerlink" title="2.2 类图"></a>2.2 类图</h3><p><img src="https://pic.downk.cc/item/5e8e9f47504f4bcb04f6f0c4.png"></p>
+<p>职责介绍：</p>
+<ul>
+<li>Client：Client类是访问者设计模式使用者。 它有权访问对象结构对象，并可以指示它们接受访问者者以执行适当的处理。</li>
+<li>Visitor：这是一个接口或抽象类，用于声明所有可访问类类型的访问操作。</li>
+<li>ConcreteVisitor：对于每种类型的访问者，必须实现在所有具体访问方法。 每个访问者将负责不同的操作。</li>
+<li>Visitable：这是一个声明接受操作的接口。 这是使访问者对象可以“访问”对象的入口点。</li>
+<li>ConcreteVisitable：这些类实现Visitable接口或类并定义接受操作。 使用accept操作将访问者对象传递给该对象。</li>
+</ul>
+<p>OK，大概你已经有点晕了，来看实例吧。</p>
+<h2 id="3-如何使用？"><a href="#3-如何使用？" class="headerlink" title="3.如何使用？"></a>3.如何使用？</h2><p>我们先给出利用访问者模式解决“为什么要使用”中的不易扩展的问题的类图：</p>
+<p><img src="https://pic.downk.cc/item/5e8e9f58504f4bcb04f70557.png"></p>
+<p>Book和Fruit都是商品，所以抽象出一个父类或接口，作为Visitable（被访问者），声明一个accept。</p>
+<p>这里就以接口的方式作为讲解：</p>
+<p>被访问者接口：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// 作为被访问者的接口</span></span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">interface</span> <span class="title">Goods</span> </span>&#123;</span><br><span class="line">    <span class="function"><span class="keyword">void</span> <span class="title">accept</span><span class="params">(Visitor visitor)</span></span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>访问者接口:</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">interface</span> <span class="title">Visitor</span> </span>&#123;</span><br><span class="line">    <span class="function"><span class="keyword">void</span> <span class="title">saleCountOnBook</span><span class="params">(Book book)</span></span>;</span><br><span class="line">    <span class="function"><span class="keyword">void</span> <span class="title">saleCountOnFruit</span><span class="params">(Fruit fruit)</span></span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>也许你会问，Book和Fruit都是Goods，<strong>根据依赖倒转原则，不是应该依赖高层抽象吗。</strong>不然的话，每增加一个具体的商品，就会增加一个方法。<strong>下文会对这个做解释。</strong></p>
+<p>具体的被访问者，Book和Fruit</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// Book</span></span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">Book</span> <span class="keyword">implements</span> <span class="title">Goods</span></span>&#123;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">private</span> <span class="keyword">double</span> price;</span><br><span class="line">    <span class="keyword">private</span> <span class="keyword">int</span> page;</span><br><span class="line">    <span class="keyword">private</span> String name;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">double</span> <span class="title">getPrice</span><span class="params">()</span> </span>&#123;</span><br><span class="line">        <span class="keyword">return</span> price;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">setPrice</span><span class="params">(<span class="keyword">double</span> price)</span> </span>&#123;</span><br><span class="line">        <span class="keyword">this</span>.price = price;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">int</span> <span class="title">getPage</span><span class="params">()</span> </span>&#123;</span><br><span class="line">        <span class="keyword">return</span> page;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">setPage</span><span class="params">(<span class="keyword">int</span> page)</span> </span>&#123;</span><br><span class="line">        <span class="keyword">this</span>.page = page;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">public</span> String <span class="title">getName</span><span class="params">()</span> </span>&#123;</span><br><span class="line">        <span class="keyword">return</span> name;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">setName</span><span class="params">(String name)</span> </span>&#123;</span><br><span class="line">        <span class="keyword">this</span>.name = name;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="title">Book</span><span class="params">()</span> </span>&#123;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="meta">@Override</span></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">accept</span><span class="params">(Visitor visitor)</span> </span>&#123;</span><br><span class="line">        <span class="comment">// 下面这句话是访问者模式的关键，它将对Book的操作职责转移到了Visitor类</span></span><br><span class="line">        visitor.saleCountOnBook(<span class="keyword">this</span>);</span><br><span class="line">    &#125;</span><br><span class="line">    </span><br><span class="line">     <span class="meta">@Override</span></span><br><span class="line">    <span class="function"><span class="keyword">public</span> String <span class="title">toString</span><span class="params">()</span> </span>&#123;</span><br><span class="line">        <span class="keyword">return</span> <span class="string">&quot;Book&#123;&quot;</span> +</span><br><span class="line">                <span class="string">&quot;price=&quot;</span> + price +</span><br><span class="line">                <span class="string">&quot;, page=&quot;</span> + page +</span><br><span class="line">                <span class="string">&quot;, name=&#x27;&quot;</span> + name + <span class="string">&#x27;\&#x27;&#x27;</span> +</span><br><span class="line">                <span class="string">&#x27;&#125;&#x27;</span>;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">Fruit</span> <span class="keyword">implements</span> <span class="title">Goods</span></span>&#123;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">private</span> <span class="keyword">double</span> weight;</span><br><span class="line">    <span class="keyword">private</span> <span class="keyword">double</span> pricePerWeight;</span><br><span class="line">    <span class="keyword">private</span> String name;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">double</span> <span class="title">getWeight</span><span class="params">()</span> </span>&#123;</span><br><span class="line">        <span class="keyword">return</span> weight;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">setWeight</span><span class="params">(<span class="keyword">double</span> weight)</span> </span>&#123;</span><br><span class="line">        <span class="keyword">this</span>.weight = weight;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">double</span> <span class="title">getPricePerWeight</span><span class="params">()</span> </span>&#123;</span><br><span class="line">        <span class="keyword">return</span> pricePerWeight;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">setPricePerWeight</span><span class="params">(<span class="keyword">double</span> pricePerWeight)</span> </span>&#123;</span><br><span class="line">        <span class="keyword">this</span>.pricePerWeight = pricePerWeight;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">public</span> String <span class="title">getName</span><span class="params">()</span> </span>&#123;</span><br><span class="line">        <span class="keyword">return</span> name;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">setName</span><span class="params">(String name)</span> </span>&#123;</span><br><span class="line">        <span class="keyword">this</span>.name = name;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="title">Fruit</span><span class="params">()</span> </span>&#123;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="meta">@Override</span></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">accept</span><span class="params">(Visitor visitor)</span> </span>&#123;</span><br><span class="line">        <span class="comment">// 同Book，操作职责转移</span></span><br><span class="line">        visitor.saleCountOnFruit(<span class="keyword">this</span>);</span><br><span class="line">    &#125;</span><br><span class="line">    </span><br><span class="line">    <span class="meta">@Override</span></span><br><span class="line">    <span class="function"><span class="keyword">public</span> String <span class="title">toString</span><span class="params">()</span> </span>&#123;</span><br><span class="line">        <span class="keyword">return</span> <span class="string">&quot;Fruit&#123;&quot;</span> +</span><br><span class="line">                <span class="string">&quot;weight=&quot;</span> + weight +</span><br><span class="line">                <span class="string">&quot;, pricePerWeight=&quot;</span> + pricePerWeight +</span><br><span class="line">                <span class="string">&quot;, name=&#x27;&quot;</span> + name + <span class="string">&#x27;\&#x27;&#x27;</span> +</span><br><span class="line">                <span class="string">&#x27;&#125;&#x27;</span>;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+
+<p><strong>一定要注意Book在Fruit实现accept的操作，事实上所有的元素（这里就是每个具体的Goods）都应该做类似的实现，将操作这个元素的职责转移给Visitor。</strong></p>
+<p>ok，再看看具体的Visitor是如何实现的。这里对<strong>上文“Visitor的方法为什么不依赖Goods高层抽象呢“一问题就做了解释。</strong></p>
+<p>每种依赖的对象，内部结构可能是不同的，如Book有getPage方法，而Fruit有getPricePerWeight方法。<strong>访问者模式的使用要求之一是：对象结构内部元素固定（或尽可能固定）</strong>，这样Visitor的方法设计一开始就已经制定好了。</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">SaleCountVisitor</span> <span class="keyword">implements</span> <span class="title">Visitor</span> </span>&#123;</span><br><span class="line">    <span class="comment">/**</span></span><br><span class="line"><span class="comment">     * <span class="doctag">@param</span> book</span></span><br><span class="line"><span class="comment">     * 对大于500页的书，打8折活动</span></span><br><span class="line"><span class="comment">     */</span></span><br><span class="line">    <span class="meta">@Override</span></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">saleCountOnBook</span><span class="params">(Book book)</span> </span>&#123;</span><br><span class="line">        <span class="keyword">double</span> price = book.getPrice();</span><br><span class="line">        <span class="keyword">if</span>(book.getPage() &gt;= <span class="number">500</span>)&#123;</span><br><span class="line">            price = price*<span class="number">0.8</span>;</span><br><span class="line">        &#125;</span><br><span class="line">        book.setPrice(price);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="comment">/**</span></span><br><span class="line"><span class="comment">     * 水果每买一斤，单位价格下降1%</span></span><br><span class="line"><span class="comment">     * <span class="doctag">@param</span> fruit</span></span><br><span class="line"><span class="comment">     */</span></span><br><span class="line">    <span class="meta">@Override</span></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">saleCountOnFruit</span><span class="params">(Fruit fruit)</span> </span>&#123;</span><br><span class="line">        <span class="keyword">int</span> weight = (<span class="keyword">int</span>) fruit.getWeight();</span><br><span class="line">        <span class="keyword">double</span> pricePerWeight = fruit.getPricePerWeight();</span><br><span class="line">        <span class="keyword">for</span>(<span class="keyword">int</span> i =<span class="number">0</span>;i&lt;weight;i++)&#123;</span><br><span class="line">            pricePerWeight*=<span class="number">0.99</span>;</span><br><span class="line">        &#125;</span><br><span class="line">        fruit.setPricePerWeight(pricePerWeight);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>也许有人会书，那我就要依赖高层抽象，然后在内部做RTTI判断（也就是instanceof）后做类型强转，这其实也不是不可以，但是这样会违反<strong>单一职责原则</strong>，当操作过多时，你的方法会充斥着if else做RTTI判断。</p>
+<p>Bukcet没什么好说的：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">Bucket</span> </span>&#123;</span><br><span class="line">    <span class="keyword">private</span> Goods[] goods;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="title">Bucket</span><span class="params">(Goods[] goods)</span> </span>&#123;</span><br><span class="line">        <span class="keyword">this</span>.goods = goods;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">saleCount</span><span class="params">(Visitor visitor)</span></span>&#123;</span><br><span class="line">        <span class="keyword">for</span>(Goods goods: goods)&#123;</span><br><span class="line">            goods.accept(visitor);</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="meta">@Override</span></span><br><span class="line">    <span class="function"><span class="keyword">public</span> String <span class="title">toString</span><span class="params">()</span> </span>&#123;</span><br><span class="line">        <span class="keyword">return</span> <span class="string">&quot;Bucket&#123;&quot;</span> +</span><br><span class="line">                <span class="string">&quot;goods=&quot;</span> + Arrays.toString(goods) +</span><br><span class="line">                <span class="string">&#x27;&#125;&#x27;</span>;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+
+<p>Client使用：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">Client</span> </span>&#123;</span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">main</span><span class="params">(String[] args)</span> </span>&#123;</span><br><span class="line">        <span class="comment">// 定义商品</span></span><br><span class="line">        Book book = <span class="keyword">new</span> Book();</span><br><span class="line">        book.setPrice(<span class="number">100.0</span>);</span><br><span class="line">        book.setPage(<span class="number">600</span>);</span><br><span class="line">        book.setName(<span class="string">&quot;设计模式&quot;</span>);</span><br><span class="line">        Fruit fruit = <span class="keyword">new</span> Fruit();</span><br><span class="line">        fruit.setPricePerWeight(<span class="number">10</span>);</span><br><span class="line">        fruit.setName(<span class="string">&quot;苹果&quot;</span>);</span><br><span class="line">        fruit.setWeight(<span class="number">5</span>);</span><br><span class="line"></span><br><span class="line">        <span class="comment">// 装入篮中</span></span><br><span class="line">        Goods[] goods = <span class="keyword">new</span> Goods[]&#123;book,fruit&#125;;</span><br><span class="line">        Bucket bucket = <span class="keyword">new</span> Bucket(goods);  <span class="comment">// 其实bucket略有多余，不过不影响</span></span><br><span class="line"></span><br><span class="line">        <span class="comment">// 执行打折</span></span><br><span class="line">        Visitor visitor = <span class="keyword">new</span> SaleCountVisitor();</span><br><span class="line">        bucket.saleCount(visitor);</span><br><span class="line"></span><br><span class="line">        <span class="comment">// 打折后商品信息</span></span><br><span class="line">        System.out.println(bucket);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>输出：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">Bucket&#123;goods&#x3D;[Book&#123;price&#x3D;80.0, page&#x3D;600, name&#x3D;&#39;设计模式&#39;&#125;, Fruit&#123;weight&#x3D;5.0, pricePerWeight&#x3D;9.509900498999999, name&#x3D;&#39;苹果&#39;&#125;]&#125;</span><br></pre></td></tr></table></figure>
+
+<p>访问者模式就是这样执行的，<strong>我个人看来其核心思想就是一种职责转移，将原本应该在具体商品类做的操作，委托到Visitor中执行。这样实现具体商品和逻辑操作的解耦，后续我们要添加任何操作，都和具体商品无关，我们只用定义操作类实现Visitor接口即可。</strong></p>
+<h2 id="4-优缺点"><a href="#4-优缺点" class="headerlink" title="4.优缺点"></a>4.优缺点</h2><h2 id="4-1-优点"><a href="#4-1-优点" class="headerlink" title="4.1 优点"></a>4.1 优点</h2><ul>
+<li>如果操作逻辑发生变化，那么我们只需要在访问者实现中进行更改，而不必在所有项目类中进行更改。(易维护性)</li>
+<li>向系统添加新项目很容易，只需在访问者界面和实现中进行更改，现有项目类别将不会受到影响。（可扩展性）</li>
+</ul>
+<h2 id="4-2-缺点"><a href="#4-2-缺点" class="headerlink" title="4.2 缺点"></a>4.2 缺点</h2><ul>
+<li>在设计时，我们应该知道visit（）方法的返回类型，否则我们将不得不更改接口及其所有实现。</li>
+<li>如果访问者接口的实现过多，则很难扩展。</li>
+</ul>
+<h2 id="5-使用的注意事项"><a href="#5-使用的注意事项" class="headerlink" title="5.使用的注意事项"></a>5.使用的注意事项</h2><ul>
+<li>确认当前<strong>层次结构（称为元素层次结构）将相当稳定</strong>，并且这些类的公共接口足以满足Visitor类所需要的访问。 如果不满足这些条件，则访问者模式则不太适用。</li>
+<li>为每个Element派生类型都在<code>Visior</code>类中创建带有<code>visit（ElementXxx）</code>方法。<strong>（不要依赖高层抽象）</strong></li>
+<li>在元素层次结构中添加一个“ accept（Visitor）”方法。 每个Element派生类中的实现都应该相同-<code>accept（Visitor v）&#123;v.visit（this）;  &#125;</code>。</li>
+<li><code>Element</code>层次结构仅耦合到Visitor基类，但是<code>Visitor</code>层次结构耦合到每个<code>Element</code>派生类。 如果元素层次结构的稳定性低，而访客层次结构的稳定性高； 则<strong>应该考虑交换两个层次结构的“角色”。</strong></li>
+<li>为要在<code>Element</code>对象上执行的<strong>每个“操作”创建</strong>一个<code>Visitor</code>派生类。  visit（）实现将依赖于<code>Element</code>的公共接口。.</li>
+<li>客户端创建访问者对象，并通过调用<code>accept（）</code>将其传递给Element对象。</li>
+</ul>
+<h2 id="参考："><a href="#参考：" class="headerlink" title="参考："></a>参考：</h2><ul>
+<li><a target="_blank" rel="noopener" href="https://en.wikipedia.org/wiki/Visitor_pattern">Visitor pattern</a></li>
+<li><a target="_blank" rel="noopener" href="https://sourcemaking.com/design_patterns/visitor">Visitor Design Pattern</a></li>
+<li><a target="_blank" rel="noopener" href="https://www.geeksforgeeks.org/visitor-design-pattern">Visitor Design Pattern From Geek</a></li>
+</ul>
+
+    </div>
+
+    
+    
+    
+        <div class="reward-container">
+  <div>文章对你有帮助?打赏一下作者吧</div>
+  <button onclick="var qr = document.getElementById('qr'); qr.style.display = (qr.style.display === 'none') ? 'block' : 'none';">
+    打赏
+  </button>
+  <div id="qr" style="display: none;">
+      
+      <div style="display: inline-block;">
+        <img src="https://pic.downk.cc/item/5d064208451253d178a15b27.png" alt="Raven 微信支付">
+        <p>微信支付</p>
+      </div>
+      
+      <div style="display: inline-block;">
+        <img src="https://pic.downk.cc/item/5d0641c7451253d178a15376.png" alt="Raven 支付宝">
+        <p>支付宝</p>
+      </div>
+
+  </div>
+</div>
+
+        
+
+<div>
+<ul class="post-copyright">
+  <li class="post-copyright-author">
+    <strong>本文作者： </strong>Raven
+  </li>
+  <li class="post-copyright-link">
+    <strong>本文链接：</strong>
+    <a href="https://www.ravenxrz.ink/archives/b07c35a8.html" title="设计模式-访问者模式">https://www.ravenxrz.ink/archives/b07c35a8.html</a>
+  </li>
+  <li class="post-copyright-license">
+    <strong>版权声明： </strong>本博客所有文章除特别声明外，均采用 <span class="exturl" data-url="aHR0cHM6Ly9jcmVhdGl2ZWNvbW1vbnMub3JnL2xpY2Vuc2VzL2J5LW5jLXNhLzQuMC8="><i class="fa fa-fw fa-creative-commons"></i>BY-NC-SA</span> 许可协议。转载请注明出处！
+  </li>
+</ul>
+</div>
+
+
+      <footer class="post-footer">
+          
+          <div class="post-tags">
+              <a href="/tags/%E8%AE%BF%E9%97%AE%E8%80%85%E6%A8%A1%E5%BC%8F/" rel="tag"><i class="fa fa-tag"></i> 访问者模式</a>
+          </div>
+
+        
+
+
+        
+    <div class="post-nav">
+      <div class="post-nav-item">
+    <a href="/archives/58d5d9aa.html" rel="prev" title="一文透析构造者模式">
+      <i class="fa fa-chevron-left"></i> 一文透析构造者模式
+    </a></div>
+      <div class="post-nav-item">
+    <a href="/archives/6bef376f.html" rel="next" title="java函数接口&方法引用">
+      java函数接口&方法引用 <i class="fa fa-chevron-right"></i>
+    </a></div>
+    </div>
+      </footer>
+    
+  </article>
+  
+  
+  
+
+
+
+          </div>
+          
+    <div class="comments" id="gitalk-container"></div>
+
+<script>
+  window.addEventListener('tabs:register', () => {
+    let { activeClass } = CONFIG.comments;
+    if (CONFIG.comments.storage) {
+      activeClass = localStorage.getItem('comments_active') || activeClass;
+    }
+    if (activeClass) {
+      let activeTab = document.querySelector(`a[href="#comment-${activeClass}"]`);
+      if (activeTab) {
+        activeTab.click();
+      }
+    }
+  });
+  if (CONFIG.comments.storage) {
+    window.addEventListener('tabs:click', event => {
+      if (!event.target.matches('.tabs-comment .tab-content .tab-pane')) return;
+      let commentClass = event.target.classList[1];
+      localStorage.setItem('comments_active', commentClass);
+    });
+  }
+</script>
+
+        </div>
+          
+  
+  <div class="toggle sidebar-toggle">
+    <span class="toggle-line toggle-line-first"></span>
+    <span class="toggle-line toggle-line-middle"></span>
+    <span class="toggle-line toggle-line-last"></span>
+  </div>
+
+  <aside class="sidebar">
+    <div class="sidebar-inner">
+
+      <ul class="sidebar-nav motion-element">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          站点概览
+        </li>
+      </ul>
+
+      <!--noindex-->
+      <div class="post-toc-wrap sidebar-panel">
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#1-%E4%B8%BA%E4%BB%80%E4%B9%88%E4%BD%BF%E7%94%A8%EF%BC%9F"><span class="nav-text">1.为什么使用？</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#2-%E4%BB%8B%E7%BB%8D%E6%98%AF%E4%BB%80%E4%B9%88%EF%BC%9F"><span class="nav-text">2.介绍是什么？</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#2-1-%E5%9F%BA%E6%9C%AC%E4%BB%8B%E7%BB%8D"><span class="nav-text">2.1 基本介绍</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#2-2-%E7%B1%BB%E5%9B%BE"><span class="nav-text">2.2 类图</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#3-%E5%A6%82%E4%BD%95%E4%BD%BF%E7%94%A8%EF%BC%9F"><span class="nav-text">3.如何使用？</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#4-%E4%BC%98%E7%BC%BA%E7%82%B9"><span class="nav-text">4.优缺点</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#4-1-%E4%BC%98%E7%82%B9"><span class="nav-text">4.1 优点</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#4-2-%E7%BC%BA%E7%82%B9"><span class="nav-text">4.2 缺点</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#5-%E4%BD%BF%E7%94%A8%E7%9A%84%E6%B3%A8%E6%84%8F%E4%BA%8B%E9%A1%B9"><span class="nav-text">5.使用的注意事项</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%8F%82%E8%80%83%EF%BC%9A"><span class="nav-text">参考：</span></a></li></ol></div>
+      </div>
+      <!--/noindex-->
+
+      <div class="site-overview-wrap sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+    <img class="site-author-image" itemprop="image" alt="Raven"
+      src="https://pic.downk.cc/item/5e907515504f4bcb04b6f798.jpg">
+  <p class="site-author-name" itemprop="name">Raven</p>
+  <div class="site-description" itemprop="description">分享技术，记录生活</div>
+</div>
+<div class="site-state-wrap motion-element">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+          <a href="/archives/">
+        
+          <span class="site-state-item-count">120</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+            <a href="/categories/">
+          
+        <span class="site-state-item-count">17</span>
+        <span class="site-state-item-name">分类</span></a>
+      </div>
+      <div class="site-state-item site-state-tags">
+            <a href="/tags/">
+          
+        <span class="site-state-item-count">114</span>
+        <span class="site-state-item-name">标签</span></a>
+      </div>
+  </nav>
+</div>
+  <div class="links-of-author motion-element">
+      <span class="links-of-author-item">
+        <span class="exturl" data-url="aHR0cHM6Ly9naXRodWIuY29tL3JhdmVueHJ6" title="GitHub → https:&#x2F;&#x2F;github.com&#x2F;ravenxrz"><i class="fa fa-fw fa-fab fa-github"></i>GitHub</span>
+      </span>
+      <span class="links-of-author-item">
+        <span class="exturl" data-url="bWFpbHRvOnpoYWduLnhpbmdydWlAZm94bWFpbC5jb20=" title="E-Mail → mailto:zhagn.xingrui@foxmail.com"><i class="fa fa-fw fa-fa fa-envelope"></i>E-Mail</span>
+      </span>
+  </div>
+  <div class="cc-license motion-element" itemprop="license">
+    <span class="exturl cc-opacity" data-url="aHR0cHM6Ly9jcmVhdGl2ZWNvbW1vbnMub3JnL2xpY2Vuc2VzL2J5LW5jLXNhLzQuMC8="><img src="/images/cc-by-nc-sa.svg" alt="Creative Commons"></span>
+  </div>
+
+
+  <div class="links-of-blogroll motion-element">
+    <div class="links-of-blogroll-title">
+      <i class="fa fa-fw fa-fa fa-link"></i>
+      Links
+    </div>
+    <ul class="links-of-blogroll-list">
+        <li class="links-of-blogroll-item">
+          <a href="/resources" title="&#x2F;resources">我的资源</a>
+        </li>
+    </ul>
+  </div>
+
+      </div>
+
+    </div>
+  </aside>
+  <div id="sidebar-dimmer"></div>
+
+
+      </div>
+    </main>
+
+    <footer class="footer">
+      <div class="footer-inner">
+        
+
+        
+
+<div class="copyright">
+  
+  &copy; 2017 – 
+  <span itemprop="copyrightYear">2020</span>
+  <span class="with-love">
+    <i class="fa fa-fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">Raven</span>
+</div>
+  <div class="powered-by">由 <span class="exturl theme-link" data-url="aHR0cHM6Ly9oZXhvLmlv">Hexo</span> & <span class="exturl theme-link" data-url="aHR0cHM6Ly9taXN0LnRoZW1lLW5leHQub3Jn">NexT.Mist</span> 强力驱动
+  </div>
+
+        
+<div class="busuanzi-count">
+  <script async src="https://busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+    <span class="post-meta-item" id="busuanzi_container_site_uv" style="display: none;">
+      <span class="post-meta-item-icon">
+        <i class="fa fa-fa fa-user"></i>
+      </span>
+      <span class="site-uv" title="总访客量">
+        <span id="busuanzi_value_site_uv"></span>
+      </span>
+    </span>
+    <span class="post-meta-divider">|</span>
+    <span class="post-meta-item" id="busuanzi_container_site_pv" style="display: none;">
+      <span class="post-meta-item-icon">
+        <i class="fa fa-fa fa-eye"></i>
+      </span>
+      <span class="site-pv" title="总访问量">
+        <span id="busuanzi_value_site_pv"></span>
+      </span>
+    </span>
+</div>
+
+
+
+
+
+
+
+
+      </div>
+    </footer>
+  </div>
+
+  
+  <script src="//cdn.jsdelivr.net/npm/animejs@3.1.0/lib/anime.min.js"></script>
+  <script src="//cdn.jsdelivr.net/npm/medium-zoom@1/dist/medium-zoom.min.js"></script>
+  <script src="//cdn.jsdelivr.net/npm/lozad@1/dist/lozad.min.js"></script>
+  <script src="//cdn.jsdelivr.net/npm/pangu@4/dist/browser/pangu.min.js"></script>
+
+<script src="/js/utils.js"></script>
+
+
+<script src="/js/schemes/muse.js"></script>
+
+
+<script src="/js/next-boot.js"></script>
+
+
+
+
+  
+  <script>
+    (function(){
+      var bp = document.createElement('script');
+      var curProtocol = window.location.protocol.split(':')[0];
+      bp.src = (curProtocol === 'https') ? 'https://zz.bdstatic.com/linksubmit/push.js' : 'http://push.zhanzhang.baidu.com/push.js';
+      var s = document.getElementsByTagName("script")[0];
+      s.parentNode.insertBefore(bp, s);
+    })();
+  </script>
+
+
+
+
+  
+<script src="/js/local-search.js"></script>
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+  
+      
+
+<script>
+  if (typeof MathJax === 'undefined') {
+    window.MathJax = {
+      loader: {
+        source: {
+          '[tex]/amsCd': '[tex]/amscd',
+          '[tex]/AMScd': '[tex]/amscd'
+        }
+      },
+      tex: {
+        inlineMath: {'[+]': [['$', '$']]},
+        tags: 'ams'
+      },
+      options: {
+        renderActions: {
+          findScript: [10, doc => {
+            document.querySelectorAll('script[type^="math/tex"]').forEach(node => {
+              const display = !!node.type.match(/; *mode=display/);
+              const math = new doc.options.MathItem(node.textContent, doc.inputJax[0], display);
+              const text = document.createTextNode('');
+              node.parentNode.replaceChild(text, node);
+              math.start = {node: text, delim: '', n: 0};
+              math.end = {node: text, delim: '', n: 0};
+              doc.math.push(math);
+            });
+          }, '', false],
+          insertedScript: [200, () => {
+            document.querySelectorAll('mjx-container').forEach(node => {
+              let target = node.parentNode;
+              if (target.nodeName.toLowerCase() === 'li') {
+                target.parentNode.classList.add('has-jax');
+              }
+            });
+          }, '', false]
+        }
+      }
+    };
+    (function () {
+      var script = document.createElement('script');
+      script.src = '//cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js';
+      script.defer = true;
+      document.head.appendChild(script);
+    })();
+  } else {
+    MathJax.startup.document.state(0);
+    MathJax.texReset();
+    MathJax.typeset();
+  }
+</script>
+
+    
+
+  
+  <script src="//cdn.jsdelivr.net/npm/quicklink@1/dist/quicklink.umd.js"></script>
+  <script>
+      window.addEventListener('load', () => {
+      quicklink({
+        timeout : 3000,
+        priority: true,
+        ignores : [uri => uri.includes('#'),uri => uri === 'https://www.ravenxrz.ink/archives/b07c35a8.html',]
+      });
+      });
+  </script>
+
+<link rel="stylesheet" href="//cdn.jsdelivr.net/npm/gitalk@1/dist/gitalk.min.css">
+
+<script>
+NexT.utils.loadComments(document.querySelector('#gitalk-container'), () => {
+  NexT.utils.getScript('//cdn.jsdelivr.net/npm/gitalk@1/dist/gitalk.min.js', () => {
+    var gitalk = new Gitalk({
+      clientID    : 'b2fd373d2ca2e03e591e',
+      clientSecret: 'de4ab066908c1fbd32d3a45e091b3538761d685b',
+      repo        : 'BlogComment',
+      owner       : 'ravenxrz',
+      admin       : ['ravenxrz'],
+      id          : 'd2be2c2303063bb6f4a5fd852c07af91',
+        language: '',
+      distractionFreeMode: true
+    });
+    gitalk.render('gitalk-container');
+  }, window.Gitalk);
+});
+</script>
+
+</body>
+</html>

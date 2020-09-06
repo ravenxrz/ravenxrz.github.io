@@ -1,0 +1,675 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 5.1.1">
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+  <meta http-equiv="Cache-Control" content="no-transform">
+  <meta http-equiv="Cache-Control" content="no-siteapp">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+<link rel="stylesheet" href="//cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@5/css/all.min.css">
+  <link rel="stylesheet" href="//cdn.jsdelivr.net/npm/pace-js@1/themes/blue/pace-theme-minimal.css">
+  <script src="//cdn.jsdelivr.net/npm/pace-js@1/pace.min.js"></script>
+
+<script id="hexo-configurations">
+    var NexT = window.NexT || {};
+    var CONFIG = {"hostname":"www.ravenxrz.ink","root":"/","scheme":"Mist","version":"7.8.0","exturl":true,"sidebar":{"position":"left","display":"always","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":true,"show_result":true,"style":"flat"},"back2top":{"enable":true,"sidebar":false,"scrollpercent":true},"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":true,"lazyload":true,"pangu":true,"comments":{"style":"tabs","active":"gitalk","storage":true,"lazyload":true,"nav":null,"activeClass":"gitalk"},"algolia":{"hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":true,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},"motion":{"enable":false,"async":true,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}}};
+  </script>
+
+  <meta name="description" content="Vim，编辑器之神。凡是接触过Linux的朋友，肯定都知道这个编辑器。">
+<meta property="og:type" content="article">
+<meta property="og:title" content="个人向-对Vim的一点看法">
+<meta property="og:url" content="https://www.ravenxrz.ink/archives/d009831a.html">
+<meta property="og:site_name" content="Raven&#39;s Blog">
+<meta property="og:description" content="Vim，编辑器之神。凡是接触过Linux的朋友，肯定都知道这个编辑器。">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="https://ae01.alicdn.com/kf/HTB1fP.ZXQT2gK0jSZPc763KkpXap.png">
+<meta property="og:image" content="https://ae01.alicdn.com/kf/HTB1B_w2XUD1gK0jSZFGq6zd3FXa0.jpg">
+<meta property="og:image" content="https://ae01.alicdn.com/kf/HTB1PEo1XQY2gK0jSZFgq6A5OFXaF.jpg">
+<meta property="article:published_time" content="2019-07-11T05:58:28.000Z">
+<meta property="article:modified_time" content="2020-09-06T02:45:08.049Z">
+<meta property="article:author" content="Raven">
+<meta property="article:tag" content="vim">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://ae01.alicdn.com/kf/HTB1fP.ZXQT2gK0jSZPc763KkpXap.png">
+
+<link rel="canonical" href="https://www.ravenxrz.ink/archives/d009831a.html">
+
+
+<script id="page-configurations">
+  // https://hexo.io/docs/variables.html
+  CONFIG.page = {
+    sidebar: "",
+    isHome : false,
+    isPost : true,
+    lang   : 'zh-CN'
+  };
+</script>
+
+  <title>个人向-对Vim的一点看法 | Raven's Blog</title>
+  
+
+
+
+
+
+
+  <noscript>
+  <style>
+  .use-motion .brand,
+  .use-motion .menu-item,
+  .sidebar-inner,
+  .use-motion .post-block,
+  .use-motion .pagination,
+  .use-motion .comments,
+  .use-motion .post-header,
+  .use-motion .post-body,
+  .use-motion .collection-header { opacity: initial; }
+
+  .use-motion .site-title,
+  .use-motion .site-subtitle {
+    opacity: initial;
+    top: initial;
+  }
+
+  .use-motion .logo-line-before i { left: initial; }
+  .use-motion .logo-line-after i { right: initial; }
+  </style>
+</noscript>
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage">
+  <div class="container">
+    <div class="headband"></div>
+
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切换导航栏">
+      <span class="toggle-line toggle-line-first"></span>
+      <span class="toggle-line toggle-line-middle"></span>
+      <span class="toggle-line toggle-line-last"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <span class="logo-line-before"><i></i></span>
+      <h1 class="site-title">Raven's Blog</h1>
+      <span class="logo-line-after"><i></i></span>
+    </a>
+      <p class="site-subtitle" itemprop="description">zhang.xingrui@foxmail.com</p>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger">
+        <i class="fa fa-search fa-fw fa-lg"></i>
+    </div>
+  </div>
+</div>
+
+
+
+
+<nav class="site-nav">
+  <ul id="menu" class="menu">
+        <li class="menu-item menu-item-home">
+
+    <a href="/" rel="section"><i class="fa fa-fw fa-fa fa-home"></i>首页</a>
+
+  </li>
+        <li class="menu-item menu-item-archives">
+
+    <a href="/archives/" rel="section"><i class="fa fa-fw fa-fa fa-archive"></i>归档<span class="badge">120</span></a>
+
+  </li>
+        <li class="menu-item menu-item-categories">
+
+    <a href="/categories/" rel="section"><i class="fa fa-fw fa-fa fa-th"></i>分类<span class="badge">17</span></a>
+
+  </li>
+        <li class="menu-item menu-item-tags">
+
+    <a href="/tags/" rel="section"><i class="fa fa-fw fa-fa fa-tags"></i>标签<span class="badge">114</span></a>
+
+  </li>
+        <li class="menu-item menu-item-about">
+
+    <a href="/about/" rel="section"><i class="fa fa-fw fa-fa fa-user"></i>关于</a>
+
+  </li>
+      <li class="menu-item menu-item-search">
+        <a role="button" class="popup-trigger"><i class="fa fa-search fa-fw"></i>搜索
+        </a>
+      </li>
+  </ul>
+</nav>
+
+
+
+  <div class="search-pop-overlay">
+    <div class="popup search-popup">
+        <div class="search-header">
+  <span class="search-icon">
+    <i class="fa fa-search"></i>
+  </span>
+  <div class="search-input-container">
+    <input autocomplete="off" autocapitalize="off"
+           placeholder="搜索..." spellcheck="false"
+           type="search" class="search-input">
+  </div>
+  <span class="popup-btn-close">
+    <i class="fa fa-times-circle"></i>
+  </span>
+</div>
+<div id="search-result">
+  <div id="no-result">
+    <i class="fa fa-spinner fa-pulse fa-5x fa-fw"></i>
+  </div>
+</div>
+
+    </div>
+  </div>
+
+</div>
+    </header>
+
+    
+  <div class="back-to-top">
+    <i class="fa fa-arrow-up"></i>
+    <span>0%</span>
+  </div>
+
+  <span class="exturl github-corner" data-url="aHR0cHM6Ly9naXRodWIuY29tL3JhdmVueHJ6" title="Follow me on GitHub" aria-label="Follow me on GitHub"><svg width="80" height="80" viewBox="0 0 250 250" aria-hidden="true"><path d="M0,0 L115,115 L130,115 L142,142 L250,250 L250,0 Z"></path><path d="M128.3,109.0 C113.8,99.7 119.0,89.6 119.0,89.6 C122.0,82.7 120.5,78.6 120.5,78.6 C119.2,72.0 123.4,76.3 123.4,76.3 C127.3,80.9 125.5,87.3 125.5,87.3 C122.9,97.6 130.6,101.9 134.4,103.2" fill="currentColor" style="transform-origin: 130px 106px;" class="octo-arm"></path><path d="M115.0,115.0 C114.9,115.1 118.7,116.5 119.8,115.4 L133.7,101.6 C136.9,99.2 139.9,98.4 142.2,98.6 C133.8,88.0 127.5,74.4 143.8,58.0 C148.5,53.4 154.0,51.2 159.7,51.0 C160.3,49.4 163.2,43.6 171.4,40.1 C171.4,40.1 176.1,42.5 178.8,56.2 C183.1,58.6 187.2,61.8 190.9,65.4 C194.5,69.0 197.7,73.2 200.1,77.6 C213.8,80.2 216.3,84.9 216.3,84.9 C212.7,93.1 206.9,96.0 205.4,96.6 C205.1,102.4 203.0,107.8 198.3,112.5 C181.9,128.9 168.3,122.5 157.7,114.1 C157.9,116.9 156.7,120.9 152.7,124.9 L141.0,136.5 C139.8,137.7 141.6,141.9 141.8,141.8 Z" fill="currentColor" class="octo-body"></path></svg></span>
+
+
+    <main class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          
+
+          <div class="content post posts-expand">
+            
+
+    
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="https://www.ravenxrz.ink/archives/d009831a.html">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="https://pic.downk.cc/item/5e907515504f4bcb04b6f798.jpg">
+      <meta itemprop="name" content="Raven">
+      <meta itemprop="description" content="分享技术，记录生活">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Raven's Blog">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          个人向-对Vim的一点看法
+        </h1>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+
+              <time title="创建时间：2019-07-11 13:58:28" itemprop="dateCreated datePublished" datetime="2019-07-11T13:58:28+08:00">2019-07-11</time>
+            </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-calendar-check-o"></i>
+                </span>
+                <span class="post-meta-item-text">更新于</span>
+                <time title="修改时间：2020-09-06 10:45:08" itemprop="dateModified" datetime="2020-09-06T10:45:08+08:00">2020-09-06</time>
+              </span>
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              <span class="post-meta-item-text">分类于</span>
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/%E6%9D%82%E6%96%87/" itemprop="url" rel="index"><span itemprop="name">杂文</span></a>
+                </span>
+            </span>
+
+          
+            <span class="post-meta-item" title="阅读次数" id="busuanzi_container_page_pv" style="display: none;">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-fa fa-eye"></i>
+              </span>
+              <span class="post-meta-item-text">阅读次数：</span>
+              <span id="busuanzi_value_page_pv"></span>
+            </span>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+        <p><img src="https://ae01.alicdn.com/kf/HTB1fP.ZXQT2gK0jSZPc763KkpXap.png"></p>
+<p>Vim，编辑器之神。凡是接触过Linux的朋友，肯定都知道这个编辑器。</p>
+<a id="more"></a>
+
+<p>大家对于这款编辑器的评价更是褒贬不一。有人说：这玩意用熟以后就是一个字-“快”，能够大幅度提高码字效率。也有人说：有IDE了还用vim的就是傻逼。嗯，vim很快，满配的vim抵得上我vs的1/3了，记住IDE的快捷键一样能够大幅效率。还有一种朋友则是混用–在IDE中安装vim的插件。</p>
+<p>那么我也来说说我对Vim的看法，首先谈谈我的Vim经历，跳进Vim坑爬出来又跳进去差不多反复了3,4次。不想看的跳到后面看推荐使用就好了。</p>
+<ol>
+<li><p><strong>第一次：</strong>刚接触Linux，Liunx本身的命令就够我记了，还要学习Vim，简直难受，没多久就弃坑了，Windows这么多好用的编辑器干嘛用这货，再不济我用gedit都好受一点，所以最后差<strong>不多就记得个 h j k l</strong>以及如果保存文件和退出Vim。（没错，我就是那个不知道怎么退出Vim的人）。</p>
+</li>
+<li><p><strong>第二次：</strong>基本上能够在Linux存活了，网上一堆吹爆Vim的，是时候来学习一会了，在网上搜索了几篇博文，算是<strong>学会了一些基本功能</strong>，d, c, y ,操作符+motion符的操作等等。但是感觉效率也就那样吧，好多人总是吹什么在操作前加number，就能重复执行该命令多少次。比如粘贴100次当前行，先yy，然后100p。可是问问自己，这样的场景真的多吗？显然不多。又如好多人说的从鼠标中解救出来，这倒是不假，但是反复地按移动快捷键按得手抽筋。写代码也没办法提示，我这种渣渣码农还是算了吧，没多久就再次弃坑。一度怀疑是网上的人过分神话。</p>
+</li>
+<li><p><strong>第三次：</strong>再次接触Vim可能都过了大半年，源于一次实习，当时实习做的是嵌入式的东西，要在Linux上做开发，当时的领头采用的是在Windows上开发，通过虚拟机共享文件夹共享到Linux上编译。我觉得这一来一回的简直麻烦，正好学了点Makefile，所以又用起了Vim，当然了这次我知道通过<strong>安装插件来拓展Vim功能</strong>，并且知道了一键配置Vim的脚本–spf13。有了一堆插件的辅助，不得不说用着其实还行，但是还是有一个老毛病，快捷键按得我的手真的痛，而且由于Vim的快捷键在我这里还未形成肌肉记忆，网网还会动脑去想一下要跳转到xx地方，我该用什么快捷好一点（Vim有太多种跳转的方式了）。make之后形成的qucikfix窗口也让我感觉不太好用，最要命的是文件导航栏，即使当时安装了NERD Tree插件，我仍觉得非常难用。实习用Vim大约用了4天，我<strong>改用了Sclickedi</strong>t，个人觉得是liunx上最好用的C/C++ IDE。</p>
+</li>
+<li><p><strong>第四次：</strong> 第四次也就是最近了，毕业了放假回来总得学点什么吧。想着未来的研究方向肯定离不开Linux，又想到了学Vim。开工之前我在网上搜寻了10多20篇帖子来说到底该不该学Vim，答案也就如本文开头说的那样。我呢，是一个热爱新鲜事物的人，就想知道到底要怎么样用Vim才是最舒服的。既然最近也闲，那就翻到头重新学，于是网上搜什么书比较好，得到的结果是下面这本：</p>
+<p><img src="https://ae01.alicdn.com/kf/HTB1B_w2XUD1gK0jSZFGq6zd3FXa0.jpg"></p>
+<p><strong>额外说一句：其实这本书书并不是写给新手的，它根本不会说什么h j k l 打开退出vim的方法，介绍的是vim使用的一些技巧，通过技巧让人熟悉Vim的使用方式。</strong></p>
+<p>行吧，那就开始看呗。在家宅了4天的样子，通读了一遍，确实学到了不少，如<strong>经典的点范式操作，录制编辑宏，寄存器的概念与使用，共享系统剪贴板，标记代码行，.vimrc的简单配置，快速切换上次编辑过的地方等等等等</strong>。</p>
+<p>这本书算是涉及到了Vim的各种基础知识，但是有一个却讲得非常少，那就是Vim的插件管理。于是我又去搜索了一些插件管理的博文，学习了，<strong>知道vundle怎么用</strong>。</p>
+<p>然后就到了打造自己的vim IDE for C/C++时间了，我参见的文章是这个：</p>
+<p><a target="_blank" rel="noopener" href="https://github.com/yangyangwithgnu/use_vim_as_ide">https://github.com/yangyangwithgnu/use_vim_as_ide</a></p>
+<p>作者说要配置完成，大约80页+，所以vim打磨真的是会折磨人。</p>
+<p>花了一天时间，挑选了个人认为有用的配置。配置成自己习惯的键位映射，有用的插件。但，就目前来说，我仍不想用它来开发项目。我不习惯vim的文件导航方式，更不喜欢gdb的调试方式，YouCompleteMe插件很强，但是配置起来真的很伤。</p>
+<p>虽然整个配置过程很长，也折腾人。不过跟着走一遍配置流程后，你会发现之后只用vimrc文件然后稍加配置就好了。重点是你要知道vimrc每个部分是干什么的，并修改为适合个人习惯的方式。</p>
+<h2 id="最终中的结果与建议"><a href="#最终中的结果与建议" class="headerlink" title="最终中的结果与建议"></a>最终中的结果与建议</h2><p><strong>那么未来我会不会用vim的开发项目呢？我想我仍然不会</strong>，那我花费了这么长的时间是为什么学习呢？好的来说是为了确定vim到底能不能做，好不好做大型项目开发。答案是能做，也好做，但有更好的方法。坏的来说就是闲的蛋疼。现在回忆起实习时老师的方法其实反而是一种很好的方法，在windows上开发，到linux上编译，又或者使用slickedit这类IDE，其实很nice的。学vim不是说没用，做服务器运维的，在服务器这玩意才好用，所以肯定要学；另外基本上所有的主流IDE都支持VIM，连浏览器都有Vim的插件，学习Vim后，可以在各类IDE中通用一套Vim快捷键，这叫取其精华去其糟粕。</p>
+<p><strong>所以，在IDE中安装Vim才是王道，未来我应该会用Clion+ideavim(ideavim支持自定义vimrc)。</strong></p>
+<p>对于那些想进入vim的朋友来说，其实我觉得下面这张图说得还是颇有几分道理，vim的入门的确很陡峭。如果你要采用混用的方式，我建议还是要把<strong>《Vim使用技巧》这本书读了</strong>，毕竟读完你就算是能够对vim有个大范围了解。而不仅仅是几个h j k l :wq 替换，操作符+motion符这些基础东西。</p>
+<p><img src="https://ae01.alicdn.com/kf/HTB1PEo1XQY2gK0jSZFgq6A5OFXaF.jpg"></p>
+</li>
+</ol>
+
+    </div>
+
+    
+    
+    
+        <div class="reward-container">
+  <div>文章对你有帮助?打赏一下作者吧</div>
+  <button onclick="var qr = document.getElementById('qr'); qr.style.display = (qr.style.display === 'none') ? 'block' : 'none';">
+    打赏
+  </button>
+  <div id="qr" style="display: none;">
+      
+      <div style="display: inline-block;">
+        <img src="https://pic.downk.cc/item/5d064208451253d178a15b27.png" alt="Raven 微信支付">
+        <p>微信支付</p>
+      </div>
+      
+      <div style="display: inline-block;">
+        <img src="https://pic.downk.cc/item/5d0641c7451253d178a15376.png" alt="Raven 支付宝">
+        <p>支付宝</p>
+      </div>
+
+  </div>
+</div>
+
+        
+
+<div>
+<ul class="post-copyright">
+  <li class="post-copyright-author">
+    <strong>本文作者： </strong>Raven
+  </li>
+  <li class="post-copyright-link">
+    <strong>本文链接：</strong>
+    <a href="https://www.ravenxrz.ink/archives/d009831a.html" title="个人向-对Vim的一点看法">https://www.ravenxrz.ink/archives/d009831a.html</a>
+  </li>
+  <li class="post-copyright-license">
+    <strong>版权声明： </strong>本博客所有文章除特别声明外，均采用 <span class="exturl" data-url="aHR0cHM6Ly9jcmVhdGl2ZWNvbW1vbnMub3JnL2xpY2Vuc2VzL2J5LW5jLXNhLzQuMC8="><i class="fa fa-fw fa-creative-commons"></i>BY-NC-SA</span> 许可协议。转载请注明出处！
+  </li>
+</ul>
+</div>
+
+
+      <footer class="post-footer">
+          
+          <div class="post-tags">
+              <a href="/tags/vim/" rel="tag"><i class="fa fa-tag"></i> vim</a>
+          </div>
+
+        
+
+
+        
+    <div class="post-nav">
+      <div class="post-nav-item">
+    <a href="/archives/1b8fe85b.html" rel="prev" title="研究僧-在IPAD上阅读文献并与Zotero文献库同步">
+      <i class="fa fa-chevron-left"></i> 研究僧-在IPAD上阅读文献并与Zotero文献库同步
+    </a></div>
+      <div class="post-nav-item">
+    <a href="/archives/5528d718.html" rel="next" title="Android7-0后相机相册调用">
+      Android7-0后相机相册调用 <i class="fa fa-chevron-right"></i>
+    </a></div>
+    </div>
+      </footer>
+    
+  </article>
+  
+  
+  
+
+
+
+          </div>
+          
+    <div class="comments" id="gitalk-container"></div>
+
+<script>
+  window.addEventListener('tabs:register', () => {
+    let { activeClass } = CONFIG.comments;
+    if (CONFIG.comments.storage) {
+      activeClass = localStorage.getItem('comments_active') || activeClass;
+    }
+    if (activeClass) {
+      let activeTab = document.querySelector(`a[href="#comment-${activeClass}"]`);
+      if (activeTab) {
+        activeTab.click();
+      }
+    }
+  });
+  if (CONFIG.comments.storage) {
+    window.addEventListener('tabs:click', event => {
+      if (!event.target.matches('.tabs-comment .tab-content .tab-pane')) return;
+      let commentClass = event.target.classList[1];
+      localStorage.setItem('comments_active', commentClass);
+    });
+  }
+</script>
+
+        </div>
+          
+  
+  <div class="toggle sidebar-toggle">
+    <span class="toggle-line toggle-line-first"></span>
+    <span class="toggle-line toggle-line-middle"></span>
+    <span class="toggle-line toggle-line-last"></span>
+  </div>
+
+  <aside class="sidebar">
+    <div class="sidebar-inner">
+
+      <ul class="sidebar-nav motion-element">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          站点概览
+        </li>
+      </ul>
+
+      <!--noindex-->
+      <div class="post-toc-wrap sidebar-panel">
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E6%9C%80%E7%BB%88%E4%B8%AD%E7%9A%84%E7%BB%93%E6%9E%9C%E4%B8%8E%E5%BB%BA%E8%AE%AE"><span class="nav-text">最终中的结果与建议</span></a></li></ol></div>
+      </div>
+      <!--/noindex-->
+
+      <div class="site-overview-wrap sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+    <img class="site-author-image" itemprop="image" alt="Raven"
+      src="https://pic.downk.cc/item/5e907515504f4bcb04b6f798.jpg">
+  <p class="site-author-name" itemprop="name">Raven</p>
+  <div class="site-description" itemprop="description">分享技术，记录生活</div>
+</div>
+<div class="site-state-wrap motion-element">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+          <a href="/archives/">
+        
+          <span class="site-state-item-count">120</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+            <a href="/categories/">
+          
+        <span class="site-state-item-count">17</span>
+        <span class="site-state-item-name">分类</span></a>
+      </div>
+      <div class="site-state-item site-state-tags">
+            <a href="/tags/">
+          
+        <span class="site-state-item-count">114</span>
+        <span class="site-state-item-name">标签</span></a>
+      </div>
+  </nav>
+</div>
+  <div class="links-of-author motion-element">
+      <span class="links-of-author-item">
+        <span class="exturl" data-url="aHR0cHM6Ly9naXRodWIuY29tL3JhdmVueHJ6" title="GitHub → https:&#x2F;&#x2F;github.com&#x2F;ravenxrz"><i class="fa fa-fw fa-fab fa-github"></i>GitHub</span>
+      </span>
+      <span class="links-of-author-item">
+        <span class="exturl" data-url="bWFpbHRvOnpoYWduLnhpbmdydWlAZm94bWFpbC5jb20=" title="E-Mail → mailto:zhagn.xingrui@foxmail.com"><i class="fa fa-fw fa-fa fa-envelope"></i>E-Mail</span>
+      </span>
+  </div>
+  <div class="cc-license motion-element" itemprop="license">
+    <span class="exturl cc-opacity" data-url="aHR0cHM6Ly9jcmVhdGl2ZWNvbW1vbnMub3JnL2xpY2Vuc2VzL2J5LW5jLXNhLzQuMC8="><img src="/images/cc-by-nc-sa.svg" alt="Creative Commons"></span>
+  </div>
+
+
+  <div class="links-of-blogroll motion-element">
+    <div class="links-of-blogroll-title">
+      <i class="fa fa-fw fa-fa fa-link"></i>
+      Links
+    </div>
+    <ul class="links-of-blogroll-list">
+        <li class="links-of-blogroll-item">
+          <a href="/resources" title="&#x2F;resources">我的资源</a>
+        </li>
+    </ul>
+  </div>
+
+      </div>
+
+    </div>
+  </aside>
+  <div id="sidebar-dimmer"></div>
+
+
+      </div>
+    </main>
+
+    <footer class="footer">
+      <div class="footer-inner">
+        
+
+        
+
+<div class="copyright">
+  
+  &copy; 2017 – 
+  <span itemprop="copyrightYear">2020</span>
+  <span class="with-love">
+    <i class="fa fa-fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">Raven</span>
+</div>
+  <div class="powered-by">由 <span class="exturl theme-link" data-url="aHR0cHM6Ly9oZXhvLmlv">Hexo</span> & <span class="exturl theme-link" data-url="aHR0cHM6Ly9taXN0LnRoZW1lLW5leHQub3Jn">NexT.Mist</span> 强力驱动
+  </div>
+
+        
+<div class="busuanzi-count">
+  <script async src="https://busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+    <span class="post-meta-item" id="busuanzi_container_site_uv" style="display: none;">
+      <span class="post-meta-item-icon">
+        <i class="fa fa-fa fa-user"></i>
+      </span>
+      <span class="site-uv" title="总访客量">
+        <span id="busuanzi_value_site_uv"></span>
+      </span>
+    </span>
+    <span class="post-meta-divider">|</span>
+    <span class="post-meta-item" id="busuanzi_container_site_pv" style="display: none;">
+      <span class="post-meta-item-icon">
+        <i class="fa fa-fa fa-eye"></i>
+      </span>
+      <span class="site-pv" title="总访问量">
+        <span id="busuanzi_value_site_pv"></span>
+      </span>
+    </span>
+</div>
+
+
+
+
+
+
+
+
+      </div>
+    </footer>
+  </div>
+
+  
+  <script src="//cdn.jsdelivr.net/npm/animejs@3.1.0/lib/anime.min.js"></script>
+  <script src="//cdn.jsdelivr.net/npm/medium-zoom@1/dist/medium-zoom.min.js"></script>
+  <script src="//cdn.jsdelivr.net/npm/lozad@1/dist/lozad.min.js"></script>
+  <script src="//cdn.jsdelivr.net/npm/pangu@4/dist/browser/pangu.min.js"></script>
+
+<script src="/js/utils.js"></script>
+
+
+<script src="/js/schemes/muse.js"></script>
+
+
+<script src="/js/next-boot.js"></script>
+
+
+
+
+  
+  <script>
+    (function(){
+      var bp = document.createElement('script');
+      var curProtocol = window.location.protocol.split(':')[0];
+      bp.src = (curProtocol === 'https') ? 'https://zz.bdstatic.com/linksubmit/push.js' : 'http://push.zhanzhang.baidu.com/push.js';
+      var s = document.getElementsByTagName("script")[0];
+      s.parentNode.insertBefore(bp, s);
+    })();
+  </script>
+
+
+
+
+  
+<script src="/js/local-search.js"></script>
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+  
+      
+
+<script>
+  if (typeof MathJax === 'undefined') {
+    window.MathJax = {
+      loader: {
+        source: {
+          '[tex]/amsCd': '[tex]/amscd',
+          '[tex]/AMScd': '[tex]/amscd'
+        }
+      },
+      tex: {
+        inlineMath: {'[+]': [['$', '$']]},
+        tags: 'ams'
+      },
+      options: {
+        renderActions: {
+          findScript: [10, doc => {
+            document.querySelectorAll('script[type^="math/tex"]').forEach(node => {
+              const display = !!node.type.match(/; *mode=display/);
+              const math = new doc.options.MathItem(node.textContent, doc.inputJax[0], display);
+              const text = document.createTextNode('');
+              node.parentNode.replaceChild(text, node);
+              math.start = {node: text, delim: '', n: 0};
+              math.end = {node: text, delim: '', n: 0};
+              doc.math.push(math);
+            });
+          }, '', false],
+          insertedScript: [200, () => {
+            document.querySelectorAll('mjx-container').forEach(node => {
+              let target = node.parentNode;
+              if (target.nodeName.toLowerCase() === 'li') {
+                target.parentNode.classList.add('has-jax');
+              }
+            });
+          }, '', false]
+        }
+      }
+    };
+    (function () {
+      var script = document.createElement('script');
+      script.src = '//cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js';
+      script.defer = true;
+      document.head.appendChild(script);
+    })();
+  } else {
+    MathJax.startup.document.state(0);
+    MathJax.texReset();
+    MathJax.typeset();
+  }
+</script>
+
+    
+
+  
+  <script src="//cdn.jsdelivr.net/npm/quicklink@1/dist/quicklink.umd.js"></script>
+  <script>
+      window.addEventListener('load', () => {
+      quicklink({
+        timeout : 3000,
+        priority: true,
+        ignores : [uri => uri.includes('#'),uri => uri === 'https://www.ravenxrz.ink/archives/d009831a.html',]
+      });
+      });
+  </script>
+
+<link rel="stylesheet" href="//cdn.jsdelivr.net/npm/gitalk@1/dist/gitalk.min.css">
+
+<script>
+NexT.utils.loadComments(document.querySelector('#gitalk-container'), () => {
+  NexT.utils.getScript('//cdn.jsdelivr.net/npm/gitalk@1/dist/gitalk.min.js', () => {
+    var gitalk = new Gitalk({
+      clientID    : 'b2fd373d2ca2e03e591e',
+      clientSecret: 'de4ab066908c1fbd32d3a45e091b3538761d685b',
+      repo        : 'BlogComment',
+      owner       : 'ravenxrz',
+      admin       : ['ravenxrz'],
+      id          : '2dff1a580275d0d0fa5eac26e34c7613',
+        language: '',
+      distractionFreeMode: true
+    });
+    gitalk.render('gitalk-container');
+  }, window.Gitalk);
+});
+</script>
+
+</body>
+</html>

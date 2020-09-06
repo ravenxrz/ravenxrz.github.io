@@ -1,0 +1,756 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 5.1.1">
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+  <meta http-equiv="Cache-Control" content="no-transform">
+  <meta http-equiv="Cache-Control" content="no-siteapp">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+<link rel="stylesheet" href="//cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@5/css/all.min.css">
+  <link rel="stylesheet" href="//cdn.jsdelivr.net/npm/pace-js@1/themes/blue/pace-theme-minimal.css">
+  <script src="//cdn.jsdelivr.net/npm/pace-js@1/pace.min.js"></script>
+
+<script id="hexo-configurations">
+    var NexT = window.NexT || {};
+    var CONFIG = {"hostname":"www.ravenxrz.ink","root":"/","scheme":"Mist","version":"7.8.0","exturl":true,"sidebar":{"position":"left","display":"always","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":true,"show_result":true,"style":"flat"},"back2top":{"enable":true,"sidebar":false,"scrollpercent":true},"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":true,"lazyload":true,"pangu":true,"comments":{"style":"tabs","active":"gitalk","storage":true,"lazyload":true,"nav":null,"activeClass":"gitalk"},"algolia":{"hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":true,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},"motion":{"enable":false,"async":true,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}}};
+  </script>
+
+  <meta name="description" content="1.前言 最近换手机，因为原来的旧手机（一加三）性能也还算行，所以就百度了一下看能不能把这台手机给用起来，发现搭建个基于aria的远程下载机比较有趣,于是乎就有了本篇文章。">
+<meta property="og:type" content="article">
+<meta property="og:title" content="旧手机再利用-基于Aria2的下载机">
+<meta property="og:url" content="https://www.ravenxrz.ink/archives/6b2122f5.html">
+<meta property="og:site_name" content="Raven&#39;s Blog">
+<meta property="og:description" content="1.前言 最近换手机，因为原来的旧手机（一加三）性能也还算行，所以就百度了一下看能不能把这台手机给用起来，发现搭建个基于aria的远程下载机比较有趣,于是乎就有了本篇文章。">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="https://pic3.superbed.cn/item/5cfbb583451253d178d9c758.png">
+<meta property="og:image" content="https://pic.superbed.cn/item/5cfbb58b451253d178d9c7e5.png">
+<meta property="og:image" content="https://pic2.superbed.cn/item/5cfbb58c451253d178d9c827.png">
+<meta property="og:image" content="https://pic.superbed.cn/item/5cfbb58e451253d178d9c85f.png">
+<meta property="og:image" content="https://pic1.superbed.cn/item/5cfbb58f451253d178d9c893.png">
+<meta property="og:image" content="https://pic.superbed.cn/item/5cfbb590451253d178d9c8c4.png">
+<meta property="og:image" content="https://pic1.superbed.cn/item/5cfbb592451253d178d9c901.png">
+<meta property="og:image" content="https://pic.superbed.cn/item/5cfbb594451253d178d9c93b.png">
+<meta property="og:image" content="https://pic.superbed.cn/item/5cfbb595451253d178d9c973.png">
+<meta property="og:image" content="https://pic.superbed.cn/item/5cfbb596451253d178d9c9b6.png">
+<meta property="og:image" content="https://pic.superbed.cn/item/5cfbb598451253d178d9c9ee.png">
+<meta property="og:image" content="https://pic.superbed.cn/item/5cfbb599451253d178d9ca24.png">
+<meta property="og:image" content="https://pic.superbed.cn/item/5cfbb59b451253d178d9ca5b.png">
+<meta property="og:image" content="https://pic.superbed.cn/item/5cfbb59c451253d178d9ca97.png">
+<meta property="og:image" content="https://pic.superbed.cn/item/5cfbb59e451253d178d9cadb.png">
+<meta property="article:published_time" content="2018-10-12T05:58:52.000Z">
+<meta property="article:modified_time" content="2020-09-06T02:45:08.059Z">
+<meta property="article:author" content="Raven">
+<meta property="article:tag" content="手机">
+<meta property="article:tag" content="下载机">
+<meta property="article:tag" content="aria2">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://pic3.superbed.cn/item/5cfbb583451253d178d9c758.png">
+
+<link rel="canonical" href="https://www.ravenxrz.ink/archives/6b2122f5.html">
+
+
+<script id="page-configurations">
+  // https://hexo.io/docs/variables.html
+  CONFIG.page = {
+    sidebar: "",
+    isHome : false,
+    isPost : true,
+    lang   : 'zh-CN'
+  };
+</script>
+
+  <title>旧手机再利用-基于Aria2的下载机 | Raven's Blog</title>
+  
+
+
+
+
+
+
+  <noscript>
+  <style>
+  .use-motion .brand,
+  .use-motion .menu-item,
+  .sidebar-inner,
+  .use-motion .post-block,
+  .use-motion .pagination,
+  .use-motion .comments,
+  .use-motion .post-header,
+  .use-motion .post-body,
+  .use-motion .collection-header { opacity: initial; }
+
+  .use-motion .site-title,
+  .use-motion .site-subtitle {
+    opacity: initial;
+    top: initial;
+  }
+
+  .use-motion .logo-line-before i { left: initial; }
+  .use-motion .logo-line-after i { right: initial; }
+  </style>
+</noscript>
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage">
+  <div class="container">
+    <div class="headband"></div>
+
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切换导航栏">
+      <span class="toggle-line toggle-line-first"></span>
+      <span class="toggle-line toggle-line-middle"></span>
+      <span class="toggle-line toggle-line-last"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <span class="logo-line-before"><i></i></span>
+      <h1 class="site-title">Raven's Blog</h1>
+      <span class="logo-line-after"><i></i></span>
+    </a>
+      <p class="site-subtitle" itemprop="description">zhang.xingrui@foxmail.com</p>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger">
+        <i class="fa fa-search fa-fw fa-lg"></i>
+    </div>
+  </div>
+</div>
+
+
+
+
+<nav class="site-nav">
+  <ul id="menu" class="menu">
+        <li class="menu-item menu-item-home">
+
+    <a href="/" rel="section"><i class="fa fa-fw fa-fa fa-home"></i>首页</a>
+
+  </li>
+        <li class="menu-item menu-item-archives">
+
+    <a href="/archives/" rel="section"><i class="fa fa-fw fa-fa fa-archive"></i>归档<span class="badge">120</span></a>
+
+  </li>
+        <li class="menu-item menu-item-categories">
+
+    <a href="/categories/" rel="section"><i class="fa fa-fw fa-fa fa-th"></i>分类<span class="badge">17</span></a>
+
+  </li>
+        <li class="menu-item menu-item-tags">
+
+    <a href="/tags/" rel="section"><i class="fa fa-fw fa-fa fa-tags"></i>标签<span class="badge">114</span></a>
+
+  </li>
+        <li class="menu-item menu-item-about">
+
+    <a href="/about/" rel="section"><i class="fa fa-fw fa-fa fa-user"></i>关于</a>
+
+  </li>
+      <li class="menu-item menu-item-search">
+        <a role="button" class="popup-trigger"><i class="fa fa-search fa-fw"></i>搜索
+        </a>
+      </li>
+  </ul>
+</nav>
+
+
+
+  <div class="search-pop-overlay">
+    <div class="popup search-popup">
+        <div class="search-header">
+  <span class="search-icon">
+    <i class="fa fa-search"></i>
+  </span>
+  <div class="search-input-container">
+    <input autocomplete="off" autocapitalize="off"
+           placeholder="搜索..." spellcheck="false"
+           type="search" class="search-input">
+  </div>
+  <span class="popup-btn-close">
+    <i class="fa fa-times-circle"></i>
+  </span>
+</div>
+<div id="search-result">
+  <div id="no-result">
+    <i class="fa fa-spinner fa-pulse fa-5x fa-fw"></i>
+  </div>
+</div>
+
+    </div>
+  </div>
+
+</div>
+    </header>
+
+    
+  <div class="back-to-top">
+    <i class="fa fa-arrow-up"></i>
+    <span>0%</span>
+  </div>
+
+  <span class="exturl github-corner" data-url="aHR0cHM6Ly9naXRodWIuY29tL3JhdmVueHJ6" title="Follow me on GitHub" aria-label="Follow me on GitHub"><svg width="80" height="80" viewBox="0 0 250 250" aria-hidden="true"><path d="M0,0 L115,115 L130,115 L142,142 L250,250 L250,0 Z"></path><path d="M128.3,109.0 C113.8,99.7 119.0,89.6 119.0,89.6 C122.0,82.7 120.5,78.6 120.5,78.6 C119.2,72.0 123.4,76.3 123.4,76.3 C127.3,80.9 125.5,87.3 125.5,87.3 C122.9,97.6 130.6,101.9 134.4,103.2" fill="currentColor" style="transform-origin: 130px 106px;" class="octo-arm"></path><path d="M115.0,115.0 C114.9,115.1 118.7,116.5 119.8,115.4 L133.7,101.6 C136.9,99.2 139.9,98.4 142.2,98.6 C133.8,88.0 127.5,74.4 143.8,58.0 C148.5,53.4 154.0,51.2 159.7,51.0 C160.3,49.4 163.2,43.6 171.4,40.1 C171.4,40.1 176.1,42.5 178.8,56.2 C183.1,58.6 187.2,61.8 190.9,65.4 C194.5,69.0 197.7,73.2 200.1,77.6 C213.8,80.2 216.3,84.9 216.3,84.9 C212.7,93.1 206.9,96.0 205.4,96.6 C205.1,102.4 203.0,107.8 198.3,112.5 C181.9,128.9 168.3,122.5 157.7,114.1 C157.9,116.9 156.7,120.9 152.7,124.9 L141.0,136.5 C139.8,137.7 141.6,141.9 141.8,141.8 Z" fill="currentColor" class="octo-body"></path></svg></span>
+
+
+    <main class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          
+
+          <div class="content post posts-expand">
+            
+
+    
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="https://www.ravenxrz.ink/archives/6b2122f5.html">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="https://pic.downk.cc/item/5e907515504f4bcb04b6f798.jpg">
+      <meta itemprop="name" content="Raven">
+      <meta itemprop="description" content="分享技术，记录生活">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Raven's Blog">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          旧手机再利用-基于Aria2的下载机
+        </h1>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+
+              <time title="创建时间：2018-10-12 13:58:52" itemprop="dateCreated datePublished" datetime="2018-10-12T13:58:52+08:00">2018-10-12</time>
+            </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-calendar-check-o"></i>
+                </span>
+                <span class="post-meta-item-text">更新于</span>
+                <time title="修改时间：2020-09-06 10:45:08" itemprop="dateModified" datetime="2020-09-06T10:45:08+08:00">2020-09-06</time>
+              </span>
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              <span class="post-meta-item-text">分类于</span>
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/%E6%9D%82%E6%96%87/" itemprop="url" rel="index"><span itemprop="name">杂文</span></a>
+                </span>
+            </span>
+
+          
+            <span class="post-meta-item" title="阅读次数" id="busuanzi_container_page_pv" style="display: none;">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-fa fa-eye"></i>
+              </span>
+              <span class="post-meta-item-text">阅读次数：</span>
+              <span id="busuanzi_value_page_pv"></span>
+            </span>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+        <h2 id="1-前言"><a href="#1-前言" class="headerlink" title="1.前言"></a>1.前言</h2><blockquote>
+<p>最近换手机，因为原来的旧手机（一加三）性能也还算行，所以就百度了一下看能不能把这台手机给用起来，发现搭建个<strong>基于aria的远程下载机</strong>比较有趣,于是乎就有了本篇文章。</p>
+</blockquote>
+<a id="more"></a>
+<p>什么是Aria？</p>
+<blockquote>
+<p>aria2 is a lightweight multi-protocol &amp; multi-source command-line download utility. It supports <a target="_blank" rel="noopener" href="https://wiki.archlinux.org/index.php/HTTP">HTTP</a>/<a target="_blank" rel="noopener" href="https://wiki.archlinux.org/index.php/HTTPS">HTTPS</a>, <a target="_blank" rel="noopener" href="https://wiki.archlinux.org/index.php/FTP">FTP</a>, <a target="_blank" rel="noopener" href="https://wiki.archlinux.org/index.php/BitTorrent">BitTorrent</a> and <a target="_blank" rel="noopener" href="https://en.wikipedia.org/wiki/Metalink">Metalink</a>. aria2 can be manipulated via built-in <a target="_blank" rel="noopener" href="https://en.wikipedia.org/wiki/JSON-RPC">JSON-RPC</a> and <a target="_blank" rel="noopener" href="https://en.wikipedia.org/wiki/XML-RPC">XML-RPC</a> interfaces. (抄自：<a target="_blank" rel="noopener" href="https://wiki.archlinux.org/index.php/aria2">https://wiki.archlinux.org/index.php/aria2</a>)</p>
+</blockquote>
+<p>翻译一下就是:</p>
+<blockquote>
+<p>aria2是一个轻量级的下载工具，支持多协议（HTPP/HTPPS,FTP,BT,MetaLink)，通过JSON-RPC或XML-RPC进行配置。</p>
+</blockquote>
+<p>为什么要使用Aria？</p>
+<ol>
+<li>aria轻量，可以尝试同时用迅雷和aria下东西，观察内存占用，你会发现迅雷占用明显高于aria</li>
+<li>aria跨平台，几乎所有平台都可以使用</li>
+<li>用aria<strong>实现远程下载</strong>，使用NAS,路由器，或者旧手机都可以完成</li>
+<li>破解百度网盘限速</li>
+</ol>
+<p>Aria有什么缺点？</p>
+<ol>
+<li>原Aria是纯命令行的，导致很多人望而止步，不过现在经过大神的开发，已经有很多优秀的web管理工具。</li>
+<li>Aria不支持迅雷的专用链接</li>
+<li>Aria的Bt下载速度很慢</li>
+</ol>
+<h2 id="2-准备工作"><a href="#2-准备工作" class="headerlink" title="2. 准备工作"></a>2. 准备工作</h2><ol>
+<li><p>一台root的Android机</p>
+</li>
+<li><p>Aria服务：Aria2cdroid或者Aria2Android（前者似乎在酷安市场已下架，但是在码云上有该软件的源码，有一定的Android编程知识的同学可以clone下来编译一下）</p>
+</li>
+<li><p>Aria控制器：不推荐使用酷安市场上的Aria2远程下载，该软件有个无限弹出连接主页面的bug。反之使用web控制端是个相当不错的选择。这里推荐使用：<a target="_blank" rel="noopener" href="http://euch.gotoip1.com/aria-ng/#!/status">Ariang</a></p>
+</li>
+<li><p>有了上述的几个东西已经可以实现在局域网中下载东西了，但是要做到外网远程控制我们的下载鸡必要做内网穿透才行，这里我用的是<a target="_blank" rel="noopener" href="https://www.ngrok.cc/">Sunny-Ngork</a>。</p>
+</li>
+<li><p>NeoTerm终端</p>
+</li>
+<li><p>BusyBox</p>
+</li>
+</ol>
+<p><strong>以上大多数软件均可在酷安市场找到。</strong></p>
+<h2 id="3-开始搭建"><a href="#3-开始搭建" class="headerlink" title="3.开始搭建"></a>3.开始搭建</h2><h3 id="3-1-root你的手机"><a href="#3-1-root你的手机" class="headerlink" title="3.1 root你的手机"></a>3.1 root你的手机</h3><p>这个我就不细说了，手机解锁-&gt;刷入twrp recovery-&gt; 刷入root包。</p>
+<h3 id="3-2-开启你的Aria后台服务"><a href="#3-2-开启你的Aria后台服务" class="headerlink" title="3.2 开启你的Aria后台服务"></a>3.2 开启你的Aria后台服务</h3><p><img src="https://pic3.superbed.cn/item/5cfbb583451253d178d9c758.png" alt="Screenshot_20181101-142810.png"></p>
+<p>打开Aria2（如果你下载的是Aria2Android，就打开Aria2Android）</p>
+<p><img src="https://pic.superbed.cn/item/5cfbb58b451253d178d9c7e5.png" alt="Screenshot_20181101-142828.png"></p>
+<p>点击右上角的的三角形，开启服务。</p>
+<p><img src="https://pic2.superbed.cn/item/5cfbb58c451253d178d9c827.png" alt="Screenshot_20181101-142834.png"></p>
+<p>记住下面的东西：<br>第一行的ip:192.168.43.122<br>第二行的Secret：123456（如果你没改的就是这个，另外Aria2Android的同学也注意一下是多少）</p>
+<h3 id="3-3-打开Web控制"><a href="#3-3-打开Web控制" class="headerlink" title="3.3 打开Web控制"></a>3.3 打开Web控制</h3><p>打开网址：<a target="_blank" rel="noopener" href="http://euch.gotoip1.com/aria-ng/#!/status()">Ariang</a></p>
+<p><img src="https://pic.superbed.cn/item/5cfbb58e451253d178d9c85f.png" alt="web1.png"></p>
+<p><img src="https://pic1.superbed.cn/item/5cfbb58f451253d178d9c893.png" alt="web2.png"></p>
+<p><img src="https://pic.superbed.cn/item/5cfbb590451253d178d9c8c4.png" alt="web3.png"></p>
+<p>到这一步局域网中的下载机已经搭建好了，可以来试试效果。</p>
+<p><img src="https://pic1.superbed.cn/item/5cfbb592451253d178d9c901.png" alt="web4.png"></p>
+<p>先不用在意我这里的网速。。。（如果你搭建成功，并且下载的是http的文件速度基本上是满速的）</p>
+<h3 id="3-4-内网穿透"><a href="#3-4-内网穿透" class="headerlink" title="3.4 内网穿透"></a>3.4 内网穿透</h3><p>到上一步为止都还是非常容易的，但是实用性还不算高，毕竟在局域网直接用控制端的主机来下载不就好了吗，或者每次出门前就把要下载的东西设置好。不过要是能够远程控制不是更美好吗？</p>
+<h4 id="3-4-1-配置环境"><a href="#3-4-1-配置环境" class="headerlink" title="3.4.1 配置环境"></a>3.4.1 配置环境</h4><p>打开<strong>busybox</strong>，给root权限，<strong>等加载进度条跑完</strong>，然后选择install就行了。</p>
+<h4 id="3-4-2-Sunny-Ngork配置"><a href="#3-4-2-Sunny-Ngork配置" class="headerlink" title="3.4.2 Sunny-Ngork配置"></a>3.4.2 Sunny-Ngork配置</h4><p>打开<a target="_blank" rel="noopener" href="https://www.ngrok.cc/">Sunny-Ngork</a>官网，注册一个账号进入到后台：</p>
+<p><img src="https://pic.superbed.cn/item/5cfbb594451253d178d9c93b.png" alt="web5.png"></p>
+<p><img src="https://pic.superbed.cn/item/5cfbb595451253d178d9c973.png" alt="web6.png"></p>
+<p><img src="https://pic.superbed.cn/item/5cfbb596451253d178d9c9b6.png" alt="web7.png"></p>
+<p><img src="https://pic.superbed.cn/item/5cfbb598451253d178d9c9ee.png" alt="web8.png"></p>
+<p><strong>将下载下来的linux arm文件放到手机里，并记住放置的目录,并解压，会得到一个名字为sunny脚本</strong></p>
+<h4 id="3-4-3-运行外网穿透程序"><a href="#3-4-3-运行外网穿透程序" class="headerlink" title="3.4.3 运行外网穿透程序"></a>3.4.3 运行外网穿透程序</h4><p>打开<strong>NeoTerm</strong>终端，获取超级权限:<code>su</code>，会提示给权限。</p>
+<p>cd到上一步中你解压的脚本目录下:<code>cd xxxx</code></p>
+<p>把sunny文件移动到/system层级下（不移动到这个层级下无法更改该文件的权限）:<code>mv sunny /system</code></p>
+<p>cd到system目录:<code>cd /system</code></p>
+<p>更改sunny文件权限：<code>chmod 755 sunny</code></p>
+<p>运行:<code>sunny clientid 隧道id</code></p>
+<p>如果配置成功应该由如下界面:</p>
+<p><img src="https://pic.superbed.cn/item/5cfbb599451253d178d9ca24.png" alt="Screenshot_20181101-150632.png"></p>
+<h4 id="3-4-4-更新远端控制程序"><a href="#3-4-4-更新远端控制程序" class="headerlink" title="3.4.4 更新远端控制程序"></a>3.4.4 更新远端控制程序</h4><p><img src="https://pic.superbed.cn/item/5cfbb59b451253d178d9ca5b.png" alt="web9.png"></p>
+<p>端口一定要填80端口!</p>
+<p>端口一定要填80端口!</p>
+<p>端口一定要填80端口!</p>
+<p>嗯，到这里我们就完成了远程端搭建，快去试试吧。</p>
+<h2 id="4-额外的问题"><a href="#4-额外的问题" class="headerlink" title="4.额外的问题"></a>4.额外的问题</h2><ol>
+<li><p><strong>怎么用aria怎么下载百度网盘里的资源？</strong></p>
+<p>可以用chrome的插件BaiduExporter，但是chrome商店已经下架了，好在该插件在github上有，这里贴出地址：<a target="_blank" rel="noopener" href="https://github.com/acgotaku/BaiduExporter">https://github.com/acgotaku/BaiduExporter</a></p>
+</li>
+</ol>
+<p><img src="https://pic.superbed.cn/item/5cfbb59c451253d178d9ca97.png" alt="web10.png"></p>
+<p>把这个下载下来，然后打开chrome的扩展程序，拖进去。<strong>嗯，完美的没有安装成功</strong>，chrome限制了没有在商店上线的插件。</p>
+<p>正确的做法是，把crx后缀该为rar，然后解压，最后在chrome的扩展程序中<strong>加载已解压程序</strong>，就ok了。</p>
+<p>使用方法，找到资源，点击导出下载，推送到aria（可能需要设置一下，和ariang面板差不多，就不说了）</p>
+<p><img src="https://pic.superbed.cn/item/5cfbb59e451253d178d9cadb.png" alt="web11.png"></p>
+<ol start="2">
+<li><strong>为什么我的aria下载bt，磁力没速度，但是迅雷却跑得很快？</strong></li>
+</ol>
+<p>根据我百度的资料来看（<strong>不一定准确</strong>），迅雷之所以跑得快，是因为迅雷流氓，在后台上传你下载的文件信息。我们都知道bt下载需要去别人手中取文件块，所以人越多下载得越快，迅雷这样做就导致很容易发现其他下载者，而aria就不行了。至于为什么aria速度完全没有的情况，是因为没有配置bt-tracker：把下面这些复制到你的bt-tracker中（在ariang面板中的bt设置中有这个选项）。</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br></pre></td><td class="code"><pre><span class="line">udp:&#x2F;&#x2F;tracker.coppersurfer.tk:6969&#x2F;announce</span><br><span class="line"></span><br><span class="line">udp:&#x2F;&#x2F;tracker.opentrackr.org:1337&#x2F;announce</span><br><span class="line"></span><br><span class="line">udp:&#x2F;&#x2F;9.rarbg.to:2710&#x2F;announce</span><br><span class="line"></span><br><span class="line">udp:&#x2F;&#x2F;tracker.internetwarriors.net:1337&#x2F;announce</span><br><span class="line">	</span><br><span class="line">udp:&#x2F;&#x2F;exodus.desync.com:6969&#x2F;announce</span><br><span class="line"></span><br><span class="line">udp:&#x2F;&#x2F;tracker.vanitycore.co:6969&#x2F;announce</span><br><span class="line"></span><br><span class="line">udp:&#x2F;&#x2F;public.popcorn-tracker.org:6969&#x2F;announce</span><br><span class="line"></span><br><span class="line">udp:&#x2F;&#x2F;explodie.org:6969&#x2F;announce</span><br><span class="line"></span><br><span class="line">udp:&#x2F;&#x2F;tracker1.itzmx.com:8080&#x2F;announce</span><br><span class="line"></span><br><span class="line">udp:&#x2F;&#x2F;tracker.torrent.eu.org:451&#x2F;announce</span><br><span class="line"></span><br><span class="line">udp:&#x2F;&#x2F;tracker.tiny-vps.com:6969&#x2F;announce</span><br><span class="line"></span><br><span class="line">udp:&#x2F;&#x2F;tracker.port443.xyz:6969&#x2F;announce</span><br><span class="line"></span><br><span class="line">udp:&#x2F;&#x2F;thetracker.org:80&#x2F;announce</span><br><span class="line"></span><br><span class="line">udp:&#x2F;&#x2F;open.stealth.si:80&#x2F;announce</span><br><span class="line"></span><br><span class="line">udp:&#x2F;&#x2F;open.demonii.si:1337&#x2F;announce</span><br><span class="line"></span><br><span class="line">udp:&#x2F;&#x2F;ipv4.tracker.harry.lu:80&#x2F;announce</span><br><span class="line"></span><br><span class="line">udp:&#x2F;&#x2F;denis.stalker.upeer.me:6969&#x2F;announce</span><br><span class="line"></span><br><span class="line">udp:&#x2F;&#x2F;bt.xxx-tracker.com:2710&#x2F;announce</span><br><span class="line"></span><br><span class="line">udp:&#x2F;&#x2F;tracker.cypherpunks.ru:6969&#x2F;announce</span><br><span class="line"></span><br><span class="line">udp:&#x2F;&#x2F;retracker.lanta-net.ru:2710&#x2F;announce</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+
+<p><strong>不过，tracker更新的很快，当你看到这篇文章的时候，应该已经过时了</strong>，所以这里贴出一个trakcer更新的仓库，需要的时候自己去看看吧:<a target="_blank" rel="noopener" href="https://github.com/ngosang/trackerslist">https://github.com/ngosang/trackerslist</a></p>
+<p>每次更改设置后，<strong>记住重启aria服务</strong>。</p>
+<p>好了，愉快的去享受远程下载吧。hiahia。</p>
+
+    </div>
+
+    
+    
+    
+        <div class="reward-container">
+  <div>文章对你有帮助?打赏一下作者吧</div>
+  <button onclick="var qr = document.getElementById('qr'); qr.style.display = (qr.style.display === 'none') ? 'block' : 'none';">
+    打赏
+  </button>
+  <div id="qr" style="display: none;">
+      
+      <div style="display: inline-block;">
+        <img src="https://pic.downk.cc/item/5d064208451253d178a15b27.png" alt="Raven 微信支付">
+        <p>微信支付</p>
+      </div>
+      
+      <div style="display: inline-block;">
+        <img src="https://pic.downk.cc/item/5d0641c7451253d178a15376.png" alt="Raven 支付宝">
+        <p>支付宝</p>
+      </div>
+
+  </div>
+</div>
+
+        
+
+<div>
+<ul class="post-copyright">
+  <li class="post-copyright-author">
+    <strong>本文作者： </strong>Raven
+  </li>
+  <li class="post-copyright-link">
+    <strong>本文链接：</strong>
+    <a href="https://www.ravenxrz.ink/archives/6b2122f5.html" title="旧手机再利用-基于Aria2的下载机">https://www.ravenxrz.ink/archives/6b2122f5.html</a>
+  </li>
+  <li class="post-copyright-license">
+    <strong>版权声明： </strong>本博客所有文章除特别声明外，均采用 <span class="exturl" data-url="aHR0cHM6Ly9jcmVhdGl2ZWNvbW1vbnMub3JnL2xpY2Vuc2VzL2J5LW5jLXNhLzQuMC8="><i class="fa fa-fw fa-creative-commons"></i>BY-NC-SA</span> 许可协议。转载请注明出处！
+  </li>
+</ul>
+</div>
+
+
+      <footer class="post-footer">
+          
+          <div class="post-tags">
+              <a href="/tags/%E6%89%8B%E6%9C%BA/" rel="tag"><i class="fa fa-tag"></i> 手机</a>
+              <a href="/tags/%E4%B8%8B%E8%BD%BD%E6%9C%BA/" rel="tag"><i class="fa fa-tag"></i> 下载机</a>
+              <a href="/tags/aria2/" rel="tag"><i class="fa fa-tag"></i> aria2</a>
+          </div>
+
+        
+
+
+        
+    <div class="post-nav">
+      <div class="post-nav-item">
+    <a href="/archives/5c3da6c9.html" rel="prev" title="一份失败的数学建模心得">
+      <i class="fa fa-chevron-left"></i> 一份失败的数学建模心得
+    </a></div>
+      <div class="post-nav-item">
+    <a href="/archives/5cb17766.html" rel="next" title="这些年，我所用过的精品Chrome插件（插件干货篇）">
+      这些年，我所用过的精品Chrome插件（插件干货篇） <i class="fa fa-chevron-right"></i>
+    </a></div>
+    </div>
+      </footer>
+    
+  </article>
+  
+  
+  
+
+
+
+          </div>
+          
+    <div class="comments" id="gitalk-container"></div>
+
+<script>
+  window.addEventListener('tabs:register', () => {
+    let { activeClass } = CONFIG.comments;
+    if (CONFIG.comments.storage) {
+      activeClass = localStorage.getItem('comments_active') || activeClass;
+    }
+    if (activeClass) {
+      let activeTab = document.querySelector(`a[href="#comment-${activeClass}"]`);
+      if (activeTab) {
+        activeTab.click();
+      }
+    }
+  });
+  if (CONFIG.comments.storage) {
+    window.addEventListener('tabs:click', event => {
+      if (!event.target.matches('.tabs-comment .tab-content .tab-pane')) return;
+      let commentClass = event.target.classList[1];
+      localStorage.setItem('comments_active', commentClass);
+    });
+  }
+</script>
+
+        </div>
+          
+  
+  <div class="toggle sidebar-toggle">
+    <span class="toggle-line toggle-line-first"></span>
+    <span class="toggle-line toggle-line-middle"></span>
+    <span class="toggle-line toggle-line-last"></span>
+  </div>
+
+  <aside class="sidebar">
+    <div class="sidebar-inner">
+
+      <ul class="sidebar-nav motion-element">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          站点概览
+        </li>
+      </ul>
+
+      <!--noindex-->
+      <div class="post-toc-wrap sidebar-panel">
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#1-%E5%89%8D%E8%A8%80"><span class="nav-text">1.前言</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#2-%E5%87%86%E5%A4%87%E5%B7%A5%E4%BD%9C"><span class="nav-text">2. 准备工作</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#3-%E5%BC%80%E5%A7%8B%E6%90%AD%E5%BB%BA"><span class="nav-text">3.开始搭建</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#3-1-root%E4%BD%A0%E7%9A%84%E6%89%8B%E6%9C%BA"><span class="nav-text">3.1 root你的手机</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#3-2-%E5%BC%80%E5%90%AF%E4%BD%A0%E7%9A%84Aria%E5%90%8E%E5%8F%B0%E6%9C%8D%E5%8A%A1"><span class="nav-text">3.2 开启你的Aria后台服务</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#3-3-%E6%89%93%E5%BC%80Web%E6%8E%A7%E5%88%B6"><span class="nav-text">3.3 打开Web控制</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#3-4-%E5%86%85%E7%BD%91%E7%A9%BF%E9%80%8F"><span class="nav-text">3.4 内网穿透</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#3-4-1-%E9%85%8D%E7%BD%AE%E7%8E%AF%E5%A2%83"><span class="nav-text">3.4.1 配置环境</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#3-4-2-Sunny-Ngork%E9%85%8D%E7%BD%AE"><span class="nav-text">3.4.2 Sunny-Ngork配置</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#3-4-3-%E8%BF%90%E8%A1%8C%E5%A4%96%E7%BD%91%E7%A9%BF%E9%80%8F%E7%A8%8B%E5%BA%8F"><span class="nav-text">3.4.3 运行外网穿透程序</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#3-4-4-%E6%9B%B4%E6%96%B0%E8%BF%9C%E7%AB%AF%E6%8E%A7%E5%88%B6%E7%A8%8B%E5%BA%8F"><span class="nav-text">3.4.4 更新远端控制程序</span></a></li></ol></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#4-%E9%A2%9D%E5%A4%96%E7%9A%84%E9%97%AE%E9%A2%98"><span class="nav-text">4.额外的问题</span></a></li></ol></div>
+      </div>
+      <!--/noindex-->
+
+      <div class="site-overview-wrap sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+    <img class="site-author-image" itemprop="image" alt="Raven"
+      src="https://pic.downk.cc/item/5e907515504f4bcb04b6f798.jpg">
+  <p class="site-author-name" itemprop="name">Raven</p>
+  <div class="site-description" itemprop="description">分享技术，记录生活</div>
+</div>
+<div class="site-state-wrap motion-element">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+          <a href="/archives/">
+        
+          <span class="site-state-item-count">120</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+            <a href="/categories/">
+          
+        <span class="site-state-item-count">17</span>
+        <span class="site-state-item-name">分类</span></a>
+      </div>
+      <div class="site-state-item site-state-tags">
+            <a href="/tags/">
+          
+        <span class="site-state-item-count">114</span>
+        <span class="site-state-item-name">标签</span></a>
+      </div>
+  </nav>
+</div>
+  <div class="links-of-author motion-element">
+      <span class="links-of-author-item">
+        <span class="exturl" data-url="aHR0cHM6Ly9naXRodWIuY29tL3JhdmVueHJ6" title="GitHub → https:&#x2F;&#x2F;github.com&#x2F;ravenxrz"><i class="fa fa-fw fa-fab fa-github"></i>GitHub</span>
+      </span>
+      <span class="links-of-author-item">
+        <span class="exturl" data-url="bWFpbHRvOnpoYWduLnhpbmdydWlAZm94bWFpbC5jb20=" title="E-Mail → mailto:zhagn.xingrui@foxmail.com"><i class="fa fa-fw fa-fa fa-envelope"></i>E-Mail</span>
+      </span>
+  </div>
+  <div class="cc-license motion-element" itemprop="license">
+    <span class="exturl cc-opacity" data-url="aHR0cHM6Ly9jcmVhdGl2ZWNvbW1vbnMub3JnL2xpY2Vuc2VzL2J5LW5jLXNhLzQuMC8="><img src="/images/cc-by-nc-sa.svg" alt="Creative Commons"></span>
+  </div>
+
+
+  <div class="links-of-blogroll motion-element">
+    <div class="links-of-blogroll-title">
+      <i class="fa fa-fw fa-fa fa-link"></i>
+      Links
+    </div>
+    <ul class="links-of-blogroll-list">
+        <li class="links-of-blogroll-item">
+          <a href="/resources" title="&#x2F;resources">我的资源</a>
+        </li>
+    </ul>
+  </div>
+
+      </div>
+
+    </div>
+  </aside>
+  <div id="sidebar-dimmer"></div>
+
+
+      </div>
+    </main>
+
+    <footer class="footer">
+      <div class="footer-inner">
+        
+
+        
+
+<div class="copyright">
+  
+  &copy; 2017 – 
+  <span itemprop="copyrightYear">2020</span>
+  <span class="with-love">
+    <i class="fa fa-fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">Raven</span>
+</div>
+  <div class="powered-by">由 <span class="exturl theme-link" data-url="aHR0cHM6Ly9oZXhvLmlv">Hexo</span> & <span class="exturl theme-link" data-url="aHR0cHM6Ly9taXN0LnRoZW1lLW5leHQub3Jn">NexT.Mist</span> 强力驱动
+  </div>
+
+        
+<div class="busuanzi-count">
+  <script async src="https://busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+    <span class="post-meta-item" id="busuanzi_container_site_uv" style="display: none;">
+      <span class="post-meta-item-icon">
+        <i class="fa fa-fa fa-user"></i>
+      </span>
+      <span class="site-uv" title="总访客量">
+        <span id="busuanzi_value_site_uv"></span>
+      </span>
+    </span>
+    <span class="post-meta-divider">|</span>
+    <span class="post-meta-item" id="busuanzi_container_site_pv" style="display: none;">
+      <span class="post-meta-item-icon">
+        <i class="fa fa-fa fa-eye"></i>
+      </span>
+      <span class="site-pv" title="总访问量">
+        <span id="busuanzi_value_site_pv"></span>
+      </span>
+    </span>
+</div>
+
+
+
+
+
+
+
+
+      </div>
+    </footer>
+  </div>
+
+  
+  <script src="//cdn.jsdelivr.net/npm/animejs@3.1.0/lib/anime.min.js"></script>
+  <script src="//cdn.jsdelivr.net/npm/medium-zoom@1/dist/medium-zoom.min.js"></script>
+  <script src="//cdn.jsdelivr.net/npm/lozad@1/dist/lozad.min.js"></script>
+  <script src="//cdn.jsdelivr.net/npm/pangu@4/dist/browser/pangu.min.js"></script>
+
+<script src="/js/utils.js"></script>
+
+
+<script src="/js/schemes/muse.js"></script>
+
+
+<script src="/js/next-boot.js"></script>
+
+
+
+
+  
+  <script>
+    (function(){
+      var bp = document.createElement('script');
+      var curProtocol = window.location.protocol.split(':')[0];
+      bp.src = (curProtocol === 'https') ? 'https://zz.bdstatic.com/linksubmit/push.js' : 'http://push.zhanzhang.baidu.com/push.js';
+      var s = document.getElementsByTagName("script")[0];
+      s.parentNode.insertBefore(bp, s);
+    })();
+  </script>
+
+
+
+
+  
+<script src="/js/local-search.js"></script>
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+  
+      
+
+<script>
+  if (typeof MathJax === 'undefined') {
+    window.MathJax = {
+      loader: {
+        source: {
+          '[tex]/amsCd': '[tex]/amscd',
+          '[tex]/AMScd': '[tex]/amscd'
+        }
+      },
+      tex: {
+        inlineMath: {'[+]': [['$', '$']]},
+        tags: 'ams'
+      },
+      options: {
+        renderActions: {
+          findScript: [10, doc => {
+            document.querySelectorAll('script[type^="math/tex"]').forEach(node => {
+              const display = !!node.type.match(/; *mode=display/);
+              const math = new doc.options.MathItem(node.textContent, doc.inputJax[0], display);
+              const text = document.createTextNode('');
+              node.parentNode.replaceChild(text, node);
+              math.start = {node: text, delim: '', n: 0};
+              math.end = {node: text, delim: '', n: 0};
+              doc.math.push(math);
+            });
+          }, '', false],
+          insertedScript: [200, () => {
+            document.querySelectorAll('mjx-container').forEach(node => {
+              let target = node.parentNode;
+              if (target.nodeName.toLowerCase() === 'li') {
+                target.parentNode.classList.add('has-jax');
+              }
+            });
+          }, '', false]
+        }
+      }
+    };
+    (function () {
+      var script = document.createElement('script');
+      script.src = '//cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js';
+      script.defer = true;
+      document.head.appendChild(script);
+    })();
+  } else {
+    MathJax.startup.document.state(0);
+    MathJax.texReset();
+    MathJax.typeset();
+  }
+</script>
+
+    
+
+  
+  <script src="//cdn.jsdelivr.net/npm/quicklink@1/dist/quicklink.umd.js"></script>
+  <script>
+      window.addEventListener('load', () => {
+      quicklink({
+        timeout : 3000,
+        priority: true,
+        ignores : [uri => uri.includes('#'),uri => uri === 'https://www.ravenxrz.ink/archives/6b2122f5.html',]
+      });
+      });
+  </script>
+
+<link rel="stylesheet" href="//cdn.jsdelivr.net/npm/gitalk@1/dist/gitalk.min.css">
+
+<script>
+NexT.utils.loadComments(document.querySelector('#gitalk-container'), () => {
+  NexT.utils.getScript('//cdn.jsdelivr.net/npm/gitalk@1/dist/gitalk.min.js', () => {
+    var gitalk = new Gitalk({
+      clientID    : 'b2fd373d2ca2e03e591e',
+      clientSecret: 'de4ab066908c1fbd32d3a45e091b3538761d685b',
+      repo        : 'BlogComment',
+      owner       : 'ravenxrz',
+      admin       : ['ravenxrz'],
+      id          : 'bff69d4a46d72840f72d0755ef1d3b32',
+        language: '',
+      distractionFreeMode: true
+    });
+    gitalk.render('gitalk-container');
+  }, window.Gitalk);
+});
+</script>
+
+</body>
+</html>

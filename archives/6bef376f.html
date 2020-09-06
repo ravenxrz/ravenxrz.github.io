@@ -1,0 +1,855 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 5.1.1">
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+  <meta http-equiv="Cache-Control" content="no-transform">
+  <meta http-equiv="Cache-Control" content="no-siteapp">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+<link rel="stylesheet" href="//cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@5/css/all.min.css">
+  <link rel="stylesheet" href="//cdn.jsdelivr.net/npm/pace-js@1/themes/blue/pace-theme-minimal.css">
+  <script src="//cdn.jsdelivr.net/npm/pace-js@1/pace.min.js"></script>
+
+<script id="hexo-configurations">
+    var NexT = window.NexT || {};
+    var CONFIG = {"hostname":"www.ravenxrz.ink","root":"/","scheme":"Mist","version":"7.8.0","exturl":true,"sidebar":{"position":"left","display":"always","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":true,"show_result":true,"style":"flat"},"back2top":{"enable":true,"sidebar":false,"scrollpercent":true},"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":true,"lazyload":true,"pangu":true,"comments":{"style":"tabs","active":"gitalk","storage":true,"lazyload":true,"nav":null,"activeClass":"gitalk"},"algolia":{"hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":true,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},"motion":{"enable":false,"async":true,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}}};
+  </script>
+
+  <meta name="description" content="相信不少同学在学习java 1.8新特性时，都对java函数接口和方法引用有些困惑。在查询资料加上一些自己的理解后整理出本文，希望能够帮过理清这其中的“奥秘”。">
+<meta property="og:type" content="article">
+<meta property="og:title" content="java函数接口&amp;方法引用">
+<meta property="og:url" content="https://www.ravenxrz.ink/archives/6bef376f.html">
+<meta property="og:site_name" content="Raven&#39;s Blog">
+<meta property="og:description" content="相信不少同学在学习java 1.8新特性时，都对java函数接口和方法引用有些困惑。在查询资料加上一些自己的理解后整理出本文，希望能够帮过理清这其中的“奥秘”。">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="https://cdn.jsdelivr.net/gh/ravenxrz/PicBed/img/types-of-method-references.jpg">
+<meta property="article:published_time" content="2020-04-10T05:27:38.000Z">
+<meta property="article:modified_time" content="2020-09-06T02:45:08.044Z">
+<meta property="article:author" content="Raven">
+<meta property="article:tag" content="java">
+<meta property="article:tag" content="函数接口">
+<meta property="article:tag" content="方法引用">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://cdn.jsdelivr.net/gh/ravenxrz/PicBed/img/types-of-method-references.jpg">
+
+<link rel="canonical" href="https://www.ravenxrz.ink/archives/6bef376f.html">
+
+
+<script id="page-configurations">
+  // https://hexo.io/docs/variables.html
+  CONFIG.page = {
+    sidebar: "",
+    isHome : false,
+    isPost : true,
+    lang   : 'zh-CN'
+  };
+</script>
+
+  <title>java函数接口&方法引用 | Raven's Blog</title>
+  
+
+
+
+
+
+
+  <noscript>
+  <style>
+  .use-motion .brand,
+  .use-motion .menu-item,
+  .sidebar-inner,
+  .use-motion .post-block,
+  .use-motion .pagination,
+  .use-motion .comments,
+  .use-motion .post-header,
+  .use-motion .post-body,
+  .use-motion .collection-header { opacity: initial; }
+
+  .use-motion .site-title,
+  .use-motion .site-subtitle {
+    opacity: initial;
+    top: initial;
+  }
+
+  .use-motion .logo-line-before i { left: initial; }
+  .use-motion .logo-line-after i { right: initial; }
+  </style>
+</noscript>
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage">
+  <div class="container">
+    <div class="headband"></div>
+
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切换导航栏">
+      <span class="toggle-line toggle-line-first"></span>
+      <span class="toggle-line toggle-line-middle"></span>
+      <span class="toggle-line toggle-line-last"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <span class="logo-line-before"><i></i></span>
+      <h1 class="site-title">Raven's Blog</h1>
+      <span class="logo-line-after"><i></i></span>
+    </a>
+      <p class="site-subtitle" itemprop="description">zhang.xingrui@foxmail.com</p>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger">
+        <i class="fa fa-search fa-fw fa-lg"></i>
+    </div>
+  </div>
+</div>
+
+
+
+
+<nav class="site-nav">
+  <ul id="menu" class="menu">
+        <li class="menu-item menu-item-home">
+
+    <a href="/" rel="section"><i class="fa fa-fw fa-fa fa-home"></i>首页</a>
+
+  </li>
+        <li class="menu-item menu-item-archives">
+
+    <a href="/archives/" rel="section"><i class="fa fa-fw fa-fa fa-archive"></i>归档<span class="badge">120</span></a>
+
+  </li>
+        <li class="menu-item menu-item-categories">
+
+    <a href="/categories/" rel="section"><i class="fa fa-fw fa-fa fa-th"></i>分类<span class="badge">17</span></a>
+
+  </li>
+        <li class="menu-item menu-item-tags">
+
+    <a href="/tags/" rel="section"><i class="fa fa-fw fa-fa fa-tags"></i>标签<span class="badge">114</span></a>
+
+  </li>
+        <li class="menu-item menu-item-about">
+
+    <a href="/about/" rel="section"><i class="fa fa-fw fa-fa fa-user"></i>关于</a>
+
+  </li>
+      <li class="menu-item menu-item-search">
+        <a role="button" class="popup-trigger"><i class="fa fa-search fa-fw"></i>搜索
+        </a>
+      </li>
+  </ul>
+</nav>
+
+
+
+  <div class="search-pop-overlay">
+    <div class="popup search-popup">
+        <div class="search-header">
+  <span class="search-icon">
+    <i class="fa fa-search"></i>
+  </span>
+  <div class="search-input-container">
+    <input autocomplete="off" autocapitalize="off"
+           placeholder="搜索..." spellcheck="false"
+           type="search" class="search-input">
+  </div>
+  <span class="popup-btn-close">
+    <i class="fa fa-times-circle"></i>
+  </span>
+</div>
+<div id="search-result">
+  <div id="no-result">
+    <i class="fa fa-spinner fa-pulse fa-5x fa-fw"></i>
+  </div>
+</div>
+
+    </div>
+  </div>
+
+</div>
+    </header>
+
+    
+  <div class="back-to-top">
+    <i class="fa fa-arrow-up"></i>
+    <span>0%</span>
+  </div>
+
+  <span class="exturl github-corner" data-url="aHR0cHM6Ly9naXRodWIuY29tL3JhdmVueHJ6" title="Follow me on GitHub" aria-label="Follow me on GitHub"><svg width="80" height="80" viewBox="0 0 250 250" aria-hidden="true"><path d="M0,0 L115,115 L130,115 L142,142 L250,250 L250,0 Z"></path><path d="M128.3,109.0 C113.8,99.7 119.0,89.6 119.0,89.6 C122.0,82.7 120.5,78.6 120.5,78.6 C119.2,72.0 123.4,76.3 123.4,76.3 C127.3,80.9 125.5,87.3 125.5,87.3 C122.9,97.6 130.6,101.9 134.4,103.2" fill="currentColor" style="transform-origin: 130px 106px;" class="octo-arm"></path><path d="M115.0,115.0 C114.9,115.1 118.7,116.5 119.8,115.4 L133.7,101.6 C136.9,99.2 139.9,98.4 142.2,98.6 C133.8,88.0 127.5,74.4 143.8,58.0 C148.5,53.4 154.0,51.2 159.7,51.0 C160.3,49.4 163.2,43.6 171.4,40.1 C171.4,40.1 176.1,42.5 178.8,56.2 C183.1,58.6 187.2,61.8 190.9,65.4 C194.5,69.0 197.7,73.2 200.1,77.6 C213.8,80.2 216.3,84.9 216.3,84.9 C212.7,93.1 206.9,96.0 205.4,96.6 C205.1,102.4 203.0,107.8 198.3,112.5 C181.9,128.9 168.3,122.5 157.7,114.1 C157.9,116.9 156.7,120.9 152.7,124.9 L141.0,136.5 C139.8,137.7 141.6,141.9 141.8,141.8 Z" fill="currentColor" class="octo-body"></path></svg></span>
+
+
+    <main class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          
+
+          <div class="content post posts-expand">
+            
+
+    
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="https://www.ravenxrz.ink/archives/6bef376f.html">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="https://pic.downk.cc/item/5e907515504f4bcb04b6f798.jpg">
+      <meta itemprop="name" content="Raven">
+      <meta itemprop="description" content="分享技术，记录生活">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Raven's Blog">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          java函数接口&方法引用
+        </h1>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+
+              <time title="创建时间：2020-04-10 13:27:38" itemprop="dateCreated datePublished" datetime="2020-04-10T13:27:38+08:00">2020-04-10</time>
+            </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-calendar-check-o"></i>
+                </span>
+                <span class="post-meta-item-text">更新于</span>
+                <time title="修改时间：2020-09-06 10:45:08" itemprop="dateModified" datetime="2020-09-06T10:45:08+08:00">2020-09-06</time>
+              </span>
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              <span class="post-meta-item-text">分类于</span>
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/Java/" itemprop="url" rel="index"><span itemprop="name">Java</span></a>
+                </span>
+            </span>
+
+          
+            <span class="post-meta-item" title="阅读次数" id="busuanzi_container_page_pv" style="display: none;">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-fa fa-eye"></i>
+              </span>
+              <span class="post-meta-item-text">阅读次数：</span>
+              <span id="busuanzi_value_page_pv"></span>
+            </span>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+        <p>相信不少同学在学习java 1.8新特性时，都对java函数接口和方法引用有些困惑。在查询资料加上一些自己的理解后整理出本文，希望能够帮过理清这其中的“奥秘”。</p>
+<a id="more"></a>
+
+<h2 id="1-追追历史"><a href="#1-追追历史" class="headerlink" title="1. 追追历史"></a>1. 追追历史</h2><p>一个东西的诞生是不会没有理由的。那为什么要使用函数接口呢？</p>
+<p>我们都知道在jdk1.8之前，要让线程run一个task，我们可以通过一个匿名内部类来实现，如：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// Java program to demonstrate functional interface </span></span><br><span class="line">  </span><br><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">Test</span> </span>&#123; </span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">main</span><span class="params">(String args[])</span> </span>&#123; </span><br><span class="line">        <span class="comment">// create anonymous inner class object </span></span><br><span class="line">        <span class="keyword">new</span> Thread(<span class="keyword">new</span> Runnable() &#123; </span><br><span class="line">            <span class="meta">@Override</span></span><br><span class="line">            <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">run</span><span class="params">()</span> </span>&#123; </span><br><span class="line">                System.out.println(<span class="string">&quot;New thread created&quot;</span>); </span><br><span class="line">            &#125; </span><br><span class="line">        &#125;).start(); </span><br><span class="line">    &#125; </span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>可以看到，我们仅仅是为了让线程打印一条语句，却写了这么多行代码。有什么办法可以简化它呢？于是，<strong>java引入了lambda表达式：</strong></p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">Test</span> </span>&#123;</span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">main</span><span class="params">(String args[])</span> </span>&#123;</span><br><span class="line">        <span class="comment">// lambda expression to create the object </span></span><br><span class="line">        <span class="keyword">new</span> Thread(() -&gt;&#123;</span><br><span class="line">            System.out.println(<span class="string">&quot;New thread created&quot;</span>);</span><br><span class="line">        &#125;).start();</span><br><span class="line">    &#125;</span><br><span class="line">&#125; </span><br><span class="line"></span><br></pre></td></tr></table></figure>
+
+<p>现在代码看着舒服多了。不仅是代码行数的减少，也更直观的阐述了这个线程的工作任务。</p>
+<p><strong>那我们想一下，什么情况下可以用lambda表达式来替代一个匿名内部类呢？</strong></p>
+<p>答案是：如果如果这个匿名内部类只需要实现一个抽象方法。</p>
+<h2 id="2-函数接口"><a href="#2-函数接口" class="headerlink" title="2. 函数接口"></a>2. 函数接口</h2><p>紧跟前面的答案，如果一个方法所以来的接口只有一个抽象方法，那么我们就可以用lambda表达式去替代它。这些<strong>“只有一个抽象方法”的接口</strong>（这个说明其实略有出入，后文会有解释，现在这样就可以了）就是<strong>函数接口</strong>。并且，jdk中还提供了一个注解–@FunctionalInterface，用来编译器这个接口是函数接口。当然，只要接口满足函数接口的条件，即使不加这个注解，编译器还是会认为这个接口就是函数接口。</p>
+<p>函数接口的关键：</p>
+<ol>
+<li>一个函数接口只能由一个抽象方法，但是可以有多个默认实现的方法。</li>
+<li>@FunctionalInterface注解用来确保接口不能有多尔衮抽象方法。但是一个函数接口不必一定添加这个注解。</li>
+<li>函数接口可用lambda表达式或者方法引用来替代。</li>
+</ol>
+<h3 id="2-1-JDK中的函数接口包"><a href="#2-1-JDK中的函数接口包" class="headerlink" title="2.1 JDK中的函数接口包"></a>2.1 JDK中的函数接口包</h3><p>JDK的函数接口包中大体上可以分成4类：</p>
+<ul>
+<li>Consumer： 消费器</li>
+<li>Supplier： 生产器</li>
+<li>Predicate： 判断器</li>
+<li>Function： 转换器</li>
+</ul>
+<h4 id="2-1-1-Consumer"><a href="#2-1-1-Consumer" class="headerlink" title="2.1.1 Consumer"></a>2.1.1 Consumer</h4><p>Consumer接口一个参数，并且返回一个void（即不返回），所以叫做“消费”。</p>
+<p>其内部包含两个方法：</p>
+<ul>
+<li>accept 抽象方法</li>
+<li>andThen 默认实现方法</li>
+</ul>
+<p>下面举个例子：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">ConsumerFunctionExample</span></span>&#123;</span><br><span class="line">   <span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">main</span><span class="params">(String args[])</span></span>&#123;</span><br><span class="line">      List&lt;Integer&gt; integerList= Arrays.asList(<span class="number">1</span>, <span class="number">10</span>, <span class="number">200</span>, <span class="number">101</span>, -<span class="number">10</span>, <span class="number">0</span>);</span><br><span class="line">      printList(integerList, (v -&gt; System.out.println(v)));<span class="comment">// 此处的lambda表达式，代替了printList方法中的函数接口</span></span><br><span class="line">   &#125;</span><br><span class="line"></span><br><span class="line">   <span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">printList</span><span class="params">(List&lt;Integer&gt; listOfIntegers, Consumer&lt;Integer&gt; consumer&#123;</span></span></span><br><span class="line"><span class="function"><span class="params">      <span class="keyword">for</span>(Integer integer:listOfIntegers)</span></span>&#123;</span><br><span class="line">         consumer.accept(integer);</span><br><span class="line">      &#125;</span><br><span class="line">   &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>又或者：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">ConsumerFunctionExample</span></span>&#123;</span><br><span class="line">   <span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">main</span><span class="params">(String args[])</span></span>&#123;</span><br><span class="line">      <span class="comment">// 引用一个lambda表达式</span></span><br><span class="line">      Consumer&lt;Integer&gt; consumer= i-&gt; System.out.print(i);</span><br><span class="line">      List&lt;Integer&gt; integerList= Arrays.asList(<span class="number">1</span>, <span class="number">10</span>, <span class="number">200</span>, <span class="number">101</span>, -<span class="number">10</span>, <span class="number">0</span>);</span><br><span class="line">      printList(integerList, consumer);</span><br><span class="line">      </span><br><span class="line">   &#125;</span><br><span class="line"></span><br><span class="line">   <span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">printList</span><span class="params">(List&lt;Integer&gt; listOfIntegers, Consumer&lt;Integer&gt; consumer)</span></span>&#123;</span><br><span class="line">      <span class="keyword">for</span>(Integer integer:listOfIntegers)&#123;</span><br><span class="line">         consumer.accept(integer);</span><br><span class="line">      &#125;</span><br><span class="line">   &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>含义一样。</p>
+<p><strong>BiConsumer</strong>，功能和Consumer一样，只不过Consumer吃一个参数，Biconsumer吃两个参数，然后两个接口都不吐任何东西。</p>
+<h4 id="2-1-2-Supplier"><a href="#2-1-2-Supplier" class="headerlink" title="2.1.2 Supplier"></a>2.1.2 Supplier</h4><p>和Consumer相反，Supplier不吃”任何东西“，返回给我们提供东西。所以它的内部只有一个get方法。</p>
+<p>举个例子：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">SupplierFunctionExample</span> </span>&#123;</span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">main</span><span class="params">(String args[])</span> </span>&#123;</span><br><span class="line"></span><br><span class="line">        <span class="comment">//Supplier instance with lambda expression</span></span><br><span class="line">        Supplier&lt;String&gt; helloStrSupplier = () -&gt; <span class="keyword">new</span> String(<span class="string">&quot;Hello&quot;</span>);</span><br><span class="line">        String helloStr = helloStrSupplier.get();</span><br><span class="line">        System.out.println(<span class="string">&quot;String in helloStr is-&gt;&quot;</span> + helloStr + <span class="string">&quot;&lt;-&quot;</span>);</span><br><span class="line"></span><br><span class="line">        <span class="comment">//Supplier instance using method reference to default constructor</span></span><br><span class="line">        Supplier&lt;String&gt; emptyStrSupplier = String::<span class="keyword">new</span>;</span><br><span class="line">        String emptyStr = emptyStrSupplier.get();</span><br><span class="line">        System.out.println(<span class="string">&quot;String in emptyStr is-&gt;&quot;</span> + emptyStr + <span class="string">&quot;&lt;-&quot;</span>);</span><br><span class="line"></span><br><span class="line">        <span class="comment">//Supplier instance using method reference to a static method</span></span><br><span class="line">        Supplier&lt;Date&gt; dateSupplier = SupplierFunctionExample::getSystemDate;</span><br><span class="line">        Date systemDate = dateSupplier.get();</span><br><span class="line">        System.out.println(<span class="string">&quot;systemDate-&gt;&quot;</span> + systemDate);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">static</span> Date <span class="title">getSystemDate</span><span class="params">()</span> </span>&#123;</span><br><span class="line">        <span class="keyword">return</span> <span class="keyword">new</span> Date();</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h4 id="2-1-3-Predicate"><a href="#2-1-3-Predicate" class="headerlink" title="2.1.3 Predicate"></a>2.1.3 Predicate</h4><p>predicate接受一个input，然后返回一个boolean。通过会把这个input用来做某种条件判断。如：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">PredicateFunctionExample</span> </span>&#123;</span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">main</span><span class="params">(String args[])</span> </span>&#123;</span><br><span class="line">        Predicate&lt;Integer&gt; positive = i -&gt; i &gt; <span class="number">0</span>;	<span class="comment">// 条件判定的实体</span></span><br><span class="line">        List&lt;Integer&gt; integerList;</span><br><span class="line">        integerList = Arrays.asList(<span class="number">1</span>, <span class="number">10</span>, <span class="number">200</span>, <span class="number">101</span>, -<span class="number">10</span>, <span class="number">0</span>);</span><br><span class="line">        List&lt;Integer&gt; filteredList = filterList(integerList, positive);</span><br><span class="line">        </span><br><span class="line">        filteredList.forEach(System.out::println);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">static</span> List&lt;Integer&gt; <span class="title">filterList</span><span class="params">(List&lt;Integer&gt; listOfIntegers, Predicate&lt;Integer&gt; predicate)</span> </span>&#123;</span><br><span class="line">        List&lt;Integer&gt; filteredList = <span class="keyword">new</span> ArrayList&lt;Integer&gt;();</span><br><span class="line"></span><br><span class="line">        <span class="keyword">for</span> (Integer integer : listOfIntegers) &#123;</span><br><span class="line">            <span class="keyword">if</span> (predicate.test(integer)) &#123;	</span><br><span class="line">                filteredList.add(integer);</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="keyword">return</span> filteredList;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p><strong>BiPredicate</strong> ，接收两个参数来做判别。</p>
+<h4 id="2-1-4-Function"><a href="#2-1-4-Function" class="headerlink" title="2.1.4 Function"></a>2.1.4 Function</h4><p>Function函数接口，接受一个参数然后返回一个参数（注意接收和返回可以是相同的类型，也可以是不同的类型），我个人将其称作为转换器。</p>
+<p>举个例子:</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">FunctionExample</span> </span>&#123;</span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">main</span><span class="params">(String[] args)</span> </span>&#123;</span><br><span class="line">        Function&lt;Integer,Double&gt; converter = (t) -&gt; (<span class="keyword">double</span>)t;</span><br><span class="line">        List&lt;Integer&gt; integerList = Arrays.asList(<span class="number">1</span>, <span class="number">10</span>, <span class="number">200</span>, <span class="number">101</span>, -<span class="number">10</span>, <span class="number">0</span>);</span><br><span class="line">        <span class="comment">// convert integer type to double type</span></span><br><span class="line">        List&lt;Double&gt; doubleList = listConverter(integerList,converter);</span><br><span class="line">        doubleList.forEach(System.out::println);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">public</span> <span class="keyword">static</span> &lt;T,U&gt; <span class="function">List&lt;U&gt; <span class="title">listConverter</span><span class="params">(List&lt;T&gt; tList, Function&lt;T,U&gt; converter)</span></span>&#123;</span><br><span class="line">        List&lt;U&gt; uList = <span class="keyword">new</span> ArrayList&lt;&gt;();</span><br><span class="line">        <span class="keyword">for</span>(T t: tList)&#123;</span><br><span class="line">            uList.add(converter.apply(t));</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="keyword">return</span> uList;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>现在，我们看看它的定义：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">@FunctionalInterface</span></span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">interface</span> <span class="title">Function</span>&lt;<span class="title">T</span>, <span class="title">R</span>&gt; </span>&#123;</span><br><span class="line"></span><br><span class="line">    <span class="comment">/**</span></span><br><span class="line"><span class="comment">     * Applies this function to the given argument.</span></span><br><span class="line"><span class="comment">     *</span></span><br><span class="line"><span class="comment">     * <span class="doctag">@param</span> t the function argument</span></span><br><span class="line"><span class="comment">     * <span class="doctag">@return</span> the function result</span></span><br><span class="line"><span class="comment">     */</span></span><br><span class="line">    <span class="function">R <span class="title">apply</span><span class="params">(T t)</span></span>;</span><br><span class="line">    ...</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>注意到Function的泛型T，R是只能接受<strong>类类型</strong>的。那如何接收基本类型呢(int double long等)。我们这样写吗：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">Function&lt;<span class="keyword">int</span>,<span class="keyword">double</span>&gt; function; <span class="comment">// 显然是错的</span></span><br></pre></td></tr></table></figure>
+
+<p>考虑到这个问题，jdk里面给我们提供了一些方便接口：</p>
+<ul>
+<li><p>基本类型转其它类型：命名方式：基本类型Function。如IntFunction,DoubleFunction等，就是接受一个int或double参数，然后一个泛型T类型。</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">@FunctionalInterface</span></span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">interface</span> <span class="title">IntFunction</span>&lt;<span class="title">R</span>&gt; </span>&#123;</span><br><span class="line"></span><br><span class="line">    <span class="comment">/**</span></span><br><span class="line"><span class="comment">     * Applies this function to the given argument.</span></span><br><span class="line"><span class="comment">     *</span></span><br><span class="line"><span class="comment">     * <span class="doctag">@param</span> value the function argument</span></span><br><span class="line"><span class="comment">     * <span class="doctag">@return</span> the function result</span></span><br><span class="line"><span class="comment">     */</span></span><br><span class="line">    <span class="function">R <span class="title">apply</span><span class="params">(<span class="keyword">int</span> value)</span></span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>其它类型转基本类型：命名方式：To基本类型Function。如ToIntFunction,ToDoubleFunction等。接受其它类型转为基本类型。</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">@FunctionalInterface</span></span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">interface</span> <span class="title">ToIntFunction</span>&lt;<span class="title">T</span>&gt; </span>&#123;</span><br><span class="line"></span><br><span class="line">    <span class="comment">/**</span></span><br><span class="line"><span class="comment">     * Applies this function to the given argument.</span></span><br><span class="line"><span class="comment">     *</span></span><br><span class="line"><span class="comment">     * <span class="doctag">@param</span> value the function argument</span></span><br><span class="line"><span class="comment">     * <span class="doctag">@return</span> the function result</span></span><br><span class="line"><span class="comment">     */</span></span><br><span class="line">    <span class="function"><span class="keyword">int</span> <span class="title">applyAsInt</span><span class="params">(T value)</span></span>;</span><br><span class="line">&#125;</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+
+</li>
+</ul>
+<h4 id="额外的命名规则："><a href="#额外的命名规则：" class="headerlink" title="额外的命名规则："></a><strong>额外的命名规则：</strong></h4><p>jdk中的接口还有额外一种命名规则，叫做从左向右指定形参的参数类型。</p>
+<p>如： ObjIntConsumer,其实Obj表示第一个参数是一个泛型参数，第二个参数时int：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">@FunctionalInterface</span></span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">interface</span> <span class="title">ObjIntConsumer</span>&lt;<span class="title">T</span>&gt; </span>&#123;</span><br><span class="line"></span><br><span class="line">    <span class="comment">/**</span></span><br><span class="line"><span class="comment">     * Performs this operation on the given arguments.</span></span><br><span class="line"><span class="comment">     *</span></span><br><span class="line"><span class="comment">     * <span class="doctag">@param</span> t the first input argument</span></span><br><span class="line"><span class="comment">     * <span class="doctag">@param</span> value the second input argument</span></span><br><span class="line"><span class="comment">     */</span></span><br><span class="line">    <span class="function"><span class="keyword">void</span> <span class="title">accept</span><span class="params">(T t, <span class="keyword">int</span> value)</span></span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>又如， <code>IntToDoubleFunction</code>.表明Function的apply参数，参数时int，返回值是double。</p>
+<h3 id="2-2-另一些函数接口"><a href="#2-2-另一些函数接口" class="headerlink" title="2.2 另一些函数接口"></a>2.2 另一些函数接口</h3><p>除了jdk，java.util.function包下的函数接口外，还有一些函数也是函数接口。如本文最开始提到的：</p>
+<p>Runnable,还有ActionListener, Comparable，Callable等，这些接口无一例外都只有一个抽象函数。</p>
+<p>但是我在上文中曾提到，这样的说法其实是一点出入的。我们来看Comparator这个接口：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">@FunctionalInterface</span></span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">interface</span> <span class="title">Comparator</span>&lt;<span class="title">T</span>&gt; </span>&#123;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">int</span> <span class="title">compare</span><span class="params">(T o1, T o2)</span></span>;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">boolean</span> <span class="title">equals</span><span class="params">(Object obj)</span></span>;</span><br><span class="line">    </span><br><span class="line">    ...</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>可以明显的看到，这个接口是有两个抽象函数的，但是它也用了@FunctionalInterface注解表明。</p>
+<p>所以，这个说法是有一点出入，就我个人而言，应该是<strong>在使用时能够使用labmda式或者方法引用去完全匹配一个接口中的某个抽象方法</strong>，就算是函数接口。</p>
+<p>如：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">ComparatorExample</span> </span>&#123;</span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">main</span><span class="params">(String[] args)</span> </span>&#123;</span><br><span class="line">        Student[] stus = <span class="keyword">new</span> Student[]&#123;</span><br><span class="line">                <span class="keyword">new</span> Student(<span class="number">12</span>,<span class="string">&quot;法外狂徒张三&quot;</span>),</span><br><span class="line">                <span class="keyword">new</span> Student(<span class="number">123</span>,<span class="string">&quot;李四&quot;</span>),</span><br><span class="line">                <span class="keyword">new</span> Student(<span class="number">4</span>,<span class="string">&quot;王五&quot;</span>)</span><br><span class="line">        &#125;;</span><br><span class="line">       	<span class="comment">// 此处的lambda表达完全配置Comparator#compare方法</span></span><br><span class="line">        Comparator&lt;Student&gt; comparator = (stu1,stu2)-&gt;&#123;</span><br><span class="line">            <span class="keyword">return</span> stu1.getId() - stu2.getId();</span><br><span class="line">        &#125;;</span><br><span class="line">        Arrays.sort(stus,comparator);</span><br><span class="line">        <span class="comment">// print result</span></span><br><span class="line">        Stream.of(stus).forEach(System.out::print);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">Student</span></span>&#123;</span><br><span class="line">    <span class="keyword">private</span> <span class="keyword">int</span> id;</span><br><span class="line">    <span class="keyword">private</span> String name;</span><br><span class="line">    </span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">int</span> <span class="title">getId</span><span class="params">()</span> </span>&#123;</span><br><span class="line">        <span class="keyword">return</span> id;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">setId</span><span class="params">(<span class="keyword">int</span> id)</span> </span>&#123;</span><br><span class="line">        <span class="keyword">this</span>.id = id;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">public</span> String <span class="title">getName</span><span class="params">()</span> </span>&#123;</span><br><span class="line">        <span class="keyword">return</span> name;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">setName</span><span class="params">(String name)</span> </span>&#123;</span><br><span class="line">        <span class="keyword">this</span>.name = name;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="meta">@Override</span></span><br><span class="line">    <span class="function"><span class="keyword">public</span> String <span class="title">toString</span><span class="params">()</span> </span>&#123;</span><br><span class="line">        <span class="keyword">return</span> <span class="string">&quot;Student&#123;&quot;</span> +</span><br><span class="line">                <span class="string">&quot;id=&quot;</span> + id +</span><br><span class="line">                <span class="string">&quot;, name=&#x27;&quot;</span> + name + <span class="string">&#x27;\&#x27;&#x27;</span> +</span><br><span class="line">                <span class="string">&#x27;&#125;&#x27;</span>;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="title">Student</span><span class="params">(<span class="keyword">int</span> id, String name)</span> </span>&#123;</span><br><span class="line">        <span class="keyword">this</span>.id = id;</span><br><span class="line">        <span class="keyword">this</span>.name = name;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>下面我们再来谈谈和函数接口紧密相连的方法引用。</p>
+<h2 id="3-方法引用"><a href="#3-方法引用" class="headerlink" title="3. 方法引用"></a>3. 方法引用</h2><h3 id="3-1-为什么要用方法引用"><a href="#3-1-为什么要用方法引用" class="headerlink" title="3.1 为什么要用方法引用"></a>3.1 为什么要用方法引用</h3><p>让我们再看看刚才那个根据学号排序学生的例子，只不过这次我在student类中添加一个新的方法。</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">ComparatorExample</span> </span>&#123;</span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">main</span><span class="params">(String[] args)</span> </span>&#123;</span><br><span class="line">        Student[] stus = <span class="keyword">new</span> Student[]&#123;</span><br><span class="line">                <span class="keyword">new</span> Student(<span class="number">12</span>,<span class="string">&quot;法外狂徒张三&quot;</span>),</span><br><span class="line">                <span class="keyword">new</span> Student(<span class="number">123</span>,<span class="string">&quot;李四&quot;</span>),</span><br><span class="line">                <span class="keyword">new</span> Student(<span class="number">4</span>,<span class="string">&quot;王五&quot;</span>)</span><br><span class="line">        &#125;;</span><br><span class="line">        Comparator&lt;Student&gt; comparator = (stu1,stu2)-&gt;&#123;</span><br><span class="line">            <span class="keyword">return</span> Student.compareTo(stu1,stu2);</span><br><span class="line">        &#125;;</span><br><span class="line">        Arrays.sort(stus,comparator);</span><br><span class="line">        </span><br><span class="line">        Stream.of(stus).forEach(System.out::print);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">Student</span></span>&#123;</span><br><span class="line">    <span class="keyword">private</span> <span class="keyword">int</span> id;</span><br><span class="line">    <span class="keyword">private</span> String name;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">int</span> <span class="title">compareTo</span><span class="params">(Student stu1, Student stu2)</span></span>&#123;</span><br><span class="line">        <span class="keyword">return</span> stu1.getId() - stu2.getId();</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">	...</span><br><span class="line">&#125;</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+
+<p>这样同样能实现效果，现在我们仅看这一句话：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">Comparator&lt;Student&gt; comparator = (stu1,stu2)-&gt;&#123;</span><br><span class="line">    <span class="keyword">return</span> Student.compareTo(stu1,stu2);</span><br><span class="line">&#125;;</span><br></pre></td></tr></table></figure>
+<p>这一个labmda表达式非常简单，<strong>当lambda内部出了调用一个函数以外什么也不做时，我们就可以考虑使用方法引用。</strong></p>
+<p>使用方法引用来改造上面的例子：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">ComparatorExample</span> </span>&#123;</span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">main</span><span class="params">(String[] args)</span> </span>&#123;</span><br><span class="line">        Student[] stus = <span class="keyword">new</span> Student[]&#123;</span><br><span class="line">                <span class="keyword">new</span> Student(<span class="number">12</span>,<span class="string">&quot;法外狂徒张三&quot;</span>),</span><br><span class="line">                <span class="keyword">new</span> Student(<span class="number">123</span>,<span class="string">&quot;李四&quot;</span>),</span><br><span class="line">                <span class="keyword">new</span> Student(<span class="number">4</span>,<span class="string">&quot;王五&quot;</span>)</span><br><span class="line">        &#125;;</span><br><span class="line">        Comparator&lt;Student&gt; comparator = Student::compareTo;</span><br><span class="line">        Arrays.sort(stus,comparator);</span><br><span class="line">        <span class="comment">// 或者直接： Arrays.sort(stus,Student::compareTo);</span></span><br><span class="line">        <span class="comment">// print result</span></span><br><span class="line">        Stream.of(stus).forEach(System.out::print);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>此时Student::compareTo等价于lambda表达式：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">(stu1,stu2)-&gt;&#123;</span><br><span class="line">           <span class="keyword">return</span> Student.compareTo(stu1,stu2);</span><br><span class="line">       &#125;;</span><br></pre></td></tr></table></figure>
+
+<p>仔细思考一下它们之间的相似点。</p>
+<p>yes，<strong>他们的参数是相同</strong>（数量，类型）。</p>
+<p>上面我所展示的只不过是3种方法引用的其中一种，这3种分别是：</p>
+<ol>
+<li>Reference to a static method. 静态方法引用</li>
+<li>Reference to an instance method. 实例方法引用</li>
+<li>Reference to a constructor. 构造器引用</li>
+</ol>
+<p><img src="https://cdn.jsdelivr.net/gh/ravenxrz/PicBed/img/types-of-method-references.jpg" alt="Types of Java Method References"></p>
+<p>别被三种方式吓到了，看到<strong>总结</strong>后，你会发现其实很好区别。</p>
+<h3 id="3-2-静态方法引用"><a href="#3-2-静态方法引用" class="headerlink" title="3.2 静态方法引用"></a>3.2 静态方法引用</h3><p>语法：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">ContainingClass::staticMethodName  </span><br></pre></td></tr></table></figure>
+
+<p>现在我们来解释一下之前学生排序的例子：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">Comparator&lt;Student&gt; comparator = Student::compareTo;</span><br><span class="line">Arrays.sort(stus,comparator);</span><br><span class="line"><span class="comment">// 等价于</span></span><br><span class="line">Arrays.sort(stus,Student::compareTo);</span><br></pre></td></tr></table></figure>
+
+<p>我们来看看Arrays.sort的方法签名：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="keyword">static</span> &lt;T&gt; <span class="function"><span class="keyword">void</span> <span class="title">sort</span><span class="params">(T[] a, Comparator&lt;? <span class="keyword">super</span> T&gt; c)</span></span></span><br></pre></td></tr></table></figure>
+
+<p>Compator这里作为函数接口，它的签名是：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">int</span> <span class="title">compare</span><span class="params">(T o1, T o2)</span></span>;</span><br></pre></td></tr></table></figure>
+
+<p>记住，它是两个参数。</p>
+<p>再看看Student::compareTo,</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">int</span> <span class="title">compareTo</span><span class="params">(Student stu1, Student stu2)</span></span></span><br></pre></td></tr></table></figure>
+
+<p>也是两个参数。</p>
+<p>也就是说静态方法引用，只要函数接口和静态方法的参数一一对应即可。</p>
+<h3 id="3-3-实例方法引用"><a href="#3-3-实例方法引用" class="headerlink" title="3.3 实例方法引用"></a>3.3 实例方法引用</h3><p>实例方法引用又分两种：</p>
+<h4 id="3-3-1-特定实例的方法引用"><a href="#3-3-1-特定实例的方法引用" class="headerlink" title="3.3.1 特定实例的方法引用"></a>3.3.1 特定实例的方法引用</h4><p>语法：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">containingObject::instanceMethodName  </span><br></pre></td></tr></table></figure>
+
+<ol>
+<li>简单例子：</li>
+</ol>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">Filter</span></span>&#123;</span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">boolean</span> <span class="title">startWithB</span><span class="params">(String str)</span></span>&#123;</span><br><span class="line">        <span class="keyword">return</span> str.startsWith(<span class="string">&quot;B&quot;</span>);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">List&lt;String&gt; list = Arrays.asList( <span class="string">&quot;Barbara&quot;</span>, <span class="string">&quot;James&quot;</span>, <span class="string">&quot;Mary&quot;</span>, <span class="string">&quot;John&quot;</span>,</span><br><span class="line">        <span class="string">&quot;Patricia&quot;</span>, <span class="string">&quot;Robert&quot;</span>, <span class="string">&quot;Michael&quot;</span>, <span class="string">&quot;Linda&quot;</span>);</span><br><span class="line">Filter myFilter = <span class="keyword">new</span> Filter();</span><br><span class="line">List&lt;String&gt; collect = list.stream().filter(myFilter::startWithB).collect(Collectors.toList());</span><br><span class="line">collect.forEach(System.out::println);</span><br></pre></td></tr></table></figure>
+
+<p>这里有两个地方都用到了实例方法引用：</p>
+<ol>
+<li>list.stream().filter(myFilter::startWithB)。 myFilter::startWithB</li>
+<li>collect.forEach(System.out::println);  </li>
+</ol>
+<p>这里进说明第一个：</p>
+<p>Filter是自定义的类，内部有一个方法。签名：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">boolean</span> <span class="title">startWithB</span><span class="params">(String str)</span></span></span><br></pre></td></tr></table></figure>
+
+<p>filter:</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="function">Stream&lt;T&gt; <span class="title">filter</span><span class="params">(Predicate&lt;? <span class="keyword">super</span> T&gt; predicate)</span></span>;</span><br><span class="line"></span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">interface</span> <span class="title">Predicate</span>&lt;<span class="title">T</span>&gt; </span>&#123;</span><br><span class="line">    <span class="function"><span class="keyword">boolean</span> <span class="title">test</span><span class="params">(T t)</span></span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>所以也就是test(T t)中t传给了startWithB（String str)中的str。</p>
+<h4 id="3-3-2-引用特定类型的任意对象的实例方法"><a href="#3-3-2-引用特定类型的任意对象的实例方法" class="headerlink" title="3.3.2 引用特定类型的任意对象的实例方法"></a>3.3.2 引用特定类型的任意对象的实例方法</h4><p><strong>这是方法引用中最难理解的一种。</strong></p>
+<p>现在看这个例子：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">String[] stringArray = &#123; <span class="string">&quot;Barbara&quot;</span>, <span class="string">&quot;James&quot;</span>, <span class="string">&quot;Mary&quot;</span>, <span class="string">&quot;John&quot;</span>,</span><br><span class="line">    <span class="string">&quot;Patricia&quot;</span>, <span class="string">&quot;Robert&quot;</span>, <span class="string">&quot;Michael&quot;</span>, <span class="string">&quot;Linda&quot;</span> &#125;;</span><br><span class="line">Arrays.sort(stringArray, String::compareToIgnoreCase);<span class="comment">// String::xx 这里不是静态方法，而是作为方法实例在使用</span></span><br></pre></td></tr></table></figure>
+
+<p>现在我们来比较一下参数：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// Comparator</span></span><br><span class="line"><span class="function"><span class="keyword">int</span> <span class="title">compare</span><span class="params">(T o1, T o2)</span></span>;</span><br><span class="line"><span class="comment">// String::compareToIgnoreCase</span></span><br><span class="line"> <span class="function"><span class="keyword">public</span> <span class="keyword">int</span> <span class="title">compareToIgnoreCase</span><span class="params">(String str)</span></span></span><br></pre></td></tr></table></figure>
+
+<p>这种情况是怎么回事？</p>
+<p>这种方式等价于:</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">int</span> <span class="title">compareToIgnoreCase</span><span class="params">(String str2)</span> &lt;</span>==&gt; (String str1, String str2) -&gt; &#123; <span class="keyword">return</span> str1.compareToIgnoreCase(str2);&#125;</span><br><span class="line"><span class="comment">// 传入的第一个参数作为调用者，第二个参数作为真正的compareToIngnoreCase的参数</span></span><br></pre></td></tr></table></figure>
+
+<p>为什么会这样呢?</p>
+<p>这其实又是一个很大的话题。总结下来，就两句话：</p>
+<ul>
+<li><p>第一点：<strong>接口方法的参数比引用方法的参数多一个</strong></p>
+</li>
+<li><p>第二点：<strong>接口方法的第一个参数恰巧是调用引用方法的对象（其引用方法所在类或其父类的实例）</strong></p>
+</li>
+</ul>
+<p>具体可参考：<a target="_blank" rel="noopener" href="https://blog.csdn.net/weixin_41126303/article/details/81187002">点这里</a></p>
+<p><strong>实际开发中，不推荐这种方式！</strong></p>
+<h3 id="3-4-构造方法"><a href="#3-4-构造方法" class="headerlink" title="3.4 构造方法"></a>3.4 构造方法</h3><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// 这里对应的是Student的默认构造函数</span></span><br><span class="line">Supplier&lt;Student&gt; supplier = Student::<span class="keyword">new</span>; </span><br><span class="line"><span class="comment">// 下面看一个非默认构造函数</span></span><br><span class="line"><span class="class"><span class="keyword">interface</span> <span class="title">MyFunction</span>&lt;<span class="title">T</span>,<span class="title">U</span>,<span class="title">R</span>&gt;</span>&#123;</span><br><span class="line">    <span class="function">R <span class="title">apply</span><span class="params">(T t,U u)</span></span>;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">Student</span></span>&#123;</span><br><span class="line">    <span class="keyword">private</span> <span class="keyword">int</span> id;</span><br><span class="line">    <span class="keyword">private</span> String name;</span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="title">Student</span><span class="params">(<span class="keyword">int</span> id, String name)</span> </span>&#123;</span><br><span class="line">        <span class="keyword">this</span>.id = id;</span><br><span class="line">        <span class="keyword">this</span>.name = name;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"><span class="comment">// 此时对应的是Student(int id, String name)构造函数</span></span><br><span class="line"> MyFunction&lt;Integer,String,Student&gt; myFunction = Student::<span class="keyword">new</span>;</span><br><span class="line"></span><br><span class="line"><span class="comment">// 使用：</span></span><br><span class="line">MyFunction&lt;Integer,String,Student&gt; myFunction = Student::<span class="keyword">new</span>;</span><br><span class="line">Student stu = myFunction.apply(<span class="number">1</span>,<span class="string">&quot;raven&quot;</span>);</span><br><span class="line">System.out.println(stu);</span><br></pre></td></tr></table></figure>
+
+<h2 id="3-5-方法引用总结"><a href="#3-5-方法引用总结" class="headerlink" title="3.5 方法引用总结"></a>3.5 方法引用总结</h2><ol>
+<li>静态方法引用 参数一一对应</li>
+<li>实例方法引用<ol>
+<li>特定实例的方法引用， 参数一一对应</li>
+<li>引用特定类型的任意对象，函数接口应该比方法引用多一个参数，且这个参数是对应的类型（或父类型）。很难理解，很不推荐使用。另一种理解方式</li>
+</ol>
+</li>
+<li>构造器，参数一一对应</li>
+</ol>
+<p>再引用知乎某大佬的理解方式：</p>
+<p>原文链接:<a target="_blank" rel="noopener" href="https://zhuanlan.zhihu.com/p/69985120">https://zhuanlan.zhihu.com/p/69985120</a> </p>
+<p><strong>在评论中找下面的话，原文不要看。</strong></p>
+<blockquote>
+<p>lambda 内部使用 MethodHandle，所以其实方法引用的处理规则跟 MethodHandle 是一模一样的。</p>
+<p>以 PrintStream::println 这个方法引用为例，它实际上调用的方法是 PrintStream 里的 void println(String)，但因为它是成员方法，所以内部处理时的使用的方法签名实际上是 (PrintStream, String)void，即把 this 作为第一个传入参数。</p>
+<p>因此知道这个规律后，就能明白 String::compareToIgnoreCase 是怎么回事了——它的方法签名为 (String, String)int，参数列表增加了 this（在这里就是一个 String）后刚好符合了 Comparator<String> 接口里 int compareTo(String, String) 的要求，因此可以作为 Arrays.sort(String[], Comparator<String>) 的参数。</p>
+<p>静态方法没有 this，所以方法签名该是怎么样还是怎么样。比如 String valueOf(int) 的签名就是 (int)String。</p>
+<p>当 :: 前面不是一个类型，而是一个对象，比如 “a”::equals 的时候，JDK 在生成 lambda 实例时会自动把目标对象给 bindTo 到对应的 MethodHandle 上。意思是：原来 String::equals 的方法签名根据上一段提到的规则是 (String, Object)boolean，但因为 :: 前面是一个 String 实例 “a”，因此方法引用的第一个参数（在这里就是 this）被绑定为了 “a”，方法签名变成了 (Object)boolean（因为原先第一个 String 参数被绑定成 “a” 了，它的值永远不会改变了，所以就只剩下 (Object)boolean 了）。这个改变后的签名就符合了 Predicate 接口里 boolean test(Object) 的要求。</p>
+<p>总结一下的话，三条规则就能说清楚了：</p>
+<ol>
+<li>成员方法的方法签名，前面会追加 this 的类型。</li>
+<li>静态方法的方法签名，因为没有 this, 不会追加任何东西。</li>
+<li>当 :: 前是一个实例时，这个实例会作为第一个参数给绑定到目标方法签名上。</li>
+</ol>
+</blockquote>
+<h2 id="参考："><a href="#参考：" class="headerlink" title="参考："></a>参考：</h2><ul>
+<li><p><a target="_blank" rel="noopener" href="https://blog.csdn.net/weixin_41126303/article/details/81187002">https://blog.csdn.net/weixin_41126303/article/details/81187002</a></p>
+</li>
+<li><p><a target="_blank" rel="noopener" href="http://zyzhang.github.io/blog/2013/06/15/java8-preview-method-reference/">http://zyzhang.github.io/blog/2013/06/15/java8-preview-method-reference/</a></p>
+</li>
+<li><p><a target="_blank" rel="noopener" href="http://moandjiezana.com/blog/2014/understanding-method-references/">http://moandjiezana.com/blog/2014/understanding-method-references/</a></p>
+</li>
+<li><p><a target="_blank" rel="noopener" href="https://docs.oracle.com/javase/tutorial/java/javaOO/methodreferences.html">https://docs.oracle.com/javase/tutorial/java/javaOO/methodreferences.html</a></p>
+</li>
+<li><p><a target="_blank" rel="noopener" href="https://www.baeldung.com/java-method-references">https://www.baeldung.com/java-method-references</a></p>
+</li>
+</ul>
+
+    </div>
+
+    
+    
+    
+        <div class="reward-container">
+  <div>文章对你有帮助?打赏一下作者吧</div>
+  <button onclick="var qr = document.getElementById('qr'); qr.style.display = (qr.style.display === 'none') ? 'block' : 'none';">
+    打赏
+  </button>
+  <div id="qr" style="display: none;">
+      
+      <div style="display: inline-block;">
+        <img src="https://pic.downk.cc/item/5d064208451253d178a15b27.png" alt="Raven 微信支付">
+        <p>微信支付</p>
+      </div>
+      
+      <div style="display: inline-block;">
+        <img src="https://pic.downk.cc/item/5d0641c7451253d178a15376.png" alt="Raven 支付宝">
+        <p>支付宝</p>
+      </div>
+
+  </div>
+</div>
+
+        
+
+<div>
+<ul class="post-copyright">
+  <li class="post-copyright-author">
+    <strong>本文作者： </strong>Raven
+  </li>
+  <li class="post-copyright-link">
+    <strong>本文链接：</strong>
+    <a href="https://www.ravenxrz.ink/archives/6bef376f.html" title="java函数接口&amp;方法引用">https://www.ravenxrz.ink/archives/6bef376f.html</a>
+  </li>
+  <li class="post-copyright-license">
+    <strong>版权声明： </strong>本博客所有文章除特别声明外，均采用 <span class="exturl" data-url="aHR0cHM6Ly9jcmVhdGl2ZWNvbW1vbnMub3JnL2xpY2Vuc2VzL2J5LW5jLXNhLzQuMC8="><i class="fa fa-fw fa-creative-commons"></i>BY-NC-SA</span> 许可协议。转载请注明出处！
+  </li>
+</ul>
+</div>
+
+
+      <footer class="post-footer">
+          
+          <div class="post-tags">
+              <a href="/tags/java/" rel="tag"><i class="fa fa-tag"></i> java</a>
+              <a href="/tags/%E5%87%BD%E6%95%B0%E6%8E%A5%E5%8F%A3/" rel="tag"><i class="fa fa-tag"></i> 函数接口</a>
+              <a href="/tags/%E6%96%B9%E6%B3%95%E5%BC%95%E7%94%A8/" rel="tag"><i class="fa fa-tag"></i> 方法引用</a>
+          </div>
+
+        
+
+
+        
+    <div class="post-nav">
+      <div class="post-nav-item">
+    <a href="/archives/b07c35a8.html" rel="prev" title="设计模式-访问者模式">
+      <i class="fa fa-chevron-left"></i> 设计模式-访问者模式
+    </a></div>
+      <div class="post-nav-item">
+    <a href="/archives/be26ae40.html" rel="next" title="find命令详解">
+      find命令详解 <i class="fa fa-chevron-right"></i>
+    </a></div>
+    </div>
+      </footer>
+    
+  </article>
+  
+  
+  
+
+
+
+          </div>
+          
+    <div class="comments" id="gitalk-container"></div>
+
+<script>
+  window.addEventListener('tabs:register', () => {
+    let { activeClass } = CONFIG.comments;
+    if (CONFIG.comments.storage) {
+      activeClass = localStorage.getItem('comments_active') || activeClass;
+    }
+    if (activeClass) {
+      let activeTab = document.querySelector(`a[href="#comment-${activeClass}"]`);
+      if (activeTab) {
+        activeTab.click();
+      }
+    }
+  });
+  if (CONFIG.comments.storage) {
+    window.addEventListener('tabs:click', event => {
+      if (!event.target.matches('.tabs-comment .tab-content .tab-pane')) return;
+      let commentClass = event.target.classList[1];
+      localStorage.setItem('comments_active', commentClass);
+    });
+  }
+</script>
+
+        </div>
+          
+  
+  <div class="toggle sidebar-toggle">
+    <span class="toggle-line toggle-line-first"></span>
+    <span class="toggle-line toggle-line-middle"></span>
+    <span class="toggle-line toggle-line-last"></span>
+  </div>
+
+  <aside class="sidebar">
+    <div class="sidebar-inner">
+
+      <ul class="sidebar-nav motion-element">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          站点概览
+        </li>
+      </ul>
+
+      <!--noindex-->
+      <div class="post-toc-wrap sidebar-panel">
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#1-%E8%BF%BD%E8%BF%BD%E5%8E%86%E5%8F%B2"><span class="nav-text">1. 追追历史</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#2-%E5%87%BD%E6%95%B0%E6%8E%A5%E5%8F%A3"><span class="nav-text">2. 函数接口</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#2-1-JDK%E4%B8%AD%E7%9A%84%E5%87%BD%E6%95%B0%E6%8E%A5%E5%8F%A3%E5%8C%85"><span class="nav-text">2.1 JDK中的函数接口包</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#2-1-1-Consumer"><span class="nav-text">2.1.1 Consumer</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#2-1-2-Supplier"><span class="nav-text">2.1.2 Supplier</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#2-1-3-Predicate"><span class="nav-text">2.1.3 Predicate</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#2-1-4-Function"><span class="nav-text">2.1.4 Function</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E9%A2%9D%E5%A4%96%E7%9A%84%E5%91%BD%E5%90%8D%E8%A7%84%E5%88%99%EF%BC%9A"><span class="nav-text">额外的命名规则：</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#2-2-%E5%8F%A6%E4%B8%80%E4%BA%9B%E5%87%BD%E6%95%B0%E6%8E%A5%E5%8F%A3"><span class="nav-text">2.2 另一些函数接口</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#3-%E6%96%B9%E6%B3%95%E5%BC%95%E7%94%A8"><span class="nav-text">3. 方法引用</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#3-1-%E4%B8%BA%E4%BB%80%E4%B9%88%E8%A6%81%E7%94%A8%E6%96%B9%E6%B3%95%E5%BC%95%E7%94%A8"><span class="nav-text">3.1 为什么要用方法引用</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#3-2-%E9%9D%99%E6%80%81%E6%96%B9%E6%B3%95%E5%BC%95%E7%94%A8"><span class="nav-text">3.2 静态方法引用</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#3-3-%E5%AE%9E%E4%BE%8B%E6%96%B9%E6%B3%95%E5%BC%95%E7%94%A8"><span class="nav-text">3.3 实例方法引用</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#3-3-1-%E7%89%B9%E5%AE%9A%E5%AE%9E%E4%BE%8B%E7%9A%84%E6%96%B9%E6%B3%95%E5%BC%95%E7%94%A8"><span class="nav-text">3.3.1 特定实例的方法引用</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#3-3-2-%E5%BC%95%E7%94%A8%E7%89%B9%E5%AE%9A%E7%B1%BB%E5%9E%8B%E7%9A%84%E4%BB%BB%E6%84%8F%E5%AF%B9%E8%B1%A1%E7%9A%84%E5%AE%9E%E4%BE%8B%E6%96%B9%E6%B3%95"><span class="nav-text">3.3.2 引用特定类型的任意对象的实例方法</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#3-4-%E6%9E%84%E9%80%A0%E6%96%B9%E6%B3%95"><span class="nav-text">3.4 构造方法</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#3-5-%E6%96%B9%E6%B3%95%E5%BC%95%E7%94%A8%E6%80%BB%E7%BB%93"><span class="nav-text">3.5 方法引用总结</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%8F%82%E8%80%83%EF%BC%9A"><span class="nav-text">参考：</span></a></li></ol></div>
+      </div>
+      <!--/noindex-->
+
+      <div class="site-overview-wrap sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+    <img class="site-author-image" itemprop="image" alt="Raven"
+      src="https://pic.downk.cc/item/5e907515504f4bcb04b6f798.jpg">
+  <p class="site-author-name" itemprop="name">Raven</p>
+  <div class="site-description" itemprop="description">分享技术，记录生活</div>
+</div>
+<div class="site-state-wrap motion-element">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+          <a href="/archives/">
+        
+          <span class="site-state-item-count">120</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+            <a href="/categories/">
+          
+        <span class="site-state-item-count">17</span>
+        <span class="site-state-item-name">分类</span></a>
+      </div>
+      <div class="site-state-item site-state-tags">
+            <a href="/tags/">
+          
+        <span class="site-state-item-count">114</span>
+        <span class="site-state-item-name">标签</span></a>
+      </div>
+  </nav>
+</div>
+  <div class="links-of-author motion-element">
+      <span class="links-of-author-item">
+        <span class="exturl" data-url="aHR0cHM6Ly9naXRodWIuY29tL3JhdmVueHJ6" title="GitHub → https:&#x2F;&#x2F;github.com&#x2F;ravenxrz"><i class="fa fa-fw fa-fab fa-github"></i>GitHub</span>
+      </span>
+      <span class="links-of-author-item">
+        <span class="exturl" data-url="bWFpbHRvOnpoYWduLnhpbmdydWlAZm94bWFpbC5jb20=" title="E-Mail → mailto:zhagn.xingrui@foxmail.com"><i class="fa fa-fw fa-fa fa-envelope"></i>E-Mail</span>
+      </span>
+  </div>
+  <div class="cc-license motion-element" itemprop="license">
+    <span class="exturl cc-opacity" data-url="aHR0cHM6Ly9jcmVhdGl2ZWNvbW1vbnMub3JnL2xpY2Vuc2VzL2J5LW5jLXNhLzQuMC8="><img src="/images/cc-by-nc-sa.svg" alt="Creative Commons"></span>
+  </div>
+
+
+  <div class="links-of-blogroll motion-element">
+    <div class="links-of-blogroll-title">
+      <i class="fa fa-fw fa-fa fa-link"></i>
+      Links
+    </div>
+    <ul class="links-of-blogroll-list">
+        <li class="links-of-blogroll-item">
+          <a href="/resources" title="&#x2F;resources">我的资源</a>
+        </li>
+    </ul>
+  </div>
+
+      </div>
+
+    </div>
+  </aside>
+  <div id="sidebar-dimmer"></div>
+
+
+      </div>
+    </main>
+
+    <footer class="footer">
+      <div class="footer-inner">
+        
+
+        
+
+<div class="copyright">
+  
+  &copy; 2017 – 
+  <span itemprop="copyrightYear">2020</span>
+  <span class="with-love">
+    <i class="fa fa-fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">Raven</span>
+</div>
+  <div class="powered-by">由 <span class="exturl theme-link" data-url="aHR0cHM6Ly9oZXhvLmlv">Hexo</span> & <span class="exturl theme-link" data-url="aHR0cHM6Ly9taXN0LnRoZW1lLW5leHQub3Jn">NexT.Mist</span> 强力驱动
+  </div>
+
+        
+<div class="busuanzi-count">
+  <script async src="https://busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+    <span class="post-meta-item" id="busuanzi_container_site_uv" style="display: none;">
+      <span class="post-meta-item-icon">
+        <i class="fa fa-fa fa-user"></i>
+      </span>
+      <span class="site-uv" title="总访客量">
+        <span id="busuanzi_value_site_uv"></span>
+      </span>
+    </span>
+    <span class="post-meta-divider">|</span>
+    <span class="post-meta-item" id="busuanzi_container_site_pv" style="display: none;">
+      <span class="post-meta-item-icon">
+        <i class="fa fa-fa fa-eye"></i>
+      </span>
+      <span class="site-pv" title="总访问量">
+        <span id="busuanzi_value_site_pv"></span>
+      </span>
+    </span>
+</div>
+
+
+
+
+
+
+
+
+      </div>
+    </footer>
+  </div>
+
+  
+  <script src="//cdn.jsdelivr.net/npm/animejs@3.1.0/lib/anime.min.js"></script>
+  <script src="//cdn.jsdelivr.net/npm/medium-zoom@1/dist/medium-zoom.min.js"></script>
+  <script src="//cdn.jsdelivr.net/npm/lozad@1/dist/lozad.min.js"></script>
+  <script src="//cdn.jsdelivr.net/npm/pangu@4/dist/browser/pangu.min.js"></script>
+
+<script src="/js/utils.js"></script>
+
+
+<script src="/js/schemes/muse.js"></script>
+
+
+<script src="/js/next-boot.js"></script>
+
+
+
+
+  
+  <script>
+    (function(){
+      var bp = document.createElement('script');
+      var curProtocol = window.location.protocol.split(':')[0];
+      bp.src = (curProtocol === 'https') ? 'https://zz.bdstatic.com/linksubmit/push.js' : 'http://push.zhanzhang.baidu.com/push.js';
+      var s = document.getElementsByTagName("script")[0];
+      s.parentNode.insertBefore(bp, s);
+    })();
+  </script>
+
+
+
+
+  
+<script src="/js/local-search.js"></script>
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+  
+      
+
+<script>
+  if (typeof MathJax === 'undefined') {
+    window.MathJax = {
+      loader: {
+        source: {
+          '[tex]/amsCd': '[tex]/amscd',
+          '[tex]/AMScd': '[tex]/amscd'
+        }
+      },
+      tex: {
+        inlineMath: {'[+]': [['$', '$']]},
+        tags: 'ams'
+      },
+      options: {
+        renderActions: {
+          findScript: [10, doc => {
+            document.querySelectorAll('script[type^="math/tex"]').forEach(node => {
+              const display = !!node.type.match(/; *mode=display/);
+              const math = new doc.options.MathItem(node.textContent, doc.inputJax[0], display);
+              const text = document.createTextNode('');
+              node.parentNode.replaceChild(text, node);
+              math.start = {node: text, delim: '', n: 0};
+              math.end = {node: text, delim: '', n: 0};
+              doc.math.push(math);
+            });
+          }, '', false],
+          insertedScript: [200, () => {
+            document.querySelectorAll('mjx-container').forEach(node => {
+              let target = node.parentNode;
+              if (target.nodeName.toLowerCase() === 'li') {
+                target.parentNode.classList.add('has-jax');
+              }
+            });
+          }, '', false]
+        }
+      }
+    };
+    (function () {
+      var script = document.createElement('script');
+      script.src = '//cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js';
+      script.defer = true;
+      document.head.appendChild(script);
+    })();
+  } else {
+    MathJax.startup.document.state(0);
+    MathJax.texReset();
+    MathJax.typeset();
+  }
+</script>
+
+    
+
+  
+  <script src="//cdn.jsdelivr.net/npm/quicklink@1/dist/quicklink.umd.js"></script>
+  <script>
+      window.addEventListener('load', () => {
+      quicklink({
+        timeout : 3000,
+        priority: true,
+        ignores : [uri => uri.includes('#'),uri => uri === 'https://www.ravenxrz.ink/archives/6bef376f.html',]
+      });
+      });
+  </script>
+
+<link rel="stylesheet" href="//cdn.jsdelivr.net/npm/gitalk@1/dist/gitalk.min.css">
+
+<script>
+NexT.utils.loadComments(document.querySelector('#gitalk-container'), () => {
+  NexT.utils.getScript('//cdn.jsdelivr.net/npm/gitalk@1/dist/gitalk.min.js', () => {
+    var gitalk = new Gitalk({
+      clientID    : 'b2fd373d2ca2e03e591e',
+      clientSecret: 'de4ab066908c1fbd32d3a45e091b3538761d685b',
+      repo        : 'BlogComment',
+      owner       : 'ravenxrz',
+      admin       : ['ravenxrz'],
+      id          : '2b36b6f73f5afe352916361b776fc078',
+        language: '',
+      distractionFreeMode: true
+    });
+    gitalk.render('gitalk-container');
+  }, window.Gitalk);
+});
+</script>
+
+</body>
+</html>

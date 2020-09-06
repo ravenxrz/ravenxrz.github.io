@@ -1,0 +1,785 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 5.1.1">
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+  <meta http-equiv="Cache-Control" content="no-transform">
+  <meta http-equiv="Cache-Control" content="no-siteapp">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+<link rel="stylesheet" href="//cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@5/css/all.min.css">
+  <link rel="stylesheet" href="//cdn.jsdelivr.net/npm/pace-js@1/themes/blue/pace-theme-minimal.css">
+  <script src="//cdn.jsdelivr.net/npm/pace-js@1/pace.min.js"></script>
+
+<script id="hexo-configurations">
+    var NexT = window.NexT || {};
+    var CONFIG = {"hostname":"www.ravenxrz.ink","root":"/","scheme":"Mist","version":"7.8.0","exturl":true,"sidebar":{"position":"left","display":"always","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":true,"show_result":true,"style":"flat"},"back2top":{"enable":true,"sidebar":false,"scrollpercent":true},"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":true,"lazyload":true,"pangu":true,"comments":{"style":"tabs","active":"gitalk","storage":true,"lazyload":true,"nav":null,"activeClass":"gitalk"},"algolia":{"hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":true,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},"motion":{"enable":false,"async":true,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}}};
+  </script>
+
+  <meta name="description" content="1. 前文word公式编辑一般有3种：  MathType 软件，这是最常用的，但是我并不喜欢用鼠标去点上标下标等，而且MathType所插入的公式并不好看。  高版本的Word自带的公式标记，如下图，这个兼容性很好，而且也很漂亮，但书写起来不方便  插图，用图代表公式。   本文的方法就是利用pandoc转为情况2下的公式，和word完美兼容。另外，如果你要写的公式不多，其实完全没必要使用这种方">
+<meta property="og:type" content="article">
+<meta property="og:title" content="将latex书写的公式转为word可用公式">
+<meta property="og:url" content="https://www.ravenxrz.ink/archives/dd4a0f03.html">
+<meta property="og:site_name" content="Raven&#39;s Blog">
+<meta property="og:description" content="1. 前文word公式编辑一般有3种：  MathType 软件，这是最常用的，但是我并不喜欢用鼠标去点上标下标等，而且MathType所插入的公式并不好看。  高版本的Word自带的公式标记，如下图，这个兼容性很好，而且也很漂亮，但书写起来不方便  插图，用图代表公式。   本文的方法就是利用pandoc转为情况2下的公式，和word完美兼容。另外，如果你要写的公式不多，其实完全没必要使用这种方">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="https://pic1.superbed.cn/item/5cfbaced451253d178d94696.png">
+<meta property="og:image" content="https://pic2.superbed.cn/item/5cfbacef451253d178d946cb.png">
+<meta property="og:image" content="https://pic.superbed.cn/item/5cfbacf0451253d178d9471d.png">
+<meta property="og:image" content="https://pic.superbed.cn/item/5cfbacf2451253d178d94788.png">
+<meta property="og:image" content="https://pic.superbed.cn/item/5cfbacf3451253d178d947c8.png">
+<meta property="og:image" content="https://pic1.superbed.cn/item/5cfbacf5451253d178d94802.png">
+<meta property="og:image" content="https://pic.superbed.cn/item/5cfbad00451253d178d948f7.png">
+<meta property="og:image" content="https://pic.superbed.cn/item/5cfbad02451253d178d94931.png">
+<meta property="og:image" content="https://pic3.superbed.cn/item/5cfbad03451253d178d94962.png">
+<meta property="og:image" content="https://pic.superbed.cn/item/5cfbad05451253d178d949a0.png">
+<meta property="og:image" content="https://pic.superbed.cn/item/5cfbad06451253d178d949e8.png">
+<meta property="og:image" content="https://pic1.superbed.cn/item/5cfbad07451253d178d94a23.png">
+<meta property="og:image" content="https://pic.superbed.cn/item/5cfbad09451253d178d94a5d.png">
+<meta property="og:image" content="https://pic.superbed.cn/item/5cfbad0a451253d178d94a93.png">
+<meta property="og:image" content="https://pic.superbed.cn/item/5cfbad0c451253d178d94ae5.png">
+<meta property="og:image" content="https://pic2.superbed.cn/item/5cfbad0d451253d178d94b21.png">
+<meta property="article:published_time" content="2019-05-31T05:58:50.000Z">
+<meta property="article:modified_time" content="2020-09-06T02:45:08.058Z">
+<meta property="article:author" content="Raven">
+<meta property="article:tag" content="Latex">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://pic1.superbed.cn/item/5cfbaced451253d178d94696.png">
+
+<link rel="canonical" href="https://www.ravenxrz.ink/archives/dd4a0f03.html">
+
+
+<script id="page-configurations">
+  // https://hexo.io/docs/variables.html
+  CONFIG.page = {
+    sidebar: "",
+    isHome : false,
+    isPost : true,
+    lang   : 'zh-CN'
+  };
+</script>
+
+  <title>将latex书写的公式转为word可用公式 | Raven's Blog</title>
+  
+
+
+
+
+
+
+  <noscript>
+  <style>
+  .use-motion .brand,
+  .use-motion .menu-item,
+  .sidebar-inner,
+  .use-motion .post-block,
+  .use-motion .pagination,
+  .use-motion .comments,
+  .use-motion .post-header,
+  .use-motion .post-body,
+  .use-motion .collection-header { opacity: initial; }
+
+  .use-motion .site-title,
+  .use-motion .site-subtitle {
+    opacity: initial;
+    top: initial;
+  }
+
+  .use-motion .logo-line-before i { left: initial; }
+  .use-motion .logo-line-after i { right: initial; }
+  </style>
+</noscript>
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage">
+  <div class="container">
+    <div class="headband"></div>
+
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切换导航栏">
+      <span class="toggle-line toggle-line-first"></span>
+      <span class="toggle-line toggle-line-middle"></span>
+      <span class="toggle-line toggle-line-last"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <span class="logo-line-before"><i></i></span>
+      <h1 class="site-title">Raven's Blog</h1>
+      <span class="logo-line-after"><i></i></span>
+    </a>
+      <p class="site-subtitle" itemprop="description">zhang.xingrui@foxmail.com</p>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger">
+        <i class="fa fa-search fa-fw fa-lg"></i>
+    </div>
+  </div>
+</div>
+
+
+
+
+<nav class="site-nav">
+  <ul id="menu" class="menu">
+        <li class="menu-item menu-item-home">
+
+    <a href="/" rel="section"><i class="fa fa-fw fa-fa fa-home"></i>首页</a>
+
+  </li>
+        <li class="menu-item menu-item-archives">
+
+    <a href="/archives/" rel="section"><i class="fa fa-fw fa-fa fa-archive"></i>归档<span class="badge">120</span></a>
+
+  </li>
+        <li class="menu-item menu-item-categories">
+
+    <a href="/categories/" rel="section"><i class="fa fa-fw fa-fa fa-th"></i>分类<span class="badge">17</span></a>
+
+  </li>
+        <li class="menu-item menu-item-tags">
+
+    <a href="/tags/" rel="section"><i class="fa fa-fw fa-fa fa-tags"></i>标签<span class="badge">114</span></a>
+
+  </li>
+        <li class="menu-item menu-item-about">
+
+    <a href="/about/" rel="section"><i class="fa fa-fw fa-fa fa-user"></i>关于</a>
+
+  </li>
+      <li class="menu-item menu-item-search">
+        <a role="button" class="popup-trigger"><i class="fa fa-search fa-fw"></i>搜索
+        </a>
+      </li>
+  </ul>
+</nav>
+
+
+
+  <div class="search-pop-overlay">
+    <div class="popup search-popup">
+        <div class="search-header">
+  <span class="search-icon">
+    <i class="fa fa-search"></i>
+  </span>
+  <div class="search-input-container">
+    <input autocomplete="off" autocapitalize="off"
+           placeholder="搜索..." spellcheck="false"
+           type="search" class="search-input">
+  </div>
+  <span class="popup-btn-close">
+    <i class="fa fa-times-circle"></i>
+  </span>
+</div>
+<div id="search-result">
+  <div id="no-result">
+    <i class="fa fa-spinner fa-pulse fa-5x fa-fw"></i>
+  </div>
+</div>
+
+    </div>
+  </div>
+
+</div>
+    </header>
+
+    
+  <div class="back-to-top">
+    <i class="fa fa-arrow-up"></i>
+    <span>0%</span>
+  </div>
+
+  <span class="exturl github-corner" data-url="aHR0cHM6Ly9naXRodWIuY29tL3JhdmVueHJ6" title="Follow me on GitHub" aria-label="Follow me on GitHub"><svg width="80" height="80" viewBox="0 0 250 250" aria-hidden="true"><path d="M0,0 L115,115 L130,115 L142,142 L250,250 L250,0 Z"></path><path d="M128.3,109.0 C113.8,99.7 119.0,89.6 119.0,89.6 C122.0,82.7 120.5,78.6 120.5,78.6 C119.2,72.0 123.4,76.3 123.4,76.3 C127.3,80.9 125.5,87.3 125.5,87.3 C122.9,97.6 130.6,101.9 134.4,103.2" fill="currentColor" style="transform-origin: 130px 106px;" class="octo-arm"></path><path d="M115.0,115.0 C114.9,115.1 118.7,116.5 119.8,115.4 L133.7,101.6 C136.9,99.2 139.9,98.4 142.2,98.6 C133.8,88.0 127.5,74.4 143.8,58.0 C148.5,53.4 154.0,51.2 159.7,51.0 C160.3,49.4 163.2,43.6 171.4,40.1 C171.4,40.1 176.1,42.5 178.8,56.2 C183.1,58.6 187.2,61.8 190.9,65.4 C194.5,69.0 197.7,73.2 200.1,77.6 C213.8,80.2 216.3,84.9 216.3,84.9 C212.7,93.1 206.9,96.0 205.4,96.6 C205.1,102.4 203.0,107.8 198.3,112.5 C181.9,128.9 168.3,122.5 157.7,114.1 C157.9,116.9 156.7,120.9 152.7,124.9 L141.0,136.5 C139.8,137.7 141.6,141.9 141.8,141.8 Z" fill="currentColor" class="octo-body"></path></svg></span>
+
+
+    <main class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          
+
+          <div class="content post posts-expand">
+            
+
+    
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="https://www.ravenxrz.ink/archives/dd4a0f03.html">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="https://pic.downk.cc/item/5e907515504f4bcb04b6f798.jpg">
+      <meta itemprop="name" content="Raven">
+      <meta itemprop="description" content="分享技术，记录生活">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Raven's Blog">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          将latex书写的公式转为word可用公式
+        </h1>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+
+              <time title="创建时间：2019-05-31 13:58:50" itemprop="dateCreated datePublished" datetime="2019-05-31T13:58:50+08:00">2019-05-31</time>
+            </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-calendar-check-o"></i>
+                </span>
+                <span class="post-meta-item-text">更新于</span>
+                <time title="修改时间：2020-09-06 10:45:08" itemprop="dateModified" datetime="2020-09-06T10:45:08+08:00">2020-09-06</time>
+              </span>
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              <span class="post-meta-item-text">分类于</span>
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/%E6%9D%82%E6%96%87/" itemprop="url" rel="index"><span itemprop="name">杂文</span></a>
+                </span>
+            </span>
+
+          
+            <span class="post-meta-item" title="阅读次数" id="busuanzi_container_page_pv" style="display: none;">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-fa fa-eye"></i>
+              </span>
+              <span class="post-meta-item-text">阅读次数：</span>
+              <span id="busuanzi_value_page_pv"></span>
+            </span>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+        <h2 id="1-前文"><a href="#1-前文" class="headerlink" title="1. 前文"></a>1. 前文</h2><p>word公式编辑一般有3种：</p>
+<ol>
+<li><p>MathType 软件，这是最常用的，但是我并不喜欢用鼠标去点上标下标等，而且MathType所插入的公式并不好看。</p>
+</li>
+<li><p>高版本的Word自带的公式标记，如下图，这个兼容性很好，而且也很漂亮，但书写起来不方便<br><img src="https://pic1.superbed.cn/item/5cfbaced451253d178d94696.png"></p>
+</li>
+<li><p>插图，用图代表公式。</p>
+</li>
+</ol>
+<p>本文的方法就是利用pandoc转为情况2下的公式，和word完美兼容。<br>另外，如果你要写的公式不多，其实完全没必要使用这种方法，因为反而绕了路。本文的方式只适合公式特别多的情况。</p>
+<a id="more"></a>
+<h2 id="2-正文"><a href="#2-正文" class="headerlink" title="2. 正文"></a>2. 正文</h2><h3 id="2-1-准备材料"><a href="#2-1-准备材料" class="headerlink" title="2.1 准备材料"></a>2.1 准备材料</h3><ol>
+<li><a target="_blank" rel="noopener" href="http://tug.org/texlive/">texlive</a> 安装包 – 要编写latex总得要有编译环境吧。</li>
+<li><a target="_blank" rel="noopener" href="http://texstudio.sourceforge.net/">texstudi</a>o – 个人认为最好用的latex编辑器。笔者曾尝试过<ol>
+<li>Atom自搭建</li>
+<li>texwork</li>
+</ol>
+</li>
+<li><a target="_blank" rel="noopener" href="https://www.pandoc.org/installing.html">pandoc</a>  – 将ltex文件转为word文档工具，当然这个工具不止可以转换到word识别文件</li>
+<li>office 2016及其以上套件（2013版我没测试，2010肯定不行）</li>
+</ol>
+<p><strong>上述材料依次安装</strong>（除了office），否则可能造成命令缺失，无法编译运行。</p>
+<h3 id="2-2-Demo"><a href="#2-2-Demo" class="headerlink" title="2.2 Demo"></a>2.2 Demo</h3><p>在使用之前请把编译器设置为xelatex, 设置方式为:</p>
+<p><img src="https://pic2.superbed.cn/item/5cfbacef451253d178d946cb.png"></p>
+<p>好，现在正式开始:</p>
+<ol>
+<li>建立以下两个文件：</li>
+</ol>
+<p><img src="https://pic.superbed.cn/item/5cfbacf0451253d178d9471d.png"></p>
+<p>   第一个文件是latex编译所需要用到的文件。</p>
+<p>   第二文件则是待会从tex中得到的文件。</p>
+<ol start="2">
+<li><p>现在开始写点latex代码吧，代码如下：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br></pre></td><td class="code"><pre><span class="line">\documentclass&#123;article&#125;</span><br><span class="line">\usepackage&#123;xeCJK&#125;		% 中文支持</span><br><span class="line">\usepackage&#123;amsmath&#125;	% 一些高级数学宏包</span><br><span class="line"></span><br><span class="line">\begin&#123;document&#125;</span><br><span class="line">	% 随便写点公式</span><br><span class="line">	\[</span><br><span class="line">	a+b &#x3D; c</span><br><span class="line">	\]</span><br><span class="line">	</span><br><span class="line">	\[</span><br><span class="line">	\int_&#123;0&#125;^&#123;1&#125; xdx &#x3D; \frac&#123;1&#125;&#123;2&#125; </span><br><span class="line">	\]</span><br><span class="line">	</span><br><span class="line">	% 公式中含有中文</span><br><span class="line">	\[</span><br><span class="line">	\text&#123;张&#125;a+\text&#123;张&#125;b &#x3D; \text&#123;张&#125;c</span><br><span class="line">	\]</span><br><span class="line">\end&#123;document&#125;</span><br></pre></td></tr></table></figure>
+
+<p>使用xelatex编译器编译后：</p>
+<p>可以得到如下:</p>
+<p><img src="https://pic.superbed.cn/item/5cfbacf2451253d178d94788.png"></p>
+</li>
+<li><p>可以看到对应生成的pdf还是相当漂亮的。现在我们把它转成word可用的docx文档。打开终端:</p>
+<p><img src="https://pic.superbed.cn/item/5cfbacf3451253d178d947c8.png"></p>
+</li>
+</ol>
+<ol start="4">
+<li><p>执行以下命令:</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">pandoc document.tex -o &quot;formula.docx&quot;</span><br></pre></td></tr></table></figure>
+
+
+
+</li>
+</ol>
+<ol start="5">
+<li><p>现在在打开我们的”formula.docx”文档:</p>
+<p><img src="https://pic1.superbed.cn/item/5cfbacf5451253d178d94802.png"></p>
+</li>
+</ol>
+<p>生成的公式是完全和word兼容的。这个时候你就可以复制粘贴到你的文章中去了。</p>
+<h3 id="2-3-添加些改造"><a href="#2-3-添加些改造" class="headerlink" title="2.3 添加些改造"></a>2.3 添加些改造</h3><p>每次都要敲命令是不是有点难受了？而且敲命令之前还要先关闭”formula.docx”这个文件，不然会提示文件已打开无法转换。 所以我们来搞个批运行代码，linux可以直接使用makefile+make命令，mac和linux一样，采用makefile。我们要实现的功能如下:</p>
+<ol>
+<li>能够自动关闭已经打开的”formula.docx”文档</li>
+<li>能够自动编译刚新写的tex文档</li>
+<li>编译完成后能够自动再打开”formula.docx”文档</li>
+</ol>
+<p>在和<code>document.tex</code>和<code>formula.docx</code>目录下新建一个<code>run.bat</code>文件，并用记事本打开，添加以下代码:</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">:: 生成公式脚本</span><br><span class="line">:: 关闭当前已打开的word公式文档</span><br><span class="line">taskkill -FI &quot;WINDOWTITLE eq formula.docx*&quot;	</span><br><span class="line">:: 重新生成文档</span><br><span class="line">pandoc document.tex -o formula.docx</span><br><span class="line">:: 重新打开文档</span><br><span class="line">start &#x2F;b &quot;C:\Program Files (x86)\Microsoft Office\root\Office16\WINWORD.EXE&quot; formula.docx</span><br></pre></td></tr></table></figure>
+
+<p>其中需要大家的修改的地方有一处，在最后一行的</p>
+<p>C:\Program Files (x86)\Microsoft Office\root\Office16\WINWORD.EXE需要修改为你的word程序路径，这个路径怎么找，推荐使用everything这款软件，如下图:</p>
+<p><img src="https://pic.superbed.cn/item/5cfbad00451253d178d948f7.png"></p>
+<p>这样就可以找到了。</p>
+<h3 id="2-4-视频Demo"><a href="#2-4-视频Demo" class="headerlink" title="2.4 视频Demo"></a>2.4 视频Demo</h3><p>我将上述操作流程（不包括安装）录了个视频发在了B站，有需要的朋友可以看一下。</p>
+<iframe id="spkj"  src="//player.bilibili.com/player.html?aid=54188330&cid=94790979&page=1" scrolling="no" border="0" frameborder="no" framespacing="0" width=100% allowfullscreen="true"> </iframe>
+!!!
+<script type="text/javascript">  
+document.getElementById("spkj").style.height=document.getElementById("spkj").scrollWidth*0.76+"px";
+</script>
+!!!
+
+
+<h2 id="3-latex写公式简单说明"><a href="#3-latex写公式简单说明" class="headerlink" title="3. latex写公式简单说明"></a>3. latex写公式简单说明</h2><p>还是看我们在2.2节中贴过的代码:</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br></pre></td><td class="code"><pre><span class="line">\documentclass&#123;article&#125;</span><br><span class="line">\usepackage&#123;xeCJK&#125;		% 中文支持</span><br><span class="line">\usepackage&#123;amsmath&#125;	% 一些高级数学宏包</span><br><span class="line"></span><br><span class="line">\begin&#123;document&#125;</span><br><span class="line">	% 随便写点公式</span><br><span class="line">	\[</span><br><span class="line">	a+b = c</span><br><span class="line">	\]</span><br><span class="line">	</span><br><span class="line">	\[</span><br><span class="line">	\int_&#123;<span class="number">0</span>&#125;^&#123;<span class="number">1</span>&#125; xdx = \frac&#123;<span class="number">1</span>&#125;&#123;<span class="number">2</span>&#125; </span><br><span class="line">	\]</span><br><span class="line">	</span><br><span class="line">	% 公式中含有中文</span><br><span class="line">	\[</span><br><span class="line">	\text&#123;张&#125;a+\text&#123;张&#125;b = \text&#123;张&#125;c</span><br><span class="line">	\]</span><br><span class="line">\end&#123;document&#125;</span><br></pre></td></tr></table></figure>
+
+<p>我们一行行的分析。</p>
+<ul>
+<li><code>\documentclass&#123;article&#125;  </code> – 这是latex必备的一条指令，意思是本篇文章使用article模板，除了article以外，常用的还有report、book、ctexart等。一般来说我们只写公式的话，导入article即可。</li>
+<li><code>\usepackage&#123;xeCJK&#125;</code> – article模板并不支持中文，\usepackage{xxx}是导入宏包的意思，通过宏包我们可以拓展文章的功能，xeCJK宏包用于支持中文。</li>
+<li><code>usepackage&#123;amsmath&#125;</code> – amsmath是拓展数学宏包，一些高级的数学环境需要它的支持。</li>
+<li>再看<code>\begin&#123;document&#125; -- \end&#123;document&#125;</code> ， 这就是我们文章的主体了，我们所有需要显示的内容都是在这里书写。</li>
+</ul>
+<p>如果你不懂上面说明的意思，只用记住这就是模板，你所需要的就是修改<code>\begin&#123;document&#125;</code> 到 <code>\end&#123;document&#125;</code>之间的内容。</p>
+<p>再来说说latex里面如何书写公式。</p>
+<p>latex公式中包括：行间公式和行内公式两种。什么意思呢。看下图就知道了。</p>
+<p><img src="https://pic.superbed.cn/item/5cfbad02451253d178d94931.png"></p>
+<p>书写行内公式的方式有两种:</p>
+<p><img src="https://pic3.superbed.cn/item/5cfbad03451253d178d94962.png"></p>
+<p>如图:</p>
+<p><img src="https://pic.superbed.cn/item/5cfbad05451253d178d949a0.png"></p>
+<p>数学行间公式的方式有多种，这里介绍常用的两种:</p>
+<p><img src="https://pic.superbed.cn/item/5cfbad06451253d178d949e8.png"></p>
+<p>如图:</p>
+<p><img src="https://pic1.superbed.cn/item/5cfbad07451253d178d94a23.png"></p>
+<p>注意一点，在数学模式中是无法写中文的，写了是不会显示出来。如：</p>
+<p><img src="https://pic.superbed.cn/item/5cfbad09451253d178d94a5d.png"></p>
+<p>正确的做法是用\text{}指令包围中文，如:</p>
+<p><img src="https://pic.superbed.cn/item/5cfbad0a451253d178d94a93.png"></p>
+<p>下面介绍一些常用的数学符号指令:</p>
+<ul>
+<li><p>求和 – \sum_{}^{}            _ 代表下表^代表上标</p>
+</li>
+<li><p>积分 – \int_{}^{}</p>
+</li>
+<li><p>无穷大 – \infty</p>
+</li>
+<li><p>小于等于 – \le</p>
+</li>
+<li><p>大于等于 – \ge</p>
+</li>
+<li><p>多个约束条件并用一个大括号括起来 :</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">$$</span><br><span class="line">\left\&#123;</span><br><span class="line">             \begin&#123;array&#125;&#123;lr&#125;</span><br><span class="line">             x&#x3D;\dfrac&#123;3\pi&#125;&#123;2&#125;(1+2t)\cos(\dfrac&#123;3\pi&#125;&#123;2&#125;(1+2t)), &amp;  \\</span><br><span class="line">             y&#x3D;s, &amp; 0\leq s\leq L,|t|\leq1.\\</span><br><span class="line">             z&#x3D;\dfrac&#123;3\pi&#125;&#123;2&#125;(1+2t)\sin(\dfrac&#123;3\pi&#125;&#123;2&#125;(1+2t)), &amp;  </span><br><span class="line">             \end&#123;array&#125;</span><br><span class="line">\right.</span><br><span class="line">$$</span><br></pre></td></tr></table></figure>
+
+<p>效果如图:</p>
+<p><img src="https://pic.superbed.cn/item/5cfbad0c451253d178d94ae5.png"></p>
+</li>
+</ul>
+<p>更多的公式可以从texstudio侧边栏找:</p>
+<p><img src="https://pic2.superbed.cn/item/5cfbad0d451253d178d94b21.png"></p>
+
+    </div>
+
+    
+    
+    
+        <div class="reward-container">
+  <div>文章对你有帮助?打赏一下作者吧</div>
+  <button onclick="var qr = document.getElementById('qr'); qr.style.display = (qr.style.display === 'none') ? 'block' : 'none';">
+    打赏
+  </button>
+  <div id="qr" style="display: none;">
+      
+      <div style="display: inline-block;">
+        <img src="https://pic.downk.cc/item/5d064208451253d178a15b27.png" alt="Raven 微信支付">
+        <p>微信支付</p>
+      </div>
+      
+      <div style="display: inline-block;">
+        <img src="https://pic.downk.cc/item/5d0641c7451253d178a15376.png" alt="Raven 支付宝">
+        <p>支付宝</p>
+      </div>
+
+  </div>
+</div>
+
+        
+
+<div>
+<ul class="post-copyright">
+  <li class="post-copyright-author">
+    <strong>本文作者： </strong>Raven
+  </li>
+  <li class="post-copyright-link">
+    <strong>本文链接：</strong>
+    <a href="https://www.ravenxrz.ink/archives/dd4a0f03.html" title="将latex书写的公式转为word可用公式">https://www.ravenxrz.ink/archives/dd4a0f03.html</a>
+  </li>
+  <li class="post-copyright-license">
+    <strong>版权声明： </strong>本博客所有文章除特别声明外，均采用 <span class="exturl" data-url="aHR0cHM6Ly9jcmVhdGl2ZWNvbW1vbnMub3JnL2xpY2Vuc2VzL2J5LW5jLXNhLzQuMC8="><i class="fa fa-fw fa-creative-commons"></i>BY-NC-SA</span> 许可协议。转载请注明出处！
+  </li>
+</ul>
+</div>
+
+
+      <footer class="post-footer">
+          
+          <div class="post-tags">
+              <a href="/tags/Latex/" rel="tag"><i class="fa fa-tag"></i> Latex</a>
+          </div>
+
+        
+
+
+        
+    <div class="post-nav">
+      <div class="post-nav-item">
+    <a href="/archives/8db6abea.html" rel="prev" title="在你的Typecho中插入音乐和视频（B站视频）">
+      <i class="fa fa-chevron-left"></i> 在你的Typecho中插入音乐和视频（B站视频）
+    </a></div>
+      <div class="post-nav-item">
+    <a href="/archives/d7efd3d0.html" rel="next" title="201966-更换图床日志">
+      201966-更换图床日志 <i class="fa fa-chevron-right"></i>
+    </a></div>
+    </div>
+      </footer>
+    
+  </article>
+  
+  
+  
+
+
+
+          </div>
+          
+    <div class="comments" id="gitalk-container"></div>
+
+<script>
+  window.addEventListener('tabs:register', () => {
+    let { activeClass } = CONFIG.comments;
+    if (CONFIG.comments.storage) {
+      activeClass = localStorage.getItem('comments_active') || activeClass;
+    }
+    if (activeClass) {
+      let activeTab = document.querySelector(`a[href="#comment-${activeClass}"]`);
+      if (activeTab) {
+        activeTab.click();
+      }
+    }
+  });
+  if (CONFIG.comments.storage) {
+    window.addEventListener('tabs:click', event => {
+      if (!event.target.matches('.tabs-comment .tab-content .tab-pane')) return;
+      let commentClass = event.target.classList[1];
+      localStorage.setItem('comments_active', commentClass);
+    });
+  }
+</script>
+
+        </div>
+          
+  
+  <div class="toggle sidebar-toggle">
+    <span class="toggle-line toggle-line-first"></span>
+    <span class="toggle-line toggle-line-middle"></span>
+    <span class="toggle-line toggle-line-last"></span>
+  </div>
+
+  <aside class="sidebar">
+    <div class="sidebar-inner">
+
+      <ul class="sidebar-nav motion-element">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          站点概览
+        </li>
+      </ul>
+
+      <!--noindex-->
+      <div class="post-toc-wrap sidebar-panel">
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#1-%E5%89%8D%E6%96%87"><span class="nav-text">1. 前文</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#2-%E6%AD%A3%E6%96%87"><span class="nav-text">2. 正文</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#2-1-%E5%87%86%E5%A4%87%E6%9D%90%E6%96%99"><span class="nav-text">2.1 准备材料</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#2-2-Demo"><span class="nav-text">2.2 Demo</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#2-3-%E6%B7%BB%E5%8A%A0%E4%BA%9B%E6%94%B9%E9%80%A0"><span class="nav-text">2.3 添加些改造</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#2-4-%E8%A7%86%E9%A2%91Demo"><span class="nav-text">2.4 视频Demo</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#3-latex%E5%86%99%E5%85%AC%E5%BC%8F%E7%AE%80%E5%8D%95%E8%AF%B4%E6%98%8E"><span class="nav-text">3. latex写公式简单说明</span></a></li></ol></div>
+      </div>
+      <!--/noindex-->
+
+      <div class="site-overview-wrap sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+    <img class="site-author-image" itemprop="image" alt="Raven"
+      src="https://pic.downk.cc/item/5e907515504f4bcb04b6f798.jpg">
+  <p class="site-author-name" itemprop="name">Raven</p>
+  <div class="site-description" itemprop="description">分享技术，记录生活</div>
+</div>
+<div class="site-state-wrap motion-element">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+          <a href="/archives/">
+        
+          <span class="site-state-item-count">120</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+            <a href="/categories/">
+          
+        <span class="site-state-item-count">17</span>
+        <span class="site-state-item-name">分类</span></a>
+      </div>
+      <div class="site-state-item site-state-tags">
+            <a href="/tags/">
+          
+        <span class="site-state-item-count">114</span>
+        <span class="site-state-item-name">标签</span></a>
+      </div>
+  </nav>
+</div>
+  <div class="links-of-author motion-element">
+      <span class="links-of-author-item">
+        <span class="exturl" data-url="aHR0cHM6Ly9naXRodWIuY29tL3JhdmVueHJ6" title="GitHub → https:&#x2F;&#x2F;github.com&#x2F;ravenxrz"><i class="fa fa-fw fa-fab fa-github"></i>GitHub</span>
+      </span>
+      <span class="links-of-author-item">
+        <span class="exturl" data-url="bWFpbHRvOnpoYWduLnhpbmdydWlAZm94bWFpbC5jb20=" title="E-Mail → mailto:zhagn.xingrui@foxmail.com"><i class="fa fa-fw fa-fa fa-envelope"></i>E-Mail</span>
+      </span>
+  </div>
+  <div class="cc-license motion-element" itemprop="license">
+    <span class="exturl cc-opacity" data-url="aHR0cHM6Ly9jcmVhdGl2ZWNvbW1vbnMub3JnL2xpY2Vuc2VzL2J5LW5jLXNhLzQuMC8="><img src="/images/cc-by-nc-sa.svg" alt="Creative Commons"></span>
+  </div>
+
+
+  <div class="links-of-blogroll motion-element">
+    <div class="links-of-blogroll-title">
+      <i class="fa fa-fw fa-fa fa-link"></i>
+      Links
+    </div>
+    <ul class="links-of-blogroll-list">
+        <li class="links-of-blogroll-item">
+          <a href="/resources" title="&#x2F;resources">我的资源</a>
+        </li>
+    </ul>
+  </div>
+
+      </div>
+
+    </div>
+  </aside>
+  <div id="sidebar-dimmer"></div>
+
+
+      </div>
+    </main>
+
+    <footer class="footer">
+      <div class="footer-inner">
+        
+
+        
+
+<div class="copyright">
+  
+  &copy; 2017 – 
+  <span itemprop="copyrightYear">2020</span>
+  <span class="with-love">
+    <i class="fa fa-fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">Raven</span>
+</div>
+  <div class="powered-by">由 <span class="exturl theme-link" data-url="aHR0cHM6Ly9oZXhvLmlv">Hexo</span> & <span class="exturl theme-link" data-url="aHR0cHM6Ly9taXN0LnRoZW1lLW5leHQub3Jn">NexT.Mist</span> 强力驱动
+  </div>
+
+        
+<div class="busuanzi-count">
+  <script async src="https://busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+    <span class="post-meta-item" id="busuanzi_container_site_uv" style="display: none;">
+      <span class="post-meta-item-icon">
+        <i class="fa fa-fa fa-user"></i>
+      </span>
+      <span class="site-uv" title="总访客量">
+        <span id="busuanzi_value_site_uv"></span>
+      </span>
+    </span>
+    <span class="post-meta-divider">|</span>
+    <span class="post-meta-item" id="busuanzi_container_site_pv" style="display: none;">
+      <span class="post-meta-item-icon">
+        <i class="fa fa-fa fa-eye"></i>
+      </span>
+      <span class="site-pv" title="总访问量">
+        <span id="busuanzi_value_site_pv"></span>
+      </span>
+    </span>
+</div>
+
+
+
+
+
+
+
+
+      </div>
+    </footer>
+  </div>
+
+  
+  <script src="//cdn.jsdelivr.net/npm/animejs@3.1.0/lib/anime.min.js"></script>
+  <script src="//cdn.jsdelivr.net/npm/medium-zoom@1/dist/medium-zoom.min.js"></script>
+  <script src="//cdn.jsdelivr.net/npm/lozad@1/dist/lozad.min.js"></script>
+  <script src="//cdn.jsdelivr.net/npm/pangu@4/dist/browser/pangu.min.js"></script>
+
+<script src="/js/utils.js"></script>
+
+
+<script src="/js/schemes/muse.js"></script>
+
+
+<script src="/js/next-boot.js"></script>
+
+
+
+
+  
+  <script>
+    (function(){
+      var bp = document.createElement('script');
+      var curProtocol = window.location.protocol.split(':')[0];
+      bp.src = (curProtocol === 'https') ? 'https://zz.bdstatic.com/linksubmit/push.js' : 'http://push.zhanzhang.baidu.com/push.js';
+      var s = document.getElementsByTagName("script")[0];
+      s.parentNode.insertBefore(bp, s);
+    })();
+  </script>
+
+
+
+
+  
+<script src="/js/local-search.js"></script>
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+  
+      
+
+<script>
+  if (typeof MathJax === 'undefined') {
+    window.MathJax = {
+      loader: {
+        source: {
+          '[tex]/amsCd': '[tex]/amscd',
+          '[tex]/AMScd': '[tex]/amscd'
+        }
+      },
+      tex: {
+        inlineMath: {'[+]': [['$', '$']]},
+        tags: 'ams'
+      },
+      options: {
+        renderActions: {
+          findScript: [10, doc => {
+            document.querySelectorAll('script[type^="math/tex"]').forEach(node => {
+              const display = !!node.type.match(/; *mode=display/);
+              const math = new doc.options.MathItem(node.textContent, doc.inputJax[0], display);
+              const text = document.createTextNode('');
+              node.parentNode.replaceChild(text, node);
+              math.start = {node: text, delim: '', n: 0};
+              math.end = {node: text, delim: '', n: 0};
+              doc.math.push(math);
+            });
+          }, '', false],
+          insertedScript: [200, () => {
+            document.querySelectorAll('mjx-container').forEach(node => {
+              let target = node.parentNode;
+              if (target.nodeName.toLowerCase() === 'li') {
+                target.parentNode.classList.add('has-jax');
+              }
+            });
+          }, '', false]
+        }
+      }
+    };
+    (function () {
+      var script = document.createElement('script');
+      script.src = '//cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js';
+      script.defer = true;
+      document.head.appendChild(script);
+    })();
+  } else {
+    MathJax.startup.document.state(0);
+    MathJax.texReset();
+    MathJax.typeset();
+  }
+</script>
+
+    
+
+  
+  <script src="//cdn.jsdelivr.net/npm/quicklink@1/dist/quicklink.umd.js"></script>
+  <script>
+      window.addEventListener('load', () => {
+      quicklink({
+        timeout : 3000,
+        priority: true,
+        ignores : [uri => uri.includes('#'),uri => uri === 'https://www.ravenxrz.ink/archives/dd4a0f03.html',]
+      });
+      });
+  </script>
+
+<link rel="stylesheet" href="//cdn.jsdelivr.net/npm/gitalk@1/dist/gitalk.min.css">
+
+<script>
+NexT.utils.loadComments(document.querySelector('#gitalk-container'), () => {
+  NexT.utils.getScript('//cdn.jsdelivr.net/npm/gitalk@1/dist/gitalk.min.js', () => {
+    var gitalk = new Gitalk({
+      clientID    : 'b2fd373d2ca2e03e591e',
+      clientSecret: 'de4ab066908c1fbd32d3a45e091b3538761d685b',
+      repo        : 'BlogComment',
+      owner       : 'ravenxrz',
+      admin       : ['ravenxrz'],
+      id          : '7b8ee00a7174a5151e6ea284633ed563',
+        language: '',
+      distractionFreeMode: true
+    });
+    gitalk.render('gitalk-container');
+  }, window.Gitalk);
+});
+</script>
+
+</body>
+</html>

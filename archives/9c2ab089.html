@@ -1,0 +1,697 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 5.1.1">
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+  <meta http-equiv="Cache-Control" content="no-transform">
+  <meta http-equiv="Cache-Control" content="no-siteapp">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+<link rel="stylesheet" href="//cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@5/css/all.min.css">
+  <link rel="stylesheet" href="//cdn.jsdelivr.net/npm/pace-js@1/themes/blue/pace-theme-minimal.css">
+  <script src="//cdn.jsdelivr.net/npm/pace-js@1/pace.min.js"></script>
+
+<script id="hexo-configurations">
+    var NexT = window.NexT || {};
+    var CONFIG = {"hostname":"www.ravenxrz.ink","root":"/","scheme":"Mist","version":"7.8.0","exturl":true,"sidebar":{"position":"left","display":"always","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":true,"show_result":true,"style":"flat"},"back2top":{"enable":true,"sidebar":false,"scrollpercent":true},"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":true,"lazyload":true,"pangu":true,"comments":{"style":"tabs","active":"gitalk","storage":true,"lazyload":true,"nav":null,"activeClass":"gitalk"},"algolia":{"hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":true,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},"motion":{"enable":false,"async":true,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}}};
+  </script>
+
+  <meta name="description" content="i&gt; 本文转载自：https:&#x2F;&#x2F;zhuanlan.zhihu.com&#x2F;p&#x2F;41358013 “The Design and Implementation of a Log-Structured File System“ 是 Mendel Rosenblum 和 John K. Ousterhout 在90年代初发表的一篇经典论文。且不提论文的两个作者都大名鼎鼎：Rosenblum 是 Vm">
+<meta property="og:type" content="article">
+<meta property="og:title" content="导读-Log-structuredFileSystem">
+<meta property="og:url" content="https://www.ravenxrz.ink/archives/9c2ab089.html">
+<meta property="og:site_name" content="Raven&#39;s Blog">
+<meta property="og:description" content="i&gt; 本文转载自：https:&#x2F;&#x2F;zhuanlan.zhihu.com&#x2F;p&#x2F;41358013 “The Design and Implementation of a Log-Structured File System“ 是 Mendel Rosenblum 和 John K. Ousterhout 在90年代初发表的一篇经典论文。且不提论文的两个作者都大名鼎鼎：Rosenblum 是 Vm">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="https://pic2.zhimg.com/80/v2-5a968180f6bc6c9d97617c7ce46956e9_hd.jpg">
+<meta property="og:image" content="https://pic4.zhimg.com/80/v2-9c4ecd5a9b8c32469e5377c98e7c0c5f_hd.jpg">
+<meta property="og:image" content="https://pic1.zhimg.com/80/v2-e2d18cf2debe20993e1cebc73ac43bd0_hd.jpg">
+<meta property="og:image" content="https://pic4.zhimg.com/80/v2-82171bfc38138a3f6637ab1b7ba4785f_hd.jpg">
+<meta property="og:image" content="https://pic4.zhimg.com/80/v2-a2973b1665f092f0e47ed95bd7ca5a3f_hd.jpg">
+<meta property="og:image" content="https://pic2.zhimg.com/80/v2-c08804c5f9a5c8dd876103c6bfede391_hd.jpg">
+<meta property="article:published_time" content="2019-09-23T05:58:48.000Z">
+<meta property="article:modified_time" content="2020-09-06T02:45:08.057Z">
+<meta property="article:author" content="Raven">
+<meta property="article:tag" content="Log-structured FileSystem">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://pic2.zhimg.com/80/v2-5a968180f6bc6c9d97617c7ce46956e9_hd.jpg">
+
+<link rel="canonical" href="https://www.ravenxrz.ink/archives/9c2ab089.html">
+
+
+<script id="page-configurations">
+  // https://hexo.io/docs/variables.html
+  CONFIG.page = {
+    sidebar: "",
+    isHome : false,
+    isPost : true,
+    lang   : 'zh-CN'
+  };
+</script>
+
+  <title>导读-Log-structuredFileSystem | Raven's Blog</title>
+  
+
+
+
+
+
+
+  <noscript>
+  <style>
+  .use-motion .brand,
+  .use-motion .menu-item,
+  .sidebar-inner,
+  .use-motion .post-block,
+  .use-motion .pagination,
+  .use-motion .comments,
+  .use-motion .post-header,
+  .use-motion .post-body,
+  .use-motion .collection-header { opacity: initial; }
+
+  .use-motion .site-title,
+  .use-motion .site-subtitle {
+    opacity: initial;
+    top: initial;
+  }
+
+  .use-motion .logo-line-before i { left: initial; }
+  .use-motion .logo-line-after i { right: initial; }
+  </style>
+</noscript>
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage">
+  <div class="container">
+    <div class="headband"></div>
+
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切换导航栏">
+      <span class="toggle-line toggle-line-first"></span>
+      <span class="toggle-line toggle-line-middle"></span>
+      <span class="toggle-line toggle-line-last"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <span class="logo-line-before"><i></i></span>
+      <h1 class="site-title">Raven's Blog</h1>
+      <span class="logo-line-after"><i></i></span>
+    </a>
+      <p class="site-subtitle" itemprop="description">zhang.xingrui@foxmail.com</p>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger">
+        <i class="fa fa-search fa-fw fa-lg"></i>
+    </div>
+  </div>
+</div>
+
+
+
+
+<nav class="site-nav">
+  <ul id="menu" class="menu">
+        <li class="menu-item menu-item-home">
+
+    <a href="/" rel="section"><i class="fa fa-fw fa-fa fa-home"></i>首页</a>
+
+  </li>
+        <li class="menu-item menu-item-archives">
+
+    <a href="/archives/" rel="section"><i class="fa fa-fw fa-fa fa-archive"></i>归档<span class="badge">120</span></a>
+
+  </li>
+        <li class="menu-item menu-item-categories">
+
+    <a href="/categories/" rel="section"><i class="fa fa-fw fa-fa fa-th"></i>分类<span class="badge">17</span></a>
+
+  </li>
+        <li class="menu-item menu-item-tags">
+
+    <a href="/tags/" rel="section"><i class="fa fa-fw fa-fa fa-tags"></i>标签<span class="badge">114</span></a>
+
+  </li>
+        <li class="menu-item menu-item-about">
+
+    <a href="/about/" rel="section"><i class="fa fa-fw fa-fa fa-user"></i>关于</a>
+
+  </li>
+      <li class="menu-item menu-item-search">
+        <a role="button" class="popup-trigger"><i class="fa fa-search fa-fw"></i>搜索
+        </a>
+      </li>
+  </ul>
+</nav>
+
+
+
+  <div class="search-pop-overlay">
+    <div class="popup search-popup">
+        <div class="search-header">
+  <span class="search-icon">
+    <i class="fa fa-search"></i>
+  </span>
+  <div class="search-input-container">
+    <input autocomplete="off" autocapitalize="off"
+           placeholder="搜索..." spellcheck="false"
+           type="search" class="search-input">
+  </div>
+  <span class="popup-btn-close">
+    <i class="fa fa-times-circle"></i>
+  </span>
+</div>
+<div id="search-result">
+  <div id="no-result">
+    <i class="fa fa-spinner fa-pulse fa-5x fa-fw"></i>
+  </div>
+</div>
+
+    </div>
+  </div>
+
+</div>
+    </header>
+
+    
+  <div class="back-to-top">
+    <i class="fa fa-arrow-up"></i>
+    <span>0%</span>
+  </div>
+
+  <span class="exturl github-corner" data-url="aHR0cHM6Ly9naXRodWIuY29tL3JhdmVueHJ6" title="Follow me on GitHub" aria-label="Follow me on GitHub"><svg width="80" height="80" viewBox="0 0 250 250" aria-hidden="true"><path d="M0,0 L115,115 L130,115 L142,142 L250,250 L250,0 Z"></path><path d="M128.3,109.0 C113.8,99.7 119.0,89.6 119.0,89.6 C122.0,82.7 120.5,78.6 120.5,78.6 C119.2,72.0 123.4,76.3 123.4,76.3 C127.3,80.9 125.5,87.3 125.5,87.3 C122.9,97.6 130.6,101.9 134.4,103.2" fill="currentColor" style="transform-origin: 130px 106px;" class="octo-arm"></path><path d="M115.0,115.0 C114.9,115.1 118.7,116.5 119.8,115.4 L133.7,101.6 C136.9,99.2 139.9,98.4 142.2,98.6 C133.8,88.0 127.5,74.4 143.8,58.0 C148.5,53.4 154.0,51.2 159.7,51.0 C160.3,49.4 163.2,43.6 171.4,40.1 C171.4,40.1 176.1,42.5 178.8,56.2 C183.1,58.6 187.2,61.8 190.9,65.4 C194.5,69.0 197.7,73.2 200.1,77.6 C213.8,80.2 216.3,84.9 216.3,84.9 C212.7,93.1 206.9,96.0 205.4,96.6 C205.1,102.4 203.0,107.8 198.3,112.5 C181.9,128.9 168.3,122.5 157.7,114.1 C157.9,116.9 156.7,120.9 152.7,124.9 L141.0,136.5 C139.8,137.7 141.6,141.9 141.8,141.8 Z" fill="currentColor" class="octo-body"></path></svg></span>
+
+
+    <main class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          
+
+          <div class="content post posts-expand">
+            
+
+    
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="https://www.ravenxrz.ink/archives/9c2ab089.html">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="https://pic.downk.cc/item/5e907515504f4bcb04b6f798.jpg">
+      <meta itemprop="name" content="Raven">
+      <meta itemprop="description" content="分享技术，记录生活">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Raven's Blog">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          导读-Log-structuredFileSystem
+        </h1>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+
+              <time title="创建时间：2019-09-23 13:58:48" itemprop="dateCreated datePublished" datetime="2019-09-23T13:58:48+08:00">2019-09-23</time>
+            </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-calendar-check-o"></i>
+                </span>
+                <span class="post-meta-item-text">更新于</span>
+                <time title="修改时间：2020-09-06 10:45:08" itemprop="dateModified" datetime="2020-09-06T10:45:08+08:00">2020-09-06</time>
+              </span>
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              <span class="post-meta-item-text">分类于</span>
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/%E8%AE%BA%E6%96%87/" itemprop="url" rel="index"><span itemprop="name">论文</span></a>
+                </span>
+            </span>
+
+          
+            <span class="post-meta-item" title="阅读次数" id="busuanzi_container_page_pv" style="display: none;">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-fa fa-eye"></i>
+              </span>
+              <span class="post-meta-item-text">阅读次数：</span>
+              <span id="busuanzi_value_page_pv"></span>
+            </span>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+        <p>i&gt; 本文转载自：<a target="_blank" rel="noopener" href="https://zhuanlan.zhihu.com/p/41358013">https://zhuanlan.zhihu.com/p/41358013</a></p>
+<p>“<a href="https://link.zhihu.com/?target=https://people.eecs.berkeley.edu/~brewer/cs262/LFS.pdf">The Design and Implementation of a Log-Structured File System</a>“ 是 Mendel Rosenblum 和 John K. Ousterhout 在90年代初发表的一篇经典论文。且不提论文的两个作者都大名鼎鼎：Rosenblum 是 Vmware 的联合创始人，Ousterhout 是 <a href="https://link.zhihu.com/?target=https://raft.github.io/raft.pdf">Raft</a>的作者之一（Ongaro 的老板）; 这篇论文在发表之后就引起了长达数年的 <a href="https://link.zhihu.com/?target=https://en.wikipedia.org/wiki/Unix_File_System">Fast File System</a> 和 LFS 之间的<a href="https://link.zhihu.com/?target=http://www.eecs.harvard.edu/~margo/cs261/paper-history/second-submission.pdf">口水战</a>。LFS 在提出后的前10多年里并没有被业界采用（猜猜为什么），但当 SSD 的价格下降并成为主流后，LFS 却焕发了第二春：LFS 被广泛运用在 SSD 的 firmware 中，而且新的文件系统，譬如基于 journal 的 <a href="https://link.zhihu.com/?target=https://en.wikipedia.org/wiki/Ext4">ext3/ext4</a>和支持 copy on write 的 <a href="https://link.zhihu.com/?target=https://en.wikipedia.org/wiki/Btrfs">btrfs</a>都吸取了LFS 的 idea；甚至我们常用的<a href="https://link.zhihu.com/?target=https://en.wikipedia.org/wiki/Log-structured_merge-tree">LSM</a>算法都能看到 LFS 的影子。</p>
+<a id="more"></a>
+<h2 id="动机"><a href="#动机" class="headerlink" title="动机"></a>动机</h2><p>在90年代初，计算机的硬件性能开始了爆发式增长：CPU 的速度越来越快，RAM 也越来越大；然而，虽然硬盘的顺序读写速度也在提高，但是随机读写速度，受制于物理上的寻道时间，却难以短于10ms。另一方面，当时的文件系统不论是 <a href="https://link.zhihu.com/?target=https://en.wikipedia.org/wiki/Unix_File_System">Unix File System</a> 还是 FFS，都有大量的随机读写（在 FFS 中创建一个新文件至少需要5次随机写），因此成为整个系统的性能瓶颈。同时因为 Page cache 的存在，作者认为随机读不是 主要问题：随着越来越大的内存，大部分的读操作都能被 cache，因此 LFS 主要要解决的是减少对硬盘的随机写操作。</p>
+<h2 id="File-System-as-a-Log"><a href="#File-System-as-a-Log" class="headerlink" title="File System as a Log"></a>File System as a Log</h2><p>那么LFS是怎么减少随机写入呢？它基于一个很简单的 idea: 把整个磁盘看做一个 append only log,永远都是顺序写入。每当我们写入新文件时，我们总是顺序地追加在log 的最后；不同于 FFS/UFS, LFS 对文件的更改并不修改现有内容，而是把增量追加在硬盘的最后。</p>
+<p><img src="https://pic2.zhimg.com/80/v2-5a968180f6bc6c9d97617c7ce46956e9_hd.jpg" alt="img"></p>
+<h2 id="管理空余空间：段-Segements"><a href="#管理空余空间：段-Segements" class="headerlink" title="管理空余空间：段(Segements)"></a>管理空余空间：段(Segements)</h2><p>这样的设计有一个明显的问题：硬盘大小是有限的，当我们的 log 把硬盘写满以后，我们就不能再往硬盘里写入新的数据。但是正如图一所示，我们在操作文件系统时，我们会删除文件，或是用新的内容覆盖旧的内容；因此在 log 中会有过期数据。因此我们需要设计垃圾回收机制和空余空间管理机制。</p>
+<p>在 LFS 中，空余空间是用固定大小的段(Segment)来管理的：硬盘被分割成固定大小的段；写操作首先会被写入到内存中；当内存中缓存的数据超过段的大小后，LFS 将数据一次性写入到空闲的段中。</p>
+<p><img src="https://pic4.zhimg.com/80/v2-9c4ecd5a9b8c32469e5377c98e7c0c5f_hd.jpg" alt="img"></p>
+<h2 id="LFS-的读操作"><a href="#LFS-的读操作" class="headerlink" title="LFS 的读操作"></a>LFS 的读操作</h2><p>基于段的批量写入解决了随机写入问题，但是LFS 如何实现读操作呢？类似 UFS/FFS, LFS 的在段内存储文件内容时，也存储了文件的索引。具体的来说：</p>
+<ul>
+<li>在 Segment 中，文件内容存储在固定大小的 data block 中</li>
+<li>Segment 中同时存储了 data block 的索引, a.k.a inode. 每个 inode 存储了对应文件的 data block 的索引和 data block 的地址</li>
+</ul>
+<p>在下图的例子中，Segment0 里存储了文件2的两个 data block。而之后的 inode2 中存储了这两个 data block 的索引。</p>
+<p>然而不同于 UFS/FFS, LFS 的 inode 是动态分配的，因此 LFS 在每个 Segment 的尾部存储了对 inode 的索引， 称为 inode map。在 LFS 中，所有的 inode map 内容都会被缓存到内容中，从而加快读取速度。</p>
+<p>  <img src="https://pic1.zhimg.com/80/v2-e2d18cf2debe20993e1cebc73ac43bd0_hd.jpg" alt="img"></p>
+<p>有了 inode/inode map 和 data block; 在 LFS 中读取一个inode 号为 i 的文件流程如下:</p>
+<ol>
+<li>从内存中缓存的 inode map 中找到所有的段中 inode 为 i 的地址</li>
+<li>根据不同段中的 inode 找到对应的 data block 地址</li>
+<li>读取 data block 中的数据</li>
+</ol>
+<p>因为 LFS 是 append only，所以对同一个文件的同一个 data block 可能存在多个版本（在不同段中）。但是通过比较不同段的更新时间，LFS就能判断出哪个 segment 中的 data block 是最新版本。</p>
+<h2 id="垃圾回收"><a href="#垃圾回收" class="headerlink" title="垃圾回收"></a>垃圾回收</h2><p>正如前文所说，LFS 需要设计垃圾回收机制来删除旧数据。 在 LFS 中，多个包含过期数据 block 的段（文件内容被更新或是文件被删除）会被 compact 成新的数据段，同时其中的旧数据会被删除。</p>
+<p><img src="https://pic4.zhimg.com/80/v2-82171bfc38138a3f6637ab1b7ba4785f_hd.jpg" alt="img"></p>
+<p>但是 LFS 是如何检查段中的过期 block 呢？LFS 在每个段的头部存储了名为 Segment Summary 的数据结构。在 Segment Summary 中存储了段中每个 data block 的地址，和这个 data block 的 inode number （文件号），以及该 block 在文件中的 offset。对于任意 block，只要对比该 block 的地址，和通过 inode map 查询这个 block 的地址是否相同，就能判断这个 block 是否过期。</p>
+<p><img src="https://pic4.zhimg.com/80/v2-a2973b1665f092f0e47ed95bd7ca5a3f_hd.jpg" alt="img"></p>
+<h2 id="故障恢复"><a href="#故障恢复" class="headerlink" title="故障恢复"></a>故障恢复</h2><p>显然任何文件系统都要能从故障中恢复数据。不同于 UFS 用 <a href="https://link.zhihu.com/?target=https://en.wikipedia.org/wiki/Fsck">fsck</a> 命令对故障进行恢复，LFS 对整个硬盘存储了 Checkpoint:</p>
+<ul>
+<li>因为 LFS 的每个 Segment 都存储了下一个 Segment 的地址，整个文件系统就像一个链表一样被组织在一起。</li>
+<li>在 Checkpoint 中，LFS 存储了这个链表的第一个 Segment 和最后一个 Segment 的地址，因此只要读取 Checkpoint 就能恢复出整个文件系统。</li>
+<li>LFS 每 30秒更新一次 Checkpoint 中的数据。</li>
+</ul>
+<p><img src="https://pic2.zhimg.com/80/v2-c08804c5f9a5c8dd876103c6bfede391_hd.jpg" alt="img"></p>
+<p>现在我们考虑一下系统崩溃的情况：</p>
+<p>如果LFS 在创建 Checkpoint 时崩溃，比如只更新了 Checkpoint 的头指针而没有更新尾指针。对此 LFS 的解决方案是：</p>
+<ul>
+<li>LFS 在硬盘的头部和尾部存储了两个 Checkpoint，每次 Checkpoint 时 LFS 交替地存储在头部或是尾部的 Checkpoint 中。 这样即使写入一个 Checkpoint 失败， LFS 也能恢复到上一个 Checkpoint。</li>
+<li>同时 LFS 利用时间戳来检测 Checkpoint 的失败：在写入 Checkpoint 时，先更新头指针和对应的时间戳，再更新 Checkpoint 中的其它内容，最后更新尾指针和相同的时间戳。如果 LFS 在读取 Checkpoint 时发现头指针和尾指针的时间戳不一致，就知道这个 Checkpoint 并没有完成。</li>
+</ul>
+<p>如果 LFS 在创建 Checkpoint 之间失败，显然系统可以恢复到上一次 Checkpoint 时的状态。然而这会丢失一部分数据。对此 LFS 效仿了数据库的 redo log：LFS 会尝试从当前的 segment 链表尾部恢复出已经成功写入但没有被 Checkpoint 的数据段。</p>
+<h2 id="总结"><a href="#总结" class="headerlink" title="总结"></a>总结</h2><p>从今天算起，LFS 已经发布了将近 30 年；然而正式由于作者对未来的正确假设，使得 LFS 的设计思想和理念却仍然深刻地影相了文件系统设计：LFS 的基于 Segment 的设计和 SSD 的物理特性不谋而合，因此被<a href="https://link.zhihu.com/?target=https://lwn.net/Articles/353411/">广泛应用在 SSD 的 firmware 中</a>；LSM 的 memory table/compaction 与 LFS 的 memeory buffer 和 GC 一脉相承；而新的文件系统例如 btrfs 也基于 LSM append only 的特点实现了 copy-on-write 或是 multi-version 的特性。  参考文献</p>
+<ol>
+<li><a href="https://link.zhihu.com/?target=https://people.eecs.berkeley.edu/~brewer/cs262/LFS.pdf">The Design and Implementation of a Log-Structured File System</a></li>
+<li><a href="https://link.zhihu.com/?target=https://lwn.net/Articles/353411/">Log-structured file systems: There’s one in every SSD</a></li>
+<li><a href="https://link.zhihu.com/?target=http://www.eecs.harvard.edu/~cs161/notes/lfs.pdf">CS 161: Lecture 15</a></li>
+</ol>
+
+    </div>
+
+    
+    
+    
+        <div class="reward-container">
+  <div>文章对你有帮助?打赏一下作者吧</div>
+  <button onclick="var qr = document.getElementById('qr'); qr.style.display = (qr.style.display === 'none') ? 'block' : 'none';">
+    打赏
+  </button>
+  <div id="qr" style="display: none;">
+      
+      <div style="display: inline-block;">
+        <img src="https://pic.downk.cc/item/5d064208451253d178a15b27.png" alt="Raven 微信支付">
+        <p>微信支付</p>
+      </div>
+      
+      <div style="display: inline-block;">
+        <img src="https://pic.downk.cc/item/5d0641c7451253d178a15376.png" alt="Raven 支付宝">
+        <p>支付宝</p>
+      </div>
+
+  </div>
+</div>
+
+        
+
+<div>
+<ul class="post-copyright">
+  <li class="post-copyright-author">
+    <strong>本文作者： </strong>Raven
+  </li>
+  <li class="post-copyright-link">
+    <strong>本文链接：</strong>
+    <a href="https://www.ravenxrz.ink/archives/9c2ab089.html" title="导读-Log-structuredFileSystem">https://www.ravenxrz.ink/archives/9c2ab089.html</a>
+  </li>
+  <li class="post-copyright-license">
+    <strong>版权声明： </strong>本博客所有文章除特别声明外，均采用 <span class="exturl" data-url="aHR0cHM6Ly9jcmVhdGl2ZWNvbW1vbnMub3JnL2xpY2Vuc2VzL2J5LW5jLXNhLzQuMC8="><i class="fa fa-fw fa-creative-commons"></i>BY-NC-SA</span> 许可协议。转载请注明出处！
+  </li>
+</ul>
+</div>
+
+
+      <footer class="post-footer">
+          
+          <div class="post-tags">
+              <a href="/tags/Log-structured-FileSystem/" rel="tag"><i class="fa fa-tag"></i> Log-structured FileSystem</a>
+          </div>
+
+        
+
+
+        
+    <div class="post-nav">
+      <div class="post-nav-item">
+    <a href="/archives/e16de5be.html" rel="prev" title="巧记指针常量和常量指针">
+      <i class="fa fa-chevron-left"></i> 巧记指针常量和常量指针
+    </a></div>
+      <div class="post-nav-item">
+    <a href="/archives/c49b3e12.html" rel="next" title="理解C++中的左值(lvalue)和右值(rvalue)">
+      理解C++中的左值(lvalue)和右值(rvalue) <i class="fa fa-chevron-right"></i>
+    </a></div>
+    </div>
+      </footer>
+    
+  </article>
+  
+  
+  
+
+
+
+          </div>
+          
+    <div class="comments" id="gitalk-container"></div>
+
+<script>
+  window.addEventListener('tabs:register', () => {
+    let { activeClass } = CONFIG.comments;
+    if (CONFIG.comments.storage) {
+      activeClass = localStorage.getItem('comments_active') || activeClass;
+    }
+    if (activeClass) {
+      let activeTab = document.querySelector(`a[href="#comment-${activeClass}"]`);
+      if (activeTab) {
+        activeTab.click();
+      }
+    }
+  });
+  if (CONFIG.comments.storage) {
+    window.addEventListener('tabs:click', event => {
+      if (!event.target.matches('.tabs-comment .tab-content .tab-pane')) return;
+      let commentClass = event.target.classList[1];
+      localStorage.setItem('comments_active', commentClass);
+    });
+  }
+</script>
+
+        </div>
+          
+  
+  <div class="toggle sidebar-toggle">
+    <span class="toggle-line toggle-line-first"></span>
+    <span class="toggle-line toggle-line-middle"></span>
+    <span class="toggle-line toggle-line-last"></span>
+  </div>
+
+  <aside class="sidebar">
+    <div class="sidebar-inner">
+
+      <ul class="sidebar-nav motion-element">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          站点概览
+        </li>
+      </ul>
+
+      <!--noindex-->
+      <div class="post-toc-wrap sidebar-panel">
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%8A%A8%E6%9C%BA"><span class="nav-text">动机</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#File-System-as-a-Log"><span class="nav-text">File System as a Log</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E7%AE%A1%E7%90%86%E7%A9%BA%E4%BD%99%E7%A9%BA%E9%97%B4%EF%BC%9A%E6%AE%B5-Segements"><span class="nav-text">管理空余空间：段(Segements)</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#LFS-%E7%9A%84%E8%AF%BB%E6%93%8D%E4%BD%9C"><span class="nav-text">LFS 的读操作</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%9E%83%E5%9C%BE%E5%9B%9E%E6%94%B6"><span class="nav-text">垃圾回收</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E6%95%85%E9%9A%9C%E6%81%A2%E5%A4%8D"><span class="nav-text">故障恢复</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E6%80%BB%E7%BB%93"><span class="nav-text">总结</span></a></li></ol></div>
+      </div>
+      <!--/noindex-->
+
+      <div class="site-overview-wrap sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+    <img class="site-author-image" itemprop="image" alt="Raven"
+      src="https://pic.downk.cc/item/5e907515504f4bcb04b6f798.jpg">
+  <p class="site-author-name" itemprop="name">Raven</p>
+  <div class="site-description" itemprop="description">分享技术，记录生活</div>
+</div>
+<div class="site-state-wrap motion-element">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+          <a href="/archives/">
+        
+          <span class="site-state-item-count">120</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+            <a href="/categories/">
+          
+        <span class="site-state-item-count">17</span>
+        <span class="site-state-item-name">分类</span></a>
+      </div>
+      <div class="site-state-item site-state-tags">
+            <a href="/tags/">
+          
+        <span class="site-state-item-count">114</span>
+        <span class="site-state-item-name">标签</span></a>
+      </div>
+  </nav>
+</div>
+  <div class="links-of-author motion-element">
+      <span class="links-of-author-item">
+        <span class="exturl" data-url="aHR0cHM6Ly9naXRodWIuY29tL3JhdmVueHJ6" title="GitHub → https:&#x2F;&#x2F;github.com&#x2F;ravenxrz"><i class="fa fa-fw fa-fab fa-github"></i>GitHub</span>
+      </span>
+      <span class="links-of-author-item">
+        <span class="exturl" data-url="bWFpbHRvOnpoYWduLnhpbmdydWlAZm94bWFpbC5jb20=" title="E-Mail → mailto:zhagn.xingrui@foxmail.com"><i class="fa fa-fw fa-fa fa-envelope"></i>E-Mail</span>
+      </span>
+  </div>
+  <div class="cc-license motion-element" itemprop="license">
+    <span class="exturl cc-opacity" data-url="aHR0cHM6Ly9jcmVhdGl2ZWNvbW1vbnMub3JnL2xpY2Vuc2VzL2J5LW5jLXNhLzQuMC8="><img src="/images/cc-by-nc-sa.svg" alt="Creative Commons"></span>
+  </div>
+
+
+  <div class="links-of-blogroll motion-element">
+    <div class="links-of-blogroll-title">
+      <i class="fa fa-fw fa-fa fa-link"></i>
+      Links
+    </div>
+    <ul class="links-of-blogroll-list">
+        <li class="links-of-blogroll-item">
+          <a href="/resources" title="&#x2F;resources">我的资源</a>
+        </li>
+    </ul>
+  </div>
+
+      </div>
+
+    </div>
+  </aside>
+  <div id="sidebar-dimmer"></div>
+
+
+      </div>
+    </main>
+
+    <footer class="footer">
+      <div class="footer-inner">
+        
+
+        
+
+<div class="copyright">
+  
+  &copy; 2017 – 
+  <span itemprop="copyrightYear">2020</span>
+  <span class="with-love">
+    <i class="fa fa-fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">Raven</span>
+</div>
+  <div class="powered-by">由 <span class="exturl theme-link" data-url="aHR0cHM6Ly9oZXhvLmlv">Hexo</span> & <span class="exturl theme-link" data-url="aHR0cHM6Ly9taXN0LnRoZW1lLW5leHQub3Jn">NexT.Mist</span> 强力驱动
+  </div>
+
+        
+<div class="busuanzi-count">
+  <script async src="https://busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+    <span class="post-meta-item" id="busuanzi_container_site_uv" style="display: none;">
+      <span class="post-meta-item-icon">
+        <i class="fa fa-fa fa-user"></i>
+      </span>
+      <span class="site-uv" title="总访客量">
+        <span id="busuanzi_value_site_uv"></span>
+      </span>
+    </span>
+    <span class="post-meta-divider">|</span>
+    <span class="post-meta-item" id="busuanzi_container_site_pv" style="display: none;">
+      <span class="post-meta-item-icon">
+        <i class="fa fa-fa fa-eye"></i>
+      </span>
+      <span class="site-pv" title="总访问量">
+        <span id="busuanzi_value_site_pv"></span>
+      </span>
+    </span>
+</div>
+
+
+
+
+
+
+
+
+      </div>
+    </footer>
+  </div>
+
+  
+  <script src="//cdn.jsdelivr.net/npm/animejs@3.1.0/lib/anime.min.js"></script>
+  <script src="//cdn.jsdelivr.net/npm/medium-zoom@1/dist/medium-zoom.min.js"></script>
+  <script src="//cdn.jsdelivr.net/npm/lozad@1/dist/lozad.min.js"></script>
+  <script src="//cdn.jsdelivr.net/npm/pangu@4/dist/browser/pangu.min.js"></script>
+
+<script src="/js/utils.js"></script>
+
+
+<script src="/js/schemes/muse.js"></script>
+
+
+<script src="/js/next-boot.js"></script>
+
+
+
+
+  
+  <script>
+    (function(){
+      var bp = document.createElement('script');
+      var curProtocol = window.location.protocol.split(':')[0];
+      bp.src = (curProtocol === 'https') ? 'https://zz.bdstatic.com/linksubmit/push.js' : 'http://push.zhanzhang.baidu.com/push.js';
+      var s = document.getElementsByTagName("script")[0];
+      s.parentNode.insertBefore(bp, s);
+    })();
+  </script>
+
+
+
+
+  
+<script src="/js/local-search.js"></script>
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+  
+      
+
+<script>
+  if (typeof MathJax === 'undefined') {
+    window.MathJax = {
+      loader: {
+        source: {
+          '[tex]/amsCd': '[tex]/amscd',
+          '[tex]/AMScd': '[tex]/amscd'
+        }
+      },
+      tex: {
+        inlineMath: {'[+]': [['$', '$']]},
+        tags: 'ams'
+      },
+      options: {
+        renderActions: {
+          findScript: [10, doc => {
+            document.querySelectorAll('script[type^="math/tex"]').forEach(node => {
+              const display = !!node.type.match(/; *mode=display/);
+              const math = new doc.options.MathItem(node.textContent, doc.inputJax[0], display);
+              const text = document.createTextNode('');
+              node.parentNode.replaceChild(text, node);
+              math.start = {node: text, delim: '', n: 0};
+              math.end = {node: text, delim: '', n: 0};
+              doc.math.push(math);
+            });
+          }, '', false],
+          insertedScript: [200, () => {
+            document.querySelectorAll('mjx-container').forEach(node => {
+              let target = node.parentNode;
+              if (target.nodeName.toLowerCase() === 'li') {
+                target.parentNode.classList.add('has-jax');
+              }
+            });
+          }, '', false]
+        }
+      }
+    };
+    (function () {
+      var script = document.createElement('script');
+      script.src = '//cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js';
+      script.defer = true;
+      document.head.appendChild(script);
+    })();
+  } else {
+    MathJax.startup.document.state(0);
+    MathJax.texReset();
+    MathJax.typeset();
+  }
+</script>
+
+    
+
+  
+  <script src="//cdn.jsdelivr.net/npm/quicklink@1/dist/quicklink.umd.js"></script>
+  <script>
+      window.addEventListener('load', () => {
+      quicklink({
+        timeout : 3000,
+        priority: true,
+        ignores : [uri => uri.includes('#'),uri => uri === 'https://www.ravenxrz.ink/archives/9c2ab089.html',]
+      });
+      });
+  </script>
+
+<link rel="stylesheet" href="//cdn.jsdelivr.net/npm/gitalk@1/dist/gitalk.min.css">
+
+<script>
+NexT.utils.loadComments(document.querySelector('#gitalk-container'), () => {
+  NexT.utils.getScript('//cdn.jsdelivr.net/npm/gitalk@1/dist/gitalk.min.js', () => {
+    var gitalk = new Gitalk({
+      clientID    : 'b2fd373d2ca2e03e591e',
+      clientSecret: 'de4ab066908c1fbd32d3a45e091b3538761d685b',
+      repo        : 'BlogComment',
+      owner       : 'ravenxrz',
+      admin       : ['ravenxrz'],
+      id          : 'e9dcbbe1f47438de570e02b2b0418c9a',
+        language: '',
+      distractionFreeMode: true
+    });
+    gitalk.render('gitalk-container');
+  }, window.Gitalk);
+});
+</script>
+
+</body>
+</html>

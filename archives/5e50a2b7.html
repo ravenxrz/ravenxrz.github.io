@@ -1,0 +1,710 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 5.1.1">
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+  <meta http-equiv="Cache-Control" content="no-transform">
+  <meta http-equiv="Cache-Control" content="no-siteapp">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+<link rel="stylesheet" href="//cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@5/css/all.min.css">
+  <link rel="stylesheet" href="//cdn.jsdelivr.net/npm/pace-js@1/themes/blue/pace-theme-minimal.css">
+  <script src="//cdn.jsdelivr.net/npm/pace-js@1/pace.min.js"></script>
+
+<script id="hexo-configurations">
+    var NexT = window.NexT || {};
+    var CONFIG = {"hostname":"www.ravenxrz.ink","root":"/","scheme":"Mist","version":"7.8.0","exturl":true,"sidebar":{"position":"left","display":"always","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":true,"show_result":true,"style":"flat"},"back2top":{"enable":true,"sidebar":false,"scrollpercent":true},"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":true,"lazyload":true,"pangu":true,"comments":{"style":"tabs","active":"gitalk","storage":true,"lazyload":true,"nav":null,"activeClass":"gitalk"},"algolia":{"hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":true,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},"motion":{"enable":false,"async":true,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}}};
+  </script>
+
+  <meta name="description" content="1. 背景提出作为一个大四老狗，回想当年也是恶心着创翼（原名NetKeeper)的一人一号过来的。 后来有一些破解方式，不过有一些已经不再适用，但也还有一些能够存活。下面介绍一些破解方式吧。  SimpleNetkeeper Android版本：这个是个很老的软件，当然由于创翼升级算法，它也不再适用了。但是确实是最好用的一个软件，毕竟直接用手机就能联网，简直美滋滋。 SImpleNetKeeper">
+<meta property="og:type" content="article">
+<meta property="og:title" content="使用荒野无灯的Padavan固件破解创翼的一人一号制度">
+<meta property="og:url" content="https://www.ravenxrz.ink/archives/5e50a2b7.html">
+<meta property="og:site_name" content="Raven&#39;s Blog">
+<meta property="og:description" content="1. 背景提出作为一个大四老狗，回想当年也是恶心着创翼（原名NetKeeper)的一人一号过来的。 后来有一些破解方式，不过有一些已经不再适用，但也还有一些能够存活。下面介绍一些破解方式吧。  SimpleNetkeeper Android版本：这个是个很老的软件，当然由于创翼升级算法，它也不再适用了。但是确实是最好用的一个软件，毕竟直接用手机就能联网，简直美滋滋。 SImpleNetKeeper">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="https://pic.superbed.cn/item/5cfbb5d0451253d178d9d14a.png">
+<meta property="og:image" content="https://raw.githubusercontent.com/ravenxrz/BlogPic/master/img/%E8%B7%AF%E7%94%B1%E5%99%A8%E5%88%B7%E6%9C%BA%E6%B5%81%E7%A8%8B1.jpg">
+<meta property="og:image" content="https://pic.superbed.cn/item/5cfbb5d1451253d178d9d17d.jpg">
+<meta property="og:image" content="https://pic.superbed.cn/item/5cfbb5d3451253d178d9d1c7.jpg">
+<meta property="og:image" content="https://pic.superbed.cn/item/5cfbb5d4451253d178d9d1fc.jpg">
+<meta property="og:image" content="https://pic.superbed.cn/item/5cfbb5d6451253d178d9d22f.jpg">
+<meta property="og:image" content="https://pic1.superbed.cn/item/5cfbb5d7451253d178d9d262.jpg">
+<meta property="og:image" content="https://pic3.superbed.cn/item/5cfbb5d9451253d178d9d2a2.jpg">
+<meta property="article:published_time" content="2019-05-05T05:58:39.000Z">
+<meta property="article:modified_time" content="2020-09-06T02:45:08.054Z">
+<meta property="article:author" content="Raven">
+<meta property="article:tag" content="padavan">
+<meta property="article:tag" content="校园网">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://pic.superbed.cn/item/5cfbb5d0451253d178d9d14a.png">
+
+<link rel="canonical" href="https://www.ravenxrz.ink/archives/5e50a2b7.html">
+
+
+<script id="page-configurations">
+  // https://hexo.io/docs/variables.html
+  CONFIG.page = {
+    sidebar: "",
+    isHome : false,
+    isPost : true,
+    lang   : 'zh-CN'
+  };
+</script>
+
+  <title>使用荒野无灯的Padavan固件破解创翼的一人一号制度 | Raven's Blog</title>
+  
+
+
+
+
+
+
+  <noscript>
+  <style>
+  .use-motion .brand,
+  .use-motion .menu-item,
+  .sidebar-inner,
+  .use-motion .post-block,
+  .use-motion .pagination,
+  .use-motion .comments,
+  .use-motion .post-header,
+  .use-motion .post-body,
+  .use-motion .collection-header { opacity: initial; }
+
+  .use-motion .site-title,
+  .use-motion .site-subtitle {
+    opacity: initial;
+    top: initial;
+  }
+
+  .use-motion .logo-line-before i { left: initial; }
+  .use-motion .logo-line-after i { right: initial; }
+  </style>
+</noscript>
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage">
+  <div class="container">
+    <div class="headband"></div>
+
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切换导航栏">
+      <span class="toggle-line toggle-line-first"></span>
+      <span class="toggle-line toggle-line-middle"></span>
+      <span class="toggle-line toggle-line-last"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <span class="logo-line-before"><i></i></span>
+      <h1 class="site-title">Raven's Blog</h1>
+      <span class="logo-line-after"><i></i></span>
+    </a>
+      <p class="site-subtitle" itemprop="description">zhang.xingrui@foxmail.com</p>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger">
+        <i class="fa fa-search fa-fw fa-lg"></i>
+    </div>
+  </div>
+</div>
+
+
+
+
+<nav class="site-nav">
+  <ul id="menu" class="menu">
+        <li class="menu-item menu-item-home">
+
+    <a href="/" rel="section"><i class="fa fa-fw fa-fa fa-home"></i>首页</a>
+
+  </li>
+        <li class="menu-item menu-item-archives">
+
+    <a href="/archives/" rel="section"><i class="fa fa-fw fa-fa fa-archive"></i>归档<span class="badge">120</span></a>
+
+  </li>
+        <li class="menu-item menu-item-categories">
+
+    <a href="/categories/" rel="section"><i class="fa fa-fw fa-fa fa-th"></i>分类<span class="badge">17</span></a>
+
+  </li>
+        <li class="menu-item menu-item-tags">
+
+    <a href="/tags/" rel="section"><i class="fa fa-fw fa-fa fa-tags"></i>标签<span class="badge">114</span></a>
+
+  </li>
+        <li class="menu-item menu-item-about">
+
+    <a href="/about/" rel="section"><i class="fa fa-fw fa-fa fa-user"></i>关于</a>
+
+  </li>
+      <li class="menu-item menu-item-search">
+        <a role="button" class="popup-trigger"><i class="fa fa-search fa-fw"></i>搜索
+        </a>
+      </li>
+  </ul>
+</nav>
+
+
+
+  <div class="search-pop-overlay">
+    <div class="popup search-popup">
+        <div class="search-header">
+  <span class="search-icon">
+    <i class="fa fa-search"></i>
+  </span>
+  <div class="search-input-container">
+    <input autocomplete="off" autocapitalize="off"
+           placeholder="搜索..." spellcheck="false"
+           type="search" class="search-input">
+  </div>
+  <span class="popup-btn-close">
+    <i class="fa fa-times-circle"></i>
+  </span>
+</div>
+<div id="search-result">
+  <div id="no-result">
+    <i class="fa fa-spinner fa-pulse fa-5x fa-fw"></i>
+  </div>
+</div>
+
+    </div>
+  </div>
+
+</div>
+    </header>
+
+    
+  <div class="back-to-top">
+    <i class="fa fa-arrow-up"></i>
+    <span>0%</span>
+  </div>
+
+  <span class="exturl github-corner" data-url="aHR0cHM6Ly9naXRodWIuY29tL3JhdmVueHJ6" title="Follow me on GitHub" aria-label="Follow me on GitHub"><svg width="80" height="80" viewBox="0 0 250 250" aria-hidden="true"><path d="M0,0 L115,115 L130,115 L142,142 L250,250 L250,0 Z"></path><path d="M128.3,109.0 C113.8,99.7 119.0,89.6 119.0,89.6 C122.0,82.7 120.5,78.6 120.5,78.6 C119.2,72.0 123.4,76.3 123.4,76.3 C127.3,80.9 125.5,87.3 125.5,87.3 C122.9,97.6 130.6,101.9 134.4,103.2" fill="currentColor" style="transform-origin: 130px 106px;" class="octo-arm"></path><path d="M115.0,115.0 C114.9,115.1 118.7,116.5 119.8,115.4 L133.7,101.6 C136.9,99.2 139.9,98.4 142.2,98.6 C133.8,88.0 127.5,74.4 143.8,58.0 C148.5,53.4 154.0,51.2 159.7,51.0 C160.3,49.4 163.2,43.6 171.4,40.1 C171.4,40.1 176.1,42.5 178.8,56.2 C183.1,58.6 187.2,61.8 190.9,65.4 C194.5,69.0 197.7,73.2 200.1,77.6 C213.8,80.2 216.3,84.9 216.3,84.9 C212.7,93.1 206.9,96.0 205.4,96.6 C205.1,102.4 203.0,107.8 198.3,112.5 C181.9,128.9 168.3,122.5 157.7,114.1 C157.9,116.9 156.7,120.9 152.7,124.9 L141.0,136.5 C139.8,137.7 141.6,141.9 141.8,141.8 Z" fill="currentColor" class="octo-body"></path></svg></span>
+
+
+    <main class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          
+
+          <div class="content post posts-expand">
+            
+
+    
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="https://www.ravenxrz.ink/archives/5e50a2b7.html">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="https://pic.downk.cc/item/5e907515504f4bcb04b6f798.jpg">
+      <meta itemprop="name" content="Raven">
+      <meta itemprop="description" content="分享技术，记录生活">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Raven's Blog">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          使用荒野无灯的Padavan固件破解创翼的一人一号制度
+        </h1>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+
+              <time title="创建时间：2019-05-05 13:58:39" itemprop="dateCreated datePublished" datetime="2019-05-05T13:58:39+08:00">2019-05-05</time>
+            </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-calendar-check-o"></i>
+                </span>
+                <span class="post-meta-item-text">更新于</span>
+                <time title="修改时间：2020-09-06 10:45:08" itemprop="dateModified" datetime="2020-09-06T10:45:08+08:00">2020-09-06</time>
+              </span>
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              <span class="post-meta-item-text">分类于</span>
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/%E6%9D%82%E6%96%87/" itemprop="url" rel="index"><span itemprop="name">杂文</span></a>
+                </span>
+            </span>
+
+          
+            <span class="post-meta-item" title="阅读次数" id="busuanzi_container_page_pv" style="display: none;">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-fa fa-eye"></i>
+              </span>
+              <span class="post-meta-item-text">阅读次数：</span>
+              <span id="busuanzi_value_page_pv"></span>
+            </span>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+        <h2 id="1-背景提出"><a href="#1-背景提出" class="headerlink" title="1. 背景提出"></a>1. 背景提出</h2><p>作为一个大四老狗，回想当年也是恶心着创翼（原名NetKeeper)的一人一号过来的。 后来有一些破解方式，不过有一些已经不再适用，但也还有一些能够存活。下面介绍一些破解方式吧。</p>
+<ul>
+<li>SimpleNetkeeper Android版本：这个是个很老的软件，当然由于创翼升级算法，它也不再适用了。但是确实是最好用的一个软件，毕竟直接用手机就能联网，简直美滋滋。</li>
+<li>SImpleNetKeeper Pc版本：出自同一个作者，作者已停止该软件的维护，如果你曾经在作者官网上注册过，那么<strong>还是可用的</strong>，现在官网已关闭，无法注册意味着你也无法再使用这个软件了。</li>
+<li>DiyBox：这是一个路由器固件，需要自己刷，我没玩过这个系统，原来实验室倒是用的这个固件，该固件要收费（不过似乎可破解，但是挺麻烦的），所以不太推荐。</li>
+<li>Openwrt：这是一个很出名的固件，支持很多路由器，所以也广受欢迎，不过不是一键可食用，需要自己去配置一些东西。</li>
+<li><strong>Padavan：这里仅说荒野无灯版本的padavan固件</strong>，额外插一句，padavan固件又名老子固件，最开始由俄罗斯人开发，所以被称为老毛子，之后国人有不少人再此基础上又进行了二次开发，主要是加入一些插件。其中以荒野无灯与Hiboy两位大佬的padavan最为出名。个人目前在使用的就是这个固件来破解，简单稳定。</li>
+</ul>
+<a id="more"></a>
+<p>破解过程主要分为两个步骤：</p>
+<ol>
+<li>刷入padavan系统</li>
+<li>设置padavan，用于拦截创翼拨号，从而实现破解一人一号机制</li>
+</ol>
+<h2 id="2-刷机过程"><a href="#2-刷机过程" class="headerlink" title="2. 刷机过程"></a>2. 刷机过程</h2><h3 id="2-1-材料准备"><a href="#2-1-材料准备" class="headerlink" title="2.1 材料准备"></a>2.1 材料准备</h3><ul>
+<li>一台可刷padavan固件的<strong>路由器</strong>，支持列表如下：<br> <img src="https://pic.superbed.cn/item/5cfbb5d0451253d178d9d14a.png"></li>
+</ul>
+<p>我使用的是k2p A2版路由器（一共有三个版本A1,A2,B1,不要买B1)，转转平台上售价大约在130-140软妹币左右。当然还有很多路由器可选，小米3路由、新3路由、k2路由都是支持的。自行决定。</p>
+<ul>
+<li>padavan固件：可从<a target="_blank" rel="noopener" href="http://rom.nanodm.net/K2P/">http://rom.nanodm.net/K2P/</a> 这里下载。当然，最全资源地当然是<a target="_blank" rel="noopener" href="https://www.right.com.cn/forum/">恩山论坛</a>啦。</li>
+<li>网线</li>
+<li><a target="_blank" rel="noopener" href="https://breed.hackpascal.net/breed-mt7621-phicomm-k2p.bin">Breed固件</a></li>
+<li>TFTP32软件</li>
+</ul>
+<h3 id="2-2-刷机"><a href="#2-2-刷机" class="headerlink" title="2.2 刷机"></a>2.2 刷机</h3><p>以K2P为例讲解刷机，其余路由器上<a target="_blank" rel="noopener" href="https://www.right.com.cn/forum">恩山论坛自行搜索</a>，刷机流程代替分为两步，一是刷入Breed（有可能你买入的路由器已经刷入Breed，那么就不用刷入了），而是刷入固件。流程图如下：</p>
+<p><img src="https://raw.githubusercontent.com/ravenxrz/BlogPic/master/img/%E8%B7%AF%E7%94%B1%E5%99%A8%E5%88%B7%E6%9C%BA%E6%B5%81%E7%A8%8B1.jpg"></p>
+<p>具体的刷机教程可参见这篇博文和配套视频</p>
+<p>博文：<a target="_blank" rel="noopener" href="https://tbvv.net/posts/0101-breed.html">https://tbvv.net/posts/0101-breed.html</a></p>
+<p>视频：<a target="_blank" rel="noopener" href="https://v.youku.com/v_show/id_XMzk0MzIxMzY3Mg==.html">https://v.youku.com/v_show/id_XMzk0MzIxMzY3Mg==.html</a></p>
+<h3 id="2-3-输入padavan固件"><a href="#2-3-输入padavan固件" class="headerlink" title="2.3 输入padavan固件"></a>2.3 输入padavan固件</h3><p><strong>刷机之前，记得备份EEPROM,具体方法：高级设置 —&gt; 系统设置 —&gt; 手动升级 —&gt; 下载备份EEPROM(是一个压缩包)。</strong></p>
+<p>上小节的博文和视频其实也说了怎么刷固件，这里再说一下：</p>
+<h4 id="方法1："><a href="#方法1：" class="headerlink" title="方法1："></a>方法1：</h4><p>高级设置 —&gt; 系统设置 —&gt; 手动升级 —&gt; 浏览 —&gt; 选择自己下载的固件 —&gt; 点击升级即可。<br>网页刷机进度条不准确可忽略，固件写入、重启、首次启动初始化这个过程实际需要3—5分钟不等，不要着急，如果固件不兼容需要手动进breed重刷</p>
+<h4 id="方法2："><a href="#方法2：" class="headerlink" title="方法2："></a>方法2：</h4><p>手动进入breed刷</p>
+<p>路由WAN口的网线拔掉避免IP冲突，电脑网线连接路由LAN口，电脑网卡设置为自动获取IP<br>路由断电3秒—&gt;按住复位键不要松手—&gt;插入电源—&gt;等待5秒后松开复位键—&gt;浏览器输入192.168.1.1—&gt;固件更新—&gt;选择固件刷入。</p>
+<ul>
+<li>如果网页错误说明 WAN口IP冲突 或 没有清理浏览器缓存</li>
+<li>闪存布局: K2大部分固件是0x50000，官方V22.5.XX.XX以后的固件选0xA0000，固件无法做到统一，如果不启动就换另一种布局重刷</li>
+</ul>
+<h2 id="3-一起来破解创翼吧"><a href="#3-一起来破解创翼吧" class="headerlink" title="3. 一起来破解创翼吧"></a>3. 一起来破解创翼吧</h2><p>先看看创翼版本：</p>
+<p><img src="https://pic.superbed.cn/item/5cfbb5d1451253d178d9d17d.jpg"></p>
+<p>这是<strong>最新创翼5.2.12版本，实测4.7.9</strong>也可以成功拨号。</p>
+<p>step1：打开padavan控制Web（192.168.6.1），在系统管理-&gt;控制台中执行：<strong>nvram set ext_show_pppoesvr=1</strong></p>
+<p>step2：之后刷新界面，就会在扩展插件栏中发现多了一个PPPoE Server的选项。按如图配置：</p>
+<p><img src="https://pic.superbed.cn/item/5cfbb5d3451253d178d9d1c7.jpg"></p>
+<p>step3：打开外部网络（WAN）选项，选择外网连接类型为<strong>PPPoE。</strong></p>
+<p><img src="https://pic.superbed.cn/item/5cfbb5d4451253d178d9d1fc.jpg"></p>
+<p>step4：打开创翼，填写账号密码点击拨号。查看是否能成功。</p>
+<p>如果到这里你已经成功了，那么恭喜你,可以溜了。</p>
+<hr>
+<p>如果你发现仍未成功，首先到日志中查看是否有拦截到账号，如果有但是报错（我遇到的错误是：No PPP Secert for xxxx），<strong>这个时候可通过修改路由MAC地址为本地PC的<code>MAC</code>地址来解决。</strong><br>具体操作如下：<br>step1:打开cmd窗口，执行<code>ipconfig /all</code>命令。<br>如果你是采用无线连接到路由器拨号，那么找到无线局域网适配器WLAN的物理地址，如果是以太网连接路由器拨号则找到以太网的物理地址。这里我以无线的为例：</p>
+<p><img src="https://pic.superbed.cn/item/5cfbb5d6451253d178d9d22f.jpg"></p>
+<p>step2:找到这行以后，抄下来（不要每两个字符之间的“-”）然后到padavan的外网连接选项中去修改MAC，如下图：</p>
+<p><img src="https://pic1.superbed.cn/item/5cfbb5d7451253d178d9d262.jpg"></p>
+<p>可在网络地图中查看是否修改成功：</p>
+<p><img src="https://pic3.superbed.cn/item/5cfbb5d9451253d178d9d2a2.jpg"></p>
+<p>step3：最后拨号应该就可以连接了。</p>
+<h2 id="参考"><a href="#参考" class="headerlink" title="参考"></a>参考</h2><p><a target="_blank" rel="noopener" href="https://tbvv.net/posts/0101-breed.html">斐讯K1、K2、K2P 刷机、刷入Breed 辅助工具</a></p>
+
+    </div>
+
+    
+    
+    
+        <div class="reward-container">
+  <div>文章对你有帮助?打赏一下作者吧</div>
+  <button onclick="var qr = document.getElementById('qr'); qr.style.display = (qr.style.display === 'none') ? 'block' : 'none';">
+    打赏
+  </button>
+  <div id="qr" style="display: none;">
+      
+      <div style="display: inline-block;">
+        <img src="https://pic.downk.cc/item/5d064208451253d178a15b27.png" alt="Raven 微信支付">
+        <p>微信支付</p>
+      </div>
+      
+      <div style="display: inline-block;">
+        <img src="https://pic.downk.cc/item/5d0641c7451253d178a15376.png" alt="Raven 支付宝">
+        <p>支付宝</p>
+      </div>
+
+  </div>
+</div>
+
+        
+
+<div>
+<ul class="post-copyright">
+  <li class="post-copyright-author">
+    <strong>本文作者： </strong>Raven
+  </li>
+  <li class="post-copyright-link">
+    <strong>本文链接：</strong>
+    <a href="https://www.ravenxrz.ink/archives/5e50a2b7.html" title="使用荒野无灯的Padavan固件破解创翼的一人一号制度">https://www.ravenxrz.ink/archives/5e50a2b7.html</a>
+  </li>
+  <li class="post-copyright-license">
+    <strong>版权声明： </strong>本博客所有文章除特别声明外，均采用 <span class="exturl" data-url="aHR0cHM6Ly9jcmVhdGl2ZWNvbW1vbnMub3JnL2xpY2Vuc2VzL2J5LW5jLXNhLzQuMC8="><i class="fa fa-fw fa-creative-commons"></i>BY-NC-SA</span> 许可协议。转载请注明出处！
+  </li>
+</ul>
+</div>
+
+
+      <footer class="post-footer">
+          
+          <div class="post-tags">
+              <a href="/tags/padavan/" rel="tag"><i class="fa fa-tag"></i> padavan</a>
+              <a href="/tags/%E6%A0%A1%E5%9B%AD%E7%BD%91/" rel="tag"><i class="fa fa-tag"></i> 校园网</a>
+          </div>
+
+        
+
+
+        
+    <div class="post-nav">
+      <div class="post-nav-item">
+    <a href="/archives/dc78766f.html" rel="prev" title="使用find指令查找文件遇见的一点小坑">
+      <i class="fa fa-chevron-left"></i> 使用find指令查找文件遇见的一点小坑
+    </a></div>
+      <div class="post-nav-item">
+    <a href="/archives/d808500e.html" rel="next" title="解决Pandownload连接数限制为1的方法">
+      解决Pandownload连接数限制为1的方法 <i class="fa fa-chevron-right"></i>
+    </a></div>
+    </div>
+      </footer>
+    
+  </article>
+  
+  
+  
+
+
+
+          </div>
+          
+    <div class="comments" id="gitalk-container"></div>
+
+<script>
+  window.addEventListener('tabs:register', () => {
+    let { activeClass } = CONFIG.comments;
+    if (CONFIG.comments.storage) {
+      activeClass = localStorage.getItem('comments_active') || activeClass;
+    }
+    if (activeClass) {
+      let activeTab = document.querySelector(`a[href="#comment-${activeClass}"]`);
+      if (activeTab) {
+        activeTab.click();
+      }
+    }
+  });
+  if (CONFIG.comments.storage) {
+    window.addEventListener('tabs:click', event => {
+      if (!event.target.matches('.tabs-comment .tab-content .tab-pane')) return;
+      let commentClass = event.target.classList[1];
+      localStorage.setItem('comments_active', commentClass);
+    });
+  }
+</script>
+
+        </div>
+          
+  
+  <div class="toggle sidebar-toggle">
+    <span class="toggle-line toggle-line-first"></span>
+    <span class="toggle-line toggle-line-middle"></span>
+    <span class="toggle-line toggle-line-last"></span>
+  </div>
+
+  <aside class="sidebar">
+    <div class="sidebar-inner">
+
+      <ul class="sidebar-nav motion-element">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          站点概览
+        </li>
+      </ul>
+
+      <!--noindex-->
+      <div class="post-toc-wrap sidebar-panel">
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#1-%E8%83%8C%E6%99%AF%E6%8F%90%E5%87%BA"><span class="nav-text">1. 背景提出</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#2-%E5%88%B7%E6%9C%BA%E8%BF%87%E7%A8%8B"><span class="nav-text">2. 刷机过程</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#2-1-%E6%9D%90%E6%96%99%E5%87%86%E5%A4%87"><span class="nav-text">2.1 材料准备</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#2-2-%E5%88%B7%E6%9C%BA"><span class="nav-text">2.2 刷机</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#2-3-%E8%BE%93%E5%85%A5padavan%E5%9B%BA%E4%BB%B6"><span class="nav-text">2.3 输入padavan固件</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#%E6%96%B9%E6%B3%951%EF%BC%9A"><span class="nav-text">方法1：</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E6%96%B9%E6%B3%952%EF%BC%9A"><span class="nav-text">方法2：</span></a></li></ol></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#3-%E4%B8%80%E8%B5%B7%E6%9D%A5%E7%A0%B4%E8%A7%A3%E5%88%9B%E7%BF%BC%E5%90%A7"><span class="nav-text">3. 一起来破解创翼吧</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%8F%82%E8%80%83"><span class="nav-text">参考</span></a></li></ol></div>
+      </div>
+      <!--/noindex-->
+
+      <div class="site-overview-wrap sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+    <img class="site-author-image" itemprop="image" alt="Raven"
+      src="https://pic.downk.cc/item/5e907515504f4bcb04b6f798.jpg">
+  <p class="site-author-name" itemprop="name">Raven</p>
+  <div class="site-description" itemprop="description">分享技术，记录生活</div>
+</div>
+<div class="site-state-wrap motion-element">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+          <a href="/archives/">
+        
+          <span class="site-state-item-count">120</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+            <a href="/categories/">
+          
+        <span class="site-state-item-count">17</span>
+        <span class="site-state-item-name">分类</span></a>
+      </div>
+      <div class="site-state-item site-state-tags">
+            <a href="/tags/">
+          
+        <span class="site-state-item-count">114</span>
+        <span class="site-state-item-name">标签</span></a>
+      </div>
+  </nav>
+</div>
+  <div class="links-of-author motion-element">
+      <span class="links-of-author-item">
+        <span class="exturl" data-url="aHR0cHM6Ly9naXRodWIuY29tL3JhdmVueHJ6" title="GitHub → https:&#x2F;&#x2F;github.com&#x2F;ravenxrz"><i class="fa fa-fw fa-fab fa-github"></i>GitHub</span>
+      </span>
+      <span class="links-of-author-item">
+        <span class="exturl" data-url="bWFpbHRvOnpoYWduLnhpbmdydWlAZm94bWFpbC5jb20=" title="E-Mail → mailto:zhagn.xingrui@foxmail.com"><i class="fa fa-fw fa-fa fa-envelope"></i>E-Mail</span>
+      </span>
+  </div>
+  <div class="cc-license motion-element" itemprop="license">
+    <span class="exturl cc-opacity" data-url="aHR0cHM6Ly9jcmVhdGl2ZWNvbW1vbnMub3JnL2xpY2Vuc2VzL2J5LW5jLXNhLzQuMC8="><img src="/images/cc-by-nc-sa.svg" alt="Creative Commons"></span>
+  </div>
+
+
+  <div class="links-of-blogroll motion-element">
+    <div class="links-of-blogroll-title">
+      <i class="fa fa-fw fa-fa fa-link"></i>
+      Links
+    </div>
+    <ul class="links-of-blogroll-list">
+        <li class="links-of-blogroll-item">
+          <a href="/resources" title="&#x2F;resources">我的资源</a>
+        </li>
+    </ul>
+  </div>
+
+      </div>
+
+    </div>
+  </aside>
+  <div id="sidebar-dimmer"></div>
+
+
+      </div>
+    </main>
+
+    <footer class="footer">
+      <div class="footer-inner">
+        
+
+        
+
+<div class="copyright">
+  
+  &copy; 2017 – 
+  <span itemprop="copyrightYear">2020</span>
+  <span class="with-love">
+    <i class="fa fa-fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">Raven</span>
+</div>
+  <div class="powered-by">由 <span class="exturl theme-link" data-url="aHR0cHM6Ly9oZXhvLmlv">Hexo</span> & <span class="exturl theme-link" data-url="aHR0cHM6Ly9taXN0LnRoZW1lLW5leHQub3Jn">NexT.Mist</span> 强力驱动
+  </div>
+
+        
+<div class="busuanzi-count">
+  <script async src="https://busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+    <span class="post-meta-item" id="busuanzi_container_site_uv" style="display: none;">
+      <span class="post-meta-item-icon">
+        <i class="fa fa-fa fa-user"></i>
+      </span>
+      <span class="site-uv" title="总访客量">
+        <span id="busuanzi_value_site_uv"></span>
+      </span>
+    </span>
+    <span class="post-meta-divider">|</span>
+    <span class="post-meta-item" id="busuanzi_container_site_pv" style="display: none;">
+      <span class="post-meta-item-icon">
+        <i class="fa fa-fa fa-eye"></i>
+      </span>
+      <span class="site-pv" title="总访问量">
+        <span id="busuanzi_value_site_pv"></span>
+      </span>
+    </span>
+</div>
+
+
+
+
+
+
+
+
+      </div>
+    </footer>
+  </div>
+
+  
+  <script src="//cdn.jsdelivr.net/npm/animejs@3.1.0/lib/anime.min.js"></script>
+  <script src="//cdn.jsdelivr.net/npm/medium-zoom@1/dist/medium-zoom.min.js"></script>
+  <script src="//cdn.jsdelivr.net/npm/lozad@1/dist/lozad.min.js"></script>
+  <script src="//cdn.jsdelivr.net/npm/pangu@4/dist/browser/pangu.min.js"></script>
+
+<script src="/js/utils.js"></script>
+
+
+<script src="/js/schemes/muse.js"></script>
+
+
+<script src="/js/next-boot.js"></script>
+
+
+
+
+  
+  <script>
+    (function(){
+      var bp = document.createElement('script');
+      var curProtocol = window.location.protocol.split(':')[0];
+      bp.src = (curProtocol === 'https') ? 'https://zz.bdstatic.com/linksubmit/push.js' : 'http://push.zhanzhang.baidu.com/push.js';
+      var s = document.getElementsByTagName("script")[0];
+      s.parentNode.insertBefore(bp, s);
+    })();
+  </script>
+
+
+
+
+  
+<script src="/js/local-search.js"></script>
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+  
+      
+
+<script>
+  if (typeof MathJax === 'undefined') {
+    window.MathJax = {
+      loader: {
+        source: {
+          '[tex]/amsCd': '[tex]/amscd',
+          '[tex]/AMScd': '[tex]/amscd'
+        }
+      },
+      tex: {
+        inlineMath: {'[+]': [['$', '$']]},
+        tags: 'ams'
+      },
+      options: {
+        renderActions: {
+          findScript: [10, doc => {
+            document.querySelectorAll('script[type^="math/tex"]').forEach(node => {
+              const display = !!node.type.match(/; *mode=display/);
+              const math = new doc.options.MathItem(node.textContent, doc.inputJax[0], display);
+              const text = document.createTextNode('');
+              node.parentNode.replaceChild(text, node);
+              math.start = {node: text, delim: '', n: 0};
+              math.end = {node: text, delim: '', n: 0};
+              doc.math.push(math);
+            });
+          }, '', false],
+          insertedScript: [200, () => {
+            document.querySelectorAll('mjx-container').forEach(node => {
+              let target = node.parentNode;
+              if (target.nodeName.toLowerCase() === 'li') {
+                target.parentNode.classList.add('has-jax');
+              }
+            });
+          }, '', false]
+        }
+      }
+    };
+    (function () {
+      var script = document.createElement('script');
+      script.src = '//cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js';
+      script.defer = true;
+      document.head.appendChild(script);
+    })();
+  } else {
+    MathJax.startup.document.state(0);
+    MathJax.texReset();
+    MathJax.typeset();
+  }
+</script>
+
+    
+
+  
+  <script src="//cdn.jsdelivr.net/npm/quicklink@1/dist/quicklink.umd.js"></script>
+  <script>
+      window.addEventListener('load', () => {
+      quicklink({
+        timeout : 3000,
+        priority: true,
+        ignores : [uri => uri.includes('#'),uri => uri === 'https://www.ravenxrz.ink/archives/5e50a2b7.html',]
+      });
+      });
+  </script>
+
+<link rel="stylesheet" href="//cdn.jsdelivr.net/npm/gitalk@1/dist/gitalk.min.css">
+
+<script>
+NexT.utils.loadComments(document.querySelector('#gitalk-container'), () => {
+  NexT.utils.getScript('//cdn.jsdelivr.net/npm/gitalk@1/dist/gitalk.min.js', () => {
+    var gitalk = new Gitalk({
+      clientID    : 'b2fd373d2ca2e03e591e',
+      clientSecret: 'de4ab066908c1fbd32d3a45e091b3538761d685b',
+      repo        : 'BlogComment',
+      owner       : 'ravenxrz',
+      admin       : ['ravenxrz'],
+      id          : '736c4aa5610325d35895f99fccc98306',
+        language: '',
+      distractionFreeMode: true
+    });
+    gitalk.render('gitalk-container');
+  }, window.Gitalk);
+});
+</script>
+
+</body>
+</html>

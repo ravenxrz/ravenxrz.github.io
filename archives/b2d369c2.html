@@ -1,0 +1,707 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 5.1.1">
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+  <meta http-equiv="Cache-Control" content="no-transform">
+  <meta http-equiv="Cache-Control" content="no-siteapp">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+<link rel="stylesheet" href="//cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@5/css/all.min.css">
+  <link rel="stylesheet" href="//cdn.jsdelivr.net/npm/pace-js@1/themes/blue/pace-theme-minimal.css">
+  <script src="//cdn.jsdelivr.net/npm/pace-js@1/pace.min.js"></script>
+
+<script id="hexo-configurations">
+    var NexT = window.NexT || {};
+    var CONFIG = {"hostname":"www.ravenxrz.ink","root":"/","scheme":"Mist","version":"7.8.0","exturl":true,"sidebar":{"position":"left","display":"always","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":true,"show_result":true,"style":"flat"},"back2top":{"enable":true,"sidebar":false,"scrollpercent":true},"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":true,"lazyload":true,"pangu":true,"comments":{"style":"tabs","active":"gitalk","storage":true,"lazyload":true,"nav":null,"activeClass":"gitalk"},"algolia":{"hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":true,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},"motion":{"enable":false,"async":true,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}}};
+  </script>
+
+  <meta name="description" content="1. 前言 需求提出：还有两三天就要参加毕业设计答辩了。一直在考虑怎么样给老师做展示才好。由于毕设做的是基于深度学习的去雾研究。只有一台PC，也就意味着只能录屏？感觉录屏不好啊，所以想了下要不做个Android App展示去雾？可是研究了下把Keras模型移植到Android上似乎也不太轻松，因为我的模型中有些自定义层，不是标准的模型。再来就想要不把模型放到服务器上？但是我的服务器性能这么垃圾，而">
+<meta property="og:type" content="article">
+<meta property="og:title" content="利用内网穿透实现Socket外网通信">
+<meta property="og:url" content="https://www.ravenxrz.ink/archives/b2d369c2.html">
+<meta property="og:site_name" content="Raven&#39;s Blog">
+<meta property="og:description" content="1. 前言 需求提出：还有两三天就要参加毕业设计答辩了。一直在考虑怎么样给老师做展示才好。由于毕设做的是基于深度学习的去雾研究。只有一台PC，也就意味着只能录屏？感觉录屏不好啊，所以想了下要不做个Android App展示去雾？可是研究了下把Keras模型移植到Android上似乎也不太轻松，因为我的模型中有些自定义层，不是标准的模型。再来就想要不把模型放到服务器上？但是我的服务器性能这么垃圾，而">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="https://pic.superbed.cn/item/5cfc9796451253d178e53687.jpg">
+<meta property="og:image" content="https://pic.superbed.cn/item/5cfc9814451253d178e53c32.jpg">
+<meta property="og:image" content="https://cy-pic.kuaizhan.com/g3/73/28/ed54-5ad8-4b9e-aae1-38bb14fd4a1132">
+<meta property="og:image" content="https://cy-pic.kuaizhan.com/g3/ff/3c/1bfb-b4b7-45a5-9763-763a31e99c8758">
+<meta property="og:image" content="https://ae01.alicdn.com/kf/HTB1SV79b8Kw3KVjSZFOq6yrDVXaB.jpg">
+<meta property="og:image" content="https://ae01.alicdn.com/kf/HTB1T4Xacbys3KVjSZFnq6xFzpXaK.jpg">
+<meta property="og:image" content="https://ae01.alicdn.com/kf/HTB1y6XXcbus3KVjSZKbq6xqkFXa7.jpg">
+<meta property="og:image" content="https://ae01.alicdn.com/kf/HTB1I2g3b25G3KVjSZPxq6zI3XXab.jpg">
+<meta property="og:image" content="https://ae01.alicdn.com/kf/HTB1W7M3b4iH3KVjSZPfq6xBiVXay.jpg">
+<meta property="og:image" content="https://ae01.alicdn.com/kf/HTB1KzSeXvBj_uVjSZFpq6A0SXXaS.jpg">
+<meta property="article:published_time" content="2019-07-09T05:58:41.000Z">
+<meta property="article:modified_time" content="2020-09-06T02:45:08.054Z">
+<meta property="article:author" content="Raven">
+<meta property="article:tag" content="Socket">
+<meta property="article:tag" content="内网穿透">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://pic.superbed.cn/item/5cfc9796451253d178e53687.jpg">
+
+<link rel="canonical" href="https://www.ravenxrz.ink/archives/b2d369c2.html">
+
+
+<script id="page-configurations">
+  // https://hexo.io/docs/variables.html
+  CONFIG.page = {
+    sidebar: "",
+    isHome : false,
+    isPost : true,
+    lang   : 'zh-CN'
+  };
+</script>
+
+  <title>利用内网穿透实现Socket外网通信 | Raven's Blog</title>
+  
+
+
+
+
+
+
+  <noscript>
+  <style>
+  .use-motion .brand,
+  .use-motion .menu-item,
+  .sidebar-inner,
+  .use-motion .post-block,
+  .use-motion .pagination,
+  .use-motion .comments,
+  .use-motion .post-header,
+  .use-motion .post-body,
+  .use-motion .collection-header { opacity: initial; }
+
+  .use-motion .site-title,
+  .use-motion .site-subtitle {
+    opacity: initial;
+    top: initial;
+  }
+
+  .use-motion .logo-line-before i { left: initial; }
+  .use-motion .logo-line-after i { right: initial; }
+  </style>
+</noscript>
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage">
+  <div class="container">
+    <div class="headband"></div>
+
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切换导航栏">
+      <span class="toggle-line toggle-line-first"></span>
+      <span class="toggle-line toggle-line-middle"></span>
+      <span class="toggle-line toggle-line-last"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <span class="logo-line-before"><i></i></span>
+      <h1 class="site-title">Raven's Blog</h1>
+      <span class="logo-line-after"><i></i></span>
+    </a>
+      <p class="site-subtitle" itemprop="description">zhang.xingrui@foxmail.com</p>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger">
+        <i class="fa fa-search fa-fw fa-lg"></i>
+    </div>
+  </div>
+</div>
+
+
+
+
+<nav class="site-nav">
+  <ul id="menu" class="menu">
+        <li class="menu-item menu-item-home">
+
+    <a href="/" rel="section"><i class="fa fa-fw fa-fa fa-home"></i>首页</a>
+
+  </li>
+        <li class="menu-item menu-item-archives">
+
+    <a href="/archives/" rel="section"><i class="fa fa-fw fa-fa fa-archive"></i>归档<span class="badge">120</span></a>
+
+  </li>
+        <li class="menu-item menu-item-categories">
+
+    <a href="/categories/" rel="section"><i class="fa fa-fw fa-fa fa-th"></i>分类<span class="badge">17</span></a>
+
+  </li>
+        <li class="menu-item menu-item-tags">
+
+    <a href="/tags/" rel="section"><i class="fa fa-fw fa-fa fa-tags"></i>标签<span class="badge">114</span></a>
+
+  </li>
+        <li class="menu-item menu-item-about">
+
+    <a href="/about/" rel="section"><i class="fa fa-fw fa-fa fa-user"></i>关于</a>
+
+  </li>
+      <li class="menu-item menu-item-search">
+        <a role="button" class="popup-trigger"><i class="fa fa-search fa-fw"></i>搜索
+        </a>
+      </li>
+  </ul>
+</nav>
+
+
+
+  <div class="search-pop-overlay">
+    <div class="popup search-popup">
+        <div class="search-header">
+  <span class="search-icon">
+    <i class="fa fa-search"></i>
+  </span>
+  <div class="search-input-container">
+    <input autocomplete="off" autocapitalize="off"
+           placeholder="搜索..." spellcheck="false"
+           type="search" class="search-input">
+  </div>
+  <span class="popup-btn-close">
+    <i class="fa fa-times-circle"></i>
+  </span>
+</div>
+<div id="search-result">
+  <div id="no-result">
+    <i class="fa fa-spinner fa-pulse fa-5x fa-fw"></i>
+  </div>
+</div>
+
+    </div>
+  </div>
+
+</div>
+    </header>
+
+    
+  <div class="back-to-top">
+    <i class="fa fa-arrow-up"></i>
+    <span>0%</span>
+  </div>
+
+  <span class="exturl github-corner" data-url="aHR0cHM6Ly9naXRodWIuY29tL3JhdmVueHJ6" title="Follow me on GitHub" aria-label="Follow me on GitHub"><svg width="80" height="80" viewBox="0 0 250 250" aria-hidden="true"><path d="M0,0 L115,115 L130,115 L142,142 L250,250 L250,0 Z"></path><path d="M128.3,109.0 C113.8,99.7 119.0,89.6 119.0,89.6 C122.0,82.7 120.5,78.6 120.5,78.6 C119.2,72.0 123.4,76.3 123.4,76.3 C127.3,80.9 125.5,87.3 125.5,87.3 C122.9,97.6 130.6,101.9 134.4,103.2" fill="currentColor" style="transform-origin: 130px 106px;" class="octo-arm"></path><path d="M115.0,115.0 C114.9,115.1 118.7,116.5 119.8,115.4 L133.7,101.6 C136.9,99.2 139.9,98.4 142.2,98.6 C133.8,88.0 127.5,74.4 143.8,58.0 C148.5,53.4 154.0,51.2 159.7,51.0 C160.3,49.4 163.2,43.6 171.4,40.1 C171.4,40.1 176.1,42.5 178.8,56.2 C183.1,58.6 187.2,61.8 190.9,65.4 C194.5,69.0 197.7,73.2 200.1,77.6 C213.8,80.2 216.3,84.9 216.3,84.9 C212.7,93.1 206.9,96.0 205.4,96.6 C205.1,102.4 203.0,107.8 198.3,112.5 C181.9,128.9 168.3,122.5 157.7,114.1 C157.9,116.9 156.7,120.9 152.7,124.9 L141.0,136.5 C139.8,137.7 141.6,141.9 141.8,141.8 Z" fill="currentColor" class="octo-body"></path></svg></span>
+
+
+    <main class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          
+
+          <div class="content post posts-expand">
+            
+
+    
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="https://www.ravenxrz.ink/archives/b2d369c2.html">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="https://pic.downk.cc/item/5e907515504f4bcb04b6f798.jpg">
+      <meta itemprop="name" content="Raven">
+      <meta itemprop="description" content="分享技术，记录生活">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Raven's Blog">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          利用内网穿透实现Socket外网通信
+        </h1>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+
+              <time title="创建时间：2019-07-09 13:58:41" itemprop="dateCreated datePublished" datetime="2019-07-09T13:58:41+08:00">2019-07-09</time>
+            </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-calendar-check-o"></i>
+                </span>
+                <span class="post-meta-item-text">更新于</span>
+                <time title="修改时间：2020-09-06 10:45:08" itemprop="dateModified" datetime="2020-09-06T10:45:08+08:00">2020-09-06</time>
+              </span>
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              <span class="post-meta-item-text">分类于</span>
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/%E6%9D%82%E6%96%87/" itemprop="url" rel="index"><span itemprop="name">杂文</span></a>
+                </span>
+            </span>
+
+          
+            <span class="post-meta-item" title="阅读次数" id="busuanzi_container_page_pv" style="display: none;">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-fa fa-eye"></i>
+              </span>
+              <span class="post-meta-item-text">阅读次数：</span>
+              <span id="busuanzi_value_page_pv"></span>
+            </span>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+        <h2 id="1-前言"><a href="#1-前言" class="headerlink" title="1. 前言"></a>1. 前言</h2><blockquote>
+<p>需求提出：还有两三天就要参加毕业设计答辩了。一直在考虑怎么样给老师做展示才好。由于毕设做的是基于深度学习的去雾研究。只有一台PC，也就意味着只能录屏？感觉录屏不好啊，所以想了下要不<strong>做个Android App展示去雾</strong>？可是研究了下<strong>把Keras模型移植到Android上</strong>似乎也不太轻松，因为我的模型中有些自定义层，不是标准的模型。<strong>再来就想要不把模型放到服务器上</strong>？但是我的服务器性能这么垃圾，而且服务器在国外，上传下载速度也不行。最后，要不就拿现在这台PC来做？可是问题来了，我怎么才能<strong>走广域网连接PC</strong>呢，毕竟答辩不可能在寝室。<br>OK，百度一波，还是选择内网穿透吧。</p>
+<p>第一次接触内网穿透是在去年10月还是11月的**<a href="https://www.ravenxrz.ink/2019/05/03/reuse-of-old-mobile-phonea-downloader-based-on-arria2.html">“搭建aria2远程下载机”</a>**。所以对内网穿透这个名词还不算陌生。（看样子曾经无聊搞的东西还是可能在未来帮到自己啊）</p>
+</blockquote>
+<a id="more"></a>
+<p>[post cid=”36” /]</p>
+<p>好了，废话了一堆，本文要做的功能有：</p>
+<ol>
+<li>以台式机作为服务器，等待客户端上传图片，服务器将图片去雾后回传给客户端。</li>
+<li>既然台式机要做服务器，那就必须来个内网穿透了，不然外网的手机是不能连接到PC的。</li>
+<li>服务器与客户端的通信使用的Socket</li>
+</ol>
+<h2 id="2-正文“斯达头”（start）"><a href="#2-正文“斯达头”（start）" class="headerlink" title="2. 正文“斯达头”（start）"></a>2. 正文“斯达头”（start）</h2><h3 id="2-1-材料准备"><a href="#2-1-材料准备" class="headerlink" title="2.1 材料准备"></a>2.1 材料准备</h3><ol>
+<li>PC机</li>
+<li>花生壳账号</li>
+</ol>
+<h3 id="2-2-花生壳注册与端口映射"><a href="#2-2-花生壳注册与端口映射" class="headerlink" title="2.2 花生壳注册与端口映射"></a>2.2 花生壳注册与端口映射</h3><p>登陆官网，并注册：<a target="_blank" rel="noopener" href="https://hsk.oray.com/">https://hsk.oray.com/</a> </p>
+<p>然后进入控制台。进入域名注册：</p>
+<p><img src="https://pic.superbed.cn/item/5cfc9796451253d178e53687.jpg"></p>
+<p><img src="https://pic.superbed.cn/item/5cfc9814451253d178e53c32.jpg"></p>
+<p>自己注册一个域名吧，用不了多少钱。</p>
+<p>然后打开内网穿透，新增映射。</p>
+<p><img src="https://cy-pic.kuaizhan.com/g3/73/28/ed54-5ad8-4b9e-aae1-38bb14fd4a1132"></p>
+<p>填写你的相关信息。</p>
+<p><img src="https://cy-pic.kuaizhan.com/g3/ff/3c/1bfb-b4b7-45a5-9763-763a31e99c8758"></p>
+<p>这里再说一下如何查IP。</p>
+<p>方法一：如果使用了路由器，可以打开路由器查：</p>
+<p><img src="https://ae01.alicdn.com/kf/HTB1SV79b8Kw3KVjSZFOq6yrDVXaB.jpg"></p>
+<p>方法二：直连网线或wifi的，在cmd窗口用ipconfig命令查看。</p>
+<p><img src="https://ae01.alicdn.com/kf/HTB1T4Xacbys3KVjSZFnq6xFzpXaK.jpg"></p>
+<p>注意你的连接方式，我是有线所以找的以太网适配器。如果是无线，记得找无线适配器的地址。</p>
+<p>最后下载花生壳的内网穿透客户端到PC上，记得<strong>下载3.0版本</strong>，5.0 beta版经测试还是有bug。</p>
+<p>花生壳3.0 版本：<a target="_blank" rel="noopener" href="https://hsk.oray.com/download/download?id=hskddns_310">https://hsk.oray.com/download/download?id=hskddns_310</a></p>
+<p><strong>下载好后，安装并登陆打开。</strong></p>
+<h3 id="2-3-测试是否映射成功"><a href="#2-3-测试是否映射成功" class="headerlink" title="2.3 测试是否映射成功"></a>2.3 测试是否映射成功</h3><p>打开在线端口映射工具：<a target="_blank" rel="noopener" href="http://tool.chinaz.com/port/">http://tool.chinaz.com/port/</a></p>
+<p><img src="https://ae01.alicdn.com/kf/HTB1y6XXcbus3KVjSZKbq6xqkFXa7.jpg"></p>
+<p>记住外网的域名和端口，依此填入即可。</p>
+<p><img src="https://ae01.alicdn.com/kf/HTB1I2g3b25G3KVjSZPxq6zI3XXab.jpg"></p>
+<p>显示“开启”字样，则表示穿透成功。</p>
+<h2 id="3-测试Socket通信"><a href="#3-测试Socket通信" class="headerlink" title="3. 测试Socket通信"></a>3. 测试Socket通信</h2><p>在我的测试中，python作为Socket服务端，Android作为Socket客户端。对应代码如下</p>
+<h3 id="3-1-Socket服务端"><a href="#3-1-Socket服务端" class="headerlink" title="3.1 Socket服务端"></a>3.1 Socket服务端</h3><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">socket_service</span>():</span></span><br><span class="line">    <span class="string">&quot;&quot;&quot;</span></span><br><span class="line"><span class="string">    开启socket服务</span></span><br><span class="line"><span class="string">    :return:</span></span><br><span class="line"><span class="string">    &quot;&quot;&quot;</span></span><br><span class="line">    <span class="comment"># 开启socket服务</span></span><br><span class="line">    <span class="keyword">try</span>:</span><br><span class="line">        s = socket.socket()</span><br><span class="line">        s.bind((<span class="string">&#x27;192.168.1.104&#x27;</span>, <span class="number">6666</span>))</span><br><span class="line">        s.listen(<span class="number">10</span>)</span><br><span class="line">    <span class="keyword">except</span> socket.error <span class="keyword">as</span> msg:</span><br><span class="line">        print(msg)</span><br><span class="line">        sys.exit(<span class="number">1</span>)</span><br><span class="line"></span><br><span class="line">    print(<span class="string">&quot;Wait&quot;</span>)</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">def</span> <span class="title">save_haze_file</span>(<span class="params">sock</span>):</span></span><br><span class="line">        <span class="string">&quot;&quot;&quot;</span></span><br><span class="line"><span class="string">        从sock中获取数据，并保存下来</span></span><br><span class="line"><span class="string">        :param sock:</span></span><br><span class="line"><span class="string">        :return:</span></span><br><span class="line"><span class="string">        &quot;&quot;&quot;</span></span><br><span class="line">        <span class="keyword">with</span> open(haze_path, <span class="string">&#x27;wb&#x27;</span>) <span class="keyword">as</span> f:</span><br><span class="line">            print(<span class="string">&#x27;file opened&#x27;</span>)</span><br><span class="line">            <span class="keyword">while</span> <span class="literal">True</span>:</span><br><span class="line">                data = sock.recv(<span class="number">1024</span>)</span><br><span class="line">                <span class="comment"># print()</span></span><br><span class="line">                <span class="keyword">if</span> <span class="keyword">not</span> data:</span><br><span class="line">                    <span class="keyword">break</span></span><br><span class="line">                <span class="keyword">elif</span> <span class="string">&#x27;EOF&#x27;</span> <span class="keyword">in</span> str(data):</span><br><span class="line">                    f.write(data[:-len(<span class="string">&#x27;EFO&#x27;</span>)])</span><br><span class="line">                    <span class="keyword">break</span></span><br><span class="line">                <span class="comment"># write data to a file</span></span><br><span class="line">                f.write(data)</span><br><span class="line">        <span class="comment"># sock.close()</span></span><br><span class="line">        print(<span class="string">&#x27;pic received finished&#x27;</span>)</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">def</span> <span class="title">send_img</span>(<span class="params">sock</span>):</span></span><br><span class="line">        <span class="comment"># 发送处理后的图片</span></span><br><span class="line">        <span class="keyword">with</span> open(dehaze_path, <span class="string">&#x27;rb&#x27;</span>) <span class="keyword">as</span> f:</span><br><span class="line">            <span class="keyword">for</span> data <span class="keyword">in</span> f:</span><br><span class="line">                sock.send(data)</span><br><span class="line">        print(<span class="string">&#x27;send finished&#x27;</span>)</span><br><span class="line"></span><br><span class="line">    <span class="comment"># 等待连接并处理</span></span><br><span class="line">    idx = <span class="number">0</span></span><br><span class="line">    <span class="keyword">while</span> <span class="literal">True</span>:</span><br><span class="line">        sock, _ = s.accept()</span><br><span class="line">        <span class="comment"># idx += 1</span></span><br><span class="line">        <span class="comment"># if idx == 1:</span></span><br><span class="line">        <span class="comment">#     save_haze_file(sock)</span></span><br><span class="line">        <span class="comment"># elif idx == 2:</span></span><br><span class="line">        <span class="comment">#     idx = 0</span></span><br><span class="line">        <span class="keyword">try</span>:</span><br><span class="line">            save_haze_file(sock)</span><br><span class="line">            dehaze()</span><br><span class="line">            send_img(sock)</span><br><span class="line">        <span class="keyword">except</span> Exception <span class="keyword">as</span> reason:</span><br><span class="line">            print(reason)</span><br><span class="line">        <span class="keyword">finally</span>:</span><br><span class="line">            sock.close()</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+
+<p>上述代码，就是建立Socket服务端，服务端的IP为内网IP。</p>
+<h3 id="3-2-Socket客户端"><a href="#3-2-Socket客户端" class="headerlink" title="3.2 Socket客户端"></a>3.2 Socket客户端</h3><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br></pre></td><td class="code"><pre><span class="line"> <span class="keyword">private</span> <span class="keyword">final</span> String IP = <span class="string">&quot;xxx&quot;</span>;		<span class="comment">// 这个地方的IP为内网穿透时给的ip</span></span><br><span class="line"><span class="keyword">private</span> <span class="keyword">final</span> <span class="keyword">int</span> PORT= xxx;					<span class="comment">// 同理为给的端口</span></span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">private</span> <span class="keyword">void</span> <span class="title">sendImg</span><span class="params">(String path)</span> <span class="keyword">throws</span> IOException </span>&#123;</span><br><span class="line">    <span class="comment">// 创建一个Socket对象，并指定服务端的IP及端口号</span></span><br><span class="line">    socket = <span class="keyword">new</span> Socket(IP, PORT);</span><br><span class="line">    InputStream inputStream = <span class="keyword">new</span> FileInputStream(path);</span><br><span class="line">    <span class="comment">// 获取Socket的OutputStream对象用于发送数据。</span></span><br><span class="line">    OutputStream outputStream = socket.getOutputStream();</span><br><span class="line">    <span class="comment">// 创建一个byte类型的buffer字节数组，用于存放读取的本地文件</span></span><br><span class="line">    <span class="keyword">byte</span> buffer[] = <span class="keyword">new</span> <span class="keyword">byte</span>[<span class="number">10</span> * <span class="number">1024</span>];</span><br><span class="line">    <span class="keyword">int</span> temp = <span class="number">0</span>;</span><br><span class="line">    <span class="comment">// 循环读取文件</span></span><br><span class="line">    <span class="keyword">while</span> ((temp = inputStream.read(buffer)) != -<span class="number">1</span>) &#123;</span><br><span class="line">        <span class="comment">// 把数据写入到OuputStream对象中</span></span><br><span class="line">        outputStream.write(buffer, <span class="number">0</span>, temp);</span><br><span class="line">        <span class="comment">// 发送读取的数据到服务端</span></span><br><span class="line">        outputStream.flush();</span><br><span class="line">    &#125;</span><br><span class="line">    socket.close();</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>注意要修改的地址为IP和PORT。</p>
+<p>查看方式如下：</p>
+<p><img src="https://ae01.alicdn.com/kf/HTB1W7M3b4iH3KVjSZPfq6xBiVXay.jpg"></p>
+<p><img src="https://ae01.alicdn.com/kf/HTB1KzSeXvBj_uVjSZFpq6A0SXXaS.jpg"></p>
+<p><strong>红框表明的即为需要修改的IP，端口为“映射”字段后写的端口。</strong></p>
+<h2 id="4-结语"><a href="#4-结语" class="headerlink" title="4. 结语"></a>4. 结语</h2><p>至此，已经实现了内网穿透并且通过Socket通信了。其余应用功能只用映射为其它端口即可。</p>
+<p>本文涉及的所有代码已放于GIthub:<a target="_blank" rel="noopener" href="https://github.com/ravenxrz/DeBlurGanToDehaze">https://github.com/ravenxrz/DeBlurGanToDehaze</a></p>
+
+    </div>
+
+    
+    
+    
+        <div class="reward-container">
+  <div>文章对你有帮助?打赏一下作者吧</div>
+  <button onclick="var qr = document.getElementById('qr'); qr.style.display = (qr.style.display === 'none') ? 'block' : 'none';">
+    打赏
+  </button>
+  <div id="qr" style="display: none;">
+      
+      <div style="display: inline-block;">
+        <img src="https://pic.downk.cc/item/5d064208451253d178a15b27.png" alt="Raven 微信支付">
+        <p>微信支付</p>
+      </div>
+      
+      <div style="display: inline-block;">
+        <img src="https://pic.downk.cc/item/5d0641c7451253d178a15376.png" alt="Raven 支付宝">
+        <p>支付宝</p>
+      </div>
+
+  </div>
+</div>
+
+        
+
+<div>
+<ul class="post-copyright">
+  <li class="post-copyright-author">
+    <strong>本文作者： </strong>Raven
+  </li>
+  <li class="post-copyright-link">
+    <strong>本文链接：</strong>
+    <a href="https://www.ravenxrz.ink/archives/b2d369c2.html" title="利用内网穿透实现Socket外网通信">https://www.ravenxrz.ink/archives/b2d369c2.html</a>
+  </li>
+  <li class="post-copyright-license">
+    <strong>版权声明： </strong>本博客所有文章除特别声明外，均采用 <span class="exturl" data-url="aHR0cHM6Ly9jcmVhdGl2ZWNvbW1vbnMub3JnL2xpY2Vuc2VzL2J5LW5jLXNhLzQuMC8="><i class="fa fa-fw fa-creative-commons"></i>BY-NC-SA</span> 许可协议。转载请注明出处！
+  </li>
+</ul>
+</div>
+
+
+      <footer class="post-footer">
+          
+          <div class="post-tags">
+              <a href="/tags/Socket/" rel="tag"><i class="fa fa-tag"></i> Socket</a>
+              <a href="/tags/%E5%86%85%E7%BD%91%E7%A9%BF%E9%80%8F/" rel="tag"><i class="fa fa-tag"></i> 内网穿透</a>
+          </div>
+
+        
+
+
+        
+    <div class="post-nav">
+      <div class="post-nav-item">
+    <a href="/archives/fc472545.html" rel="prev" title="用Android手机作PC的麦克风和摄像头">
+      <i class="fa fa-chevron-left"></i> 用Android手机作PC的麦克风和摄像头
+    </a></div>
+      <div class="post-nav-item">
+    <a href="/archives/1b8fe85b.html" rel="next" title="研究僧-在IPAD上阅读文献并与Zotero文献库同步">
+      研究僧-在IPAD上阅读文献并与Zotero文献库同步 <i class="fa fa-chevron-right"></i>
+    </a></div>
+    </div>
+      </footer>
+    
+  </article>
+  
+  
+  
+
+
+
+          </div>
+          
+    <div class="comments" id="gitalk-container"></div>
+
+<script>
+  window.addEventListener('tabs:register', () => {
+    let { activeClass } = CONFIG.comments;
+    if (CONFIG.comments.storage) {
+      activeClass = localStorage.getItem('comments_active') || activeClass;
+    }
+    if (activeClass) {
+      let activeTab = document.querySelector(`a[href="#comment-${activeClass}"]`);
+      if (activeTab) {
+        activeTab.click();
+      }
+    }
+  });
+  if (CONFIG.comments.storage) {
+    window.addEventListener('tabs:click', event => {
+      if (!event.target.matches('.tabs-comment .tab-content .tab-pane')) return;
+      let commentClass = event.target.classList[1];
+      localStorage.setItem('comments_active', commentClass);
+    });
+  }
+</script>
+
+        </div>
+          
+  
+  <div class="toggle sidebar-toggle">
+    <span class="toggle-line toggle-line-first"></span>
+    <span class="toggle-line toggle-line-middle"></span>
+    <span class="toggle-line toggle-line-last"></span>
+  </div>
+
+  <aside class="sidebar">
+    <div class="sidebar-inner">
+
+      <ul class="sidebar-nav motion-element">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          站点概览
+        </li>
+      </ul>
+
+      <!--noindex-->
+      <div class="post-toc-wrap sidebar-panel">
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#1-%E5%89%8D%E8%A8%80"><span class="nav-text">1. 前言</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#2-%E6%AD%A3%E6%96%87%E2%80%9C%E6%96%AF%E8%BE%BE%E5%A4%B4%E2%80%9D%EF%BC%88start%EF%BC%89"><span class="nav-text">2. 正文“斯达头”（start）</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#2-1-%E6%9D%90%E6%96%99%E5%87%86%E5%A4%87"><span class="nav-text">2.1 材料准备</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#2-2-%E8%8A%B1%E7%94%9F%E5%A3%B3%E6%B3%A8%E5%86%8C%E4%B8%8E%E7%AB%AF%E5%8F%A3%E6%98%A0%E5%B0%84"><span class="nav-text">2.2 花生壳注册与端口映射</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#2-3-%E6%B5%8B%E8%AF%95%E6%98%AF%E5%90%A6%E6%98%A0%E5%B0%84%E6%88%90%E5%8A%9F"><span class="nav-text">2.3 测试是否映射成功</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#3-%E6%B5%8B%E8%AF%95Socket%E9%80%9A%E4%BF%A1"><span class="nav-text">3. 测试Socket通信</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#3-1-Socket%E6%9C%8D%E5%8A%A1%E7%AB%AF"><span class="nav-text">3.1 Socket服务端</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#3-2-Socket%E5%AE%A2%E6%88%B7%E7%AB%AF"><span class="nav-text">3.2 Socket客户端</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#4-%E7%BB%93%E8%AF%AD"><span class="nav-text">4. 结语</span></a></li></ol></div>
+      </div>
+      <!--/noindex-->
+
+      <div class="site-overview-wrap sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+    <img class="site-author-image" itemprop="image" alt="Raven"
+      src="https://pic.downk.cc/item/5e907515504f4bcb04b6f798.jpg">
+  <p class="site-author-name" itemprop="name">Raven</p>
+  <div class="site-description" itemprop="description">分享技术，记录生活</div>
+</div>
+<div class="site-state-wrap motion-element">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+          <a href="/archives/">
+        
+          <span class="site-state-item-count">120</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+            <a href="/categories/">
+          
+        <span class="site-state-item-count">17</span>
+        <span class="site-state-item-name">分类</span></a>
+      </div>
+      <div class="site-state-item site-state-tags">
+            <a href="/tags/">
+          
+        <span class="site-state-item-count">114</span>
+        <span class="site-state-item-name">标签</span></a>
+      </div>
+  </nav>
+</div>
+  <div class="links-of-author motion-element">
+      <span class="links-of-author-item">
+        <span class="exturl" data-url="aHR0cHM6Ly9naXRodWIuY29tL3JhdmVueHJ6" title="GitHub → https:&#x2F;&#x2F;github.com&#x2F;ravenxrz"><i class="fa fa-fw fa-fab fa-github"></i>GitHub</span>
+      </span>
+      <span class="links-of-author-item">
+        <span class="exturl" data-url="bWFpbHRvOnpoYWduLnhpbmdydWlAZm94bWFpbC5jb20=" title="E-Mail → mailto:zhagn.xingrui@foxmail.com"><i class="fa fa-fw fa-fa fa-envelope"></i>E-Mail</span>
+      </span>
+  </div>
+  <div class="cc-license motion-element" itemprop="license">
+    <span class="exturl cc-opacity" data-url="aHR0cHM6Ly9jcmVhdGl2ZWNvbW1vbnMub3JnL2xpY2Vuc2VzL2J5LW5jLXNhLzQuMC8="><img src="/images/cc-by-nc-sa.svg" alt="Creative Commons"></span>
+  </div>
+
+
+  <div class="links-of-blogroll motion-element">
+    <div class="links-of-blogroll-title">
+      <i class="fa fa-fw fa-fa fa-link"></i>
+      Links
+    </div>
+    <ul class="links-of-blogroll-list">
+        <li class="links-of-blogroll-item">
+          <a href="/resources" title="&#x2F;resources">我的资源</a>
+        </li>
+    </ul>
+  </div>
+
+      </div>
+
+    </div>
+  </aside>
+  <div id="sidebar-dimmer"></div>
+
+
+      </div>
+    </main>
+
+    <footer class="footer">
+      <div class="footer-inner">
+        
+
+        
+
+<div class="copyright">
+  
+  &copy; 2017 – 
+  <span itemprop="copyrightYear">2020</span>
+  <span class="with-love">
+    <i class="fa fa-fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">Raven</span>
+</div>
+  <div class="powered-by">由 <span class="exturl theme-link" data-url="aHR0cHM6Ly9oZXhvLmlv">Hexo</span> & <span class="exturl theme-link" data-url="aHR0cHM6Ly9taXN0LnRoZW1lLW5leHQub3Jn">NexT.Mist</span> 强力驱动
+  </div>
+
+        
+<div class="busuanzi-count">
+  <script async src="https://busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+    <span class="post-meta-item" id="busuanzi_container_site_uv" style="display: none;">
+      <span class="post-meta-item-icon">
+        <i class="fa fa-fa fa-user"></i>
+      </span>
+      <span class="site-uv" title="总访客量">
+        <span id="busuanzi_value_site_uv"></span>
+      </span>
+    </span>
+    <span class="post-meta-divider">|</span>
+    <span class="post-meta-item" id="busuanzi_container_site_pv" style="display: none;">
+      <span class="post-meta-item-icon">
+        <i class="fa fa-fa fa-eye"></i>
+      </span>
+      <span class="site-pv" title="总访问量">
+        <span id="busuanzi_value_site_pv"></span>
+      </span>
+    </span>
+</div>
+
+
+
+
+
+
+
+
+      </div>
+    </footer>
+  </div>
+
+  
+  <script src="//cdn.jsdelivr.net/npm/animejs@3.1.0/lib/anime.min.js"></script>
+  <script src="//cdn.jsdelivr.net/npm/medium-zoom@1/dist/medium-zoom.min.js"></script>
+  <script src="//cdn.jsdelivr.net/npm/lozad@1/dist/lozad.min.js"></script>
+  <script src="//cdn.jsdelivr.net/npm/pangu@4/dist/browser/pangu.min.js"></script>
+
+<script src="/js/utils.js"></script>
+
+
+<script src="/js/schemes/muse.js"></script>
+
+
+<script src="/js/next-boot.js"></script>
+
+
+
+
+  
+  <script>
+    (function(){
+      var bp = document.createElement('script');
+      var curProtocol = window.location.protocol.split(':')[0];
+      bp.src = (curProtocol === 'https') ? 'https://zz.bdstatic.com/linksubmit/push.js' : 'http://push.zhanzhang.baidu.com/push.js';
+      var s = document.getElementsByTagName("script")[0];
+      s.parentNode.insertBefore(bp, s);
+    })();
+  </script>
+
+
+
+
+  
+<script src="/js/local-search.js"></script>
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+  
+      
+
+<script>
+  if (typeof MathJax === 'undefined') {
+    window.MathJax = {
+      loader: {
+        source: {
+          '[tex]/amsCd': '[tex]/amscd',
+          '[tex]/AMScd': '[tex]/amscd'
+        }
+      },
+      tex: {
+        inlineMath: {'[+]': [['$', '$']]},
+        tags: 'ams'
+      },
+      options: {
+        renderActions: {
+          findScript: [10, doc => {
+            document.querySelectorAll('script[type^="math/tex"]').forEach(node => {
+              const display = !!node.type.match(/; *mode=display/);
+              const math = new doc.options.MathItem(node.textContent, doc.inputJax[0], display);
+              const text = document.createTextNode('');
+              node.parentNode.replaceChild(text, node);
+              math.start = {node: text, delim: '', n: 0};
+              math.end = {node: text, delim: '', n: 0};
+              doc.math.push(math);
+            });
+          }, '', false],
+          insertedScript: [200, () => {
+            document.querySelectorAll('mjx-container').forEach(node => {
+              let target = node.parentNode;
+              if (target.nodeName.toLowerCase() === 'li') {
+                target.parentNode.classList.add('has-jax');
+              }
+            });
+          }, '', false]
+        }
+      }
+    };
+    (function () {
+      var script = document.createElement('script');
+      script.src = '//cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js';
+      script.defer = true;
+      document.head.appendChild(script);
+    })();
+  } else {
+    MathJax.startup.document.state(0);
+    MathJax.texReset();
+    MathJax.typeset();
+  }
+</script>
+
+    
+
+  
+  <script src="//cdn.jsdelivr.net/npm/quicklink@1/dist/quicklink.umd.js"></script>
+  <script>
+      window.addEventListener('load', () => {
+      quicklink({
+        timeout : 3000,
+        priority: true,
+        ignores : [uri => uri.includes('#'),uri => uri === 'https://www.ravenxrz.ink/archives/b2d369c2.html',]
+      });
+      });
+  </script>
+
+<link rel="stylesheet" href="//cdn.jsdelivr.net/npm/gitalk@1/dist/gitalk.min.css">
+
+<script>
+NexT.utils.loadComments(document.querySelector('#gitalk-container'), () => {
+  NexT.utils.getScript('//cdn.jsdelivr.net/npm/gitalk@1/dist/gitalk.min.js', () => {
+    var gitalk = new Gitalk({
+      clientID    : 'b2fd373d2ca2e03e591e',
+      clientSecret: 'de4ab066908c1fbd32d3a45e091b3538761d685b',
+      repo        : 'BlogComment',
+      owner       : 'ravenxrz',
+      admin       : ['ravenxrz'],
+      id          : '12b51009f69fc8bb3641a06feeb8d62d',
+        language: '',
+      distractionFreeMode: true
+    });
+    gitalk.render('gitalk-container');
+  }, window.Gitalk);
+});
+</script>
+
+</body>
+</html>

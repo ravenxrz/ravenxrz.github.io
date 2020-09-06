@@ -1,0 +1,716 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 5.1.1">
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+  <meta http-equiv="Cache-Control" content="no-transform">
+  <meta http-equiv="Cache-Control" content="no-siteapp">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+<link rel="stylesheet" href="//cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@5/css/all.min.css">
+  <link rel="stylesheet" href="//cdn.jsdelivr.net/npm/pace-js@1/themes/blue/pace-theme-minimal.css">
+  <script src="//cdn.jsdelivr.net/npm/pace-js@1/pace.min.js"></script>
+
+<script id="hexo-configurations">
+    var NexT = window.NexT || {};
+    var CONFIG = {"hostname":"www.ravenxrz.ink","root":"/","scheme":"Mist","version":"7.8.0","exturl":true,"sidebar":{"position":"left","display":"always","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":true,"show_result":true,"style":"flat"},"back2top":{"enable":true,"sidebar":false,"scrollpercent":true},"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":true,"lazyload":true,"pangu":true,"comments":{"style":"tabs","active":"gitalk","storage":true,"lazyload":true,"nav":null,"activeClass":"gitalk"},"algolia":{"hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":true,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},"motion":{"enable":false,"async":true,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}}};
+  </script>
+
+  <meta name="description" content="1. 前言 需求提出：之前在帮助别人做东西的时候有这样一个功能，相机拍照到一个固定的目录，相册选取图片（单选、多选）。  Android6.0以后提出新的权限管理机制，7.0后相册访问机制也进一步更改。所以我们除了相机、相册功能外还要考虑权限问题。下面就稍微讲解一下如何实现这些功能。 先说明一点，本文所实现的代码没有兼容7.0以前，只实现了7.0之后的相关代码。">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Android7-0后相机相册调用">
+<meta property="og:url" content="https://www.ravenxrz.ink/archives/5528d718.html">
+<meta property="og:site_name" content="Raven&#39;s Blog">
+<meta property="og:description" content="1. 前言 需求提出：之前在帮助别人做东西的时候有这样一个功能，相机拍照到一个固定的目录，相册选取图片（单选、多选）。  Android6.0以后提出新的权限管理机制，7.0后相册访问机制也进一步更改。所以我们除了相机、相册功能外还要考虑权限问题。下面就稍微讲解一下如何实现这些功能。 先说明一点，本文所实现的代码没有兼容7.0以前，只实现了7.0之后的相关代码。">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="https://puui.qpic.cn/fans_admin/0/3_203818224_1560341182603/0">
+<meta property="og:image" content="https://cy-pic.kuaizhan.com/g3/de/4b/6116-16ad-407a-a063-ccf4b45d8ce006">
+<meta property="og:image" content="https://cy-pic.kuaizhan.com/g3/22/72/7f49-3976-4867-9b94-26f39033f6be97">
+<meta property="article:published_time" content="2019-07-12T05:58:03.000Z">
+<meta property="article:modified_time" content="2020-09-06T02:45:08.024Z">
+<meta property="article:author" content="Raven">
+<meta property="article:tag" content="相机">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://puui.qpic.cn/fans_admin/0/3_203818224_1560341182603/0">
+
+<link rel="canonical" href="https://www.ravenxrz.ink/archives/5528d718.html">
+
+
+<script id="page-configurations">
+  // https://hexo.io/docs/variables.html
+  CONFIG.page = {
+    sidebar: "",
+    isHome : false,
+    isPost : true,
+    lang   : 'zh-CN'
+  };
+</script>
+
+  <title>Android7-0后相机相册调用 | Raven's Blog</title>
+  
+
+
+
+
+
+
+  <noscript>
+  <style>
+  .use-motion .brand,
+  .use-motion .menu-item,
+  .sidebar-inner,
+  .use-motion .post-block,
+  .use-motion .pagination,
+  .use-motion .comments,
+  .use-motion .post-header,
+  .use-motion .post-body,
+  .use-motion .collection-header { opacity: initial; }
+
+  .use-motion .site-title,
+  .use-motion .site-subtitle {
+    opacity: initial;
+    top: initial;
+  }
+
+  .use-motion .logo-line-before i { left: initial; }
+  .use-motion .logo-line-after i { right: initial; }
+  </style>
+</noscript>
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage">
+  <div class="container">
+    <div class="headband"></div>
+
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切换导航栏">
+      <span class="toggle-line toggle-line-first"></span>
+      <span class="toggle-line toggle-line-middle"></span>
+      <span class="toggle-line toggle-line-last"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <span class="logo-line-before"><i></i></span>
+      <h1 class="site-title">Raven's Blog</h1>
+      <span class="logo-line-after"><i></i></span>
+    </a>
+      <p class="site-subtitle" itemprop="description">zhang.xingrui@foxmail.com</p>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger">
+        <i class="fa fa-search fa-fw fa-lg"></i>
+    </div>
+  </div>
+</div>
+
+
+
+
+<nav class="site-nav">
+  <ul id="menu" class="menu">
+        <li class="menu-item menu-item-home">
+
+    <a href="/" rel="section"><i class="fa fa-fw fa-fa fa-home"></i>首页</a>
+
+  </li>
+        <li class="menu-item menu-item-archives">
+
+    <a href="/archives/" rel="section"><i class="fa fa-fw fa-fa fa-archive"></i>归档<span class="badge">120</span></a>
+
+  </li>
+        <li class="menu-item menu-item-categories">
+
+    <a href="/categories/" rel="section"><i class="fa fa-fw fa-fa fa-th"></i>分类<span class="badge">17</span></a>
+
+  </li>
+        <li class="menu-item menu-item-tags">
+
+    <a href="/tags/" rel="section"><i class="fa fa-fw fa-fa fa-tags"></i>标签<span class="badge">114</span></a>
+
+  </li>
+        <li class="menu-item menu-item-about">
+
+    <a href="/about/" rel="section"><i class="fa fa-fw fa-fa fa-user"></i>关于</a>
+
+  </li>
+      <li class="menu-item menu-item-search">
+        <a role="button" class="popup-trigger"><i class="fa fa-search fa-fw"></i>搜索
+        </a>
+      </li>
+  </ul>
+</nav>
+
+
+
+  <div class="search-pop-overlay">
+    <div class="popup search-popup">
+        <div class="search-header">
+  <span class="search-icon">
+    <i class="fa fa-search"></i>
+  </span>
+  <div class="search-input-container">
+    <input autocomplete="off" autocapitalize="off"
+           placeholder="搜索..." spellcheck="false"
+           type="search" class="search-input">
+  </div>
+  <span class="popup-btn-close">
+    <i class="fa fa-times-circle"></i>
+  </span>
+</div>
+<div id="search-result">
+  <div id="no-result">
+    <i class="fa fa-spinner fa-pulse fa-5x fa-fw"></i>
+  </div>
+</div>
+
+    </div>
+  </div>
+
+</div>
+    </header>
+
+    
+  <div class="back-to-top">
+    <i class="fa fa-arrow-up"></i>
+    <span>0%</span>
+  </div>
+
+  <span class="exturl github-corner" data-url="aHR0cHM6Ly9naXRodWIuY29tL3JhdmVueHJ6" title="Follow me on GitHub" aria-label="Follow me on GitHub"><svg width="80" height="80" viewBox="0 0 250 250" aria-hidden="true"><path d="M0,0 L115,115 L130,115 L142,142 L250,250 L250,0 Z"></path><path d="M128.3,109.0 C113.8,99.7 119.0,89.6 119.0,89.6 C122.0,82.7 120.5,78.6 120.5,78.6 C119.2,72.0 123.4,76.3 123.4,76.3 C127.3,80.9 125.5,87.3 125.5,87.3 C122.9,97.6 130.6,101.9 134.4,103.2" fill="currentColor" style="transform-origin: 130px 106px;" class="octo-arm"></path><path d="M115.0,115.0 C114.9,115.1 118.7,116.5 119.8,115.4 L133.7,101.6 C136.9,99.2 139.9,98.4 142.2,98.6 C133.8,88.0 127.5,74.4 143.8,58.0 C148.5,53.4 154.0,51.2 159.7,51.0 C160.3,49.4 163.2,43.6 171.4,40.1 C171.4,40.1 176.1,42.5 178.8,56.2 C183.1,58.6 187.2,61.8 190.9,65.4 C194.5,69.0 197.7,73.2 200.1,77.6 C213.8,80.2 216.3,84.9 216.3,84.9 C212.7,93.1 206.9,96.0 205.4,96.6 C205.1,102.4 203.0,107.8 198.3,112.5 C181.9,128.9 168.3,122.5 157.7,114.1 C157.9,116.9 156.7,120.9 152.7,124.9 L141.0,136.5 C139.8,137.7 141.6,141.9 141.8,141.8 Z" fill="currentColor" class="octo-body"></path></svg></span>
+
+
+    <main class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          
+
+          <div class="content post posts-expand">
+            
+
+    
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="https://www.ravenxrz.ink/archives/5528d718.html">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="https://pic.downk.cc/item/5e907515504f4bcb04b6f798.jpg">
+      <meta itemprop="name" content="Raven">
+      <meta itemprop="description" content="分享技术，记录生活">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Raven's Blog">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          Android7-0后相机相册调用
+        </h1>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+
+              <time title="创建时间：2019-07-12 13:58:03" itemprop="dateCreated datePublished" datetime="2019-07-12T13:58:03+08:00">2019-07-12</time>
+            </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-calendar-check-o"></i>
+                </span>
+                <span class="post-meta-item-text">更新于</span>
+                <time title="修改时间：2020-09-06 10:45:08" itemprop="dateModified" datetime="2020-09-06T10:45:08+08:00">2020-09-06</time>
+              </span>
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              <span class="post-meta-item-text">分类于</span>
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/Android/" itemprop="url" rel="index"><span itemprop="name">Android</span></a>
+                </span>
+            </span>
+
+          
+            <span class="post-meta-item" title="阅读次数" id="busuanzi_container_page_pv" style="display: none;">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-fa fa-eye"></i>
+              </span>
+              <span class="post-meta-item-text">阅读次数：</span>
+              <span id="busuanzi_value_page_pv"></span>
+            </span>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+        <h2 id="1-前言"><a href="#1-前言" class="headerlink" title="1. 前言"></a>1. 前言</h2><blockquote>
+<p>需求提出：之前在帮助别人做东西的时候有这样一个功能，相机拍照到一个<strong>固定的目录</strong>，相册选取图片（单选、多选）。</p>
+</blockquote>
+<p>Android6.0以后提出新的权限管理机制，7.0后相册访问机制也进一步更改。所以我们除了相机、相册功能外还要考虑权限问题。下面就稍微讲解一下如何实现这些功能。</p>
+<p>先说明一点，本文所实现的代码没有兼容7.0以前，只实现了7.0之后的相关代码。</p>
+<a id="more"></a>
+
+<p><strong>相关知识：</strong></p>
+<ol>
+<li>相机、相册权限请求</li>
+<li>相机、相册调用</li>
+<li>相机拍照后将图片移动一个固定的文件夹下（文件IO操作）</li>
+</ol>
+<h2 id="2-代码实现"><a href="#2-代码实现" class="headerlink" title="2. 代码实现"></a>2. 代码实现</h2><p>先来看一下实现的效果:</p>
+<p><img src="https://puui.qpic.cn/fans_admin/0/3_203818224_1560341182603/0"></p>
+<h3 id="2-1-材料准备"><a href="#2-1-材料准备" class="headerlink" title="2.1 材料准备"></a>2.1 材料准备</h3><p>为实现代码方便，这里引用两个开源库</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">&#x2F;&#x2F;动态权限申请库</span><br><span class="line">implementation &#39;pub.devrel:easypermissions:1.3.0&#39;</span><br><span class="line">&#x2F;&#x2F; 多选相册(如果不实现多选，不用引用这个库，调用系统相册选择已经足够)</span><br><span class="line">implementation &#39;com.github.HuanTanSheng:EasyPhotos:2.4.4&#39;</span><br><span class="line">&#x2F;&#x2F; Glide 多选相册依赖，不用多选就不用添加下面两项</span><br><span class="line">implementation &#39;com.github.bumptech.glide:glide:4.4.0&#39;</span><br><span class="line">annotationProcessor &#39;com.github.bumptech.glide:compiler:4.4.0&#39;</span><br></pre></td></tr></table></figure>
+
+<p>注意要引用<a target="_blank" rel="noopener" href="https://github.com/HuanTanSheng/EasyPhotos">EasyPhotos</a>相关库，需要在项目的gradle文件下增添一个仓库地址<code>maven &#123; url &quot;https://jitpack.io&quot; &#125;</code>，最后的效果如下：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">allprojects &#123;</span><br><span class="line">    repositories &#123;</span><br><span class="line">        google()</span><br><span class="line">        jcenter()</span><br><span class="line">        maven &#123; url &quot;https:&#x2F;&#x2F;jitpack.io&quot; &#125;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h3 id="2-2-相关配置"><a href="#2-2-相关配置" class="headerlink" title="2.2 相关配置"></a>2.2 相关配置</h3><p>在manifest文件中添加权限</p>
+<figure class="highlight xml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">&lt;!-- 读写权限 --&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">uses-permission</span> <span class="attr">android:name</span>=<span class="string">&quot;android.permission.WRITE_EXTERNAL_STORAGE&quot;</span> /&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">uses-permission</span> <span class="attr">android:name</span>=<span class="string">&quot;android.permission.READ_EXTERNAL_STORAGE&quot;</span> /&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">uses-permission</span> <span class="attr">android:name</span>=<span class="string">&quot;android.permission.MOUNT_UNMOUNT_FILESYSTEMS&quot;</span> /&gt;</span></span><br><span class="line"><span class="comment">&lt;!-- 调用相机权限 --&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">uses-permission</span> <span class="attr">android:name</span>=<span class="string">&quot;android.permission.CAMERA&quot;</span> /&gt;</span></span><br></pre></td></tr></table></figure>
+
+<p>再在manifest文件的application标签中添加以下代码：</p>
+<figure class="highlight xml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="tag">&lt;<span class="name">provider</span></span></span><br><span class="line"><span class="tag">           <span class="attr">android:name</span>=<span class="string">&quot;android.support.v4.content.FileProvider&quot;</span></span></span><br><span class="line"><span class="tag">           <span class="attr">android:authorities</span>=<span class="string">&quot;com.raven.demo.fileprovider&quot;</span></span></span><br><span class="line"><span class="tag">           <span class="attr">android:exported</span>=<span class="string">&quot;false&quot;</span></span></span><br><span class="line"><span class="tag">           <span class="attr">android:grantUriPermissions</span>=<span class="string">&quot;true&quot;</span>&gt;</span></span><br><span class="line">           <span class="tag">&lt;<span class="name">meta-data</span></span></span><br><span class="line"><span class="tag">               <span class="attr">android:name</span>=<span class="string">&quot;android.support.FILE_PROVIDER_PATHS&quot;</span></span></span><br><span class="line"><span class="tag">               <span class="attr">android:resource</span>=<span class="string">&quot;@xml/file_paths&quot;</span> /&gt;</span></span><br><span class="line">       <span class="tag">&lt;/<span class="name">provider</span>&gt;</span></span><br></pre></td></tr></table></figure>
+
+<p>注意这里的<code>android:authorities=&quot;com.raven.demo.fileprovider&quot;</code>字段，需要将该字段中的<code>com.raven.demo</code>改为自己的包名。包名可在app模块的gradle文件中查看。</p>
+<p>再在资源文件下建立file_paths.xml，如图：</p>
+<p><img src="https://cy-pic.kuaizhan.com/g3/de/4b/6116-16ad-407a-a063-ccf4b45d8ce006"></p>
+<p>添加以下代码：</p>
+<figure class="highlight xml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">&lt;?xml version=&quot;1.0&quot; encoding=&quot;utf-8&quot;?&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">paths</span> <span class="attr">xmlns:android</span>=<span class="string">&quot;http://schemas.android.com/apk/res/android&quot;</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">external-path</span> <span class="attr">name</span>=<span class="string">&quot;external_files&quot;</span> <span class="attr">path</span>=<span class="string">&quot;.&quot;</span>/&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">paths</span>&gt;</span></span><br></pre></td></tr></table></figure>
+
+<h3 id="2-3-界面设计与点击事件"><a href="#2-3-界面设计与点击事件" class="headerlink" title="2.3 界面设计与点击事件"></a>2.3 界面设计与点击事件</h3><p>为方便测试，这里仅给了三个Button，一个相机调用，一个单相片选取，一个多相片选取。</p>
+<p>效果如下：</p>
+<p><img src="https://cy-pic.kuaizhan.com/g3/22/72/7f49-3976-4867-9b94-26f39033f6be97"></p>
+<p>代码：</p>
+<figure class="highlight xml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">&lt;?xml version=&quot;1.0&quot; encoding=&quot;utf-8&quot;?&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">LinearLayout</span> <span class="attr">xmlns:android</span>=<span class="string">&quot;http://schemas.android.com/apk/res/android&quot;</span></span></span><br><span class="line"><span class="tag">    <span class="attr">xmlns:app</span>=<span class="string">&quot;http://schemas.android.com/apk/res-auto&quot;</span></span></span><br><span class="line"><span class="tag">    <span class="attr">xmlns:tools</span>=<span class="string">&quot;http://schemas.android.com/tools&quot;</span></span></span><br><span class="line"><span class="tag">    <span class="attr">android:layout_width</span>=<span class="string">&quot;match_parent&quot;</span></span></span><br><span class="line"><span class="tag">    <span class="attr">android:layout_height</span>=<span class="string">&quot;match_parent&quot;</span></span></span><br><span class="line"><span class="tag">    <span class="attr">android:gravity</span>=<span class="string">&quot;center&quot;</span></span></span><br><span class="line"><span class="tag">    <span class="attr">android:orientation</span>=<span class="string">&quot;vertical&quot;</span></span></span><br><span class="line"><span class="tag">    <span class="attr">tools:context</span>=<span class="string">&quot;.MainActivity&quot;</span>&gt;</span></span><br><span class="line"></span><br><span class="line">    <span class="tag">&lt;<span class="name">Button</span></span></span><br><span class="line"><span class="tag">        <span class="attr">android:id</span>=<span class="string">&quot;@+id/bt_camera&quot;</span></span></span><br><span class="line"><span class="tag">        <span class="attr">android:text</span>=<span class="string">&quot;相机&quot;</span></span></span><br><span class="line"><span class="tag">        <span class="attr">android:layout_width</span>=<span class="string">&quot;200dp&quot;</span></span></span><br><span class="line"><span class="tag">        <span class="attr">android:layout_height</span>=<span class="string">&quot;wrap_content&quot;</span> /&gt;</span></span><br><span class="line"></span><br><span class="line">    <span class="tag">&lt;<span class="name">Button</span></span></span><br><span class="line"><span class="tag">        <span class="attr">android:id</span>=<span class="string">&quot;@+id/bt_single_pic&quot;</span></span></span><br><span class="line"><span class="tag">        <span class="attr">android:text</span>=<span class="string">&quot;单相片选取&quot;</span></span></span><br><span class="line"><span class="tag">        <span class="attr">android:layout_width</span>=<span class="string">&quot;200dp&quot;</span></span></span><br><span class="line"><span class="tag">        <span class="attr">android:layout_height</span>=<span class="string">&quot;wrap_content&quot;</span> /&gt;</span></span><br><span class="line"></span><br><span class="line">    <span class="tag">&lt;<span class="name">Button</span></span></span><br><span class="line"><span class="tag">        <span class="attr">android:id</span>=<span class="string">&quot;@+id/bt_multi_pic&quot;</span></span></span><br><span class="line"><span class="tag">        <span class="attr">android:text</span>=<span class="string">&quot;多相片选取&quot;</span></span></span><br><span class="line"><span class="tag">        <span class="attr">android:layout_width</span>=<span class="string">&quot;200dp&quot;</span></span></span><br><span class="line"><span class="tag">        <span class="attr">android:layout_height</span>=<span class="string">&quot;wrap_content&quot;</span> /&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">Linearout</span>&gt;</span></span><br></pre></td></tr></table></figure>
+
+<p>初始化这几个button并添加相应的点击事件，加入一些辅助变量。</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// 控件</span></span><br><span class="line">Button btCamera,btSinglePic,btMultiPic;</span><br><span class="line"></span><br><span class="line"><span class="comment">//相机请求码</span></span><br><span class="line"><span class="keyword">private</span> <span class="keyword">static</span> <span class="keyword">final</span> <span class="keyword">int</span> CAMERA_REQUEST_CODE = <span class="number">1</span>;</span><br><span class="line"></span><br><span class="line"><span class="comment">//单张请求码</span></span><br><span class="line"><span class="keyword">private</span> <span class="keyword">static</span> <span class="keyword">final</span> <span class="keyword">int</span> SINGLE_REQUEST_CODE = <span class="number">2</span>;</span><br><span class="line"></span><br><span class="line"><span class="comment">// 多张请求码</span></span><br><span class="line"><span class="keyword">private</span> <span class="keyword">static</span> <span class="keyword">final</span> <span class="keyword">int</span> MULTI_REQUEST_CODE = <span class="number">3</span>;</span><br><span class="line"></span><br><span class="line"><span class="comment">// 权限集合</span></span><br><span class="line"><span class="keyword">private</span> String[] permissions = &#123;Manifest.permission.CAMERA,Manifest.permission.WRITE_EXTERNAL_STORAGE&#125;;</span><br><span class="line"></span><br><span class="line"><span class="meta">@Override</span></span><br><span class="line"><span class="function"><span class="keyword">protected</span> <span class="keyword">void</span> <span class="title">onCreate</span><span class="params">(Bundle savedInstanceState)</span> </span>&#123;</span><br><span class="line">    <span class="keyword">super</span>.onCreate(savedInstanceState);</span><br><span class="line">    setContentView(R.layout.activity_main);</span><br><span class="line"></span><br><span class="line">    <span class="comment">// 初始化view</span></span><br><span class="line">    btCamera = findViewById(R.id.bt_camera);</span><br><span class="line">    btSinglePic = findViewById(R.id.bt_single_pic);</span><br><span class="line">    btMultiPic = findViewById(R.id.bt_multi_pic);</span><br><span class="line"></span><br><span class="line">    <span class="comment">// 增添点击事件</span></span><br><span class="line">    btCamera.setOnClickListener(<span class="keyword">this</span>);</span><br><span class="line">    btSinglePic.setOnClickListener(<span class="keyword">this</span>);</span><br><span class="line">    btMultiPic.setOnClickListener(<span class="keyword">this</span>);</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="meta">@Override</span></span><br><span class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">onClick</span><span class="params">(View v)</span> </span>&#123;</span><br><span class="line">    <span class="keyword">int</span> id = v.getId();</span><br><span class="line">    <span class="keyword">if</span>(R.id.bt_camera == id)&#123;</span><br><span class="line">        <span class="comment">// 调用系统相机</span></span><br><span class="line">        callSystemCamera();</span><br><span class="line">    &#125;<span class="keyword">else</span> <span class="keyword">if</span>(R.id.bt_single_pic == id)&#123;</span><br><span class="line">        <span class="comment">// 调用单张相册</span></span><br><span class="line">        callSinglePic();</span><br><span class="line">    &#125;<span class="keyword">else</span> <span class="keyword">if</span>(R.id.bt_multi_pic == id)&#123;</span><br><span class="line">        <span class="comment">// 调用多张相册选择</span></span><br><span class="line">        callMultiPic();</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h3 id="2-4-设置权限回调"><a href="#2-4-设置权限回调" class="headerlink" title="2.4 设置权限回调"></a>2.4 设置权限回调</h3><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">@Override</span></span><br><span class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">onRequestPermissionsResult</span><span class="params">(<span class="keyword">int</span> requestCode, <span class="meta">@NonNull</span> String[] permissions, <span class="meta">@NonNull</span> <span class="keyword">int</span>[] grantResults)</span> </span>&#123;</span><br><span class="line">    <span class="keyword">super</span>.onRequestPermissionsResult(requestCode, permissions, grantResults);</span><br><span class="line">    <span class="comment">//框架要求必须这么写</span></span><br><span class="line">    EasyPermissions.onRequestPermissionsResult(requestCode, permissions, grantResults, <span class="keyword">this</span>);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h3 id="2-5-实现三个功能"><a href="#2-5-实现三个功能" class="headerlink" title="2.5 实现三个功能"></a>2.5 实现三个功能</h3><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">/**</span></span><br><span class="line"><span class="comment">    * 调用系统相机，包含权限检测</span></span><br><span class="line"><span class="comment">    */</span></span><br><span class="line">   <span class="function"><span class="keyword">private</span> <span class="keyword">void</span> <span class="title">callSystemCamera</span><span class="params">()</span> </span>&#123;</span><br><span class="line">       <span class="keyword">if</span> (EasyPermissions.hasPermissions(<span class="keyword">this</span>, permissions)) &#123;</span><br><span class="line">           <span class="comment">//已经打开权限</span></span><br><span class="line">           useCamera();</span><br><span class="line">       &#125; <span class="keyword">else</span> &#123;</span><br><span class="line">           <span class="comment">//没有打开相关权限、申请权限</span></span><br><span class="line">           getPermission();</span><br><span class="line">       &#125;</span><br><span class="line">   &#125;</span><br><span class="line"></span><br><span class="line">   <span class="comment">/**</span></span><br><span class="line"><span class="comment">    * 调用相机</span></span><br><span class="line"><span class="comment">    */</span></span><br><span class="line">   <span class="function"><span class="keyword">private</span> <span class="keyword">void</span> <span class="title">useCamera</span><span class="params">()</span> </span>&#123;</span><br><span class="line">       Intent intent = <span class="keyword">new</span> Intent();</span><br><span class="line">       <span class="comment">//此处之所以诸多try catch，为了兼容</span></span><br><span class="line">       intent.setAction(MediaStore.INTENT_ACTION_STILL_IMAGE_CAMERA);</span><br><span class="line">       startActivityForResult(intent, CAMERA_REQUEST_CODE);</span><br><span class="line">   &#125;</span><br><span class="line"></span><br><span class="line">   <span class="comment">/**</span></span><br><span class="line"><span class="comment">    * 调用系统相册，选择单张图片，包含权限检测</span></span><br><span class="line"><span class="comment">    */</span></span><br><span class="line">   <span class="function"><span class="keyword">private</span> <span class="keyword">void</span> <span class="title">callSinglePic</span><span class="params">()</span> </span>&#123;</span><br><span class="line">       <span class="keyword">if</span> (EasyPermissions.hasPermissions(<span class="keyword">this</span>, permissions)) &#123;</span><br><span class="line">           <span class="comment">//已经打开权限</span></span><br><span class="line">           chooseSinglePhoto();</span><br><span class="line">       &#125; <span class="keyword">else</span> &#123;</span><br><span class="line">           <span class="comment">//没有打开相关权限、申请权限</span></span><br><span class="line">           getPermission();</span><br><span class="line">       &#125;</span><br><span class="line">   &#125;</span><br><span class="line"></span><br><span class="line">   <span class="comment">/**</span></span><br><span class="line"><span class="comment">    * 选择单张图片</span></span><br><span class="line"><span class="comment">    */</span></span><br><span class="line">   <span class="function"><span class="keyword">private</span> <span class="keyword">void</span> <span class="title">chooseSinglePhoto</span><span class="params">()</span> </span>&#123;</span><br><span class="line">       Intent intent = <span class="keyword">new</span> Intent();</span><br><span class="line">       intent.setAction(Intent.ACTION_PICK);</span><br><span class="line">       intent.setType(<span class="string">&quot;image/*&quot;</span>);</span><br><span class="line">       startActivityForResult(intent, SINGLE_REQUEST_CODE);</span><br><span class="line">   &#125;</span><br><span class="line"></span><br><span class="line">   <span class="comment">/**</span></span><br><span class="line"><span class="comment">    * 调用第三方相册，选择多张图片</span></span><br><span class="line"><span class="comment">    */</span></span><br><span class="line">   <span class="function"><span class="keyword">private</span> <span class="keyword">void</span> <span class="title">callMultiPic</span><span class="params">()</span> </span>&#123;</span><br><span class="line">       <span class="keyword">if</span> (EasyPermissions.hasPermissions(<span class="keyword">this</span>, permissions)) &#123;</span><br><span class="line">           <span class="comment">//已经打开权限</span></span><br><span class="line">           chooseSMultiPhotos();</span><br><span class="line">       &#125; <span class="keyword">else</span> &#123;</span><br><span class="line">           <span class="comment">//没有打开相关权限、申请权限</span></span><br><span class="line">           getPermission();</span><br><span class="line">       &#125;</span><br><span class="line">   &#125;</span><br><span class="line"></span><br><span class="line">   <span class="function"><span class="keyword">private</span> <span class="keyword">void</span> <span class="title">chooseSMultiPhotos</span><span class="params">()</span> </span>&#123;</span><br><span class="line">       <span class="comment">// 初始化相册引擎</span></span><br><span class="line">       EasyPhotos.createAlbum(<span class="keyword">this</span>, <span class="keyword">false</span>, GlideEngine.getInstance())</span><br><span class="line">               .setCount(<span class="number">20</span>)        <span class="comment">// 设置最大选取张数</span></span><br><span class="line">               .setCleanMenu(<span class="keyword">false</span>)</span><br><span class="line">               .setPuzzleMenu(<span class="keyword">false</span>)</span><br><span class="line">               .start(MULTI_REQUEST_CODE);</span><br><span class="line">   &#125;</span><br></pre></td></tr></table></figure>
+
+<p>其中GlideEngine类我会在文末尾给出。</p>
+<h3 id="2-6-回调处理"><a href="#2-6-回调处理" class="headerlink" title="2.6 回调处理"></a>2.6 回调处理</h3><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">/**</span></span><br><span class="line"><span class="comment"> * 处理相机或者相册的回调</span></span><br><span class="line"><span class="comment"> *</span></span><br><span class="line"><span class="comment"> * <span class="doctag">@param</span> requestCode 请求码</span></span><br><span class="line"><span class="comment"> * <span class="doctag">@param</span> resultCode  结果码</span></span><br><span class="line"><span class="comment"> * <span class="doctag">@param</span> data        传出data</span></span><br><span class="line"><span class="comment"> */</span></span><br><span class="line"><span class="meta">@Override</span></span><br><span class="line"><span class="function"><span class="keyword">protected</span> <span class="keyword">void</span> <span class="title">onActivityResult</span><span class="params">(<span class="keyword">int</span> requestCode, <span class="keyword">int</span> resultCode, <span class="meta">@Nullable</span> Intent data)</span> </span>&#123;</span><br><span class="line">    <span class="comment">// 相机回调处理</span></span><br><span class="line">    <span class="keyword">if</span> (requestCode == CAMERA_REQUEST_CODE &amp;&amp; resultCode == RESULT_CANCELED) &#123;</span><br><span class="line">        Toast.makeText(<span class="keyword">this</span>,<span class="string">&quot;拍照完成&quot;</span>,Toast.LENGTH_SHORT).show();</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="comment">// 单张回调处理</span></span><br><span class="line">    <span class="keyword">if</span> (requestCode == SINGLE_REQUEST_CODE &amp;&amp; resultCode == RESULT_OK) &#123;</span><br><span class="line">        String photoPath = GetPhotoFromAlbum.getRealPathFromUri(<span class="keyword">this</span>,</span><br><span class="line">                data != <span class="keyword">null</span> ? data.getData() : <span class="keyword">null</span>);</span><br><span class="line">        Toast.makeText(<span class="keyword">this</span>,<span class="string">&quot;选择的照片路径为&quot;</span>+photoPath,Toast.LENGTH_SHORT).show();</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">        <span class="comment">// 多张回调处理</span></span><br><span class="line">    <span class="keyword">if</span> (requestCode == MULTI_REQUEST_CODE &amp;&amp; resultCode == RESULT_OK) &#123;</span><br><span class="line">        <span class="comment">// 获取选择图片集合路径</span></span><br><span class="line">        ArrayList&lt;String&gt; photosPath = data.getStringArrayListExtra(EasyPhotos.RESULT_PATHS);</span><br><span class="line">        Toast.makeText(<span class="keyword">this</span>, String.format(<span class="string">&quot;共选择了%d张图片&quot;</span>, photosPath.size()),Toast.LENGTH_SHORT).show();</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">super</span>.onActivityResult(requestCode, resultCode, data);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+
+
+<h2 id="3-相册、相机处理中的FAQ"><a href="#3-相册、相机处理中的FAQ" class="headerlink" title="3. 相册、相机处理中的FAQ"></a>3. 相册、相机处理中的FAQ</h2><p><strong>Q1： 为什么我拍照后相册没有得到更新？</strong></p>
+<p>A1： 可以通过以下方法更新：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// 通知图库更新</span></span><br><span class="line">MediaScannerConnection.scanFile(MainActivity.<span class="keyword">this</span>, <span class="keyword">new</span> String[]&#123;path&#125;, <span class="keyword">null</span>,</span><br><span class="line">    <span class="keyword">new</span> MediaScannerConnection.OnScanCompletedListener() &#123;</span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">onScanCompleted</span><span class="params">(String path, Uri uri)</span> </span>&#123;</span><br><span class="line">    Intent mediaScanIntent = <span class="keyword">new</span> Intent(Intent.ACTION_MEDIA_SCANNER_SCAN_FILE);</span><br><span class="line">    mediaScanIntent.setData(uri);</span><br><span class="line">    sendBroadcast(mediaScanIntent);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;);</span><br></pre></td></tr></table></figure>
+
+<p>其中path参数就是你新拍照后的照片路径。</p>
+<p><strong>Q2: 有没有办法设置相机拍照后的相片到一个指定相册?</strong></p>
+<p>A2: 说实话这也让我挺头疼的问题。因为在我搜索出来的结果中，Android似乎并没有提供这样的Api给我们。最后我的实现方法是将刚拍照的图片找出来移动到需要的目录去。这里给一个思路。</p>
+<ol>
+<li>如何找到刚拍照的照片？可以通过时间戳的方式。在进入相机时记录一下时间，退出相机时记录一下时间，然后到系统的相册集中去找在这个时间段的所有照片。</li>
+<li>使用Java IO的相关API去移动图片，注意最好在线程里面做，避免因为移动过多图片造成主线程卡死。</li>
+</ol>
+<h2 id="4-代码中用到的其他文件"><a href="#4-代码中用到的其他文件" class="headerlink" title="4. 代码中用到的其他文件"></a>4. 代码中用到的其他文件</h2><p>GlideEngine.java</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br><span class="line">75</span><br><span class="line">76</span><br><span class="line">77</span><br><span class="line">78</span><br><span class="line">79</span><br><span class="line">80</span><br><span class="line">81</span><br><span class="line">82</span><br><span class="line">83</span><br><span class="line">84</span><br><span class="line">85</span><br><span class="line">86</span><br><span class="line">87</span><br><span class="line">88</span><br><span class="line">89</span><br><span class="line">90</span><br><span class="line">91</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">package</span> com.raven.mnist_recon;</span><br><span class="line"><span class="keyword">import</span> android.content.Context;</span><br><span class="line"><span class="keyword">import</span> android.graphics.Bitmap;</span><br><span class="line"><span class="keyword">import</span> android.widget.ImageView;</span><br><span class="line"><span class="keyword">import</span> com.bumptech.glide.Glide;</span><br><span class="line"><span class="keyword">import</span> com.huantansheng.easyphotos.engine.ImageEngine;</span><br><span class="line"></span><br><span class="line"><span class="keyword">import</span> <span class="keyword">static</span> com.bumptech.glide.load.resource.drawable.DrawableTransitionOptions.withCrossFade;</span><br><span class="line"></span><br><span class="line"><span class="comment">/**</span></span><br><span class="line"><span class="comment"> * Glide4.x的加载图片引擎实现,单例模式</span></span><br><span class="line"><span class="comment"> * Glide4.x的缓存机制更加智能，已经达到无需配置的境界。如果使用Glide3.x，需要考虑缓存机制。</span></span><br><span class="line"><span class="comment"> * Created by huan on 2018/1/15.</span></span><br><span class="line"><span class="comment"> */</span></span><br><span class="line"></span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">GlideEngine</span> <span class="keyword">implements</span> <span class="title">ImageEngine</span> </span>&#123;</span><br><span class="line">    <span class="comment">//单例</span></span><br><span class="line">    <span class="keyword">private</span> <span class="keyword">static</span> GlideEngine instance = <span class="keyword">null</span>;</span><br><span class="line">    <span class="comment">//单例模式，私有构造方法</span></span><br><span class="line">    <span class="function"><span class="keyword">private</span> <span class="title">GlideEngine</span><span class="params">()</span> </span>&#123;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="comment">//获取单例</span></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">static</span> GlideEngine <span class="title">getInstance</span><span class="params">()</span> </span>&#123;</span><br><span class="line">        <span class="keyword">if</span> (<span class="keyword">null</span> == instance) &#123;</span><br><span class="line">            <span class="keyword">synchronized</span> (GlideEngine.class) &#123;</span><br><span class="line">                <span class="keyword">if</span> (<span class="keyword">null</span> == instance) &#123;</span><br><span class="line">                    instance = <span class="keyword">new</span> GlideEngine();</span><br><span class="line">                &#125;</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="keyword">return</span> instance;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="comment">/**</span></span><br><span class="line"><span class="comment">     * 加载图片到ImageView</span></span><br><span class="line"><span class="comment">     *</span></span><br><span class="line"><span class="comment">     * <span class="doctag">@param</span> context   上下文</span></span><br><span class="line"><span class="comment">     * <span class="doctag">@param</span> photoPath 图片路径</span></span><br><span class="line"><span class="comment">     * <span class="doctag">@param</span> imageView 加载到的ImageView</span></span><br><span class="line"><span class="comment">     */</span></span><br><span class="line">    <span class="meta">@Override</span></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">loadPhoto</span><span class="params">(Context context, String photoPath, ImageView imageView)</span> </span>&#123;</span><br><span class="line">        Glide.with(context).load(photoPath).transition(withCrossFade()).into(imageView);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="comment">/**</span></span><br><span class="line"><span class="comment">     * 加载gif动图图片到ImageView，gif动图不动</span></span><br><span class="line"><span class="comment">     *</span></span><br><span class="line"><span class="comment">     * <span class="doctag">@param</span> context   上下文</span></span><br><span class="line"><span class="comment">     * <span class="doctag">@param</span> gifPath   gif动图路径</span></span><br><span class="line"><span class="comment">     * <span class="doctag">@param</span> imageView 加载到的ImageView</span></span><br><span class="line"><span class="comment">     *                  &lt;p&gt;</span></span><br><span class="line"><span class="comment">     *                  备注：不支持动图显示的情况下可以不写</span></span><br><span class="line"><span class="comment">     */</span></span><br><span class="line">    <span class="meta">@Override</span></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">loadGifAsBitmap</span><span class="params">(Context context, String gifPath, ImageView imageView)</span> </span>&#123;</span><br><span class="line">        Glide.with(context).asBitmap().load(gifPath).into(imageView);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="comment">/**</span></span><br><span class="line"><span class="comment">     * 加载gif动图到ImageView，gif动图动</span></span><br><span class="line"><span class="comment">     *</span></span><br><span class="line"><span class="comment">     * <span class="doctag">@param</span> context   上下文</span></span><br><span class="line"><span class="comment">     * <span class="doctag">@param</span> gifPath   gif动图路径</span></span><br><span class="line"><span class="comment">     * <span class="doctag">@param</span> imageView 加载动图的ImageView</span></span><br><span class="line"><span class="comment">     *                  &lt;p&gt;</span></span><br><span class="line"><span class="comment">     *                  备注：不支持动图显示的情况下可以不写</span></span><br><span class="line"><span class="comment">     */</span></span><br><span class="line">    <span class="meta">@Override</span></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">loadGif</span><span class="params">(Context context, String gifPath, ImageView imageView)</span> </span>&#123;</span><br><span class="line">        Glide.with(context).asGif().load(gifPath).transition(withCrossFade()).into(imageView);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">    <span class="comment">/**</span></span><br><span class="line"><span class="comment">     * 获取图片加载框架中的缓存Bitmap</span></span><br><span class="line"><span class="comment">     *</span></span><br><span class="line"><span class="comment">     * <span class="doctag">@param</span> context 上下文</span></span><br><span class="line"><span class="comment">     * <span class="doctag">@param</span> path    图片路径</span></span><br><span class="line"><span class="comment">     * <span class="doctag">@param</span> width   图片宽度</span></span><br><span class="line"><span class="comment">     * <span class="doctag">@param</span> height  图片高度</span></span><br><span class="line"><span class="comment">     * <span class="doctag">@return</span> Bitmap</span></span><br><span class="line"><span class="comment">     * <span class="doctag">@throws</span> Exception 异常直接抛出，EasyPhotos内部处理</span></span><br><span class="line"><span class="comment">     */</span></span><br><span class="line">    <span class="meta">@Override</span></span><br><span class="line">    <span class="function"><span class="keyword">public</span> Bitmap <span class="title">getCacheBitmap</span><span class="params">(Context context, String path, <span class="keyword">int</span> width, <span class="keyword">int</span> height)</span> <span class="keyword">throws</span> Exception </span>&#123;</span><br><span class="line">        <span class="keyword">return</span> Glide.with(context).asBitmap().load(path).submit(width, height).get();</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>AlbumUtil.java</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br><span class="line">75</span><br><span class="line">76</span><br><span class="line">77</span><br><span class="line">78</span><br><span class="line">79</span><br><span class="line">80</span><br><span class="line">81</span><br><span class="line">82</span><br><span class="line">83</span><br><span class="line">84</span><br><span class="line">85</span><br><span class="line">86</span><br><span class="line">87</span><br><span class="line">88</span><br><span class="line">89</span><br><span class="line">90</span><br><span class="line">91</span><br><span class="line">92</span><br><span class="line">93</span><br><span class="line">94</span><br><span class="line">95</span><br><span class="line">96</span><br><span class="line">97</span><br><span class="line">98</span><br><span class="line">99</span><br><span class="line">100</span><br><span class="line">101</span><br><span class="line">102</span><br><span class="line">103</span><br><span class="line">104</span><br><span class="line">105</span><br><span class="line">106</span><br><span class="line">107</span><br><span class="line">108</span><br><span class="line">109</span><br><span class="line">110</span><br><span class="line">111</span><br><span class="line">112</span><br><span class="line">113</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">package</span> com.raven.demo;</span><br><span class="line"></span><br><span class="line"><span class="keyword">import</span> android.annotation.SuppressLint;</span><br><span class="line"><span class="keyword">import</span> android.content.ContentUris;</span><br><span class="line"><span class="keyword">import</span> android.content.Context;</span><br><span class="line"><span class="keyword">import</span> android.database.Cursor;</span><br><span class="line"><span class="keyword">import</span> android.net.Uri;</span><br><span class="line"><span class="keyword">import</span> android.os.Build;</span><br><span class="line"><span class="keyword">import</span> android.provider.DocumentsContract;</span><br><span class="line"><span class="keyword">import</span> android.provider.MediaStore;</span><br><span class="line"></span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">AlbumUtil</span> </span>&#123;</span><br><span class="line">    <span class="comment">/**</span></span><br><span class="line"><span class="comment">     * 根据Uri获取图片的绝对路径</span></span><br><span class="line"><span class="comment">     *</span></span><br><span class="line"><span class="comment">     * <span class="doctag">@param</span> context 上下文对象</span></span><br><span class="line"><span class="comment">     * <span class="doctag">@param</span> uri     图片的Uri</span></span><br><span class="line"><span class="comment">     * <span class="doctag">@return</span> 如果Uri对应的图片存在, 那么返回该图片的绝对路径, 否则返回null</span></span><br><span class="line"><span class="comment">     */</span></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">static</span> String <span class="title">getRealPathFromUri</span><span class="params">(Context context, Uri uri)</span> </span>&#123;</span><br><span class="line">        <span class="keyword">int</span> sdkVersion = Build.VERSION.SDK_INT;</span><br><span class="line">        <span class="keyword">if</span> (sdkVersion &gt;= <span class="number">19</span>) &#123; </span><br><span class="line">            <span class="keyword">return</span> getRealPathFromUriAboveApi19(context, uri);</span><br><span class="line">        &#125; <span class="keyword">else</span> &#123;</span><br><span class="line">            <span class="keyword">return</span> getRealPathFromUriBelowAPI19(context, uri);</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="comment">/**</span></span><br><span class="line"><span class="comment">     * 适配api19以下(不包括api19),根据uri获取图片的绝对路径</span></span><br><span class="line"><span class="comment">     *</span></span><br><span class="line"><span class="comment">     * <span class="doctag">@param</span> context 上下文对象</span></span><br><span class="line"><span class="comment">     * <span class="doctag">@param</span> uri     图片的Uri</span></span><br><span class="line"><span class="comment">     * <span class="doctag">@return</span> 如果Uri对应的图片存在, 那么返回该图片的绝对路径, 否则返回null</span></span><br><span class="line"><span class="comment">     */</span></span><br><span class="line">    <span class="function"><span class="keyword">private</span> <span class="keyword">static</span> String <span class="title">getRealPathFromUriBelowAPI19</span><span class="params">(Context context, Uri uri)</span> </span>&#123;</span><br><span class="line">        <span class="keyword">return</span> getDataColumn(context, uri, <span class="keyword">null</span>, <span class="keyword">null</span>);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="comment">/**</span></span><br><span class="line"><span class="comment">     * 适配api19及以上,根据uri获取图片的绝对路径</span></span><br><span class="line"><span class="comment">     *</span></span><br><span class="line"><span class="comment">     * <span class="doctag">@param</span> context 上下文对象</span></span><br><span class="line"><span class="comment">     * <span class="doctag">@param</span> uri     图片的Uri</span></span><br><span class="line"><span class="comment">     * <span class="doctag">@return</span> 如果Uri对应的图片存在, 那么返回该图片的绝对路径, 否则返回null</span></span><br><span class="line"><span class="comment">     */</span></span><br><span class="line">    <span class="meta">@SuppressLint(&quot;NewApi&quot;)</span></span><br><span class="line">    <span class="function"><span class="keyword">private</span> <span class="keyword">static</span> String <span class="title">getRealPathFromUriAboveApi19</span><span class="params">(Context context, Uri uri)</span> </span>&#123;</span><br><span class="line">        String filePath = <span class="keyword">null</span>;</span><br><span class="line">        <span class="keyword">if</span> (DocumentsContract.isDocumentUri(context, uri)) &#123;</span><br><span class="line">            <span class="comment">// 如果是document类型的 uri, 则通过document id来进行处理</span></span><br><span class="line">            String documentId = DocumentsContract.getDocumentId(uri);</span><br><span class="line">            <span class="keyword">if</span> (isMediaDocument(uri)) &#123;</span><br><span class="line">                <span class="comment">// 使用&#x27;:&#x27;分割</span></span><br><span class="line">                String id = documentId.split(<span class="string">&quot;:&quot;</span>)[<span class="number">1</span>];</span><br><span class="line"></span><br><span class="line">                String selection = MediaStore.Images.Media._ID + <span class="string">&quot;=?&quot;</span>;</span><br><span class="line">                String[] selectionArgs = &#123;id&#125;;</span><br><span class="line">                filePath = getDataColumn(context, MediaStore.Images.Media.EXTERNAL_CONTENT_URI, selection, selectionArgs);</span><br><span class="line">            &#125; <span class="keyword">else</span> <span class="keyword">if</span> (isDownloadsDocument(uri)) &#123; </span><br><span class="line">                Uri contentUri = ContentUris.withAppendedId(Uri.parse(<span class="string">&quot;content://downloads/public_downloads&quot;</span>), Long.valueOf(documentId));</span><br><span class="line">                filePath = getDataColumn(context, contentUri, <span class="keyword">null</span>, <span class="keyword">null</span>);</span><br><span class="line">            &#125;</span><br><span class="line">        &#125; <span class="keyword">else</span> <span class="keyword">if</span> (<span class="string">&quot;content&quot;</span>.equalsIgnoreCase(uri.getScheme())) &#123;</span><br><span class="line">            <span class="comment">// 如果是 content 类型的 Uri</span></span><br><span class="line">            filePath = getDataColumn(context, uri, <span class="keyword">null</span>, <span class="keyword">null</span>);</span><br><span class="line">        &#125; <span class="keyword">else</span> <span class="keyword">if</span> (<span class="string">&quot;file&quot;</span>.equals(uri.getScheme())) &#123;</span><br><span class="line">            <span class="comment">// 如果是 file 类型的 Uri,直接获取图片对应的路径</span></span><br><span class="line">            filePath = uri.getPath();</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="keyword">return</span> filePath;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="comment">/**</span></span><br><span class="line"><span class="comment">     * 获取数据库表中的 _data 列，即返回Uri对应的文件路径</span></span><br><span class="line"><span class="comment">     *</span></span><br><span class="line"><span class="comment">     */</span></span><br><span class="line">    <span class="function"><span class="keyword">private</span> <span class="keyword">static</span> String <span class="title">getDataColumn</span><span class="params">(Context context, Uri uri, String selection, String[] selectionArgs)</span> </span>&#123;</span><br><span class="line">        String path = <span class="keyword">null</span>;</span><br><span class="line"></span><br><span class="line">        String[] projection = <span class="keyword">new</span> String[]&#123;MediaStore.Images.Media.DATA&#125;;</span><br><span class="line">        Cursor cursor = <span class="keyword">null</span>;</span><br><span class="line">        <span class="keyword">try</span> &#123;</span><br><span class="line">            cursor = context.getContentResolver().query(uri, projection, selection, selectionArgs, <span class="keyword">null</span>);</span><br><span class="line">            <span class="keyword">if</span> (cursor != <span class="keyword">null</span> &amp;&amp; cursor.moveToFirst()) &#123;</span><br><span class="line">                <span class="keyword">int</span> columnIndex = cursor.getColumnIndexOrThrow(projection[<span class="number">0</span>]);</span><br><span class="line">                path = cursor.getString(columnIndex);</span><br><span class="line">            &#125;</span><br><span class="line">        &#125; <span class="keyword">catch</span> (Exception e) &#123;</span><br><span class="line">            <span class="keyword">if</span> (cursor != <span class="keyword">null</span>) &#123;</span><br><span class="line">                cursor.close();</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="keyword">return</span> path;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="comment">/**</span></span><br><span class="line"><span class="comment">     * <span class="doctag">@param</span> uri the Uri to check</span></span><br><span class="line"><span class="comment">     * <span class="doctag">@return</span> Whether the Uri authority is MediaProvider</span></span><br><span class="line"><span class="comment">     */</span></span><br><span class="line">    <span class="function"><span class="keyword">private</span> <span class="keyword">static</span> <span class="keyword">boolean</span> <span class="title">isMediaDocument</span><span class="params">(Uri uri)</span> </span>&#123;</span><br><span class="line">        <span class="keyword">return</span> <span class="string">&quot;com.android.providers.media.documents&quot;</span>.equals(uri.getAuthority());</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="comment">/**</span></span><br><span class="line"><span class="comment">     * <span class="doctag">@param</span> uri the Uri to check</span></span><br><span class="line"><span class="comment">     * <span class="doctag">@return</span> Whether the Uri authority is DownloadsProvider</span></span><br><span class="line"><span class="comment">     */</span></span><br><span class="line">    <span class="function"><span class="keyword">private</span> <span class="keyword">static</span> <span class="keyword">boolean</span> <span class="title">isDownloadsDocument</span><span class="params">(Uri uri)</span> </span>&#123;</span><br><span class="line">        <span class="keyword">return</span> <span class="string">&quot;com.android.providers.downloads.documents&quot;</span>.equals(uri.getAuthority());</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+
+<p>本文所有代码都已上传至github，有需求朋友可自行下载查看。</p>
+<p>地址：<a target="_blank" rel="noopener" href="https://github.com/raven-misc/Android-Camera-Album">https://github.com/raven-misc/Android-Camera-Album</a></p>
+
+    </div>
+
+    
+    
+    
+        <div class="reward-container">
+  <div>文章对你有帮助?打赏一下作者吧</div>
+  <button onclick="var qr = document.getElementById('qr'); qr.style.display = (qr.style.display === 'none') ? 'block' : 'none';">
+    打赏
+  </button>
+  <div id="qr" style="display: none;">
+      
+      <div style="display: inline-block;">
+        <img src="https://pic.downk.cc/item/5d064208451253d178a15b27.png" alt="Raven 微信支付">
+        <p>微信支付</p>
+      </div>
+      
+      <div style="display: inline-block;">
+        <img src="https://pic.downk.cc/item/5d0641c7451253d178a15376.png" alt="Raven 支付宝">
+        <p>支付宝</p>
+      </div>
+
+  </div>
+</div>
+
+        
+
+<div>
+<ul class="post-copyright">
+  <li class="post-copyright-author">
+    <strong>本文作者： </strong>Raven
+  </li>
+  <li class="post-copyright-link">
+    <strong>本文链接：</strong>
+    <a href="https://www.ravenxrz.ink/archives/5528d718.html" title="Android7-0后相机相册调用">https://www.ravenxrz.ink/archives/5528d718.html</a>
+  </li>
+  <li class="post-copyright-license">
+    <strong>版权声明： </strong>本博客所有文章除特别声明外，均采用 <span class="exturl" data-url="aHR0cHM6Ly9jcmVhdGl2ZWNvbW1vbnMub3JnL2xpY2Vuc2VzL2J5LW5jLXNhLzQuMC8="><i class="fa fa-fw fa-creative-commons"></i>BY-NC-SA</span> 许可协议。转载请注明出处！
+  </li>
+</ul>
+</div>
+
+
+      <footer class="post-footer">
+          
+          <div class="post-tags">
+              <a href="/tags/%E7%9B%B8%E6%9C%BA/" rel="tag"><i class="fa fa-tag"></i> 相机</a>
+          </div>
+
+        
+
+
+        
+    <div class="post-nav">
+      <div class="post-nav-item">
+    <a href="/archives/d009831a.html" rel="prev" title="个人向-对Vim的一点看法">
+      <i class="fa fa-chevron-left"></i> 个人向-对Vim的一点看法
+    </a></div>
+      <div class="post-nav-item">
+    <a href="/archives/3c0e07f4.html" rel="next" title="转载-SEO优化-如何书写Robots文件">
+      转载-SEO优化-如何书写Robots文件 <i class="fa fa-chevron-right"></i>
+    </a></div>
+    </div>
+      </footer>
+    
+  </article>
+  
+  
+  
+
+
+
+          </div>
+          
+    <div class="comments" id="gitalk-container"></div>
+
+<script>
+  window.addEventListener('tabs:register', () => {
+    let { activeClass } = CONFIG.comments;
+    if (CONFIG.comments.storage) {
+      activeClass = localStorage.getItem('comments_active') || activeClass;
+    }
+    if (activeClass) {
+      let activeTab = document.querySelector(`a[href="#comment-${activeClass}"]`);
+      if (activeTab) {
+        activeTab.click();
+      }
+    }
+  });
+  if (CONFIG.comments.storage) {
+    window.addEventListener('tabs:click', event => {
+      if (!event.target.matches('.tabs-comment .tab-content .tab-pane')) return;
+      let commentClass = event.target.classList[1];
+      localStorage.setItem('comments_active', commentClass);
+    });
+  }
+</script>
+
+        </div>
+          
+  
+  <div class="toggle sidebar-toggle">
+    <span class="toggle-line toggle-line-first"></span>
+    <span class="toggle-line toggle-line-middle"></span>
+    <span class="toggle-line toggle-line-last"></span>
+  </div>
+
+  <aside class="sidebar">
+    <div class="sidebar-inner">
+
+      <ul class="sidebar-nav motion-element">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          站点概览
+        </li>
+      </ul>
+
+      <!--noindex-->
+      <div class="post-toc-wrap sidebar-panel">
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#1-%E5%89%8D%E8%A8%80"><span class="nav-text">1. 前言</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#2-%E4%BB%A3%E7%A0%81%E5%AE%9E%E7%8E%B0"><span class="nav-text">2. 代码实现</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#2-1-%E6%9D%90%E6%96%99%E5%87%86%E5%A4%87"><span class="nav-text">2.1 材料准备</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#2-2-%E7%9B%B8%E5%85%B3%E9%85%8D%E7%BD%AE"><span class="nav-text">2.2 相关配置</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#2-3-%E7%95%8C%E9%9D%A2%E8%AE%BE%E8%AE%A1%E4%B8%8E%E7%82%B9%E5%87%BB%E4%BA%8B%E4%BB%B6"><span class="nav-text">2.3 界面设计与点击事件</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#2-4-%E8%AE%BE%E7%BD%AE%E6%9D%83%E9%99%90%E5%9B%9E%E8%B0%83"><span class="nav-text">2.4 设置权限回调</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#2-5-%E5%AE%9E%E7%8E%B0%E4%B8%89%E4%B8%AA%E5%8A%9F%E8%83%BD"><span class="nav-text">2.5 实现三个功能</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#2-6-%E5%9B%9E%E8%B0%83%E5%A4%84%E7%90%86"><span class="nav-text">2.6 回调处理</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#3-%E7%9B%B8%E5%86%8C%E3%80%81%E7%9B%B8%E6%9C%BA%E5%A4%84%E7%90%86%E4%B8%AD%E7%9A%84FAQ"><span class="nav-text">3. 相册、相机处理中的FAQ</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#4-%E4%BB%A3%E7%A0%81%E4%B8%AD%E7%94%A8%E5%88%B0%E7%9A%84%E5%85%B6%E4%BB%96%E6%96%87%E4%BB%B6"><span class="nav-text">4. 代码中用到的其他文件</span></a></li></ol></div>
+      </div>
+      <!--/noindex-->
+
+      <div class="site-overview-wrap sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+    <img class="site-author-image" itemprop="image" alt="Raven"
+      src="https://pic.downk.cc/item/5e907515504f4bcb04b6f798.jpg">
+  <p class="site-author-name" itemprop="name">Raven</p>
+  <div class="site-description" itemprop="description">分享技术，记录生活</div>
+</div>
+<div class="site-state-wrap motion-element">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+          <a href="/archives/">
+        
+          <span class="site-state-item-count">120</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+            <a href="/categories/">
+          
+        <span class="site-state-item-count">17</span>
+        <span class="site-state-item-name">分类</span></a>
+      </div>
+      <div class="site-state-item site-state-tags">
+            <a href="/tags/">
+          
+        <span class="site-state-item-count">114</span>
+        <span class="site-state-item-name">标签</span></a>
+      </div>
+  </nav>
+</div>
+  <div class="links-of-author motion-element">
+      <span class="links-of-author-item">
+        <span class="exturl" data-url="aHR0cHM6Ly9naXRodWIuY29tL3JhdmVueHJ6" title="GitHub → https:&#x2F;&#x2F;github.com&#x2F;ravenxrz"><i class="fa fa-fw fa-fab fa-github"></i>GitHub</span>
+      </span>
+      <span class="links-of-author-item">
+        <span class="exturl" data-url="bWFpbHRvOnpoYWduLnhpbmdydWlAZm94bWFpbC5jb20=" title="E-Mail → mailto:zhagn.xingrui@foxmail.com"><i class="fa fa-fw fa-fa fa-envelope"></i>E-Mail</span>
+      </span>
+  </div>
+  <div class="cc-license motion-element" itemprop="license">
+    <span class="exturl cc-opacity" data-url="aHR0cHM6Ly9jcmVhdGl2ZWNvbW1vbnMub3JnL2xpY2Vuc2VzL2J5LW5jLXNhLzQuMC8="><img src="/images/cc-by-nc-sa.svg" alt="Creative Commons"></span>
+  </div>
+
+
+  <div class="links-of-blogroll motion-element">
+    <div class="links-of-blogroll-title">
+      <i class="fa fa-fw fa-fa fa-link"></i>
+      Links
+    </div>
+    <ul class="links-of-blogroll-list">
+        <li class="links-of-blogroll-item">
+          <a href="/resources" title="&#x2F;resources">我的资源</a>
+        </li>
+    </ul>
+  </div>
+
+      </div>
+
+    </div>
+  </aside>
+  <div id="sidebar-dimmer"></div>
+
+
+      </div>
+    </main>
+
+    <footer class="footer">
+      <div class="footer-inner">
+        
+
+        
+
+<div class="copyright">
+  
+  &copy; 2017 – 
+  <span itemprop="copyrightYear">2020</span>
+  <span class="with-love">
+    <i class="fa fa-fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">Raven</span>
+</div>
+  <div class="powered-by">由 <span class="exturl theme-link" data-url="aHR0cHM6Ly9oZXhvLmlv">Hexo</span> & <span class="exturl theme-link" data-url="aHR0cHM6Ly9taXN0LnRoZW1lLW5leHQub3Jn">NexT.Mist</span> 强力驱动
+  </div>
+
+        
+<div class="busuanzi-count">
+  <script async src="https://busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+    <span class="post-meta-item" id="busuanzi_container_site_uv" style="display: none;">
+      <span class="post-meta-item-icon">
+        <i class="fa fa-fa fa-user"></i>
+      </span>
+      <span class="site-uv" title="总访客量">
+        <span id="busuanzi_value_site_uv"></span>
+      </span>
+    </span>
+    <span class="post-meta-divider">|</span>
+    <span class="post-meta-item" id="busuanzi_container_site_pv" style="display: none;">
+      <span class="post-meta-item-icon">
+        <i class="fa fa-fa fa-eye"></i>
+      </span>
+      <span class="site-pv" title="总访问量">
+        <span id="busuanzi_value_site_pv"></span>
+      </span>
+    </span>
+</div>
+
+
+
+
+
+
+
+
+      </div>
+    </footer>
+  </div>
+
+  
+  <script src="//cdn.jsdelivr.net/npm/animejs@3.1.0/lib/anime.min.js"></script>
+  <script src="//cdn.jsdelivr.net/npm/medium-zoom@1/dist/medium-zoom.min.js"></script>
+  <script src="//cdn.jsdelivr.net/npm/lozad@1/dist/lozad.min.js"></script>
+  <script src="//cdn.jsdelivr.net/npm/pangu@4/dist/browser/pangu.min.js"></script>
+
+<script src="/js/utils.js"></script>
+
+
+<script src="/js/schemes/muse.js"></script>
+
+
+<script src="/js/next-boot.js"></script>
+
+
+
+
+  
+  <script>
+    (function(){
+      var bp = document.createElement('script');
+      var curProtocol = window.location.protocol.split(':')[0];
+      bp.src = (curProtocol === 'https') ? 'https://zz.bdstatic.com/linksubmit/push.js' : 'http://push.zhanzhang.baidu.com/push.js';
+      var s = document.getElementsByTagName("script")[0];
+      s.parentNode.insertBefore(bp, s);
+    })();
+  </script>
+
+
+
+
+  
+<script src="/js/local-search.js"></script>
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+  
+      
+
+<script>
+  if (typeof MathJax === 'undefined') {
+    window.MathJax = {
+      loader: {
+        source: {
+          '[tex]/amsCd': '[tex]/amscd',
+          '[tex]/AMScd': '[tex]/amscd'
+        }
+      },
+      tex: {
+        inlineMath: {'[+]': [['$', '$']]},
+        tags: 'ams'
+      },
+      options: {
+        renderActions: {
+          findScript: [10, doc => {
+            document.querySelectorAll('script[type^="math/tex"]').forEach(node => {
+              const display = !!node.type.match(/; *mode=display/);
+              const math = new doc.options.MathItem(node.textContent, doc.inputJax[0], display);
+              const text = document.createTextNode('');
+              node.parentNode.replaceChild(text, node);
+              math.start = {node: text, delim: '', n: 0};
+              math.end = {node: text, delim: '', n: 0};
+              doc.math.push(math);
+            });
+          }, '', false],
+          insertedScript: [200, () => {
+            document.querySelectorAll('mjx-container').forEach(node => {
+              let target = node.parentNode;
+              if (target.nodeName.toLowerCase() === 'li') {
+                target.parentNode.classList.add('has-jax');
+              }
+            });
+          }, '', false]
+        }
+      }
+    };
+    (function () {
+      var script = document.createElement('script');
+      script.src = '//cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js';
+      script.defer = true;
+      document.head.appendChild(script);
+    })();
+  } else {
+    MathJax.startup.document.state(0);
+    MathJax.texReset();
+    MathJax.typeset();
+  }
+</script>
+
+    
+
+  
+  <script src="//cdn.jsdelivr.net/npm/quicklink@1/dist/quicklink.umd.js"></script>
+  <script>
+      window.addEventListener('load', () => {
+      quicklink({
+        timeout : 3000,
+        priority: true,
+        ignores : [uri => uri.includes('#'),uri => uri === 'https://www.ravenxrz.ink/archives/5528d718.html',]
+      });
+      });
+  </script>
+
+<link rel="stylesheet" href="//cdn.jsdelivr.net/npm/gitalk@1/dist/gitalk.min.css">
+
+<script>
+NexT.utils.loadComments(document.querySelector('#gitalk-container'), () => {
+  NexT.utils.getScript('//cdn.jsdelivr.net/npm/gitalk@1/dist/gitalk.min.js', () => {
+    var gitalk = new Gitalk({
+      clientID    : 'b2fd373d2ca2e03e591e',
+      clientSecret: 'de4ab066908c1fbd32d3a45e091b3538761d685b',
+      repo        : 'BlogComment',
+      owner       : 'ravenxrz',
+      admin       : ['ravenxrz'],
+      id          : 'b51898d51d184b2c4f6adeb70915240c',
+        language: '',
+      distractionFreeMode: true
+    });
+    gitalk.render('gitalk-container');
+  }, window.Gitalk);
+});
+</script>
+
+</body>
+</html>

@@ -1,0 +1,808 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 5.1.1">
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+  <meta http-equiv="Cache-Control" content="no-transform">
+  <meta http-equiv="Cache-Control" content="no-siteapp">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+<link rel="stylesheet" href="//cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@5/css/all.min.css">
+  <link rel="stylesheet" href="//cdn.jsdelivr.net/npm/pace-js@1/themes/blue/pace-theme-minimal.css">
+  <script src="//cdn.jsdelivr.net/npm/pace-js@1/pace.min.js"></script>
+
+<script id="hexo-configurations">
+    var NexT = window.NexT || {};
+    var CONFIG = {"hostname":"www.ravenxrz.ink","root":"/","scheme":"Mist","version":"7.8.0","exturl":true,"sidebar":{"position":"left","display":"always","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":true,"show_result":true,"style":"flat"},"back2top":{"enable":true,"sidebar":false,"scrollpercent":true},"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":true,"lazyload":true,"pangu":true,"comments":{"style":"tabs","active":"gitalk","storage":true,"lazyload":true,"nav":null,"activeClass":"gitalk"},"algolia":{"hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":true,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},"motion":{"enable":false,"async":true,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}}};
+  </script>
+
+  <meta name="description" content="系列文章：  linux软riad配置详解 Linux配置iSCSI服务 Linux配置Multipath访问iSCSI服务  在《linux软riad配置详解》中讲解了如何在Linux中配置软raid，本文中我们将讲解如何让这个raid5可被客户端通过ISCSI服务访问。 实验平台： Server端： Manjaro 内核4.9.214 Client端： Ubuntu18 内核 5.3.40 当">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Linux配置iSCSI服务">
+<meta property="og:url" content="https://www.ravenxrz.ink/archives/47bf0456.html">
+<meta property="og:site_name" content="Raven&#39;s Blog">
+<meta property="og:description" content="系列文章：  linux软riad配置详解 Linux配置iSCSI服务 Linux配置Multipath访问iSCSI服务  在《linux软riad配置详解》中讲解了如何在Linux中配置软raid，本文中我们将讲解如何让这个raid5可被客户端通过ISCSI服务访问。 实验平台： Server端： Manjaro 内核4.9.214 Client端： Ubuntu18 内核 5.3.40 当">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="https://pic.downk.cc/item/5e60ca5198271cb2b8a214fc.jpg">
+<meta property="og:image" content="https://pic.downk.cc/item/5e60cf6298271cb2b8a5942d.png">
+<meta property="og:image" content="https://pic.downk.cc/item/5e60cc1d98271cb2b8a35c7b.jpg">
+<meta property="og:image" content="https://pic.downk.cc/item/5e60cd2898271cb2b8a41232.jpg">
+<meta property="article:published_time" content="2020-03-05T09:05:45.000Z">
+<meta property="article:modified_time" content="2020-09-06T02:45:08.036Z">
+<meta property="article:author" content="Raven">
+<meta property="article:tag" content="iSCSI">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://pic.downk.cc/item/5e60ca5198271cb2b8a214fc.jpg">
+
+<link rel="canonical" href="https://www.ravenxrz.ink/archives/47bf0456.html">
+
+
+<script id="page-configurations">
+  // https://hexo.io/docs/variables.html
+  CONFIG.page = {
+    sidebar: "",
+    isHome : false,
+    isPost : true,
+    lang   : 'zh-CN'
+  };
+</script>
+
+  <title>Linux配置iSCSI服务 | Raven's Blog</title>
+  
+
+
+
+
+
+
+  <noscript>
+  <style>
+  .use-motion .brand,
+  .use-motion .menu-item,
+  .sidebar-inner,
+  .use-motion .post-block,
+  .use-motion .pagination,
+  .use-motion .comments,
+  .use-motion .post-header,
+  .use-motion .post-body,
+  .use-motion .collection-header { opacity: initial; }
+
+  .use-motion .site-title,
+  .use-motion .site-subtitle {
+    opacity: initial;
+    top: initial;
+  }
+
+  .use-motion .logo-line-before i { left: initial; }
+  .use-motion .logo-line-after i { right: initial; }
+  </style>
+</noscript>
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage">
+  <div class="container">
+    <div class="headband"></div>
+
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切换导航栏">
+      <span class="toggle-line toggle-line-first"></span>
+      <span class="toggle-line toggle-line-middle"></span>
+      <span class="toggle-line toggle-line-last"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <span class="logo-line-before"><i></i></span>
+      <h1 class="site-title">Raven's Blog</h1>
+      <span class="logo-line-after"><i></i></span>
+    </a>
+      <p class="site-subtitle" itemprop="description">zhang.xingrui@foxmail.com</p>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger">
+        <i class="fa fa-search fa-fw fa-lg"></i>
+    </div>
+  </div>
+</div>
+
+
+
+
+<nav class="site-nav">
+  <ul id="menu" class="menu">
+        <li class="menu-item menu-item-home">
+
+    <a href="/" rel="section"><i class="fa fa-fw fa-fa fa-home"></i>首页</a>
+
+  </li>
+        <li class="menu-item menu-item-archives">
+
+    <a href="/archives/" rel="section"><i class="fa fa-fw fa-fa fa-archive"></i>归档<span class="badge">120</span></a>
+
+  </li>
+        <li class="menu-item menu-item-categories">
+
+    <a href="/categories/" rel="section"><i class="fa fa-fw fa-fa fa-th"></i>分类<span class="badge">17</span></a>
+
+  </li>
+        <li class="menu-item menu-item-tags">
+
+    <a href="/tags/" rel="section"><i class="fa fa-fw fa-fa fa-tags"></i>标签<span class="badge">114</span></a>
+
+  </li>
+        <li class="menu-item menu-item-about">
+
+    <a href="/about/" rel="section"><i class="fa fa-fw fa-fa fa-user"></i>关于</a>
+
+  </li>
+      <li class="menu-item menu-item-search">
+        <a role="button" class="popup-trigger"><i class="fa fa-search fa-fw"></i>搜索
+        </a>
+      </li>
+  </ul>
+</nav>
+
+
+
+  <div class="search-pop-overlay">
+    <div class="popup search-popup">
+        <div class="search-header">
+  <span class="search-icon">
+    <i class="fa fa-search"></i>
+  </span>
+  <div class="search-input-container">
+    <input autocomplete="off" autocapitalize="off"
+           placeholder="搜索..." spellcheck="false"
+           type="search" class="search-input">
+  </div>
+  <span class="popup-btn-close">
+    <i class="fa fa-times-circle"></i>
+  </span>
+</div>
+<div id="search-result">
+  <div id="no-result">
+    <i class="fa fa-spinner fa-pulse fa-5x fa-fw"></i>
+  </div>
+</div>
+
+    </div>
+  </div>
+
+</div>
+    </header>
+
+    
+  <div class="back-to-top">
+    <i class="fa fa-arrow-up"></i>
+    <span>0%</span>
+  </div>
+
+  <span class="exturl github-corner" data-url="aHR0cHM6Ly9naXRodWIuY29tL3JhdmVueHJ6" title="Follow me on GitHub" aria-label="Follow me on GitHub"><svg width="80" height="80" viewBox="0 0 250 250" aria-hidden="true"><path d="M0,0 L115,115 L130,115 L142,142 L250,250 L250,0 Z"></path><path d="M128.3,109.0 C113.8,99.7 119.0,89.6 119.0,89.6 C122.0,82.7 120.5,78.6 120.5,78.6 C119.2,72.0 123.4,76.3 123.4,76.3 C127.3,80.9 125.5,87.3 125.5,87.3 C122.9,97.6 130.6,101.9 134.4,103.2" fill="currentColor" style="transform-origin: 130px 106px;" class="octo-arm"></path><path d="M115.0,115.0 C114.9,115.1 118.7,116.5 119.8,115.4 L133.7,101.6 C136.9,99.2 139.9,98.4 142.2,98.6 C133.8,88.0 127.5,74.4 143.8,58.0 C148.5,53.4 154.0,51.2 159.7,51.0 C160.3,49.4 163.2,43.6 171.4,40.1 C171.4,40.1 176.1,42.5 178.8,56.2 C183.1,58.6 187.2,61.8 190.9,65.4 C194.5,69.0 197.7,73.2 200.1,77.6 C213.8,80.2 216.3,84.9 216.3,84.9 C212.7,93.1 206.9,96.0 205.4,96.6 C205.1,102.4 203.0,107.8 198.3,112.5 C181.9,128.9 168.3,122.5 157.7,114.1 C157.9,116.9 156.7,120.9 152.7,124.9 L141.0,136.5 C139.8,137.7 141.6,141.9 141.8,141.8 Z" fill="currentColor" class="octo-body"></path></svg></span>
+
+
+    <main class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          
+
+          <div class="content post posts-expand">
+            
+
+    
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="https://www.ravenxrz.ink/archives/47bf0456.html">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="https://pic.downk.cc/item/5e907515504f4bcb04b6f798.jpg">
+      <meta itemprop="name" content="Raven">
+      <meta itemprop="description" content="分享技术，记录生活">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Raven's Blog">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          Linux配置iSCSI服务
+        </h1>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+
+              <time title="创建时间：2020-03-05 17:05:45" itemprop="dateCreated datePublished" datetime="2020-03-05T17:05:45+08:00">2020-03-05</time>
+            </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-calendar-check-o"></i>
+                </span>
+                <span class="post-meta-item-text">更新于</span>
+                <time title="修改时间：2020-09-06 10:45:08" itemprop="dateModified" datetime="2020-09-06T10:45:08+08:00">2020-09-06</time>
+              </span>
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              <span class="post-meta-item-text">分类于</span>
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/Linux/" itemprop="url" rel="index"><span itemprop="name">Linux</span></a>
+                </span>
+            </span>
+
+          
+            <span class="post-meta-item" title="阅读次数" id="busuanzi_container_page_pv" style="display: none;">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-fa fa-eye"></i>
+              </span>
+              <span class="post-meta-item-text">阅读次数：</span>
+              <span id="busuanzi_value_page_pv"></span>
+            </span>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+        <p>系列文章：</p>
+<ul>
+<li><a href="https://www.ravenxrz.ink/archives/b85e04d0.html">linux软riad配置详解</a></li>
+<li><a href="https://www.ravenxrz.ink/archives/47bf0456.html">Linux配置iSCSI服务</a></li>
+<li><a href="https://www.ravenxrz.ink/archives/f30ddec7.html">Linux配置Multipath访问iSCSI服务</a></li>
+</ul>
+<p>在<a href="https://www.ravenxrz.ink/archives/b85e04d0.html">《linux软riad配置详解》</a>中讲解了如何在Linux中配置软raid，本文中我们将讲解如何让这个raid5可被客户端通过ISCSI服务访问。</p>
+<p>实验平台：</p>
+<p>Server端： Manjaro 内核4.9.214</p>
+<p>Client端： Ubuntu18 内核 5.3.40</p>
+<p>当然了，这里强烈推荐Server和Client端都是用<strong>CentOs</strong>，个人是因为笔记本已经装了Manjaro和Ubuntu不方便更换，所以就将就使用了。</p>
+<a id="more"></a>
+
+<h2 id="0-基础知识"><a href="#0-基础知识" class="headerlink" title="0. 基础知识"></a>0. 基础知识</h2><p>iSCSI 的全称是: Internet 小型计算机系统接口，是一个基于 TCP/IP 的协议，主要用于通过 IP 网络仿真 SCSI，从而为远程块存储设备提供数据传输和管理。说白了，就是通过网络由专门的服务器提供存储管理，以实现数据的远程储存，便于数据的集中管理，从而简化了数据复制、迁移和容灾。</p>
+<h3 id="常用的基本概念"><a href="#常用的基本概念" class="headerlink" title="常用的基本概念"></a><strong>常用的基本概念</strong></h3><table>
+<thead>
+<tr>
+<th align="center">名词</th>
+<th align="center">解释</th>
+</tr>
+</thead>
+<tbody><tr>
+<td align="center">ACL</td>
+<td align="center">访问权限控制列表，用来验证客户端启动器的访问，通常是客户端   iSCSI 启动器的 IQN 名称</td>
+</tr>
+<tr>
+<td align="center">IQN</td>
+<td align="center">用于标识单个 iSCSI   目标和启动器的唯一名称(全部小写)</td>
+</tr>
+<tr>
+<td align="center">WWN</td>
+<td align="center">用于标识单个光纤通道端口和节点的唯一编号</td>
+</tr>
+<tr>
+<td align="center">TARGET</td>
+<td align="center">iSCSI 服务器上的存储资源</td>
+</tr>
+<tr>
+<td align="center">LUN</td>
+<td align="center">iSCSI 服务器上的块设备</td>
+</tr>
+<tr>
+<td align="center">initiator(启动器)</td>
+<td align="center">以软件或硬件实施的 iSCSI 客户端</td>
+</tr>
+<tr>
+<td align="center">NODE</td>
+<td align="center">单个 iSCSI 启动器或者目标</td>
+</tr>
+<tr>
+<td align="center">TPG</td>
+<td align="center">启动器或者目标上的单个 IP 连接地址</td>
+</tr>
+<tr>
+<td align="center">Portal</td>
+<td align="center">网络接口及端口</td>
+</tr>
+</tbody></table>
+<p><em>IQN 的格式为：iqn.年份-月份.com|cn|net|org.域名:自定义标识，如：iqn.2018-05.com.test:desktop;其中的字母均应为小写，即使输入时包含大写，命令执行后，系统会自动转换成小写。</em></p>
+<h2 id="1-Server配置"><a href="#1-Server配置" class="headerlink" title="1. Server配置"></a>1. Server配置</h2><p> <strong>安装 iSCSI 服务端程序以及其配置命令工具</strong></p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">yay -S targetd targetcli # 这里用了aur，其余平台按各自的包管理器即可</span><br></pre></td></tr></table></figure>
+
+<p><strong>启动targtd服务，并将其添加到开机自启中。</strong></p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">systemctl start targetd</span><br><span class="line">systemctl enable targetd</span><br></pre></td></tr></table></figure>
+
+<p><strong>使用 targetcli 配置命令</strong></p>
+<p>targetcli 是用于管理 iSCSI 服务端存储资源的专用配置命令，它能够提供类似于 fdisk 命令的交互式配置功能，将 iSCSI 共享资源的配置内容抽象成“目录”的形式，我们只需将各类配置信息填入到相应的“目录”中即可。</p>
+<p>这里的难点主要在于认识每个“参数目录”的作用。当把配置参数正确地填写到“目录”中后，iSCSI 服务端就可以提供共享资源服务了。</p>
+<p><strong>配置块设配资源池</strong></p>
+<p>/backstores/block 是 iSCSI服务端配置共享设备的位置。在 targetcli 交互命令环境下，使用 create 命令把上述所创建的 RAID 5 磁盘阵列 /dev/md.raid5 文件加入到配置共享设备的“资源池”中，并将该文件重新命名为 disk0。</p>
+<p>额外补充，/backstores下的四个目录的含义：</p>
+<table>
+<thead>
+<tr>
+<th align="center">目录</th>
+<th align="center">解释</th>
+</tr>
+</thead>
+<tbody><tr>
+<td align="center">block</td>
+<td align="center">块设备，磁盘驱动器、磁盘分区、逻辑卷、以及服务器上定义的任何 b 类型的设备文件</td>
+</tr>
+<tr>
+<td align="center">fileio</td>
+<td align="center">在服务器上生成的一个指定大小的文件，类似于虚拟机中的虚拟磁盘</td>
+</tr>
+<tr>
+<td align="center">pscsi</td>
+<td align="center">物理 SCSI，通常不使用</td>
+</tr>
+<tr>
+<td align="center">ramdisk</td>
+<td align="center">内存盘，其中存储的数据在服务器重启后将全部丢失</td>
+</tr>
+</tbody></table>
+<p>具体操作：</p>
+<p>切换到root用户，执行targetcli命令,进入targetcli管理界面，help命令可显示帮助</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">cd /backstores/block</span><br><span class="line">create disk0 /dev/md/raid05 # create 资源名 raid设备路径(不限定是raid，只是这里以为例)</span><br></pre></td></tr></table></figure>
+
+<p><strong>创建IQN：</strong></p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">cd &#x2F;iscsi&#x2F;</span><br><span class="line">create iqn.2020-03.com.ravenxrz:server</span><br></pre></td></tr></table></figure>
+
+<p><strong>设置ACL访问列表</strong>：</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">cd /iscsi/iqn.2020-02.com.ravenxrz:server/tpg1/acls</span><br><span class="line">create iqn.2020-03.com.ravenxrz:client		# 这个要记住，后面的客户端通过配置这个来访问资源</span><br></pre></td></tr></table></figure>
+
+<p><strong>创建LUN:</strong></p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">cd ../luns</span><br><span class="line">create /backstores/block/disk0</span><br></pre></td></tr></table></figure>
+
+<p><strong>设置监听IP和端口：</strong></p>
+<p>如果默认可通过多个网卡访问的话，可以不修改（后文配置Multipath访问时，就可以采用默认的配置），否则：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"># 删除默认0.0.0.0 3260端口 </span><br><span class="line">cd iscsi&#x2F;iqn.2020-03.com.ravenxrz:server&#x2F;tpg1&#x2F;portals&#x2F;</span><br><span class="line">delete 0.0.0.0 3260</span><br><span class="line"># 配置你想用于被访问的网卡的ip，可通过ip addr命令查看，如下图</span><br><span class="line">create 192.168.18.130 3260</span><br></pre></td></tr></table></figure>
+
+<p><img src="https://pic.downk.cc/item/5e60ca5198271cb2b8a214fc.jpg"></p>
+<p>最后，贴出<strong>完整配置</strong>：</p>
+<p><img src="https://pic.downk.cc/item/5e60cf6298271cb2b8a5942d.png"></p>
+<p>退出，重启服务，更新配置</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">exit</span><br><span class="line"><span class="meta">#</span><span class="bash"> 这里应该回到了普通termial</span></span><br><span class="line">systemctl restart targetd</span><br></pre></td></tr></table></figure>
+
+<p><strong>设置防火墙，放行3260端口</strong></p>
+<p>如果是在个人的PC上的话，这一步应该没有。</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">firewall-cmd --permanent --add-port&#x3D;3260&#x2F;tcp</span><br><span class="line">firewall-cmd --reload</span><br></pre></td></tr></table></figure>
+
+<h2 id="2-Client端配置"><a href="#2-Client端配置" class="headerlink" title="2. Client端配置"></a>2. Client端配置</h2><p><strong>安装initiator工具包：</strong></p>
+<ul>
+<li>CenteOs：<code>yum install iscsi-initiator-utils</code></li>
+<li>Ubuntu: <code>apt install open-iscsi</code></li>
+</ul>
+<p><strong>修改initiatorname</strong>，这一步很重要，就是把Server中配置的acl名字复制下来，然后修改这个文件：</p>
+<p>vim /etc/iscsi/initiatorname.iscsi</p>
+<p><img src="https://pic.downk.cc/item/5e60cc1d98271cb2b8a35c7b.jpg"></p>
+<p>修改后重启iscsid服务:</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">sudo systemctl restart iscsid</span><br></pre></td></tr></table></figure>
+
+<p><em>我这里是2020-02，上文中配的是2020-03，因为我之前已经配置过了，所以没有修改</em>，如果你一直按照之前的教程配置到这里的话，把2020-02替换为2020-03才行。</p>
+<p><strong>查找iSCSItargets主机的targetname</strong></p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">iscsiadm --mode discovery --type sendtargets --portal 192.168.18.130	# 替换ip</span><br></pre></td></tr></table></figure>
+
+<p><strong>登录iscsi</strong></p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">iscsiadm --mode node --targetname iqn.2020-03.com.ravenxrz:server --portal 192.168.18.130:3260 --login</span><br></pre></td></tr></table></figure>
+
+
+
+<p><em>如果是widnows端登录的话，将会非常简单，这里不作介绍，可参考这篇文章的末尾介绍。</em> <a target="_blank" rel="noopener" href="https://www.jianshu.com/p/648b8be1499f">https://www.jianshu.com/p/648b8be1499f</a></p>
+<h2 id="3-验证及使用"><a href="#3-验证及使用" class="headerlink" title="3. 验证及使用"></a>3. 验证及使用</h2><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">fdisk -l</span><br></pre></td></tr></table></figure>
+
+<p><img src="https://pic.downk.cc/item/5e60cd2898271cb2b8a41232.jpg"></p>
+<p>接下来可以分区，格式化，make文件系统，挂载等，就像和本地磁盘一样。</p>
+<h2 id="4-退出及清除"><a href="#4-退出及清除" class="headerlink" title="4. 退出及清除"></a>4. 退出及清除</h2><p><strong>Client端退出</strong></p>
+<p>取消挂在，然后退出：</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">umount xxx</span><br><span class="line">iscsiadm -m node -T iqn.2020-03.com.ravenxrz:server -u</span><br></pre></td></tr></table></figure>
+
+<p><strong>Server清除所有配置</strong></p>
+<p>清楚配置和配置过程就是一个逆过程，分别删除portals、acls、luns、iSCSI Targets和后端存储即可。</p>
+<h2 id="5-参考"><a href="#5-参考" class="headerlink" title="5. 参考"></a>5. 参考</h2><ul>
+<li><p><a target="_blank" rel="noopener" href="https://www.cnblogs.com/iouwenbo/p/10229055.html"><a target="_blank" rel="noopener" href="https://www.cnblogs.com/iouwenbo/p/10229055.html">iSCSI配置与卸载</a></a></p>
+</li>
+<li><p><a target="_blank" rel="noopener" href="https://www.jianshu.com/p/648b8be1499f">使用 iSCSI 服务部署网络存储</a></p>
+</li>
+<li><p><a target="_blank" rel="noopener" href="https://www.jianshu.com/p/78bedd69bd9d">Linux就该这么学 | 第17章 部署 iSCSI 网络存储</a></p>
+</li>
+</ul>
+
+    </div>
+
+    
+    
+    
+        <div class="reward-container">
+  <div>文章对你有帮助?打赏一下作者吧</div>
+  <button onclick="var qr = document.getElementById('qr'); qr.style.display = (qr.style.display === 'none') ? 'block' : 'none';">
+    打赏
+  </button>
+  <div id="qr" style="display: none;">
+      
+      <div style="display: inline-block;">
+        <img src="https://pic.downk.cc/item/5d064208451253d178a15b27.png" alt="Raven 微信支付">
+        <p>微信支付</p>
+      </div>
+      
+      <div style="display: inline-block;">
+        <img src="https://pic.downk.cc/item/5d0641c7451253d178a15376.png" alt="Raven 支付宝">
+        <p>支付宝</p>
+      </div>
+
+  </div>
+</div>
+
+        
+
+<div>
+<ul class="post-copyright">
+  <li class="post-copyright-author">
+    <strong>本文作者： </strong>Raven
+  </li>
+  <li class="post-copyright-link">
+    <strong>本文链接：</strong>
+    <a href="https://www.ravenxrz.ink/archives/47bf0456.html" title="Linux配置iSCSI服务">https://www.ravenxrz.ink/archives/47bf0456.html</a>
+  </li>
+  <li class="post-copyright-license">
+    <strong>版权声明： </strong>本博客所有文章除特别声明外，均采用 <span class="exturl" data-url="aHR0cHM6Ly9jcmVhdGl2ZWNvbW1vbnMub3JnL2xpY2Vuc2VzL2J5LW5jLXNhLzQuMC8="><i class="fa fa-fw fa-creative-commons"></i>BY-NC-SA</span> 许可协议。转载请注明出处！
+  </li>
+</ul>
+</div>
+
+
+      <footer class="post-footer">
+          
+          <div class="post-tags">
+              <a href="/tags/iSCSI/" rel="tag"><i class="fa fa-tag"></i> iSCSI</a>
+          </div>
+
+        
+
+
+        
+    <div class="post-nav">
+      <div class="post-nav-item">
+    <a href="/archives/e7c30e88.html" rel="prev" title="Ubuntu18修改网卡接口名">
+      <i class="fa fa-chevron-left"></i> Ubuntu18修改网卡接口名
+    </a></div>
+      <div class="post-nav-item">
+    <a href="/archives/f30ddec7.html" rel="next" title="Linux配置Multipath访问iSCSI服务">
+      Linux配置Multipath访问iSCSI服务 <i class="fa fa-chevron-right"></i>
+    </a></div>
+    </div>
+      </footer>
+    
+  </article>
+  
+  
+  
+
+
+
+          </div>
+          
+    <div class="comments" id="gitalk-container"></div>
+
+<script>
+  window.addEventListener('tabs:register', () => {
+    let { activeClass } = CONFIG.comments;
+    if (CONFIG.comments.storage) {
+      activeClass = localStorage.getItem('comments_active') || activeClass;
+    }
+    if (activeClass) {
+      let activeTab = document.querySelector(`a[href="#comment-${activeClass}"]`);
+      if (activeTab) {
+        activeTab.click();
+      }
+    }
+  });
+  if (CONFIG.comments.storage) {
+    window.addEventListener('tabs:click', event => {
+      if (!event.target.matches('.tabs-comment .tab-content .tab-pane')) return;
+      let commentClass = event.target.classList[1];
+      localStorage.setItem('comments_active', commentClass);
+    });
+  }
+</script>
+
+        </div>
+          
+  
+  <div class="toggle sidebar-toggle">
+    <span class="toggle-line toggle-line-first"></span>
+    <span class="toggle-line toggle-line-middle"></span>
+    <span class="toggle-line toggle-line-last"></span>
+  </div>
+
+  <aside class="sidebar">
+    <div class="sidebar-inner">
+
+      <ul class="sidebar-nav motion-element">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          站点概览
+        </li>
+      </ul>
+
+      <!--noindex-->
+      <div class="post-toc-wrap sidebar-panel">
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#0-%E5%9F%BA%E7%A1%80%E7%9F%A5%E8%AF%86"><span class="nav-text">0. 基础知识</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%B8%B8%E7%94%A8%E7%9A%84%E5%9F%BA%E6%9C%AC%E6%A6%82%E5%BF%B5"><span class="nav-text">常用的基本概念</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#1-Server%E9%85%8D%E7%BD%AE"><span class="nav-text">1. Server配置</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#2-Client%E7%AB%AF%E9%85%8D%E7%BD%AE"><span class="nav-text">2. Client端配置</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#3-%E9%AA%8C%E8%AF%81%E5%8F%8A%E4%BD%BF%E7%94%A8"><span class="nav-text">3. 验证及使用</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#4-%E9%80%80%E5%87%BA%E5%8F%8A%E6%B8%85%E9%99%A4"><span class="nav-text">4. 退出及清除</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#5-%E5%8F%82%E8%80%83"><span class="nav-text">5. 参考</span></a></li></ol></div>
+      </div>
+      <!--/noindex-->
+
+      <div class="site-overview-wrap sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+    <img class="site-author-image" itemprop="image" alt="Raven"
+      src="https://pic.downk.cc/item/5e907515504f4bcb04b6f798.jpg">
+  <p class="site-author-name" itemprop="name">Raven</p>
+  <div class="site-description" itemprop="description">分享技术，记录生活</div>
+</div>
+<div class="site-state-wrap motion-element">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+          <a href="/archives/">
+        
+          <span class="site-state-item-count">120</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+            <a href="/categories/">
+          
+        <span class="site-state-item-count">17</span>
+        <span class="site-state-item-name">分类</span></a>
+      </div>
+      <div class="site-state-item site-state-tags">
+            <a href="/tags/">
+          
+        <span class="site-state-item-count">114</span>
+        <span class="site-state-item-name">标签</span></a>
+      </div>
+  </nav>
+</div>
+  <div class="links-of-author motion-element">
+      <span class="links-of-author-item">
+        <span class="exturl" data-url="aHR0cHM6Ly9naXRodWIuY29tL3JhdmVueHJ6" title="GitHub → https:&#x2F;&#x2F;github.com&#x2F;ravenxrz"><i class="fa fa-fw fa-fab fa-github"></i>GitHub</span>
+      </span>
+      <span class="links-of-author-item">
+        <span class="exturl" data-url="bWFpbHRvOnpoYWduLnhpbmdydWlAZm94bWFpbC5jb20=" title="E-Mail → mailto:zhagn.xingrui@foxmail.com"><i class="fa fa-fw fa-fa fa-envelope"></i>E-Mail</span>
+      </span>
+  </div>
+  <div class="cc-license motion-element" itemprop="license">
+    <span class="exturl cc-opacity" data-url="aHR0cHM6Ly9jcmVhdGl2ZWNvbW1vbnMub3JnL2xpY2Vuc2VzL2J5LW5jLXNhLzQuMC8="><img src="/images/cc-by-nc-sa.svg" alt="Creative Commons"></span>
+  </div>
+
+
+  <div class="links-of-blogroll motion-element">
+    <div class="links-of-blogroll-title">
+      <i class="fa fa-fw fa-fa fa-link"></i>
+      Links
+    </div>
+    <ul class="links-of-blogroll-list">
+        <li class="links-of-blogroll-item">
+          <a href="/resources" title="&#x2F;resources">我的资源</a>
+        </li>
+    </ul>
+  </div>
+
+      </div>
+
+    </div>
+  </aside>
+  <div id="sidebar-dimmer"></div>
+
+
+      </div>
+    </main>
+
+    <footer class="footer">
+      <div class="footer-inner">
+        
+
+        
+
+<div class="copyright">
+  
+  &copy; 2017 – 
+  <span itemprop="copyrightYear">2020</span>
+  <span class="with-love">
+    <i class="fa fa-fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">Raven</span>
+</div>
+  <div class="powered-by">由 <span class="exturl theme-link" data-url="aHR0cHM6Ly9oZXhvLmlv">Hexo</span> & <span class="exturl theme-link" data-url="aHR0cHM6Ly9taXN0LnRoZW1lLW5leHQub3Jn">NexT.Mist</span> 强力驱动
+  </div>
+
+        
+<div class="busuanzi-count">
+  <script async src="https://busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+    <span class="post-meta-item" id="busuanzi_container_site_uv" style="display: none;">
+      <span class="post-meta-item-icon">
+        <i class="fa fa-fa fa-user"></i>
+      </span>
+      <span class="site-uv" title="总访客量">
+        <span id="busuanzi_value_site_uv"></span>
+      </span>
+    </span>
+    <span class="post-meta-divider">|</span>
+    <span class="post-meta-item" id="busuanzi_container_site_pv" style="display: none;">
+      <span class="post-meta-item-icon">
+        <i class="fa fa-fa fa-eye"></i>
+      </span>
+      <span class="site-pv" title="总访问量">
+        <span id="busuanzi_value_site_pv"></span>
+      </span>
+    </span>
+</div>
+
+
+
+
+
+
+
+
+      </div>
+    </footer>
+  </div>
+
+  
+  <script src="//cdn.jsdelivr.net/npm/animejs@3.1.0/lib/anime.min.js"></script>
+  <script src="//cdn.jsdelivr.net/npm/medium-zoom@1/dist/medium-zoom.min.js"></script>
+  <script src="//cdn.jsdelivr.net/npm/lozad@1/dist/lozad.min.js"></script>
+  <script src="//cdn.jsdelivr.net/npm/pangu@4/dist/browser/pangu.min.js"></script>
+
+<script src="/js/utils.js"></script>
+
+
+<script src="/js/schemes/muse.js"></script>
+
+
+<script src="/js/next-boot.js"></script>
+
+
+
+
+  
+  <script>
+    (function(){
+      var bp = document.createElement('script');
+      var curProtocol = window.location.protocol.split(':')[0];
+      bp.src = (curProtocol === 'https') ? 'https://zz.bdstatic.com/linksubmit/push.js' : 'http://push.zhanzhang.baidu.com/push.js';
+      var s = document.getElementsByTagName("script")[0];
+      s.parentNode.insertBefore(bp, s);
+    })();
+  </script>
+
+
+
+
+  
+<script src="/js/local-search.js"></script>
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+  
+      
+
+<script>
+  if (typeof MathJax === 'undefined') {
+    window.MathJax = {
+      loader: {
+        source: {
+          '[tex]/amsCd': '[tex]/amscd',
+          '[tex]/AMScd': '[tex]/amscd'
+        }
+      },
+      tex: {
+        inlineMath: {'[+]': [['$', '$']]},
+        tags: 'ams'
+      },
+      options: {
+        renderActions: {
+          findScript: [10, doc => {
+            document.querySelectorAll('script[type^="math/tex"]').forEach(node => {
+              const display = !!node.type.match(/; *mode=display/);
+              const math = new doc.options.MathItem(node.textContent, doc.inputJax[0], display);
+              const text = document.createTextNode('');
+              node.parentNode.replaceChild(text, node);
+              math.start = {node: text, delim: '', n: 0};
+              math.end = {node: text, delim: '', n: 0};
+              doc.math.push(math);
+            });
+          }, '', false],
+          insertedScript: [200, () => {
+            document.querySelectorAll('mjx-container').forEach(node => {
+              let target = node.parentNode;
+              if (target.nodeName.toLowerCase() === 'li') {
+                target.parentNode.classList.add('has-jax');
+              }
+            });
+          }, '', false]
+        }
+      }
+    };
+    (function () {
+      var script = document.createElement('script');
+      script.src = '//cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js';
+      script.defer = true;
+      document.head.appendChild(script);
+    })();
+  } else {
+    MathJax.startup.document.state(0);
+    MathJax.texReset();
+    MathJax.typeset();
+  }
+</script>
+
+    
+
+  
+  <script src="//cdn.jsdelivr.net/npm/quicklink@1/dist/quicklink.umd.js"></script>
+  <script>
+      window.addEventListener('load', () => {
+      quicklink({
+        timeout : 3000,
+        priority: true,
+        ignores : [uri => uri.includes('#'),uri => uri === 'https://www.ravenxrz.ink/archives/47bf0456.html',]
+      });
+      });
+  </script>
+
+<link rel="stylesheet" href="//cdn.jsdelivr.net/npm/gitalk@1/dist/gitalk.min.css">
+
+<script>
+NexT.utils.loadComments(document.querySelector('#gitalk-container'), () => {
+  NexT.utils.getScript('//cdn.jsdelivr.net/npm/gitalk@1/dist/gitalk.min.js', () => {
+    var gitalk = new Gitalk({
+      clientID    : 'b2fd373d2ca2e03e591e',
+      clientSecret: 'de4ab066908c1fbd32d3a45e091b3538761d685b',
+      repo        : 'BlogComment',
+      owner       : 'ravenxrz',
+      admin       : ['ravenxrz'],
+      id          : '04e846f02a1f0857e0fab51edf5a07d1',
+        language: '',
+      distractionFreeMode: true
+    });
+    gitalk.render('gitalk-container');
+  }, window.Gitalk);
+});
+</script>
+
+</body>
+</html>

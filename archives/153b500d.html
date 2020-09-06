@@ -1,0 +1,856 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 5.1.1">
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+  <meta http-equiv="Cache-Control" content="no-transform">
+  <meta http-equiv="Cache-Control" content="no-siteapp">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+<link rel="stylesheet" href="//cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@5/css/all.min.css">
+  <link rel="stylesheet" href="//cdn.jsdelivr.net/npm/pace-js@1/themes/blue/pace-theme-minimal.css">
+  <script src="//cdn.jsdelivr.net/npm/pace-js@1/pace.min.js"></script>
+
+<script id="hexo-configurations">
+    var NexT = window.NexT || {};
+    var CONFIG = {"hostname":"www.ravenxrz.ink","root":"/","scheme":"Mist","version":"7.8.0","exturl":true,"sidebar":{"position":"left","display":"always","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":true,"show_result":true,"style":"flat"},"back2top":{"enable":true,"sidebar":false,"scrollpercent":true},"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":true,"lazyload":true,"pangu":true,"comments":{"style":"tabs","active":"gitalk","storage":true,"lazyload":true,"nav":null,"activeClass":"gitalk"},"algolia":{"hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":true,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},"motion":{"enable":false,"async":true,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}}};
+  </script>
+
+  <meta name="description" content="本次 lab, cachelab. 0. 说明从这个lab开始，终于开始编写一些高级语言的代码了，而不像之前要去分析汇编。但是这并不意味这题目就简单了，实际上，cachelab耗费了我2天多的时间。ok，言归正传，这个lab的目的是什么呢？ cachelab帮助我们理解计算机存储体系中的重要组成部分–cache。 理解cache是如何组织的，如何工作的，又是如何影响我们的程序的性能的。">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Csapp-Cachelab题解">
+<meta property="og:url" content="https://www.ravenxrz.ink/archives/153b500d.html">
+<meta property="og:site_name" content="Raven&#39;s Blog">
+<meta property="og:description" content="本次 lab, cachelab. 0. 说明从这个lab开始，终于开始编写一些高级语言的代码了，而不像之前要去分析汇编。但是这并不意味这题目就简单了，实际上，cachelab耗费了我2天多的时间。ok，言归正传，这个lab的目的是什么呢？ cachelab帮助我们理解计算机存储体系中的重要组成部分–cache。 理解cache是如何组织的，如何工作的，又是如何影响我们的程序的性能的。">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="https://cdn.jsdelivr.net/gh/ravenxrz/PicBed/img/image-20200726101259903.png">
+<meta property="og:image" content="https://cdn.jsdelivr.net/gh/ravenxrz/PicBed/img/image-20200726102158585.png">
+<meta property="og:image" content="https://cdn.jsdelivr.net/gh/ravenxrz/PicBed/img/image-20200729141941145.png">
+<meta property="og:image" content="https://cdn.jsdelivr.net/gh/ravenxrz/PicBed/img/image-20200729142729751.png">
+<meta property="og:image" content="https://cdn.jsdelivr.net/gh/ravenxrz/PicBed/img/image-20200729144043920.png">
+<meta property="og:image" content="https://cdn.jsdelivr.net/gh/ravenxrz/PicBed/img/image-20200729144439379.png">
+<meta property="og:image" content="https://cdn.jsdelivr.net/gh/ravenxrz/PicBed/img/image-20200729143603293.png">
+<meta property="og:image" content="https://cdn.jsdelivr.net/gh/ravenxrz/PicBed/img/image-20200729145230952.png">
+<meta property="og:image" content="https://cdn.jsdelivr.net/gh/ravenxrz/PicBed/img/image-20200729145241517.png">
+<meta property="og:image" content="https://cdn.jsdelivr.net/gh/ravenxrz/PicBed/img/image-20200729150322560.png">
+<meta property="og:image" content="https://cdn.jsdelivr.net/gh/ravenxrz/PicBed/img/5f212d3314195aa594512d18.png">
+<meta property="og:image" content="https://cdn.jsdelivr.net/gh/ravenxrz/PicBed/img/5f212d5b14195aa594514cfb.png">
+<meta property="og:image" content="https://cdn.jsdelivr.net/gh/ravenxrz/PicBed/img/5f212d6b14195aa59451559a.png">
+<meta property="og:image" content="https://cdn.jsdelivr.net/gh/ravenxrz/PicBed/img/5f212d7d14195aa594515d89.png">
+<meta property="og:image" content="https://cdn.jsdelivr.net/gh/ravenxrz/PicBed/img/5f212d8c14195aa5945163a2.png">
+<meta property="article:published_time" content="2020-07-29T10:52:24.000Z">
+<meta property="article:modified_time" content="2020-09-06T02:45:08.027Z">
+<meta property="article:author" content="Raven">
+<meta property="article:tag" content="cachelab">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://cdn.jsdelivr.net/gh/ravenxrz/PicBed/img/image-20200726101259903.png">
+
+<link rel="canonical" href="https://www.ravenxrz.ink/archives/153b500d.html">
+
+
+<script id="page-configurations">
+  // https://hexo.io/docs/variables.html
+  CONFIG.page = {
+    sidebar: "",
+    isHome : false,
+    isPost : true,
+    lang   : 'zh-CN'
+  };
+</script>
+
+  <title>Csapp-Cachelab题解 | Raven's Blog</title>
+  
+
+
+
+
+
+
+  <noscript>
+  <style>
+  .use-motion .brand,
+  .use-motion .menu-item,
+  .sidebar-inner,
+  .use-motion .post-block,
+  .use-motion .pagination,
+  .use-motion .comments,
+  .use-motion .post-header,
+  .use-motion .post-body,
+  .use-motion .collection-header { opacity: initial; }
+
+  .use-motion .site-title,
+  .use-motion .site-subtitle {
+    opacity: initial;
+    top: initial;
+  }
+
+  .use-motion .logo-line-before i { left: initial; }
+  .use-motion .logo-line-after i { right: initial; }
+  </style>
+</noscript>
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage">
+  <div class="container">
+    <div class="headband"></div>
+
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切换导航栏">
+      <span class="toggle-line toggle-line-first"></span>
+      <span class="toggle-line toggle-line-middle"></span>
+      <span class="toggle-line toggle-line-last"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <span class="logo-line-before"><i></i></span>
+      <h1 class="site-title">Raven's Blog</h1>
+      <span class="logo-line-after"><i></i></span>
+    </a>
+      <p class="site-subtitle" itemprop="description">zhang.xingrui@foxmail.com</p>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger">
+        <i class="fa fa-search fa-fw fa-lg"></i>
+    </div>
+  </div>
+</div>
+
+
+
+
+<nav class="site-nav">
+  <ul id="menu" class="menu">
+        <li class="menu-item menu-item-home">
+
+    <a href="/" rel="section"><i class="fa fa-fw fa-fa fa-home"></i>首页</a>
+
+  </li>
+        <li class="menu-item menu-item-archives">
+
+    <a href="/archives/" rel="section"><i class="fa fa-fw fa-fa fa-archive"></i>归档<span class="badge">120</span></a>
+
+  </li>
+        <li class="menu-item menu-item-categories">
+
+    <a href="/categories/" rel="section"><i class="fa fa-fw fa-fa fa-th"></i>分类<span class="badge">17</span></a>
+
+  </li>
+        <li class="menu-item menu-item-tags">
+
+    <a href="/tags/" rel="section"><i class="fa fa-fw fa-fa fa-tags"></i>标签<span class="badge">114</span></a>
+
+  </li>
+        <li class="menu-item menu-item-about">
+
+    <a href="/about/" rel="section"><i class="fa fa-fw fa-fa fa-user"></i>关于</a>
+
+  </li>
+      <li class="menu-item menu-item-search">
+        <a role="button" class="popup-trigger"><i class="fa fa-search fa-fw"></i>搜索
+        </a>
+      </li>
+  </ul>
+</nav>
+
+
+
+  <div class="search-pop-overlay">
+    <div class="popup search-popup">
+        <div class="search-header">
+  <span class="search-icon">
+    <i class="fa fa-search"></i>
+  </span>
+  <div class="search-input-container">
+    <input autocomplete="off" autocapitalize="off"
+           placeholder="搜索..." spellcheck="false"
+           type="search" class="search-input">
+  </div>
+  <span class="popup-btn-close">
+    <i class="fa fa-times-circle"></i>
+  </span>
+</div>
+<div id="search-result">
+  <div id="no-result">
+    <i class="fa fa-spinner fa-pulse fa-5x fa-fw"></i>
+  </div>
+</div>
+
+    </div>
+  </div>
+
+</div>
+    </header>
+
+    
+  <div class="back-to-top">
+    <i class="fa fa-arrow-up"></i>
+    <span>0%</span>
+  </div>
+
+  <span class="exturl github-corner" data-url="aHR0cHM6Ly9naXRodWIuY29tL3JhdmVueHJ6" title="Follow me on GitHub" aria-label="Follow me on GitHub"><svg width="80" height="80" viewBox="0 0 250 250" aria-hidden="true"><path d="M0,0 L115,115 L130,115 L142,142 L250,250 L250,0 Z"></path><path d="M128.3,109.0 C113.8,99.7 119.0,89.6 119.0,89.6 C122.0,82.7 120.5,78.6 120.5,78.6 C119.2,72.0 123.4,76.3 123.4,76.3 C127.3,80.9 125.5,87.3 125.5,87.3 C122.9,97.6 130.6,101.9 134.4,103.2" fill="currentColor" style="transform-origin: 130px 106px;" class="octo-arm"></path><path d="M115.0,115.0 C114.9,115.1 118.7,116.5 119.8,115.4 L133.7,101.6 C136.9,99.2 139.9,98.4 142.2,98.6 C133.8,88.0 127.5,74.4 143.8,58.0 C148.5,53.4 154.0,51.2 159.7,51.0 C160.3,49.4 163.2,43.6 171.4,40.1 C171.4,40.1 176.1,42.5 178.8,56.2 C183.1,58.6 187.2,61.8 190.9,65.4 C194.5,69.0 197.7,73.2 200.1,77.6 C213.8,80.2 216.3,84.9 216.3,84.9 C212.7,93.1 206.9,96.0 205.4,96.6 C205.1,102.4 203.0,107.8 198.3,112.5 C181.9,128.9 168.3,122.5 157.7,114.1 C157.9,116.9 156.7,120.9 152.7,124.9 L141.0,136.5 C139.8,137.7 141.6,141.9 141.8,141.8 Z" fill="currentColor" class="octo-body"></path></svg></span>
+
+
+    <main class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          
+
+          <div class="content post posts-expand">
+            
+
+    
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="https://www.ravenxrz.ink/archives/153b500d.html">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="https://pic.downk.cc/item/5e907515504f4bcb04b6f798.jpg">
+      <meta itemprop="name" content="Raven">
+      <meta itemprop="description" content="分享技术，记录生活">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Raven's Blog">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          Csapp-Cachelab题解
+        </h1>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+
+              <time title="创建时间：2020-07-29 18:52:24" itemprop="dateCreated datePublished" datetime="2020-07-29T18:52:24+08:00">2020-07-29</time>
+            </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-calendar-check-o"></i>
+                </span>
+                <span class="post-meta-item-text">更新于</span>
+                <time title="修改时间：2020-09-06 10:45:08" itemprop="dateModified" datetime="2020-09-06T10:45:08+08:00">2020-09-06</time>
+              </span>
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              <span class="post-meta-item-text">分类于</span>
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/Csapp/" itemprop="url" rel="index"><span itemprop="name">Csapp</span></a>
+                </span>
+            </span>
+
+          
+            <span class="post-meta-item" title="阅读次数" id="busuanzi_container_page_pv" style="display: none;">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-fa fa-eye"></i>
+              </span>
+              <span class="post-meta-item-text">阅读次数：</span>
+              <span id="busuanzi_value_page_pv"></span>
+            </span>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+        <p>本次 lab, cachelab.</p>
+<h2 id="0-说明"><a href="#0-说明" class="headerlink" title="0. 说明"></a>0. 说明</h2><p>从这个lab开始，终于开始编写一些高级语言的代码了，而不像之前要去分析汇编。但是这并不意味这题目就简单了，实际上，cachelab耗费了我2天多的时间。ok，言归正传，这个lab的目的是什么呢？</p>
+<p>cachelab帮助我们理解计算机存储体系中的重要组成部分–cache。 理解cache是如何组织的，如何工作的，又是如何影响我们的程序的性能的。</p>
+<a id="more"></a>
+
+<img src="https://cdn.jsdelivr.net/gh/ravenxrz/PicBed/img/image-20200726101259903.png" style="zoom: 33%;" />
+
+<p>cache站立于整个存储体系的上端（低于寄存器），其重要性不言而喻了。</p>
+<p>题目说明：</p>
+<p>cachelab只有2个题目。</p>
+<ol>
+<li>写一个cache工作的模拟器，给一段内存访问的trace file，根据trace file仿真，得到这段trace file的hit，miss，eviction数。</li>
+<li>编写cache友好的代码，具体是给3种给定大小的矩阵A，求A的转置，每种大小都要miss要求。</li>
+</ol>
+<p>具体题目请参照cachelab的write up。</p>
+<h2 id="1-第一部分–cache工作方式仿真"><a href="#1-第一部分–cache工作方式仿真" class="headerlink" title="1. 第一部分–cache工作方式仿真"></a>1. 第一部分–cache工作方式仿真</h2><p>做完这个题目，可以让人理解cache的组织，工作方式，替换策略等。<strong>先说一下题目，</strong>本题主要可以分为以下几个部分：</p>
+<ol>
+<li>trace file</li>
+</ol>
+<p>题目会给出一些trace files， trace file的格式如下:</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">I 0400d7d4,8</span><br><span class="line"> M 0421c7f0,4</span><br><span class="line"> L 04f6b868,8</span><br><span class="line"> S 7ff0005c8,8</span><br></pre></td></tr></table></figure>
+
+<p>语法为：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">[space]operation address,size</span><br></pre></td></tr></table></figure>
+
+<p>The operation ﬁeld denotes the type of memory access: “I” denotes an instruction load, “L” a data load,  “S” a data store, and “M” a data modify (i.e., a data load followed by a data store). There is never a space before each “I”. There is always a space before each “M”, “L”, and “S”. The address ﬁeld speciﬁes a 64-bit hexadecimal memory address. The size ﬁeld speciﬁes the number of bytes accessed by the operation.</p>
+<p>值得注意的是，我们只关注 data ，也就是 M,L,S开头的指令，不关注I开头的指令。解析时，可根据开头是否有空格来解析。</p>
+<p>trace file就是我们要编写的代码的输入源，我们要做的就是根据这些trace file来仿真。</p>
+<ol start="2">
+<li>cache的组织方式</li>
+</ol>
+<p>题目要求，最终的程序可以接受一些参数，改变cache的组织方式。 如：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">.&#x2F;csim-ref -s 4 -E 1 -b 4 -t traces&#x2F;yi.trace</span><br></pre></td></tr></table></figure>
+
+<p>代表：</p>
+<ul>
+<li>set的bit位数为: 4</li>
+<li>E=1，即一个set中只有一个cacheline</li>
+<li>b=4，即一个cache line的block位数为4</li>
+<li>trace file的路径为 traces/yi.trace</li>
+</ul>
+<p>具体可使用的语法为：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">Usage: .&#x2F;csim-ref [-hv] -s &lt;s&gt; -E &lt;E&gt; -b &lt;b&gt; -t &lt;tracefile&gt;</span><br><span class="line">• -h: Optional help ﬂag that prints usage info</span><br><span class="line">• -v: Optional verbose ﬂag that displays trace info</span><br><span class="line">• -s &lt;s&gt;: Number of set index bits (S &#x3D; 2^s is the number of sets)</span><br><span class="line">• -E &lt;E&gt;: Associativity (number of lines per set)</span><br><span class="line">• -b &lt;b&gt;: Number of block bits (B &#x3D; 2^b is the block size)</span><br><span class="line">• -t &lt;tracefile&gt;: Name of the valgrind trace to replay</span><br></pre></td></tr></table></figure>
+
+<ol start="3">
+<li>cacheline 的替换策略，采用LRU</li>
+</ol>
+<p>ok，知道这些了，题目还给了我们一个标准答案，csim-ref, 我们自己最终的程序名为csim. 最终只要csim的输入输出和csim-ref相同即可。</p>
+<p><strong>写程序之前，一定要分析好再写，所以先来分析下我们该怎么做：</strong></p>
+<p>需要哪些背景知识：</p>
+<p>cache的组织方式：</p>
+<img src="https://cdn.jsdelivr.net/gh/ravenxrz/PicBed/img/image-20200726102158585.png" style="zoom: 50%;" />
+
+<p>这张图，给出了cache的组织方式以及cacheline的read方式。</p>
+<p>cache的组织方式非常直观，主要参数为 S, E, B. 这3个参数也决定了cache的相联关系：</p>
+<ol>
+<li>E=1, 直接映射</li>
+<li>E!=1,S!=1, E路S组相联</li>
+<li>S=1, 全相联映射。（内存和Disk就是这种映射）</li>
+</ol>
+<p>cacheline的read分为以下几步：</p>
+<ol>
+<li>根绝set bit，决定set索引</li>
+<li>比较该组的所有line，是否有匹配的tag。如有，并且valid有效，则hit，并根据b 决定数据偏移。否则，第3步。</li>
+<li>load该cacheline到cache中，如果该组还有空块（valid=0),则加载到空块中，如果没有空块，则根据替换策略进行替换。</li>
+</ol>
+<p><strong>总结下read(load)操作:</strong></p>
+<ol>
+<li>hit, 能在当前cache中找到cacheline</li>
+<li>miss，不能在cahce中找到cacheline，但是该组中有空cacheline。</li>
+<li>eviction，不能再cache中找到cacheline，且该组中没有空cacheline，需要根据替换策略进行替换。</li>
+</ol>
+<p><strong>现在在看下write(store)操作：</strong></p>
+<p>cachelab采用的的是write-back+write-allocate方式。所以，一旦我们的store miss了，需要将该块load到cache中。分析可以下3中情况：</p>
+<ol>
+<li>hit, 能在当前cache中找到cacheline</li>
+<li>miss，不能在cahce中找到cacheline，但是该组中有空cacheline。</li>
+<li>eviction，不能在cache中找到cacheline，且该组中没有空cacheline，需要根据替换策略进行替换。</li>
+</ol>
+<p><strong>最后看下modify操作：</strong></p>
+<p>modify结合了load和store操作，分析可得以下3种情况：</p>
+<ol>
+<li>hit(load) + hit(store), load命中，store也命中</li>
+<li>miss(load)+hit(store), load miss，但是当前cache set中有空块，直接load到cache即可，后续store命中。</li>
+<li>miss(load)+eviction(load)+hit(store),cache种没有该cacheline，且该组没有空块，最后store可命中</li>
+</ol>
+<blockquote>
+<p>额外啰嗦一段：</p>
+<p>cacheline和block非常容易搞混，因为一会说将某个数据块 load到cache，一会又说将某个cacheline load到cache中。 </p>
+<p>其实通常我们说将xx数据块load到cache中，这个数据块是包围在一个cacheline中的，cacheline除了这个数据块以外，还会包含一些元数据，如tag，valid，以及用于实现替换策略的辅助位等。</p>
+<p><strong>简单来说，cacheline包含block， 通常说的cacheline大小，都是说的cacheline内部的block的大小。如32字节，64字节等，都是说的cacheline内部的block的大小为32，64字节</strong></p>
+</blockquote>
+<p>好了，分析到这里，基本上把整个流程走了一遍。剩下一些与主题无关代码，包括参数解析，trace file解析，可自行看以下代码（代码比较长，因为我加了详细注释，同时为了规范，加了一些“无用”代码，但看着应该没有压力）：</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br><span class="line">75</span><br><span class="line">76</span><br><span class="line">77</span><br><span class="line">78</span><br><span class="line">79</span><br><span class="line">80</span><br><span class="line">81</span><br><span class="line">82</span><br><span class="line">83</span><br><span class="line">84</span><br><span class="line">85</span><br><span class="line">86</span><br><span class="line">87</span><br><span class="line">88</span><br><span class="line">89</span><br><span class="line">90</span><br><span class="line">91</span><br><span class="line">92</span><br><span class="line">93</span><br><span class="line">94</span><br><span class="line">95</span><br><span class="line">96</span><br><span class="line">97</span><br><span class="line">98</span><br><span class="line">99</span><br><span class="line">100</span><br><span class="line">101</span><br><span class="line">102</span><br><span class="line">103</span><br><span class="line">104</span><br><span class="line">105</span><br><span class="line">106</span><br><span class="line">107</span><br><span class="line">108</span><br><span class="line">109</span><br><span class="line">110</span><br><span class="line">111</span><br><span class="line">112</span><br><span class="line">113</span><br><span class="line">114</span><br><span class="line">115</span><br><span class="line">116</span><br><span class="line">117</span><br><span class="line">118</span><br><span class="line">119</span><br><span class="line">120</span><br><span class="line">121</span><br><span class="line">122</span><br><span class="line">123</span><br><span class="line">124</span><br><span class="line">125</span><br><span class="line">126</span><br><span class="line">127</span><br><span class="line">128</span><br><span class="line">129</span><br><span class="line">130</span><br><span class="line">131</span><br><span class="line">132</span><br><span class="line">133</span><br><span class="line">134</span><br><span class="line">135</span><br><span class="line">136</span><br><span class="line">137</span><br><span class="line">138</span><br><span class="line">139</span><br><span class="line">140</span><br><span class="line">141</span><br><span class="line">142</span><br><span class="line">143</span><br><span class="line">144</span><br><span class="line">145</span><br><span class="line">146</span><br><span class="line">147</span><br><span class="line">148</span><br><span class="line">149</span><br><span class="line">150</span><br><span class="line">151</span><br><span class="line">152</span><br><span class="line">153</span><br><span class="line">154</span><br><span class="line">155</span><br><span class="line">156</span><br><span class="line">157</span><br><span class="line">158</span><br><span class="line">159</span><br><span class="line">160</span><br><span class="line">161</span><br><span class="line">162</span><br><span class="line">163</span><br><span class="line">164</span><br><span class="line">165</span><br><span class="line">166</span><br><span class="line">167</span><br><span class="line">168</span><br><span class="line">169</span><br><span class="line">170</span><br><span class="line">171</span><br><span class="line">172</span><br><span class="line">173</span><br><span class="line">174</span><br><span class="line">175</span><br><span class="line">176</span><br><span class="line">177</span><br><span class="line">178</span><br><span class="line">179</span><br><span class="line">180</span><br><span class="line">181</span><br><span class="line">182</span><br><span class="line">183</span><br><span class="line">184</span><br><span class="line">185</span><br><span class="line">186</span><br><span class="line">187</span><br><span class="line">188</span><br><span class="line">189</span><br><span class="line">190</span><br><span class="line">191</span><br><span class="line">192</span><br><span class="line">193</span><br><span class="line">194</span><br><span class="line">195</span><br><span class="line">196</span><br><span class="line">197</span><br><span class="line">198</span><br><span class="line">199</span><br><span class="line">200</span><br><span class="line">201</span><br><span class="line">202</span><br><span class="line">203</span><br><span class="line">204</span><br><span class="line">205</span><br><span class="line">206</span><br><span class="line">207</span><br><span class="line">208</span><br><span class="line">209</span><br><span class="line">210</span><br><span class="line">211</span><br><span class="line">212</span><br><span class="line">213</span><br><span class="line">214</span><br><span class="line">215</span><br><span class="line">216</span><br><span class="line">217</span><br><span class="line">218</span><br><span class="line">219</span><br><span class="line">220</span><br><span class="line">221</span><br><span class="line">222</span><br><span class="line">223</span><br><span class="line">224</span><br><span class="line">225</span><br><span class="line">226</span><br><span class="line">227</span><br><span class="line">228</span><br><span class="line">229</span><br><span class="line">230</span><br><span class="line">231</span><br><span class="line">232</span><br><span class="line">233</span><br><span class="line">234</span><br><span class="line">235</span><br><span class="line">236</span><br><span class="line">237</span><br><span class="line">238</span><br><span class="line">239</span><br><span class="line">240</span><br><span class="line">241</span><br><span class="line">242</span><br><span class="line">243</span><br><span class="line">244</span><br><span class="line">245</span><br><span class="line">246</span><br><span class="line">247</span><br><span class="line">248</span><br><span class="line">249</span><br><span class="line">250</span><br><span class="line">251</span><br><span class="line">252</span><br><span class="line">253</span><br><span class="line">254</span><br><span class="line">255</span><br><span class="line">256</span><br><span class="line">257</span><br><span class="line">258</span><br><span class="line">259</span><br><span class="line">260</span><br><span class="line">261</span><br><span class="line">262</span><br><span class="line">263</span><br><span class="line">264</span><br><span class="line">265</span><br><span class="line">266</span><br><span class="line">267</span><br><span class="line">268</span><br><span class="line">269</span><br><span class="line">270</span><br><span class="line">271</span><br><span class="line">272</span><br><span class="line">273</span><br><span class="line">274</span><br><span class="line">275</span><br><span class="line">276</span><br><span class="line">277</span><br><span class="line">278</span><br><span class="line">279</span><br><span class="line">280</span><br><span class="line">281</span><br><span class="line">282</span><br><span class="line">283</span><br><span class="line">284</span><br><span class="line">285</span><br><span class="line">286</span><br><span class="line">287</span><br><span class="line">288</span><br><span class="line">289</span><br><span class="line">290</span><br><span class="line">291</span><br><span class="line">292</span><br><span class="line">293</span><br><span class="line">294</span><br><span class="line">295</span><br><span class="line">296</span><br><span class="line">297</span><br><span class="line">298</span><br><span class="line">299</span><br><span class="line">300</span><br><span class="line">301</span><br><span class="line">302</span><br><span class="line">303</span><br><span class="line">304</span><br><span class="line">305</span><br><span class="line">306</span><br><span class="line">307</span><br><span class="line">308</span><br><span class="line">309</span><br><span class="line">310</span><br><span class="line">311</span><br><span class="line">312</span><br><span class="line">313</span><br><span class="line">314</span><br><span class="line">315</span><br><span class="line">316</span><br><span class="line">317</span><br><span class="line">318</span><br><span class="line">319</span><br><span class="line">320</span><br><span class="line">321</span><br><span class="line">322</span><br><span class="line">323</span><br><span class="line">324</span><br><span class="line">325</span><br><span class="line">326</span><br><span class="line">327</span><br><span class="line">328</span><br><span class="line">329</span><br><span class="line">330</span><br><span class="line">331</span><br><span class="line">332</span><br><span class="line">333</span><br><span class="line">334</span><br><span class="line">335</span><br><span class="line">336</span><br><span class="line">337</span><br><span class="line">338</span><br><span class="line">339</span><br><span class="line">340</span><br><span class="line">341</span><br><span class="line">342</span><br><span class="line">343</span><br><span class="line">344</span><br><span class="line">345</span><br><span class="line">346</span><br><span class="line">347</span><br><span class="line">348</span><br><span class="line">349</span><br><span class="line">350</span><br><span class="line">351</span><br><span class="line">352</span><br><span class="line">353</span><br><span class="line">354</span><br><span class="line">355</span><br><span class="line">356</span><br><span class="line">357</span><br><span class="line">358</span><br><span class="line">359</span><br><span class="line">360</span><br><span class="line">361</span><br><span class="line">362</span><br><span class="line">363</span><br><span class="line">364</span><br><span class="line">365</span><br><span class="line">366</span><br><span class="line">367</span><br><span class="line">368</span><br><span class="line">369</span><br><span class="line">370</span><br><span class="line">371</span><br><span class="line">372</span><br><span class="line">373</span><br><span class="line">374</span><br><span class="line">375</span><br><span class="line">376</span><br><span class="line">377</span><br><span class="line">378</span><br><span class="line">379</span><br><span class="line">380</span><br><span class="line">381</span><br><span class="line">382</span><br><span class="line">383</span><br><span class="line">384</span><br><span class="line">385</span><br><span class="line">386</span><br><span class="line">387</span><br><span class="line">388</span><br><span class="line">389</span><br><span class="line">390</span><br><span class="line">391</span><br><span class="line">392</span><br><span class="line">393</span><br><span class="line">394</span><br><span class="line">395</span><br><span class="line">396</span><br><span class="line">397</span><br><span class="line">398</span><br><span class="line">399</span><br><span class="line">400</span><br><span class="line">401</span><br><span class="line">402</span><br><span class="line">403</span><br><span class="line">404</span><br><span class="line">405</span><br><span class="line">406</span><br><span class="line">407</span><br><span class="line">408</span><br><span class="line">409</span><br><span class="line">410</span><br><span class="line">411</span><br><span class="line">412</span><br><span class="line">413</span><br><span class="line">414</span><br><span class="line">415</span><br><span class="line">416</span><br><span class="line">417</span><br><span class="line">418</span><br><span class="line">419</span><br><span class="line">420</span><br><span class="line">421</span><br><span class="line">422</span><br><span class="line">423</span><br><span class="line">424</span><br><span class="line">425</span><br><span class="line">426</span><br><span class="line">427</span><br><span class="line">428</span><br><span class="line">429</span><br><span class="line">430</span><br><span class="line">431</span><br><span class="line">432</span><br><span class="line">433</span><br><span class="line">434</span><br><span class="line">435</span><br><span class="line">436</span><br><span class="line">437</span><br><span class="line">438</span><br><span class="line">439</span><br><span class="line">440</span><br><span class="line">441</span><br><span class="line">442</span><br><span class="line">443</span><br><span class="line">444</span><br><span class="line">445</span><br><span class="line">446</span><br><span class="line">447</span><br><span class="line">448</span><br><span class="line">449</span><br><span class="line">450</span><br><span class="line">451</span><br><span class="line">452</span><br><span class="line">453</span><br><span class="line">454</span><br><span class="line">455</span><br><span class="line">456</span><br><span class="line">457</span><br><span class="line">458</span><br><span class="line">459</span><br><span class="line">460</span><br><span class="line">461</span><br><span class="line">462</span><br><span class="line">463</span><br><span class="line">464</span><br><span class="line">465</span><br><span class="line">466</span><br><span class="line">467</span><br><span class="line">468</span><br><span class="line">469</span><br><span class="line">470</span><br><span class="line">471</span><br><span class="line">472</span><br><span class="line">473</span><br><span class="line">474</span><br><span class="line">475</span><br><span class="line">476</span><br><span class="line">477</span><br><span class="line">478</span><br><span class="line">479</span><br><span class="line">480</span><br><span class="line">481</span><br><span class="line">482</span><br><span class="line">483</span><br><span class="line">484</span><br><span class="line">485</span><br><span class="line">486</span><br><span class="line">487</span><br><span class="line">488</span><br><span class="line">489</span><br><span class="line">490</span><br><span class="line">491</span><br><span class="line">492</span><br><span class="line">493</span><br><span class="line">494</span><br><span class="line">495</span><br><span class="line">496</span><br><span class="line">497</span><br><span class="line">498</span><br><span class="line">499</span><br><span class="line">500</span><br><span class="line">501</span><br><span class="line">502</span><br><span class="line">503</span><br><span class="line">504</span><br><span class="line">505</span><br><span class="line">506</span><br><span class="line">507</span><br><span class="line">508</span><br><span class="line">509</span><br><span class="line">510</span><br><span class="line">511</span><br><span class="line">512</span><br><span class="line">513</span><br><span class="line">514</span><br><span class="line">515</span><br><span class="line">516</span><br><span class="line">517</span><br><span class="line">518</span><br><span class="line">519</span><br><span class="line">520</span><br><span class="line">521</span><br><span class="line">522</span><br><span class="line">523</span><br><span class="line">524</span><br><span class="line">525</span><br><span class="line">526</span><br><span class="line">527</span><br><span class="line">528</span><br><span class="line">529</span><br><span class="line">530</span><br><span class="line">531</span><br><span class="line">532</span><br><span class="line">533</span><br><span class="line">534</span><br><span class="line">535</span><br><span class="line">536</span><br><span class="line">537</span><br><span class="line">538</span><br><span class="line">539</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">/**</span></span><br><span class="line"><span class="comment"> * @author: raven</span></span><br><span class="line"><span class="comment"> * @date 2020-7-26</span></span><br><span class="line"><span class="comment"> * @description: 模拟仿真计算机cache的 load modify load过程</span></span><br><span class="line"><span class="comment"> * @issue:</span></span><br><span class="line"><span class="comment"> * 1.没有考虑任何复杂度问题</span></span><br><span class="line"><span class="comment"> * 2.函数没有做安全性检查,比如判定null等</span></span><br><span class="line"><span class="comment"> * 3.main函数中使用到的内存引用没有free</span></span><br><span class="line"><span class="comment"> */</span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&quot;cachelab.h&quot;</span></span></span><br><span class="line"></span><br><span class="line"><span class="meta">#<span class="meta-keyword">define</span> _GNU_SOURCE         <span class="comment">// getline函数不属于c标准, 需要开启GNU扩展</span></span></span><br><span class="line"></span><br><span class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;stdio.h&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;stdlib.h&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;getopt.h&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;ctype.h&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;string.h&gt;</span></span></span><br><span class="line"></span><br><span class="line"><span class="comment">/*--------------------------前置定义-----------------------*/</span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">define</span> FILE_NAME_LEN 100</span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">define</span> OS_PTR_LEN 64</span></span><br><span class="line"><span class="keyword">typedef</span> <span class="keyword">unsigned</span> <span class="keyword">long</span> <span class="keyword">long</span> <span class="keyword">address64_t</span>;     <span class="comment">// 64-bit address</span></span><br><span class="line"></span><br><span class="line"><span class="meta">#<span class="meta-keyword">define</span> DEBUG_HIT(verbose) do&#123;<span class="meta-keyword">if</span>(verbose) printf(<span class="meta-string">&quot;hit\n&quot;</span>);&#125;while(0)</span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">define</span> DEBUG_MISS(verbose) do&#123;<span class="meta-keyword">if</span>(verbose) printf(<span class="meta-string">&quot;miss\n&quot;</span>);&#125;while(0)</span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">define</span> DEBUG_EVICT(verbose) do&#123;<span class="meta-keyword">if</span>(verbose) printf(<span class="meta-string">&quot;evict\n&quot;</span>);&#125;while(0)</span></span><br><span class="line"></span><br><span class="line"><span class="comment">/*--------------------------数据结构定义-----------------------*/</span></span><br><span class="line"><span class="comment">/**</span></span><br><span class="line"><span class="comment"> * 参数</span></span><br><span class="line"><span class="comment"> */</span></span><br><span class="line"><span class="keyword">typedef</span> <span class="class"><span class="keyword">struct</span> <span class="title">param</span> &#123;</span></span><br><span class="line">    <span class="keyword">int</span> v;                     <span class="comment">// verbose</span></span><br><span class="line">    <span class="keyword">int</span> s;                     <span class="comment">// set bits 数</span></span><br><span class="line">    <span class="keyword">int</span> E;                     <span class="comment">// E-way</span></span><br><span class="line">    <span class="keyword">int</span> b;                     <span class="comment">// block offset bits</span></span><br><span class="line">    <span class="keyword">char</span> t[FILE_NAME_LEN];     <span class="comment">// trace file path</span></span><br><span class="line">&#125; param;</span><br><span class="line"></span><br><span class="line"><span class="comment">/**</span></span><br><span class="line"><span class="comment"> * cache line 结构</span></span><br><span class="line"><span class="comment"> */</span></span><br><span class="line"><span class="keyword">typedef</span> <span class="class"><span class="keyword">struct</span> <span class="title">cache_line</span> &#123;</span></span><br><span class="line">    <span class="keyword">int</span> valid;                  <span class="comment">// 有效位</span></span><br><span class="line">    <span class="keyword">int</span> tag;                    <span class="comment">// tag</span></span><br><span class="line"><span class="comment">//    int block_data;             // 存储load到cache的数据，但是由于是模拟，实际这个filed是没用的</span></span><br><span class="line">    <span class="keyword">int</span> age;                    <span class="comment">// age，用于实现LRU替换策略</span></span><br><span class="line">&#125; cache_line;</span><br><span class="line"></span><br><span class="line"><span class="comment">/**</span></span><br><span class="line"><span class="comment"> *  trace item结构： 存储trace file中的一行数据（不包括I开头的行)</span></span><br><span class="line"><span class="comment"> *  op_mode: 操作模式： L(load), M(modify), S(store)</span></span><br><span class="line"><span class="comment"> */</span></span><br><span class="line"><span class="keyword">typedef</span> <span class="keyword">enum</span> op_mode &#123;</span><br><span class="line">    L = <span class="number">0</span>,                           <span class="comment">// load</span></span><br><span class="line">    M = <span class="number">1</span>,                           <span class="comment">// modify</span></span><br><span class="line">    S = <span class="number">2</span>                            <span class="comment">// store</span></span><br><span class="line">&#125; op_mode;</span><br><span class="line"></span><br><span class="line"><span class="keyword">typedef</span> <span class="class"><span class="keyword">struct</span> <span class="title">trace_item</span> &#123;</span></span><br><span class="line">    op_mode mode;                 <span class="comment">// 操作模式</span></span><br><span class="line">    <span class="keyword">address64_t</span> addr;                 <span class="comment">// 地址</span></span><br><span class="line"><span class="comment">//    unsigned int access_size;       // 访问的内存单元数(byte为单位), unsigned int 可以 typedef，但是没想到好名字</span></span><br><span class="line">&#125; trace_item;</span><br><span class="line"></span><br><span class="line"><span class="comment">/**</span></span><br><span class="line"><span class="comment"> * set: cache中的set， 一个set可以由多个line组成</span></span><br><span class="line"><span class="comment"> * cache: 模拟的cache table，cache由多个set组成</span></span><br><span class="line"><span class="comment"> */</span></span><br><span class="line"><span class="keyword">typedef</span> <span class="class"><span class="keyword">struct</span> <span class="title">set</span> &#123;</span></span><br><span class="line">    cache_line *lines;</span><br><span class="line">&#125; <span class="built_in">set</span>;</span><br><span class="line"></span><br><span class="line"><span class="keyword">typedef</span> <span class="class"><span class="keyword">struct</span> <span class="title">cache</span> &#123;</span></span><br><span class="line">    <span class="built_in">set</span> *sets;</span><br><span class="line">&#125; cache;</span><br><span class="line"></span><br><span class="line"><span class="comment">/*--------------------------全局变量定义----------------------*/</span></span><br><span class="line"><span class="keyword">char</span> *usage = <span class="string">&quot;Usage: ./csim-ref [-hv] -s &lt;num&gt; -E &lt;num&gt; -b &lt;num&gt; -t &lt;file&gt;\n&quot;</span></span><br><span class="line">              <span class="string">&quot;Options:\n&quot;</span></span><br><span class="line">              <span class="string">&quot;  -h         Print this help message.\n&quot;</span></span><br><span class="line">              <span class="string">&quot;  -v         Optional verbose flag.\n&quot;</span></span><br><span class="line">              <span class="string">&quot;  -s &lt;num&gt;   Number of set index bits.\n&quot;</span></span><br><span class="line">              <span class="string">&quot;  -E &lt;num&gt;   Number of lines per set.\n&quot;</span></span><br><span class="line">              <span class="string">&quot;  -b &lt;num&gt;   Number of block offset bits.\n&quot;</span></span><br><span class="line">              <span class="string">&quot;  -t &lt;file&gt;  Trace file.\n&quot;</span>;             <span class="comment">// example 略...</span></span><br><span class="line"><span class="comment">// 结果集合</span></span><br><span class="line"><span class="keyword">unsigned</span> <span class="keyword">int</span> hits, miss, evicts;</span><br><span class="line"></span><br><span class="line"><span class="comment">/*--------------------------操作function定义----------------------*/</span></span><br><span class="line"><span class="comment">/**</span></span><br><span class="line"><span class="comment"> * 解析输入参数</span></span><br><span class="line"><span class="comment"> * @param argc</span></span><br><span class="line"><span class="comment"> * @param argv</span></span><br><span class="line"><span class="comment"> * @param p  解析结果放置在p引用的内存中</span></span><br><span class="line"><span class="comment"> * @return 0 success parse</span></span><br><span class="line"><span class="comment"> *         -1 failed</span></span><br><span class="line"><span class="comment"> */</span></span><br><span class="line"><span class="function"><span class="keyword">int</span> <span class="title">parse_input_params</span><span class="params">(<span class="keyword">int</span> argc, <span class="keyword">char</span> *argv[], param *p)</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">    <span class="keyword">int</span> opt;</span><br><span class="line">    </span><br><span class="line">    <span class="keyword">while</span> ((opt = getopt(argc, argv, <span class="string">&quot;hvs:E:b:t:&quot;</span>)) != <span class="number">-1</span>) &#123;</span><br><span class="line">        <span class="keyword">switch</span> (opt) &#123;</span><br><span class="line">            <span class="keyword">case</span> <span class="string">&#x27;v&#x27;</span>:</span><br><span class="line">                p-&gt;v = <span class="number">1</span>;</span><br><span class="line">                <span class="keyword">break</span>;</span><br><span class="line">            <span class="keyword">case</span> <span class="string">&#x27;s&#x27;</span>:</span><br><span class="line">                p-&gt;s = atoi(optarg);</span><br><span class="line">                <span class="keyword">break</span>;</span><br><span class="line">            <span class="keyword">case</span> <span class="string">&#x27;E&#x27;</span>:</span><br><span class="line">                p-&gt;E = atoi(optarg);</span><br><span class="line">                <span class="keyword">break</span>;</span><br><span class="line">            <span class="keyword">case</span> <span class="string">&#x27;b&#x27;</span>:</span><br><span class="line">                p-&gt;b = atoi(optarg);</span><br><span class="line">                <span class="keyword">break</span>;</span><br><span class="line">            <span class="keyword">case</span> <span class="string">&#x27;t&#x27;</span>:</span><br><span class="line">                <span class="built_in">sprintf</span>(p-&gt;t, <span class="string">&quot;%s&quot;</span>, optarg);</span><br><span class="line">                <span class="keyword">break</span>;</span><br><span class="line">            <span class="keyword">case</span> <span class="string">&#x27;h&#x27;</span>:</span><br><span class="line">            <span class="keyword">case</span> <span class="string">&#x27;?&#x27;</span>:</span><br><span class="line">            <span class="keyword">default</span>:</span><br><span class="line">                <span class="built_in">printf</span>(<span class="string">&quot;%s\n&quot;</span>, usage);</span><br><span class="line">                <span class="keyword">return</span> <span class="number">-1</span>;</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">return</span> <span class="number">0</span>;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="comment">/**</span></span><br><span class="line"><span class="comment"> * 根据字符c_mode,返回对应的op_mode枚举类型</span></span><br><span class="line"><span class="comment"> * @param c_mode</span></span><br><span class="line"><span class="comment"> * @return</span></span><br><span class="line"><span class="comment"> */</span></span><br><span class="line"><span class="function">op_mode <span class="title">parse_op_mode</span><span class="params">(<span class="keyword">char</span> c_mode)</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">    <span class="keyword">switch</span> (c_mode) &#123;</span><br><span class="line">        <span class="keyword">case</span> <span class="string">&#x27;L&#x27;</span>:</span><br><span class="line">            <span class="keyword">return</span> L;</span><br><span class="line">        <span class="keyword">case</span> <span class="string">&#x27;M&#x27;</span>:</span><br><span class="line">            <span class="keyword">return</span> M;</span><br><span class="line">        <span class="keyword">case</span> <span class="string">&#x27;S&#x27;</span>:</span><br><span class="line">            <span class="keyword">return</span> S;</span><br><span class="line">        <span class="keyword">default</span>:</span><br><span class="line">            perror(<span class="string">&quot;can&#x27;t get op mode: invalid char!&quot;</span>);</span><br><span class="line">            <span class="built_in">exit</span>(<span class="number">-1</span>);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="comment">/**</span></span><br><span class="line"><span class="comment"> * 解析trace file</span></span><br><span class="line"><span class="comment"> * @param trace_item_ptr 解析结构放置的地方</span></span><br><span class="line"><span class="comment"> * @param trace_item_num trace数组长度</span></span><br><span class="line"><span class="comment"> * @param path 解析文件路径</span></span><br><span class="line"><span class="comment"> * @return  有效的trace item数量</span></span><br><span class="line"><span class="comment"> *          -1 解析失败</span></span><br><span class="line"><span class="comment"> */</span></span><br><span class="line"><span class="function"><span class="keyword">size_t</span> <span class="title">parse_trace_file</span><span class="params">(trace_item **trace_item_ptr, <span class="keyword">size_t</span> *trace_item_num, <span class="keyword">const</span> <span class="keyword">char</span> *path)</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">    FILE *file = <span class="literal">NULL</span>;</span><br><span class="line">    <span class="keyword">char</span> *line = <span class="literal">NULL</span>;</span><br><span class="line">    trace_item *trace_items = *trace_item_ptr;</span><br><span class="line">    <span class="keyword">size_t</span> len = <span class="number">0</span>;</span><br><span class="line">    <span class="keyword">if</span> (!(file = fopen(path, <span class="string">&quot;r&quot;</span>))) &#123;</span><br><span class="line">        perror(<span class="string">&quot;trace file not exit&quot;</span>);</span><br><span class="line">        <span class="keyword">return</span> <span class="number">-1</span>;</span><br><span class="line">    &#125;</span><br><span class="line">    </span><br><span class="line">    <span class="comment">// read entry line by line</span></span><br><span class="line">    <span class="keyword">int</span> i = <span class="number">0</span>;</span><br><span class="line">    <span class="keyword">while</span> (getline(&amp;line, &amp;len, file) != <span class="number">-1</span>) &#123;</span><br><span class="line">        <span class="keyword">if</span> (line[<span class="number">0</span>] == <span class="string">&#x27;I&#x27;</span>)  <span class="comment">// I 指令不需要解析</span></span><br><span class="line">            <span class="keyword">continue</span>;</span><br><span class="line">        </span><br><span class="line">        <span class="keyword">if</span> (*trace_item_num &lt;= i) &#123;</span><br><span class="line">            <span class="comment">// line 过多,超过trace_item_num, 需要重新分配</span></span><br><span class="line">            <span class="keyword">int</span> new_num = *trace_item_num;</span><br><span class="line">            <span class="keyword">do</span> &#123;                    <span class="comment">// 保证new_num 一定要比i大</span></span><br><span class="line">                new_num *= <span class="number">2</span>;</span><br><span class="line">            &#125; <span class="keyword">while</span> (new_num &lt;= i);</span><br><span class="line">            </span><br><span class="line">            trace_items = <span class="built_in">realloc</span>(trace_items, new_num * <span class="keyword">sizeof</span>(trace_item));</span><br><span class="line">            <span class="keyword">if</span> (!trace_items) &#123;</span><br><span class="line">                <span class="built_in">printf</span>(<span class="string">&quot;realloc memory for trace item failed\n&quot;</span>);</span><br><span class="line">                <span class="built_in">exit</span>(<span class="number">-1</span>);</span><br><span class="line">            &#125;</span><br><span class="line">            *trace_item_ptr = trace_items;</span><br><span class="line">            <span class="comment">// initialize  new alloc memory</span></span><br><span class="line">            <span class="built_in">memset</span>(trace_items + (*trace_item_num), <span class="number">0</span>, (new_num - *trace_item_num) * <span class="keyword">sizeof</span>(trace_item));</span><br><span class="line">            <span class="comment">// update item_num (包含了无效的项)</span></span><br><span class="line">            *trace_item_num = (*trace_item_num) &lt;&lt; <span class="number">1</span>;</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="comment">// mode</span></span><br><span class="line">        trace_items[i].mode = parse_op_mode(line[<span class="number">1</span>]);</span><br><span class="line">        </span><br><span class="line">        <span class="comment">// address</span></span><br><span class="line">        <span class="keyword">char</span> addr[OS_PTR_LEN + <span class="number">1</span>];</span><br><span class="line">        <span class="keyword">int</span> j = <span class="number">3</span>;      <span class="comment">// 代表line中&quot;address&quot;在line中的索引位置</span></span><br><span class="line">        <span class="keyword">int</span> offset = <span class="number">0</span>;</span><br><span class="line">        <span class="comment">// 跳过所有</span></span><br><span class="line">        <span class="keyword">while</span> (!<span class="built_in">isdigit</span>(line[j]) &amp;&amp; <span class="built_in">isspace</span>(line[j]))</span><br><span class="line">            ++j;</span><br><span class="line">        offset = j;</span><br><span class="line">        <span class="comment">// 设置address</span></span><br><span class="line">        <span class="keyword">while</span> (line[j] != <span class="string">&#x27;,&#x27;</span>) &#123;</span><br><span class="line">            addr[j - offset] = line[j];</span><br><span class="line">            j++;</span><br><span class="line">        &#125;</span><br><span class="line">        addr[j - offset] = <span class="string">&#x27;\0&#x27;</span>;</span><br><span class="line">        trace_items[i].addr = strtol(addr, <span class="literal">NULL</span>, <span class="number">16</span>);</span><br><span class="line">        </span><br><span class="line">        <span class="comment">// byte_nums note: 实际仿真中,这个字段是没用的</span></span><br><span class="line"><span class="comment">//        char buf[10];</span></span><br><span class="line"><span class="comment">//        j++;     // 更新至第一个byte num索引索引位置</span></span><br><span class="line"><span class="comment">//        offset = j;</span></span><br><span class="line"><span class="comment">//        while (line[j] != &#x27;\n&#x27;) &#123;</span></span><br><span class="line"><span class="comment">//            buf[j - offset] = line[j];</span></span><br><span class="line"><span class="comment">//            j++;</span></span><br><span class="line"><span class="comment">//        &#125;</span></span><br><span class="line"><span class="comment">//        buf[j] = &#x27;\0&#x27;;</span></span><br><span class="line"><span class="comment">//        trace_items[i].access_size = atoi(buf);</span></span><br><span class="line">        </span><br><span class="line">        <span class="comment">// update idx</span></span><br><span class="line">        i++;</span><br><span class="line">    &#125;</span><br><span class="line">    </span><br><span class="line">    <span class="comment">// 删除无用项</span></span><br><span class="line">    *trace_item_num = i;</span><br><span class="line">    *trace_item_ptr = (trace_item *) <span class="built_in">realloc</span>(*trace_item_ptr, <span class="keyword">sizeof</span>(trace_item) * (*trace_item_num));</span><br><span class="line">    </span><br><span class="line">    fclose(file);</span><br><span class="line">    <span class="keyword">return</span> <span class="number">0</span>;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="comment">/**</span></span><br><span class="line"><span class="comment"> * 初始化系统cache</span></span><br><span class="line"><span class="comment"> * @param sys_cache</span></span><br><span class="line"><span class="comment"> */</span></span><br><span class="line"><span class="function"><span class="keyword">void</span> <span class="title">init_cache</span><span class="params">(cache *sys_cache, param *p)</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">    <span class="keyword">const</span> <span class="keyword">int</span> S = <span class="number">1</span> &lt;&lt; p-&gt;s;</span><br><span class="line">    <span class="keyword">const</span> <span class="keyword">int</span> E = p-&gt;E;</span><br><span class="line"><span class="comment">//    const int B = 1 &lt;&lt; p-&gt;b;</span></span><br><span class="line">    </span><br><span class="line">    <span class="built_in">set</span> *sets = (<span class="built_in">set</span> *) <span class="built_in">malloc</span>(<span class="keyword">sizeof</span>(<span class="built_in">set</span>) * S);</span><br><span class="line">    <span class="keyword">for</span> (<span class="keyword">size_t</span> i = <span class="number">0</span>; i &lt; S; i++) &#123;</span><br><span class="line">        cache_line *cls = (cache_line *) <span class="built_in">malloc</span>(<span class="keyword">sizeof</span>(cache_line) * E);</span><br><span class="line">        <span class="comment">// initialize</span></span><br><span class="line">        <span class="built_in">memset</span>(cls, <span class="number">0</span>, <span class="keyword">sizeof</span>(cache_line) * E);</span><br><span class="line">        sets[i].lines = cls;</span><br><span class="line">    &#125;</span><br><span class="line">    sys_cache-&gt;sets = sets;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="comment">/**</span></span><br><span class="line"><span class="comment"> * check是否命中</span></span><br><span class="line"><span class="comment"> * @param cache_set 需要检测的set</span></span><br><span class="line"><span class="comment"> * @param p    系统参数</span></span><br><span class="line"><span class="comment"> * @param tag  地址中的tag</span></span><br><span class="line"><span class="comment"> * @param cl_idx   如果命中,cl_idx表示当前命中的cacheline在set的中位置(从0开始索引)</span></span><br><span class="line"><span class="comment"> *                 如果未命中,cl_idx = -1</span></span><br><span class="line"><span class="comment"> */</span></span><br><span class="line"><span class="function"><span class="keyword">void</span> <span class="title">check_if_hit</span><span class="params">(<span class="built_in">set</span> *cache_set, param *p, <span class="keyword">int</span> tag, <span class="keyword">size_t</span> *cl_idx)</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">    <span class="keyword">const</span> <span class="keyword">int</span> E = p-&gt;E;</span><br><span class="line">    <span class="keyword">for</span> (<span class="keyword">size_t</span> i = <span class="number">0</span>; i &lt; E; i++) &#123;</span><br><span class="line">        <span class="keyword">if</span> (!cache_set-&gt;lines[i].valid) <span class="keyword">continue</span>;</span><br><span class="line">        <span class="keyword">if</span> (cache_set-&gt;lines[i].tag == tag) &#123;</span><br><span class="line">            *cl_idx = i;</span><br><span class="line">            <span class="keyword">return</span>;</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">    *cl_idx = <span class="number">-1</span>;</span><br><span class="line">&#125;</span><br><span class="line"><span class="comment">//<span class="doctag">TODO:</span> check_if_hit和check_has_non_block可以做成一个函数,不过这里不考虑效率问题,所以就这样分了</span></span><br><span class="line"><span class="comment">/**</span></span><br><span class="line"><span class="comment"> * 检验 这组set中,是否还有空block</span></span><br><span class="line"><span class="comment"> * @param cache_set  待检验的set</span></span><br><span class="line"><span class="comment"> * @param p  系统参数</span></span><br><span class="line"><span class="comment"> * @param cl_idx  如果有空块,则cl_idx=找到的第一个空块</span></span><br><span class="line"><span class="comment"> *                如果没有空块,cl_idx=-1</span></span><br><span class="line"><span class="comment"> */</span></span><br><span class="line"><span class="function"><span class="keyword">void</span> <span class="title">check_has_empty_block</span><span class="params">(<span class="built_in">set</span> *cache_set, param *p, <span class="keyword">size_t</span> *cl_idx)</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">    <span class="keyword">const</span> <span class="keyword">int</span> E = p-&gt;E;</span><br><span class="line">    <span class="keyword">for</span> (<span class="keyword">size_t</span> i = <span class="number">0</span>; i &lt; E; i++) &#123;</span><br><span class="line">        <span class="keyword">if</span> (!cache_set-&gt;lines[i].valid) &#123;</span><br><span class="line">            *cl_idx = i;</span><br><span class="line">            <span class="keyword">return</span>;</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">    *cl_idx = <span class="number">-1</span>;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="comment">/**</span></span><br><span class="line"><span class="comment"> * 采用LRU算法找到需要evict的cache line索引</span></span><br><span class="line"><span class="comment"> * Note: 本函数假设当前set中没有空块</span></span><br><span class="line"><span class="comment"> * @param cache_set 需要检查的set</span></span><br><span class="line"><span class="comment"> * @param p     系统参数</span></span><br><span class="line"><span class="comment"> * @param cl_idx cl_idx = 找到的cache line在set中的索引</span></span><br><span class="line"><span class="comment"> */</span></span><br><span class="line"><span class="function"><span class="keyword">void</span> <span class="title">find_evict_cache_line</span><span class="params">(<span class="built_in">set</span> *cache_set, param *p, <span class="keyword">size_t</span> *cl_idx)</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">    <span class="keyword">const</span> <span class="keyword">int</span> E = p-&gt;E;</span><br><span class="line">    <span class="keyword">int</span> min_age_idx = <span class="number">0</span>;</span><br><span class="line">    <span class="keyword">for</span> (<span class="keyword">size_t</span> i = <span class="number">1</span>; i &lt; E; i++) &#123;</span><br><span class="line">        <span class="keyword">if</span> (cache_set-&gt;lines[min_age_idx].age &gt; cache_set-&gt;lines[i].age) &#123;</span><br><span class="line">            min_age_idx = i;</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">    *cl_idx = min_age_idx;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="comment">/**</span></span><br><span class="line"><span class="comment"> * load 操作</span></span><br><span class="line"><span class="comment"> * @param cache_set</span></span><br><span class="line"><span class="comment"> * @param tag</span></span><br><span class="line"><span class="comment"> * @param age</span></span><br><span class="line"><span class="comment"> */</span></span><br><span class="line"><span class="function"><span class="keyword">void</span> <span class="title">do_load</span><span class="params">(<span class="built_in">set</span> *cache_set, param *p, <span class="keyword">int</span> tag, <span class="keyword">int</span> age)</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">    <span class="keyword">const</span> <span class="keyword">int</span> verbose = p-&gt;v;</span><br><span class="line">    <span class="comment">// 首先看能否hit</span></span><br><span class="line">    <span class="keyword">size_t</span> cl_idx;</span><br><span class="line">    check_if_hit(cache_set, p, tag, &amp;cl_idx);</span><br><span class="line">    <span class="keyword">if</span> (cl_idx != <span class="number">-1</span>) <span class="comment">// 命中</span></span><br><span class="line">    &#123;</span><br><span class="line">        hits++;</span><br><span class="line">        cache_line *cl = &amp;cache_set-&gt;lines[cl_idx];</span><br><span class="line">        cl-&gt;tag = tag;</span><br><span class="line">        cl-&gt;age = age;</span><br><span class="line">        DEBUG_HIT(verbose);</span><br><span class="line">        <span class="keyword">return</span>;</span><br><span class="line">    &#125;</span><br><span class="line">    </span><br><span class="line">    <span class="comment">// 未命中,查看是否有空块</span></span><br><span class="line">    check_has_empty_block(cache_set, p, &amp;cl_idx);</span><br><span class="line">    <span class="keyword">if</span> (cl_idx != <span class="number">-1</span>) <span class="comment">// 有空块</span></span><br><span class="line">    &#123;</span><br><span class="line">        miss++;</span><br><span class="line">        cache_line *cl = &amp;cache_set-&gt;lines[cl_idx];</span><br><span class="line">        cl-&gt;valid = <span class="number">1</span>;</span><br><span class="line">        cl-&gt;tag = tag;</span><br><span class="line">        cl-&gt;age = age;</span><br><span class="line">        DEBUG_MISS(verbose);</span><br><span class="line">        <span class="keyword">return</span>;</span><br><span class="line">    &#125;</span><br><span class="line">    </span><br><span class="line">    <span class="comment">// 未命中,没有空块</span></span><br><span class="line">    find_evict_cache_line(cache_set, p, &amp;cl_idx);</span><br><span class="line">    <span class="keyword">if</span> (cl_idx != <span class="number">-1</span>) <span class="comment">// ecvit</span></span><br><span class="line">    &#123;</span><br><span class="line">        miss++;</span><br><span class="line">        DEBUG_MISS(verbose);</span><br><span class="line">        cache_line *cl = &amp;cache_set-&gt;lines[cl_idx];</span><br><span class="line">        cl-&gt;tag = tag;</span><br><span class="line">        cl-&gt;age = age;</span><br><span class="line">        evicts++;</span><br><span class="line">        DEBUG_EVICT(verbose);</span><br><span class="line">        <span class="keyword">return</span>;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">void</span> <span class="title">do_store</span><span class="params">(<span class="built_in">set</span> *cache_set, param *p, <span class="keyword">int</span> tag, <span class="keyword">int</span> age)</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">    <span class="keyword">const</span> <span class="keyword">int</span> verbose = p-&gt;v;</span><br><span class="line">    <span class="keyword">size_t</span> cl_idx;</span><br><span class="line">    <span class="comment">// 是否hit</span></span><br><span class="line">    check_if_hit(cache_set, p, tag, &amp;cl_idx);</span><br><span class="line">    <span class="keyword">if</span> (cl_idx != <span class="number">-1</span>) <span class="comment">// 命中</span></span><br><span class="line">    &#123;</span><br><span class="line">        hits++;</span><br><span class="line">        cache_set-&gt;lines[cl_idx].age = age;</span><br><span class="line">        DEBUG_HIT(verbose);</span><br><span class="line">        <span class="keyword">return</span>;</span><br><span class="line">    &#125;</span><br><span class="line">    </span><br><span class="line">    <span class="comment">// 是否有空块</span></span><br><span class="line">    check_has_empty_block(cache_set, p, &amp;cl_idx);</span><br><span class="line">    <span class="keyword">if</span> (cl_idx != <span class="number">-1</span>) <span class="comment">// 空块</span></span><br><span class="line">    &#123;</span><br><span class="line">        miss++;</span><br><span class="line">        cache_set-&gt;lines[cl_idx].valid = <span class="number">1</span>;</span><br><span class="line">        cache_set-&gt;lines[cl_idx].tag = tag;</span><br><span class="line">        cache_set-&gt;lines[cl_idx].age = age;</span><br><span class="line">        DEBUG_MISS(verbose);</span><br><span class="line">        <span class="keyword">return</span>;</span><br><span class="line">    &#125;</span><br><span class="line">    </span><br><span class="line">    <span class="comment">// evcit</span></span><br><span class="line">    find_evict_cache_line(cache_set, p, &amp;cl_idx);</span><br><span class="line">    <span class="keyword">if</span> (cl_idx != <span class="number">-1</span>) <span class="comment">// evcit</span></span><br><span class="line">    &#123;</span><br><span class="line">        miss++;</span><br><span class="line">        DEBUG_MISS(verbose);</span><br><span class="line">        cache_set-&gt;lines[cl_idx].tag = tag;</span><br><span class="line">        cache_set-&gt;lines[cl_idx].age = age;</span><br><span class="line">        evicts++;</span><br><span class="line">        DEBUG_HIT(verbose);</span><br><span class="line">        <span class="keyword">return</span>;</span><br><span class="line">    &#125;</span><br><span class="line">    </span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">void</span> <span class="title">do_modify</span><span class="params">(<span class="built_in">set</span> *cache_set, param *p, <span class="keyword">int</span> tag, <span class="keyword">int</span> age)</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">    <span class="keyword">const</span> <span class="keyword">int</span> verbose = p-&gt;v;</span><br><span class="line">    <span class="keyword">size_t</span> cl_idx = <span class="number">-1</span>;</span><br><span class="line">    <span class="comment">// hit?</span></span><br><span class="line">    check_if_hit(cache_set, p, tag, &amp;cl_idx);</span><br><span class="line">    <span class="keyword">if</span> (cl_idx != <span class="number">-1</span>) &#123;</span><br><span class="line">        <span class="comment">// hit , 之后的store也会hit</span></span><br><span class="line">        hits += <span class="number">2</span>;</span><br><span class="line">        cache_set-&gt;lines[cl_idx].age = age;</span><br><span class="line">        DEBUG_HIT(verbose);</span><br><span class="line">        DEBUG_HIT(verbose);</span><br><span class="line">        <span class="keyword">return</span>;</span><br><span class="line">    &#125;</span><br><span class="line">    </span><br><span class="line">    <span class="comment">// 空块</span></span><br><span class="line">    check_has_empty_block(cache_set, p, &amp;cl_idx);</span><br><span class="line">    <span class="keyword">if</span> (cl_idx != <span class="number">-1</span>) &#123;</span><br><span class="line">        miss++;</span><br><span class="line">        DEBUG_MISS(verbose);</span><br><span class="line">        <span class="comment">// 首先load</span></span><br><span class="line">        cache_set-&gt;lines[cl_idx].valid = <span class="number">1</span>;</span><br><span class="line">        cache_set-&gt;lines[cl_idx].tag = tag;</span><br><span class="line">        cache_set-&gt;lines[cl_idx].age = age;</span><br><span class="line">        <span class="comment">// 再store</span></span><br><span class="line">        hits++;</span><br><span class="line">        DEBUG_HIT(verbose);</span><br><span class="line">        <span class="keyword">return</span>;</span><br><span class="line">    &#125;</span><br><span class="line">    </span><br><span class="line">    <span class="comment">// evict</span></span><br><span class="line">    find_evict_cache_line(cache_set, p, &amp;cl_idx);</span><br><span class="line">    <span class="keyword">if</span> (cl_idx != <span class="number">-1</span>) &#123;</span><br><span class="line">        miss++;</span><br><span class="line">        DEBUG_MISS(verbose);</span><br><span class="line">        <span class="comment">// evict</span></span><br><span class="line">        DEBUG_EVICT(verbose);</span><br><span class="line">        evicts++;</span><br><span class="line">        cache_set-&gt;lines[cl_idx].tag = tag;</span><br><span class="line">        cache_set-&gt;lines[cl_idx].age = age;</span><br><span class="line">        <span class="comment">// store</span></span><br><span class="line">        hits++;</span><br><span class="line">        DEBUG_HIT(verbose);</span><br><span class="line">        <span class="keyword">return</span>;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="comment">/**</span></span><br><span class="line"><span class="comment"> * 模拟仿真</span></span><br><span class="line"><span class="comment"> * @param sys_cache</span></span><br><span class="line"><span class="comment"> * @param trace_item</span></span><br><span class="line"><span class="comment"> * @param item_num</span></span><br><span class="line"><span class="comment"> */</span></span><br><span class="line"><span class="function"><span class="keyword">void</span> <span class="title">simulate</span><span class="params">(cache *sys_cache, param *p, trace_item *trace_items, <span class="keyword">const</span> <span class="keyword">unsigned</span> <span class="keyword">int</span> item_num)</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">    <span class="keyword">const</span> <span class="keyword">int</span> s = p-&gt;s;</span><br><span class="line">    <span class="keyword">const</span> <span class="keyword">int</span> b = p-&gt;b;</span><br><span class="line"><span class="comment">//    const int E = p-&gt;E;</span></span><br><span class="line">    <span class="keyword">const</span> <span class="keyword">int</span> tag_bit = OS_PTR_LEN - s - b;</span><br><span class="line">    </span><br><span class="line">    <span class="comment">// 构造set tag mask</span></span><br><span class="line">    <span class="comment">// set mask</span></span><br><span class="line">    <span class="keyword">address64_t</span> set_mask = <span class="number">1</span>;</span><br><span class="line">    <span class="keyword">for</span> (<span class="keyword">size_t</span> i = <span class="number">0</span>; i &lt; s - <span class="number">1</span>; i++) &#123;</span><br><span class="line">        set_mask = set_mask &lt;&lt; <span class="number">1</span> | <span class="number">1</span>;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="comment">// tag mask</span></span><br><span class="line">    <span class="keyword">address64_t</span> tag_mask = <span class="number">1</span>;</span><br><span class="line">    <span class="keyword">for</span> (<span class="keyword">size_t</span> i = <span class="number">0</span>; i &lt; tag_bit - <span class="number">1</span>; i++) &#123;</span><br><span class="line">        tag_mask = tag_mask &lt;&lt; <span class="number">1</span> | <span class="number">1</span>;</span><br><span class="line">    &#125;</span><br><span class="line">    </span><br><span class="line">    <span class="keyword">for</span> (<span class="keyword">size_t</span> i = <span class="number">0</span>; i &lt; item_num; i++) &#123;</span><br><span class="line">        trace_item item = trace_items[i];</span><br><span class="line">        <span class="keyword">address64_t</span> addr = item.addr;</span><br><span class="line">        op_mode mode = item.mode;</span><br><span class="line"><span class="comment">//        int access_size = item.access_size;     // useless</span></span><br><span class="line">        </span><br><span class="line">        <span class="comment">// step1: 得到set 和 tag</span></span><br><span class="line">        <span class="keyword">int</span> set_idx = addr &gt;&gt; b &amp; set_mask;</span><br><span class="line">        <span class="keyword">int</span> tag = addr &gt;&gt; (b + s);</span><br><span class="line">        </span><br><span class="line">        <span class="comment">// step2: 根据操作码来决定具体实施什么样的操作</span></span><br><span class="line">        <span class="keyword">switch</span> (mode) &#123;</span><br><span class="line">            <span class="keyword">case</span> L:</span><br><span class="line">                do_load(&amp;sys_cache-&gt;sets[set_idx], p, tag, i);</span><br><span class="line">                <span class="keyword">break</span>;</span><br><span class="line">            <span class="keyword">case</span> M:</span><br><span class="line">                do_modify(&amp;sys_cache-&gt;sets[set_idx], p, tag, i);</span><br><span class="line">                <span class="keyword">break</span>;</span><br><span class="line">            <span class="keyword">case</span> S:</span><br><span class="line">                do_store(&amp;sys_cache-&gt;sets[set_idx], p, tag, i);</span><br><span class="line">                <span class="keyword">break</span>;</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">int</span> <span class="title">main</span><span class="params">(<span class="keyword">int</span> argc, <span class="keyword">char</span> *argv[])</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">    <span class="comment">// 系统输入参数</span></span><br><span class="line">    param sys_param;</span><br><span class="line">    <span class="comment">// 解析trace file</span></span><br><span class="line">    <span class="keyword">size_t</span> trace_item_len = <span class="number">10</span>;</span><br><span class="line">    trace_item *trace_items = (trace_item *) <span class="built_in">malloc</span>(trace_item_len * <span class="keyword">sizeof</span>(trace_item));</span><br><span class="line">    <span class="comment">// 系统cache</span></span><br><span class="line">    cache sys_cache;</span><br><span class="line">    <span class="keyword">int</span> ret;</span><br><span class="line">    </span><br><span class="line">    <span class="comment">// 解析参数</span></span><br><span class="line">    ret = parse_input_params(argc, argv, &amp;sys_param);</span><br><span class="line">    <span class="keyword">if</span> (ret) &#123;</span><br><span class="line">        <span class="built_in">printf</span>(<span class="string">&quot;parse input params failed\n&quot;</span>);</span><br><span class="line">        <span class="built_in">printf</span>(<span class="string">&quot;%s\n&quot;</span>, usage);</span><br><span class="line">        <span class="keyword">return</span> <span class="number">-1</span>;</span><br><span class="line">    &#125;</span><br><span class="line">    </span><br><span class="line">    <span class="comment">// 解析trace file</span></span><br><span class="line">    ret = parse_trace_file(&amp;trace_items, &amp;trace_item_len, sys_param.t);</span><br><span class="line">    <span class="keyword">if</span> (ret) &#123;</span><br><span class="line">        <span class="built_in">printf</span>(<span class="string">&quot;parse trace file failed&quot;</span>);</span><br><span class="line">        <span class="keyword">return</span> <span class="number">-1</span>;</span><br><span class="line">    &#125;</span><br><span class="line">    </span><br><span class="line">    <span class="comment">// 初始化系统cache</span></span><br><span class="line">    init_cache(&amp;sys_cache, &amp;sys_param);</span><br><span class="line">    </span><br><span class="line">    <span class="comment">// 开始仿真</span></span><br><span class="line">    simulate(&amp;sys_cache, &amp;sys_param, trace_items, trace_item_len);</span><br><span class="line">    </span><br><span class="line">    <span class="comment">// 打印输出</span></span><br><span class="line">    printSummary(hits, miss, evicts);</span><br><span class="line">    <span class="keyword">return</span> <span class="number">0</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h2 id="2-第二部分–编写cache友好代码"><a href="#2-第二部分–编写cache友好代码" class="headerlink" title="2. 第二部分–编写cache友好代码"></a>2. 第二部分–编写cache友好代码</h2><p>本题能加强学生对cache的认识，编写cahce友好的代码。原题很简单，就是给一个矩阵A，求其转置。但是有一些额外说明，具体请读writeup。下面是本题的答案要求：</p>
+<p><img src="https://cdn.jsdelivr.net/gh/ravenxrz/PicBed/img/image-20200729141941145.png" alt="image-20200729141941145"></p>
+<p>m，代表miss次数。</p>
+<p>本题核心点：</p>
+<ol>
+<li>加强理解直接相联映射</li>
+<li><strong>理解blocking（分块）机制带来的时间局部性提升</strong></li>
+</ol>
+<p>重点：<strong>blocking机制</strong>，一定要理解blocking，请参照： <a target="_blank" rel="noopener" href="http://csapp.cs.cmu.edu/public/waside/waside-blocking.pdf">http://csapp.cs.cmu.edu/public/waside/waside-blocking.pdf</a></p>
+<p>在正式解题前，先说下系统的一些参数，最重要的就是cache的组织方式了：</p>
+<p><img src="https://cdn.jsdelivr.net/gh/ravenxrz/PicBed/img/image-20200729142729751.png" alt="image-20200729142729751"></p>
+<p>s=5, S=32, 即32组</p>
+<p>E=1， 即每组一个cacheline</p>
+<p>b=5，B=32， 即一个cacheline的block大小为32字节（后面简称cacheline大小为32字节，实际说的是cacheline内部的block大小）</p>
+<p>blocking机制运用到矩阵转置来，即将A分成多个行条带，A行条带扫描。B分为多个块，每个块由多个条带组成，每个B条带按照列扫描。如图：</p>
+<p><img src="https://cdn.jsdelivr.net/gh/ravenxrz/PicBed/img/image-20200729144043920.png" alt="image-20200729144043920"></p>
+<p><img src="https://cdn.jsdelivr.net/gh/ravenxrz/PicBed/img/image-20200729144439379.png" alt="image-20200729144147785"></p>
+<h3 id="1-32x32"><a href="#1-32x32" class="headerlink" title="1. 32x32"></a>1. 32x32</h3><p>一个cacheline 32字节， 一个int 4字节， 则一个cacheline可以放8个int， 矩阵为32x32， 则矩阵一行需要4个cacheline。</p>
+<p><img src="https://cdn.jsdelivr.net/gh/ravenxrz/PicBed/img/image-20200729143603293.png" alt="image-20200729143546012"></p>
+<p>现在的问题是如何确定条带的长度。 </p>
+<p>我们知道cpu一次read，都会load一个cache line到cache中。一个cacheline是32字节。如何将条带设置低于32字节，比如12字节，那么32字节中会有20字节无法利用，浪费了一半的cache。如果大于32字节，那扫描一个条带就会触发至少2次load。那是不是设置成32字节就好了？也不是，我们还要考虑A，B的load，store交替过程中，会造成cacheline的overlap（冲突不命中）。为了让你理解这个概念，先看以下面这道题：</p>
+<img src="https://cdn.jsdelivr.net/gh/ravenxrz/PicBed/img/image-20200729145230952.png" alt="image-20200729145230952" style="zoom:50%;" />
+
+<img src="https://cdn.jsdelivr.net/gh/ravenxrz/PicBed/img/image-20200729145241517.png" alt="image-20200729145241517" style="zoom:50%;" />
+
+<p>现在回到我们的题目，我们想要cacheline的利用率高，又不想发生太多cacheline的冲突不命中。观察到在32x32的矩阵中，<strong>每8行重复一个cache空间。</strong>如果一个条带为32字节，即8个矩阵元素，刚好对应了一个cache line大小。所以我们可以设置， A的行扫描条带为8个元素， B的列扫描条带为8个元素，那一个块的宽度呢？显然一个cacheline是32字节，刚好也是8个元素，宽度为8肯定利用率高。</p>
+<p>最终决定的参数：</p>
+<ol>
+<li>A行条带 8元素</li>
+<li>B中一个块的大小为8x8</li>
+</ol>
+<p><strong>另外，miss数计算会在之后给出。</strong></p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">void</span> <span class="title">trans32_v1</span><span class="params">(<span class="keyword">int</span> A[<span class="number">32</span>][<span class="number">32</span>], <span class="keyword">int</span> B[<span class="number">32</span>][<span class="number">32</span>])</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line"><span class="meta">#<span class="meta-keyword">define</span> LEN 32</span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">define</span> BSIZE 8</span></span><br><span class="line">    <span class="comment">// <span class="doctag">NOTE:</span> 这里采用4循环是为了更好理解“blocking”机制，其实采用3个循环就能做，具体是融合j和k</span></span><br><span class="line">    <span class="keyword">int</span> i, j, k,q;</span><br><span class="line"></span><br><span class="line">    <span class="comment">// 所有循环视角从B矩阵出发</span></span><br><span class="line">    <span class="keyword">for</span> (i = <span class="number">0</span>; i &lt; LEN; i += BSIZE) <span class="comment">// 1. 以block行为单位，扫描整个矩阵</span></span><br><span class="line">    &#123;</span><br><span class="line">        <span class="keyword">for</span> (j = <span class="number">0</span>; j &lt; LEN; j += BSIZE) <span class="comment">// 2. 以一个block为单位，扫描一个block行</span></span><br><span class="line">        &#123;</span><br><span class="line">            <span class="keyword">for</span> (k = j; k &lt; j + BSIZE; k++) <span class="comment">// 3. 以一个条带为单位，扫描一个块</span></span><br><span class="line">            &#123;</span><br><span class="line">                <span class="keyword">for</span> (q = <span class="number">0</span>; q &lt; BSIZE; q++) <span class="comment">// 4. 以最小粒度为单位， 扫描一个条带</span></span><br><span class="line">                &#123;</span><br><span class="line">                    B[i + q][k] = A[k][i + q];</span><br><span class="line">                &#125;</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line"><span class="meta">#<span class="meta-keyword">undef</span> LEN</span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">undef</span> BSIZE</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>这样写，miss数是300多，而满分要求miss数&lt;300. 继续分析，什么导致了多余的miss？</p>
+<p>cachelab的writeup中，有这样一句话：</p>
+<p><img src="https://cdn.jsdelivr.net/gh/ravenxrz/PicBed/img/image-20200729150322560.png" alt="image-20200729150322560"></p>
+<p>对角线？ 是的，对角线上的元素，会发生冲突不命中问题。究其根本，在于我们对A进行了反复读。如何解决？把A的数据放到寄存器就行了。再次回到write u中：</p>
+<p><img src="https://cdn.jsdelivr.net/gh/ravenxrz/PicBed/img/5f212d3314195aa594512d18.png"></p>
+<p>题目要求我们最多不能定义12个局部变量，上述代码仅仅4个。我们还有8个变量没用，最终的代码：</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">/**</span></span><br><span class="line"><span class="comment"> * @brief block size 8</span></span><br><span class="line"><span class="comment"> * miss计算:</span></span><br><span class="line"><span class="comment"> * BSIZE 8， 总共分为了16块， 假设块编号从0开始，由左向右，由上向下。</span></span><br><span class="line"><span class="comment"> * 则左边第一列块中的每一块（块编号为0,4,8,12)miss数为(9+7+7)：</span></span><br><span class="line"><span class="comment"> * 1.第1个9代表 load A的第一个条带(1个miss)+ store B的第一个条带（8个miss）</span></span><br><span class="line"><span class="comment"> * 2.第2个7代表 load A的剩余7列带来的miss</span></span><br><span class="line"><span class="comment"> * 3.第3个7代表，store B的剩余7列带来的miss</span></span><br><span class="line"><span class="comment"> * 具体可参见文件： m32n32-23miss</span></span><br><span class="line"><span class="comment"> * 所以这4个块总miss为：4*(9+7+7) = 92</span></span><br><span class="line"><span class="comment"> * </span></span><br><span class="line"><span class="comment"> * 上述说完了最靠左边的一列block，还剩3列block，3*4 = 12个block</span></span><br><span class="line"><span class="comment"> * 这些block的共性就是 load A条带不会和Store A条带冲突。</span></span><br><span class="line"><span class="comment"> * 所以扫描完一个block会造成的miss为8+8：</span></span><br><span class="line"><span class="comment"> * 1. 第一个8代表，store B的第一个条带（8个miss）</span></span><br><span class="line"><span class="comment"> * 2. 第二个8代表， load 8个A条带带来的miss</span></span><br><span class="line"><span class="comment"> * 所以这12个块总miss为： 12*(8+8) = 192</span></span><br><span class="line"><span class="comment"> * 具体可参见文件：m32n32-16miss</span></span><br><span class="line"><span class="comment"> * </span></span><br><span class="line"><span class="comment"> * 另外还有3个固定的额外开销，具体对应哪个cache miss未知，猜测为初始化循环变量带来的（不过又觉得应该不是，如果你知道，还请告诉我）</span></span><br><span class="line"><span class="comment"> * 具体可参见文件：m32n32-extra-miss</span></span><br><span class="line"><span class="comment"> * </span></span><br><span class="line"><span class="comment"> * 所以最终的miss为:</span></span><br><span class="line"><span class="comment"> * 92+192+3 = 287</span></span><br><span class="line"><span class="comment"> * @param A </span></span><br><span class="line"><span class="comment"> * @param B </span></span><br><span class="line"><span class="comment"> */</span></span><br><span class="line"><span class="keyword">char</span> trans32_v1_desc[] = <span class="string">&quot;trans32_v1_desc&quot;</span>;</span><br><span class="line"><span class="function"><span class="keyword">void</span> <span class="title">trans32_v1</span><span class="params">(<span class="keyword">int</span> A[<span class="number">32</span>][<span class="number">32</span>], <span class="keyword">int</span> B[<span class="number">32</span>][<span class="number">32</span>])</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line"><span class="meta">#<span class="meta-keyword">define</span> LEN 32</span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">define</span> BSIZE 8</span></span><br><span class="line">    <span class="keyword">int</span> i, j, k;</span><br><span class="line">    <span class="keyword">int</span> t0, t1, t2, t3, t4, t5, t6, t7;</span><br><span class="line"></span><br><span class="line">    <span class="comment">// 所有循环视角从B矩阵出发</span></span><br><span class="line">    <span class="keyword">for</span> (i = <span class="number">0</span>; i &lt; LEN; i += BSIZE) <span class="comment">// 1. 以block行为单位，扫描整个矩阵</span></span><br><span class="line">    &#123;</span><br><span class="line">        <span class="keyword">for</span> (j = <span class="number">0</span>; j &lt; LEN; j += BSIZE) <span class="comment">// 2. 以一个block为单位，扫描一个block行</span></span><br><span class="line">        &#123;</span><br><span class="line">            <span class="keyword">for</span> (k = j; k &lt; j + BSIZE; k++) <span class="comment">// 3. 以一个条带为单位，扫描一个块</span></span><br><span class="line">            &#123;</span><br><span class="line"></span><br><span class="line">                <span class="comment">// 避免对角线的 A B矩阵cacheline竞争</span></span><br><span class="line">                t0 = A[k][i + <span class="number">0</span>];</span><br><span class="line">                t1 = A[k][i + <span class="number">1</span>];</span><br><span class="line">                t2 = A[k][i + <span class="number">2</span>];</span><br><span class="line">                t3 = A[k][i + <span class="number">3</span>];</span><br><span class="line">                t4 = A[k][i + <span class="number">4</span>];</span><br><span class="line">                t5 = A[k][i + <span class="number">5</span>];</span><br><span class="line">                t6 = A[k][i + <span class="number">6</span>];</span><br><span class="line">                t7 = A[k][i + <span class="number">7</span>];</span><br><span class="line"></span><br><span class="line">                B[i + <span class="number">0</span>][k] = t0;</span><br><span class="line">                B[i + <span class="number">1</span>][k] = t1;</span><br><span class="line">                B[i + <span class="number">2</span>][k] = t2;</span><br><span class="line">                B[i + <span class="number">3</span>][k] = t3;</span><br><span class="line">                B[i + <span class="number">4</span>][k] = t4;</span><br><span class="line">                B[i + <span class="number">5</span>][k] = t5;</span><br><span class="line">                B[i + <span class="number">6</span>][k] = t6;</span><br><span class="line">                B[i + <span class="number">7</span>][k] = t7;</span><br><span class="line"></span><br><span class="line">                <span class="comment">// 第二种写法,但是存在对角线竞争</span></span><br><span class="line">                <span class="comment">// for (q = 0; q &lt; BSIZE; q++) // 4. 以最小粒度为单位， 扫描一个条带</span></span><br><span class="line">                <span class="comment">// &#123;</span></span><br><span class="line">                <span class="comment">//     B[i + q][k] = A[k][i + q];</span></span><br><span class="line">                <span class="comment">// &#125;</span></span><br><span class="line">            &#125;</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line"><span class="meta">#<span class="meta-keyword">undef</span> LEN</span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">undef</span> BSIZE</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p><strong>最终的miss数为287</strong>，在代码的注释部分，给出了miss的详细计算方式。</p>
+<h3 id="2-61x67"><a href="#2-61x67" class="headerlink" title="2. 61x67"></a>2. 61x67</h3><p>64x64的最后来说，先把简单的说了来。</p>
+<p>61和67看着不规则比较难，但是题目要求很松，只要低于2000miss即可。</p>
+<p>依然是上面的算法，更改BSIZE, 经测试BSIZE=16就能满足要求。</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">void</span> <span class="title">trans6761_v1</span><span class="params">(<span class="keyword">int</span> A[<span class="number">67</span>][<span class="number">61</span>], <span class="keyword">int</span> B[<span class="number">61</span>][<span class="number">67</span>])</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">    <span class="comment">// 从A矩阵视角</span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">define</span> M 67</span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">define</span> N 61</span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">define</span> BSIZE 16</span></span><br><span class="line">    <span class="keyword">int</span> i, j, k, q;</span><br><span class="line"></span><br><span class="line">    <span class="comment">// 所有循环视角从B矩阵出发</span></span><br><span class="line">    <span class="keyword">for</span> (i = <span class="number">0</span>; i &lt; N; i += BSIZE) <span class="comment">// 1. 以block行为单位，扫描整个矩阵</span></span><br><span class="line">    &#123;</span><br><span class="line">        <span class="keyword">for</span> (j = <span class="number">0</span>; j &lt; M; j += BSIZE) <span class="comment">// 2. 以一个block为单位，扫描一个block行</span></span><br><span class="line">        &#123;</span><br><span class="line">            <span class="keyword">for</span> (k = j; k &lt; j + BSIZE; k++) <span class="comment">// 3. 以一个条带为单位，扫描一个块</span></span><br><span class="line">            &#123;</span><br><span class="line">                <span class="keyword">for</span> (q = <span class="number">0</span>; q &lt; BSIZE; q++) <span class="comment">// 4. 以最小粒度为单位， 扫描一个条带</span></span><br><span class="line">                &#123;</span><br><span class="line">                    <span class="keyword">if</span> (k &lt; M &amp;&amp; i + q &lt; N)</span><br><span class="line">                    &#123;</span><br><span class="line">                        B[i + q][k] = A[k][i + q];</span><br><span class="line">                    &#125;</span><br><span class="line">                    <span class="keyword">else</span></span><br><span class="line">                    &#123;</span><br><span class="line">                        <span class="keyword">break</span>;</span><br><span class="line">                    &#125;</span><br><span class="line">                &#125;</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line"><span class="meta">#<span class="meta-keyword">undef</span> N</span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">undef</span> M</span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">undef</span> BSIZE</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p><strong>最终的miss为1817</strong></p>
+<h3 id="3-64x64"><a href="#3-64x64" class="headerlink" title="3. 64x64"></a>3. 64x64</h3><p>64x64则难很多了，如果依然照搬上面的算法，最终的miss应该是1800多，离满分1300还差很远。来分析下原因：</p>
+<ol>
+<li>如果BSIZE 依然取8会发生什么问题？</li>
+</ol>
+<p><img src="https://cdn.jsdelivr.net/gh/ravenxrz/PicBed/img/5f212d5b14195aa594514cfb.png" alt="image-20200729151739512"></p>
+<p>上图给出了此时的矩阵内部cacheline分布，有个很严重的问题在于一个cache空间，在矩阵中仅4行就重复了。那如果条带继续为8， B列向扫描一个条带，后4个元素就会替换前4个元素所在的cacheline。造成过多<strong>冲突不命中</strong>。</p>
+<ol start="2">
+<li>那，如果将BSIZE设置为4呢？</li>
+</ol>
+<p>实际上，采用同样的算法，BSIZE=4,的确是最优的了。但是设置为4又会带来什么缺点？<strong>cacheline的利用率仅有一半</strong>。 一个cacheline 32字节，可装载8个元素，但实际只是用了4个元素。</p>
+<ol start="3">
+<li>那，如何保住利用率的同时，减少冲突不命中？</li>
+</ol>
+<p>要保住利用率，BSIZE应该是8的整数倍。但是冲突不命中如何解决？</p>
+<p>以BSIZE=8为例：</p>
+<p>A条带长度为8，我们将一个A条带的前4列正常填入B的前4行，而<strong>A条带的后4列填入到其他地方，</strong>再等待某个时机，将这些临时填充的数据归还到正确位置即可。示意图：</p>
+<p><img src="https://cdn.jsdelivr.net/gh/ravenxrz/PicBed/img/5f212d6b14195aa59451559a.png" alt="image-20200729153035966"></p>
+<p>绿色代表正常填入区间。</p>
+<p>灰色代表本应该填入，但是不填入，转而填入到红色区域。</p>
+<p>红色区域代表临时填充区间。</p>
+<p>接着，在某个时机：</p>
+<p><img src="https://cdn.jsdelivr.net/gh/ravenxrz/PicBed/img/5f212d7d14195aa594515d89.png" alt="image-20200729153243973"></p>
+<p>几个问题：</p>
+<ol>
+<li><p>为什么红色区域要横着填？</p>
+<p>因为要考虑cache友好性，如果竖着填，那将跨越多个cacheline。</p>
+</li>
+<li><p>为什么要选择第0行，第4 5 6 7列 作为 第0列，第4 5 6 7行的临时区间？</p>
+<p>这只是个示意图，实际上我选择了3种方案，最终方案不是这样映射的，贴这个图是为了方便理解。</p>
+</li>
+<li><p>某个时机？具体是什么时机？</p>
+<p>将要填写第0行，第4,5,6,7列数据时，首先先移动数据到正确的位置（第0列，第4,5,6,7行），然后才填写第0行，第4，5,6,7列。</p>
+</li>
+<li><p>最靠右的块如何处理？它已经没有 右边的空间 作为缓冲了。</p>
+<p>单独处理。具体之后会说。</p>
+</li>
+</ol>
+<h4 id="最终方案"><a href="#最终方案" class="headerlink" title="最终方案"></a>最终方案</h4><p>最终我选择方案为： BSIZE=8，临时填充区间示意图如下：</p>
+<p><img src="https://cdn.jsdelivr.net/gh/ravenxrz/PicBed/img/5f212d8c14195aa5945163a2.png" alt="image-20200729153935817"></p>
+<p>为什么会这样选？如果像之前示意图那样选，依然会存在很多冲突映射，甚至不如不做映射。仔细分析了下trace file,手动模拟了cache line的load store过程，选择的这样的临时填充映射。</p>
+<p><strong>最后再说说扫描到最后一个8x8的方格时如何处理</strong>，由于最后的方格右边已经没有空间做缓冲，那先考虑一个简单的，直接对A和B矩阵的最后8x8方格做一一映射。显然后4x8会把和前4x8会产生冲突不命中。</p>
+<p>这样做的miss数应该是1500多。虽然比最开始的算法1800多，还是好不少，但依然没法满分。没办法，继续考虑。</p>
+<p><strong>既然是后4x8和前4x8冲突了，那把两次赋值过程分开不就好了吗？</strong></p>
+<p>是的，基于这样的思想，我改了代码，嗯，不错，<strong>这次跑的结果为1190</strong>。总算挤近1300了。</p>
+<p>别忘了，依然要解决重复加载A条带带来的冲突不命中问题（即，多定义局部变量）。</p>
+<p>最终代码：</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br><span class="line">75</span><br><span class="line">76</span><br><span class="line">77</span><br><span class="line">78</span><br><span class="line">79</span><br><span class="line">80</span><br><span class="line">81</span><br><span class="line">82</span><br><span class="line">83</span><br><span class="line">84</span><br><span class="line">85</span><br><span class="line">86</span><br><span class="line">87</span><br><span class="line">88</span><br><span class="line">89</span><br><span class="line">90</span><br><span class="line">91</span><br><span class="line">92</span><br><span class="line">93</span><br><span class="line">94</span><br><span class="line">95</span><br><span class="line">96</span><br><span class="line">97</span><br><span class="line">98</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">void</span> <span class="title">trans64_v1</span><span class="params">(<span class="keyword">int</span> A[<span class="number">64</span>][<span class="number">64</span>], <span class="keyword">int</span> B[<span class="number">64</span>][<span class="number">64</span>])</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line"><span class="meta">#<span class="meta-keyword">define</span> LEN 64</span></span><br><span class="line">    <span class="keyword">int</span> i, j, k;</span><br><span class="line">    <span class="keyword">int</span> t0, t1, t2, t3, t4, t5, t6, t7;</span><br><span class="line"></span><br><span class="line">    <span class="comment">// 所有循环视角从B矩阵出发</span></span><br><span class="line">    <span class="keyword">for</span> (i = <span class="number">0</span>; i &lt; LEN; i += <span class="number">8</span>) <span class="comment">// 1. 以block行为单位，扫描整个矩阵</span></span><br><span class="line">    &#123;</span><br><span class="line">        <span class="keyword">for</span> (j = <span class="number">0</span>; j &lt; LEN; j += <span class="number">8</span>) <span class="comment">// 2. 以一个block为单位，扫描一个block行</span></span><br><span class="line">        &#123;</span><br><span class="line">            <span class="keyword">for</span> (k = j; k &lt; j + <span class="number">8</span>; k++) <span class="comment">// 3. 以一个条带为单位，扫描一个块</span></span><br><span class="line">            &#123;</span><br><span class="line"></span><br><span class="line">                t0 = A[k][i + <span class="number">0</span>];</span><br><span class="line">                t1 = A[k][i + <span class="number">1</span>];</span><br><span class="line">                t2 = A[k][i + <span class="number">2</span>];</span><br><span class="line">                t3 = A[k][i + <span class="number">3</span>];</span><br><span class="line">                t4 = A[k][i + <span class="number">4</span>];</span><br><span class="line">                t5 = A[k][i + <span class="number">5</span>];</span><br><span class="line">                t6 = A[k][i + <span class="number">6</span>];</span><br><span class="line">                t7 = A[k][i + <span class="number">7</span>];</span><br><span class="line"></span><br><span class="line">                <span class="keyword">if</span> (j == <span class="number">0</span>)</span><br><span class="line">                &#123;</span><br><span class="line">                    <span class="comment">// 第一块</span></span><br><span class="line">                    <span class="comment">// 前4个正常放置</span></span><br><span class="line">                    B[i + <span class="number">0</span>][k] = t0;</span><br><span class="line">                    B[i + <span class="number">1</span>][k] = t1;</span><br><span class="line">                    B[i + <span class="number">2</span>][k] = t2;</span><br><span class="line">                    B[i + <span class="number">3</span>][k] = t3;</span><br><span class="line"></span><br><span class="line">                    <span class="comment">// 后4个需要单独处理</span></span><br><span class="line">                    B[i + k % <span class="number">4</span>][k - k % <span class="number">4</span> + <span class="number">8</span>] = t4;</span><br><span class="line">                    B[i + k % <span class="number">4</span>][k - k % <span class="number">4</span> + <span class="number">9</span>] = t5;</span><br><span class="line">                    B[i + k % <span class="number">4</span>][k - k % <span class="number">4</span> + <span class="number">10</span>] = t6;</span><br><span class="line">                    B[i + k % <span class="number">4</span>][k - k % <span class="number">4</span> + <span class="number">11</span>] = t7;</span><br><span class="line">                &#125;</span><br><span class="line">                <span class="keyword">else</span></span><br><span class="line">                &#123;</span><br><span class="line">                    <span class="comment">// 非第一块，首先需要将元素搬迁到正确的位置</span></span><br><span class="line">                    <span class="keyword">if</span> (k == j) <span class="comment">// 第一次进入该块时，搬迁</span></span><br><span class="line">                    &#123;</span><br><span class="line">                        <span class="keyword">for</span> (<span class="keyword">size_t</span> a = i; a &lt; i + <span class="number">4</span>; a++)</span><br><span class="line">                        &#123;</span><br><span class="line">                            <span class="keyword">for</span> (<span class="keyword">size_t</span> b = j; b &lt; j + <span class="number">4</span>; b++) <span class="comment">// 一个条带</span></span><br><span class="line">                            &#123;</span><br><span class="line">                                <span class="comment">// 两点关于一条直线对称</span></span><br><span class="line">                                B[b + i - j + <span class="number">4</span>][a - i + j - <span class="number">8</span>] = B[a][b];</span><br><span class="line">                                B[b + i - j + <span class="number">4</span>][a - i + j - <span class="number">4</span>] = B[a][b + <span class="number">4</span>];</span><br><span class="line">                            &#125;</span><br><span class="line">                        &#125;</span><br><span class="line">                    &#125;</span><br><span class="line"></span><br><span class="line">                    <span class="comment">// 然后，填入本block正确的元素</span></span><br><span class="line">                    <span class="keyword">if</span> (j != LEN - <span class="number">8</span>)</span><br><span class="line">                    &#123; </span><br><span class="line">                        <span class="comment">// 中间块处理方式和第一块处理方式相同</span></span><br><span class="line">                        <span class="comment">// 前4个正常放置</span></span><br><span class="line">                        B[i + <span class="number">0</span>][k] = t0;</span><br><span class="line">                        B[i + <span class="number">1</span>][k] = t1;</span><br><span class="line">                        B[i + <span class="number">2</span>][k] = t2;</span><br><span class="line">                        B[i + <span class="number">3</span>][k] = t3;</span><br><span class="line"></span><br><span class="line">                        <span class="comment">// 后4个需要单独处理</span></span><br><span class="line">                        B[i + k % <span class="number">4</span>][k - k % <span class="number">4</span> + <span class="number">8</span>] = t4;</span><br><span class="line">                        B[i + k % <span class="number">4</span>][k - k % <span class="number">4</span> + <span class="number">9</span>] = t5;</span><br><span class="line">                        B[i + k % <span class="number">4</span>][k - k % <span class="number">4</span> + <span class="number">10</span>] = t6;</span><br><span class="line">                        B[i + k % <span class="number">4</span>][k - k % <span class="number">4</span> + <span class="number">11</span>] = t7;</span><br><span class="line">                    &#125;</span><br><span class="line">                    <span class="keyword">else</span></span><br><span class="line">                    &#123;</span><br><span class="line">                        <span class="comment">// 最后一块单独处理</span></span><br><span class="line">                        <span class="comment">// 只处理8x8的上 4x8方块</span></span><br><span class="line">                        B[i + <span class="number">0</span>][k] = t0;</span><br><span class="line">                        B[i + <span class="number">1</span>][k] = t1;</span><br><span class="line">                        B[i + <span class="number">2</span>][k] = t2;</span><br><span class="line">                        B[i + <span class="number">3</span>][k] = t3;</span><br><span class="line">                    &#125;</span><br><span class="line">                &#125;</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="comment">// 补齐最后一块的下4行条带， 即最后的8x8的下4x8方块</span></span><br><span class="line">        <span class="keyword">for</span> (<span class="keyword">size_t</span> a = <span class="number">56</span>; a &lt; <span class="number">64</span>; a++)</span><br><span class="line">        &#123;</span><br><span class="line">            t4 = A[a][i + <span class="number">4</span>];</span><br><span class="line">            t5 = A[a][i + <span class="number">5</span>];</span><br><span class="line">            t6 = A[a][i + <span class="number">6</span>];</span><br><span class="line">            t7 = A[a][i + <span class="number">7</span>];</span><br><span class="line"></span><br><span class="line">            B[i + <span class="number">4</span>][a] = t4;</span><br><span class="line">            B[i + <span class="number">5</span>][a] = t5;</span><br><span class="line">            B[i + <span class="number">6</span>][a] = t6;</span><br><span class="line">            B[i + <span class="number">7</span>][a] = t7;</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line"><span class="meta">#<span class="meta-keyword">undef</span> LEN</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>如果你眼尖，会发现一个问题，那就是局部变量用了13个。好吧，确实是，but，我们是可以解决的：</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">for</span> (<span class="keyword">size_t</span> a = i; a &lt; i + <span class="number">4</span>; a++)</span><br><span class="line">&#123;</span><br><span class="line">    <span class="keyword">for</span> (<span class="keyword">size_t</span> b = j; b &lt; j + <span class="number">4</span>; b++) <span class="comment">// 一个条带</span></span><br><span class="line">    &#123;</span><br><span class="line">        <span class="comment">// 两点关于一条直线对称</span></span><br><span class="line">        B[b + i - j + <span class="number">4</span>][a - i + j - <span class="number">8</span>] = B[a][b];</span><br><span class="line">        B[b + i - j + <span class="number">4</span>][a - i + j - <span class="number">4</span>] = B[a][b + <span class="number">4</span>];</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>把这个循环展开即可。</p>
+<h2 id="3-总结"><a href="#3-总结" class="headerlink" title="3. 总结"></a>3. 总结</h2><p>呼，加上今天的文章，cachelab一共花了3天的时间，不过是完全值得的，能够深入理解经常碰到的cacheline的本质，理清了很多概念上的东西。 cache友好的代码确实很难想也很难写，以我目前的能力，写代码时还考虑不到这么底层，考虑一些时间、空间局部性就快极限了，每一行代码都去想cache line实在耗费很多精力，不得不说，还有很多路要走啊。</p>
+<p>最近也要忙项目了，下一个lab不知道什么时候再做。但一定要把csapp啃完！</p>
+
+    </div>
+
+    
+    
+    
+        <div class="reward-container">
+  <div>文章对你有帮助?打赏一下作者吧</div>
+  <button onclick="var qr = document.getElementById('qr'); qr.style.display = (qr.style.display === 'none') ? 'block' : 'none';">
+    打赏
+  </button>
+  <div id="qr" style="display: none;">
+      
+      <div style="display: inline-block;">
+        <img src="https://pic.downk.cc/item/5d064208451253d178a15b27.png" alt="Raven 微信支付">
+        <p>微信支付</p>
+      </div>
+      
+      <div style="display: inline-block;">
+        <img src="https://pic.downk.cc/item/5d0641c7451253d178a15376.png" alt="Raven 支付宝">
+        <p>支付宝</p>
+      </div>
+
+  </div>
+</div>
+
+        
+
+<div>
+<ul class="post-copyright">
+  <li class="post-copyright-author">
+    <strong>本文作者： </strong>Raven
+  </li>
+  <li class="post-copyright-link">
+    <strong>本文链接：</strong>
+    <a href="https://www.ravenxrz.ink/archives/153b500d.html" title="Csapp-Cachelab题解">https://www.ravenxrz.ink/archives/153b500d.html</a>
+  </li>
+  <li class="post-copyright-license">
+    <strong>版权声明： </strong>本博客所有文章除特别声明外，均采用 <span class="exturl" data-url="aHR0cHM6Ly9jcmVhdGl2ZWNvbW1vbnMub3JnL2xpY2Vuc2VzL2J5LW5jLXNhLzQuMC8="><i class="fa fa-fw fa-creative-commons"></i>BY-NC-SA</span> 许可协议。转载请注明出处！
+  </li>
+</ul>
+</div>
+
+
+      <footer class="post-footer">
+          
+          <div class="post-tags">
+              <a href="/tags/cachelab/" rel="tag"><i class="fa fa-tag"></i> cachelab</a>
+          </div>
+
+        
+
+
+        
+    <div class="post-nav">
+      <div class="post-nav-item">
+    <a href="/archives/8134a50f.html" rel="prev" title="Deepin安装后续事项记录">
+      <i class="fa fa-chevron-left"></i> Deepin安装后续事项记录
+    </a></div>
+      <div class="post-nav-item">
+    <a href="/archives/afbe8180.html" rel="next" title="Qt 配置+fakevim自定义">
+      Qt 配置+fakevim自定义 <i class="fa fa-chevron-right"></i>
+    </a></div>
+    </div>
+      </footer>
+    
+  </article>
+  
+  
+  
+
+
+
+          </div>
+          
+    <div class="comments" id="gitalk-container"></div>
+
+<script>
+  window.addEventListener('tabs:register', () => {
+    let { activeClass } = CONFIG.comments;
+    if (CONFIG.comments.storage) {
+      activeClass = localStorage.getItem('comments_active') || activeClass;
+    }
+    if (activeClass) {
+      let activeTab = document.querySelector(`a[href="#comment-${activeClass}"]`);
+      if (activeTab) {
+        activeTab.click();
+      }
+    }
+  });
+  if (CONFIG.comments.storage) {
+    window.addEventListener('tabs:click', event => {
+      if (!event.target.matches('.tabs-comment .tab-content .tab-pane')) return;
+      let commentClass = event.target.classList[1];
+      localStorage.setItem('comments_active', commentClass);
+    });
+  }
+</script>
+
+        </div>
+          
+  
+  <div class="toggle sidebar-toggle">
+    <span class="toggle-line toggle-line-first"></span>
+    <span class="toggle-line toggle-line-middle"></span>
+    <span class="toggle-line toggle-line-last"></span>
+  </div>
+
+  <aside class="sidebar">
+    <div class="sidebar-inner">
+
+      <ul class="sidebar-nav motion-element">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          站点概览
+        </li>
+      </ul>
+
+      <!--noindex-->
+      <div class="post-toc-wrap sidebar-panel">
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#0-%E8%AF%B4%E6%98%8E"><span class="nav-text">0. 说明</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#1-%E7%AC%AC%E4%B8%80%E9%83%A8%E5%88%86%E2%80%93cache%E5%B7%A5%E4%BD%9C%E6%96%B9%E5%BC%8F%E4%BB%BF%E7%9C%9F"><span class="nav-text">1. 第一部分–cache工作方式仿真</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#2-%E7%AC%AC%E4%BA%8C%E9%83%A8%E5%88%86%E2%80%93%E7%BC%96%E5%86%99cache%E5%8F%8B%E5%A5%BD%E4%BB%A3%E7%A0%81"><span class="nav-text">2. 第二部分–编写cache友好代码</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#1-32x32"><span class="nav-text">1. 32x32</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#2-61x67"><span class="nav-text">2. 61x67</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#3-64x64"><span class="nav-text">3. 64x64</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#%E6%9C%80%E7%BB%88%E6%96%B9%E6%A1%88"><span class="nav-text">最终方案</span></a></li></ol></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#3-%E6%80%BB%E7%BB%93"><span class="nav-text">3. 总结</span></a></li></ol></div>
+      </div>
+      <!--/noindex-->
+
+      <div class="site-overview-wrap sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+    <img class="site-author-image" itemprop="image" alt="Raven"
+      src="https://pic.downk.cc/item/5e907515504f4bcb04b6f798.jpg">
+  <p class="site-author-name" itemprop="name">Raven</p>
+  <div class="site-description" itemprop="description">分享技术，记录生活</div>
+</div>
+<div class="site-state-wrap motion-element">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+          <a href="/archives/">
+        
+          <span class="site-state-item-count">120</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+            <a href="/categories/">
+          
+        <span class="site-state-item-count">17</span>
+        <span class="site-state-item-name">分类</span></a>
+      </div>
+      <div class="site-state-item site-state-tags">
+            <a href="/tags/">
+          
+        <span class="site-state-item-count">114</span>
+        <span class="site-state-item-name">标签</span></a>
+      </div>
+  </nav>
+</div>
+  <div class="links-of-author motion-element">
+      <span class="links-of-author-item">
+        <span class="exturl" data-url="aHR0cHM6Ly9naXRodWIuY29tL3JhdmVueHJ6" title="GitHub → https:&#x2F;&#x2F;github.com&#x2F;ravenxrz"><i class="fa fa-fw fa-fab fa-github"></i>GitHub</span>
+      </span>
+      <span class="links-of-author-item">
+        <span class="exturl" data-url="bWFpbHRvOnpoYWduLnhpbmdydWlAZm94bWFpbC5jb20=" title="E-Mail → mailto:zhagn.xingrui@foxmail.com"><i class="fa fa-fw fa-fa fa-envelope"></i>E-Mail</span>
+      </span>
+  </div>
+  <div class="cc-license motion-element" itemprop="license">
+    <span class="exturl cc-opacity" data-url="aHR0cHM6Ly9jcmVhdGl2ZWNvbW1vbnMub3JnL2xpY2Vuc2VzL2J5LW5jLXNhLzQuMC8="><img src="/images/cc-by-nc-sa.svg" alt="Creative Commons"></span>
+  </div>
+
+
+  <div class="links-of-blogroll motion-element">
+    <div class="links-of-blogroll-title">
+      <i class="fa fa-fw fa-fa fa-link"></i>
+      Links
+    </div>
+    <ul class="links-of-blogroll-list">
+        <li class="links-of-blogroll-item">
+          <a href="/resources" title="&#x2F;resources">我的资源</a>
+        </li>
+    </ul>
+  </div>
+
+      </div>
+
+    </div>
+  </aside>
+  <div id="sidebar-dimmer"></div>
+
+
+      </div>
+    </main>
+
+    <footer class="footer">
+      <div class="footer-inner">
+        
+
+        
+
+<div class="copyright">
+  
+  &copy; 2017 – 
+  <span itemprop="copyrightYear">2020</span>
+  <span class="with-love">
+    <i class="fa fa-fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">Raven</span>
+</div>
+  <div class="powered-by">由 <span class="exturl theme-link" data-url="aHR0cHM6Ly9oZXhvLmlv">Hexo</span> & <span class="exturl theme-link" data-url="aHR0cHM6Ly9taXN0LnRoZW1lLW5leHQub3Jn">NexT.Mist</span> 强力驱动
+  </div>
+
+        
+<div class="busuanzi-count">
+  <script async src="https://busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+    <span class="post-meta-item" id="busuanzi_container_site_uv" style="display: none;">
+      <span class="post-meta-item-icon">
+        <i class="fa fa-fa fa-user"></i>
+      </span>
+      <span class="site-uv" title="总访客量">
+        <span id="busuanzi_value_site_uv"></span>
+      </span>
+    </span>
+    <span class="post-meta-divider">|</span>
+    <span class="post-meta-item" id="busuanzi_container_site_pv" style="display: none;">
+      <span class="post-meta-item-icon">
+        <i class="fa fa-fa fa-eye"></i>
+      </span>
+      <span class="site-pv" title="总访问量">
+        <span id="busuanzi_value_site_pv"></span>
+      </span>
+    </span>
+</div>
+
+
+
+
+
+
+
+
+      </div>
+    </footer>
+  </div>
+
+  
+  <script src="//cdn.jsdelivr.net/npm/animejs@3.1.0/lib/anime.min.js"></script>
+  <script src="//cdn.jsdelivr.net/npm/medium-zoom@1/dist/medium-zoom.min.js"></script>
+  <script src="//cdn.jsdelivr.net/npm/lozad@1/dist/lozad.min.js"></script>
+  <script src="//cdn.jsdelivr.net/npm/pangu@4/dist/browser/pangu.min.js"></script>
+
+<script src="/js/utils.js"></script>
+
+
+<script src="/js/schemes/muse.js"></script>
+
+
+<script src="/js/next-boot.js"></script>
+
+
+
+
+  
+  <script>
+    (function(){
+      var bp = document.createElement('script');
+      var curProtocol = window.location.protocol.split(':')[0];
+      bp.src = (curProtocol === 'https') ? 'https://zz.bdstatic.com/linksubmit/push.js' : 'http://push.zhanzhang.baidu.com/push.js';
+      var s = document.getElementsByTagName("script")[0];
+      s.parentNode.insertBefore(bp, s);
+    })();
+  </script>
+
+
+
+
+  
+<script src="/js/local-search.js"></script>
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+  
+      
+
+<script>
+  if (typeof MathJax === 'undefined') {
+    window.MathJax = {
+      loader: {
+        source: {
+          '[tex]/amsCd': '[tex]/amscd',
+          '[tex]/AMScd': '[tex]/amscd'
+        }
+      },
+      tex: {
+        inlineMath: {'[+]': [['$', '$']]},
+        tags: 'ams'
+      },
+      options: {
+        renderActions: {
+          findScript: [10, doc => {
+            document.querySelectorAll('script[type^="math/tex"]').forEach(node => {
+              const display = !!node.type.match(/; *mode=display/);
+              const math = new doc.options.MathItem(node.textContent, doc.inputJax[0], display);
+              const text = document.createTextNode('');
+              node.parentNode.replaceChild(text, node);
+              math.start = {node: text, delim: '', n: 0};
+              math.end = {node: text, delim: '', n: 0};
+              doc.math.push(math);
+            });
+          }, '', false],
+          insertedScript: [200, () => {
+            document.querySelectorAll('mjx-container').forEach(node => {
+              let target = node.parentNode;
+              if (target.nodeName.toLowerCase() === 'li') {
+                target.parentNode.classList.add('has-jax');
+              }
+            });
+          }, '', false]
+        }
+      }
+    };
+    (function () {
+      var script = document.createElement('script');
+      script.src = '//cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js';
+      script.defer = true;
+      document.head.appendChild(script);
+    })();
+  } else {
+    MathJax.startup.document.state(0);
+    MathJax.texReset();
+    MathJax.typeset();
+  }
+</script>
+
+    
+
+  
+  <script src="//cdn.jsdelivr.net/npm/quicklink@1/dist/quicklink.umd.js"></script>
+  <script>
+      window.addEventListener('load', () => {
+      quicklink({
+        timeout : 3000,
+        priority: true,
+        ignores : [uri => uri.includes('#'),uri => uri === 'https://www.ravenxrz.ink/archives/153b500d.html',]
+      });
+      });
+  </script>
+
+<link rel="stylesheet" href="//cdn.jsdelivr.net/npm/gitalk@1/dist/gitalk.min.css">
+
+<script>
+NexT.utils.loadComments(document.querySelector('#gitalk-container'), () => {
+  NexT.utils.getScript('//cdn.jsdelivr.net/npm/gitalk@1/dist/gitalk.min.js', () => {
+    var gitalk = new Gitalk({
+      clientID    : 'b2fd373d2ca2e03e591e',
+      clientSecret: 'de4ab066908c1fbd32d3a45e091b3538761d685b',
+      repo        : 'BlogComment',
+      owner       : 'ravenxrz',
+      admin       : ['ravenxrz'],
+      id          : 'd07dcfdb9ba028a8aca4e1630c6f120e',
+        language: '',
+      distractionFreeMode: true
+    });
+    gitalk.render('gitalk-container');
+  }, window.Gitalk);
+});
+</script>
+
+</body>
+</html>

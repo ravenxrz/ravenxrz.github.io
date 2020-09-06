@@ -1,0 +1,698 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 5.1.1">
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+  <meta http-equiv="Cache-Control" content="no-transform">
+  <meta http-equiv="Cache-Control" content="no-siteapp">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+<link rel="stylesheet" href="//cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@5/css/all.min.css">
+  <link rel="stylesheet" href="//cdn.jsdelivr.net/npm/pace-js@1/themes/blue/pace-theme-minimal.css">
+  <script src="//cdn.jsdelivr.net/npm/pace-js@1/pace.min.js"></script>
+
+<script id="hexo-configurations">
+    var NexT = window.NexT || {};
+    var CONFIG = {"hostname":"www.ravenxrz.ink","root":"/","scheme":"Mist","version":"7.8.0","exturl":true,"sidebar":{"position":"left","display":"always","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":true,"show_result":true,"style":"flat"},"back2top":{"enable":true,"sidebar":false,"scrollpercent":true},"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":true,"lazyload":true,"pangu":true,"comments":{"style":"tabs","active":"gitalk","storage":true,"lazyload":true,"nav":null,"activeClass":"gitalk"},"algolia":{"hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":true,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},"motion":{"enable":false,"async":true,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}}};
+  </script>
+
+  <meta name="description" content="i&gt; 本科毕设题目为《基于深度学习的图像去雾方法研究与实现》 毕设总结系列：  毕设总结零–绪论 毕设总结一–传统去雾理论 毕设总结二–论文复现工作1–暗通道去雾(DCP) 毕设总结三–论文复现工作2–MSCNN去雾 毕设总结四–最终去雾方案的确定与实现–DeBlurGanToDehaze 毕设总结五–杂项">
+<meta property="og:type" content="article">
+<meta property="og:title" content="毕设总结五-杂项">
+<meta property="og:url" content="https://www.ravenxrz.ink/archives/2caf6b87.html">
+<meta property="og:site_name" content="Raven&#39;s Blog">
+<meta property="og:description" content="i&gt; 本科毕设题目为《基于深度学习的图像去雾方法研究与实现》 毕设总结系列：  毕设总结零–绪论 毕设总结一–传统去雾理论 毕设总结二–论文复现工作1–暗通道去雾(DCP) 毕设总结三–论文复现工作2–MSCNN去雾 毕设总结四–最终去雾方案的确定与实现–DeBlurGanToDehaze 毕设总结五–杂项">
+<meta property="og:locale" content="zh_CN">
+<meta property="article:published_time" content="2019-07-19T07:58:58.000Z">
+<meta property="article:modified_time" content="2020-09-06T02:45:08.060Z">
+<meta property="article:author" content="Raven">
+<meta property="article:tag" content="图像去雾">
+<meta name="twitter:card" content="summary">
+
+<link rel="canonical" href="https://www.ravenxrz.ink/archives/2caf6b87.html">
+
+
+<script id="page-configurations">
+  // https://hexo.io/docs/variables.html
+  CONFIG.page = {
+    sidebar: "",
+    isHome : false,
+    isPost : true,
+    lang   : 'zh-CN'
+  };
+</script>
+
+  <title>毕设总结五-杂项 | Raven's Blog</title>
+  
+
+
+
+
+
+
+  <noscript>
+  <style>
+  .use-motion .brand,
+  .use-motion .menu-item,
+  .sidebar-inner,
+  .use-motion .post-block,
+  .use-motion .pagination,
+  .use-motion .comments,
+  .use-motion .post-header,
+  .use-motion .post-body,
+  .use-motion .collection-header { opacity: initial; }
+
+  .use-motion .site-title,
+  .use-motion .site-subtitle {
+    opacity: initial;
+    top: initial;
+  }
+
+  .use-motion .logo-line-before i { left: initial; }
+  .use-motion .logo-line-after i { right: initial; }
+  </style>
+</noscript>
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage">
+  <div class="container">
+    <div class="headband"></div>
+
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切换导航栏">
+      <span class="toggle-line toggle-line-first"></span>
+      <span class="toggle-line toggle-line-middle"></span>
+      <span class="toggle-line toggle-line-last"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <span class="logo-line-before"><i></i></span>
+      <h1 class="site-title">Raven's Blog</h1>
+      <span class="logo-line-after"><i></i></span>
+    </a>
+      <p class="site-subtitle" itemprop="description">zhang.xingrui@foxmail.com</p>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger">
+        <i class="fa fa-search fa-fw fa-lg"></i>
+    </div>
+  </div>
+</div>
+
+
+
+
+<nav class="site-nav">
+  <ul id="menu" class="menu">
+        <li class="menu-item menu-item-home">
+
+    <a href="/" rel="section"><i class="fa fa-fw fa-fa fa-home"></i>首页</a>
+
+  </li>
+        <li class="menu-item menu-item-archives">
+
+    <a href="/archives/" rel="section"><i class="fa fa-fw fa-fa fa-archive"></i>归档<span class="badge">120</span></a>
+
+  </li>
+        <li class="menu-item menu-item-categories">
+
+    <a href="/categories/" rel="section"><i class="fa fa-fw fa-fa fa-th"></i>分类<span class="badge">17</span></a>
+
+  </li>
+        <li class="menu-item menu-item-tags">
+
+    <a href="/tags/" rel="section"><i class="fa fa-fw fa-fa fa-tags"></i>标签<span class="badge">114</span></a>
+
+  </li>
+        <li class="menu-item menu-item-about">
+
+    <a href="/about/" rel="section"><i class="fa fa-fw fa-fa fa-user"></i>关于</a>
+
+  </li>
+      <li class="menu-item menu-item-search">
+        <a role="button" class="popup-trigger"><i class="fa fa-search fa-fw"></i>搜索
+        </a>
+      </li>
+  </ul>
+</nav>
+
+
+
+  <div class="search-pop-overlay">
+    <div class="popup search-popup">
+        <div class="search-header">
+  <span class="search-icon">
+    <i class="fa fa-search"></i>
+  </span>
+  <div class="search-input-container">
+    <input autocomplete="off" autocapitalize="off"
+           placeholder="搜索..." spellcheck="false"
+           type="search" class="search-input">
+  </div>
+  <span class="popup-btn-close">
+    <i class="fa fa-times-circle"></i>
+  </span>
+</div>
+<div id="search-result">
+  <div id="no-result">
+    <i class="fa fa-spinner fa-pulse fa-5x fa-fw"></i>
+  </div>
+</div>
+
+    </div>
+  </div>
+
+</div>
+    </header>
+
+    
+  <div class="back-to-top">
+    <i class="fa fa-arrow-up"></i>
+    <span>0%</span>
+  </div>
+
+  <span class="exturl github-corner" data-url="aHR0cHM6Ly9naXRodWIuY29tL3JhdmVueHJ6" title="Follow me on GitHub" aria-label="Follow me on GitHub"><svg width="80" height="80" viewBox="0 0 250 250" aria-hidden="true"><path d="M0,0 L115,115 L130,115 L142,142 L250,250 L250,0 Z"></path><path d="M128.3,109.0 C113.8,99.7 119.0,89.6 119.0,89.6 C122.0,82.7 120.5,78.6 120.5,78.6 C119.2,72.0 123.4,76.3 123.4,76.3 C127.3,80.9 125.5,87.3 125.5,87.3 C122.9,97.6 130.6,101.9 134.4,103.2" fill="currentColor" style="transform-origin: 130px 106px;" class="octo-arm"></path><path d="M115.0,115.0 C114.9,115.1 118.7,116.5 119.8,115.4 L133.7,101.6 C136.9,99.2 139.9,98.4 142.2,98.6 C133.8,88.0 127.5,74.4 143.8,58.0 C148.5,53.4 154.0,51.2 159.7,51.0 C160.3,49.4 163.2,43.6 171.4,40.1 C171.4,40.1 176.1,42.5 178.8,56.2 C183.1,58.6 187.2,61.8 190.9,65.4 C194.5,69.0 197.7,73.2 200.1,77.6 C213.8,80.2 216.3,84.9 216.3,84.9 C212.7,93.1 206.9,96.0 205.4,96.6 C205.1,102.4 203.0,107.8 198.3,112.5 C181.9,128.9 168.3,122.5 157.7,114.1 C157.9,116.9 156.7,120.9 152.7,124.9 L141.0,136.5 C139.8,137.7 141.6,141.9 141.8,141.8 Z" fill="currentColor" class="octo-body"></path></svg></span>
+
+
+    <main class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          
+
+          <div class="content post posts-expand">
+            
+
+    
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="https://www.ravenxrz.ink/archives/2caf6b87.html">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="https://pic.downk.cc/item/5e907515504f4bcb04b6f798.jpg">
+      <meta itemprop="name" content="Raven">
+      <meta itemprop="description" content="分享技术，记录生活">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Raven's Blog">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          毕设总结五-杂项
+        </h1>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+
+              <time title="创建时间：2019-07-19 15:58:58" itemprop="dateCreated datePublished" datetime="2019-07-19T15:58:58+08:00">2019-07-19</time>
+            </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-calendar-check-o"></i>
+                </span>
+                <span class="post-meta-item-text">更新于</span>
+                <time title="修改时间：2020-09-06 10:45:08" itemprop="dateModified" datetime="2020-09-06T10:45:08+08:00">2020-09-06</time>
+              </span>
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              <span class="post-meta-item-text">分类于</span>
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/%E6%B7%B1%E5%BA%A6%E5%AD%A6%E4%B9%A0/" itemprop="url" rel="index"><span itemprop="name">深度学习</span></a>
+                </span>
+            </span>
+
+          
+            <span class="post-meta-item" title="阅读次数" id="busuanzi_container_page_pv" style="display: none;">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-fa fa-eye"></i>
+              </span>
+              <span class="post-meta-item-text">阅读次数：</span>
+              <span id="busuanzi_value_page_pv"></span>
+            </span>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+        <p>i&gt; 本科毕设题目为《基于深度学习的图像去雾方法研究与实现》</p>
+<p>毕设总结系列：</p>
+<ul>
+<li><a href="https://www.ravenxrz.ink/archives/880ba6e.html">毕设总结零–绪论</a></li>
+<li><a href="https://www.ravenxrz.ink/archives/a513887d.html">毕设总结一–传统去雾理论</a></li>
+<li><a href="https://www.ravenxrz.ink/archives/81fcc536.html">毕设总结二–论文复现工作1–暗通道去雾(DCP)</a></li>
+<li><a href="https://www.ravenxrz.ink/archives/15ae521b.html">毕设总结三–论文复现工作2–MSCNN去雾</a></li>
+<li><a href="https://www.ravenxrz.ink/archives/6631bc9b.html">毕设总结四–最终去雾方案的确定与实现–DeBlurGanToDehaze</a></li>
+<li><a href="https://www.ravenxrz.ink/archives/2caf6b87.html">毕设总结五–杂项</a><a id="more"></a>
+<h2 id="1-前言"><a href="#1-前言" class="headerlink" title="1.  前言"></a>1.  前言</h2></li>
+</ul>
+<p>上一篇文章中，介绍了笔者在毕设中所采用的去雾方法及其代码实现。这一篇算是总结一些在毕设过程中的一些杂项事物，以及收尾吧。</p>
+<h2 id="2-一些杂项"><a href="#2-一些杂项" class="headerlink" title="2.  一些杂项"></a>2.  一些杂项</h2><h3 id="2-1-去雾新想法"><a href="#2-1-去雾新想法" class="headerlink" title="2.1 去雾新想法"></a>2.1 去雾新想法</h3><ul>
+<li>CycleGan的思想其实也很有趣，但是我没有去实现了，算是一个思路吧。</li>
+<li>DeBlurGan中可以尝试把ResBlock改为DenseBlock，但是注意DenseBlock很容易显存爆炸，我当初是实现了DenseBlock的，但是无奈显存直接爆炸了。曾经看过Pytorch似乎可以解决DenseBlock显存爆炸的问题，但是keras暂时还没有。显存爆炸的原因我已经忘记了，所以无法贴出相关链接。但是当时是在Github的issue上看到的，算是一条线索吧。</li>
+</ul>
+<h3 id="2-2-展望与不足"><a href="#2-2-展望与不足" class="headerlink" title="2.2 展望与不足"></a>2.2 展望与不足</h3><ul>
+<li><p>虽然没有实际测试服务器的去雾速度，但是个人感觉还是很快的。那么这样其实可以做一个<strong>视频实时去雾</strong>的应用，比如在咱们重庆高速公路上雾天天气还是蛮频繁的，做一个实时去雾处理可以大大降低车祸事故率。<strong>什么？担心上传雾图下载雾图速度慢？</strong>5G都要来了，咱应该不怕这个。更何况也可以把网络迁移到硬件设备上去，参考<a target="_blank" rel="noopener" href="https://www.tensorflow.org/lite">TensorFlow Lite</a>。</p>
+<hr>
+<p><strong>————-下段话已过时。————-</strong></p>
+<p>如果有读过我的代码的小伙伴，肯定知道不论是train还是test，我都把整个网络的输入固定了size，这就造成了整个网络只接受固定size的图片，其余size的图片需要做resize处理，resize肯定会失真，这是一个缺点。修复这个缺点的重点有两个：</p>
+<ol>
+<li>把判别网络后两个FC层改为多个卷积层，那就实现了整个网络（包括生成网络和判别网络）为全卷积网络，如此一来可以接收任意size的图片了。</li>
+<li>据个人所知，Keras和TensorFlow这两种框架必须固定输入size，要想实现任意size，可用matlab（matlab是基于操作来实现的，所以肯定可以实现全卷积），其余框架如caffe,pytorch等等我没有学习，无法给出确定答案。</li>
+</ol>
+<hr>
+<p><strong>2019/8/27更新</strong></p>
+<p>感谢评论区**@lihanyu1204**的提醒，理论上keras和tensorflow是可以接收任意size的输入的（前提是你的网络为全卷积）。个人试验后也的确如此，不过建议train时还是要固定size，test可不固定。另外，如果固定了输入size来train，判别网络也就不用将后两个FC层更改为卷积层了。代码实现如下：</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">if</span> mode == <span class="string">&#x27;train&#x27;</span>:</span><br><span class="line">       inputs = Input(shape=image_shape)</span><br><span class="line">   <span class="keyword">elif</span> mode == <span class="string">&#x27;test&#x27;</span>:</span><br><span class="line">       inputs = Input(shape=(<span class="literal">None</span>,<span class="literal">None</span>,<span class="number">3</span>))</span><br></pre></td></tr></table></figure>
+
+<p>其中<code>image_shape</code>是固定的图片大小，在我的代码里为<code>(256,256,3)</code>。</p>
+<p>当然了，这只是理论上可以接收任意size，实际情况还要看你的网络结构，由于我的网络设计已经固定，<strong>在不修改网络结构的情况下只能接收图片宽高能整除4的这类图片。</strong>因为我的网络结构最前两层卷积降维，最后两层升维，且单次升降仅让图片size乘2或除2。如果遇到输入不能整除4的情况，会造成输入输出的size不一致。例如输入为450, 经过第一层为225,第二层为113（padding=’same’的情况下，向上取整），倒数第二层为226，最后一层输出为452。所以我的网络只能接收能整除4的。</p>
+<p><strong>如果你要考虑接收任意size，则要考虑好网络结构。</strong></p>
+<hr>
+<p><strong>新问题</strong></p>
+<p>不过这样又会引发一个新问题，那就是在keras的predict函数中所接受的输入需要具有相同的shape，否则会报错。个人的解决方案是采用循环predict，每次循环仅predict一张图片。不知道keras有不有相应的predict函数能够适应不同的输入大小。</p>
+</li>
+</ul>
+<h3 id="2-3-Android-app展示去雾？"><a href="#2-3-Android-app展示去雾？" class="headerlink" title="2.3   Android app展示去雾？"></a>2.3   Android app展示去雾？</h3><p>看过本系列四的同学，应该注意到我在文末贴了一个视频，演示的是Android App上传图片到服务器，服务器处理回传后Android显示的效果。请注意那个时候Android app和服务器并不是在一个局域网内，因为我做这个app的初衷是为了答辩演示，答辩的时候肯定和寝室的台式机不在一个局域网内，于是做了内网穿透。关于这段实现过程，可参见我的另一篇博文</p>
+<p>[post cid=”194” /]</p>
+<h3 id="2-4-Latex-写毕设论文？"><a href="#2-4-Latex-写毕设论文？" class="headerlink" title="2.4 Latex 写毕设论文？"></a>2.4 Latex 写毕设论文？</h3><p>说到Latex，我真的是又爱又恨。爱的是他的简单美观，恨的是他的复杂难看。看到这里的小伙伴一定觉得我疯了，说了一堆反义词。但是Latex就是这样，<strong>如果有提供好的Latex模板</strong>，那写起来就很舒服，就像一个程序你只用给它一个简单输入，它在后台帮你把所有排版、公式编号、插图等等全部安排好。<strong>如果没有提供好的模板</strong>，那就要自己去实现，我花了一个星期的时间努力搞出本校的模板，但是我放弃了，太多细节的东西没法修复实现（全怪自己是Latex的弱鸡）。后来Latex对我来说的唯一作用就是拿来写公式，再转到word中去。</p>
+<p>i&gt; 所以一条建议：先去TexStudio工作室搜搜有不有你本校的模板，没有的话尽量就用word编排，当然如果你对自己的Latex能力有信心，那就做一份吧，还能为你本校的后辈们留点东西，方便后辈们写论文咯。</p>
+<p>[post cid=”145”/]</p>
+<h3 id="2-5-其他参考资料"><a href="#2-5-其他参考资料" class="headerlink" title="2.5 其他参考资料"></a>2.5 其他参考资料</h3><ul>
+<li><a target="_blank" rel="noopener" href="https://ramhiser.com/post/2018-05-14-autoencoders-with-keras/">自编码器 Autoencoders with Keras</a></li>
+<li>[Kears中如何保存模型？](How to Check-Point Deep Learning Models in Keras)</li>
+<li><a target="_blank" rel="noopener" href="https://blog.csdn.net/u014281392/article/details/75152809">经典CNN之：VGGNet - 机器会学习的博客 - CSDN博客</a></li>
+<li><a target="_blank" rel="noopener" href="https://blog.csdn.net/qq_38906523/article/details/79769571">深度学习—残差resnet网络原理详解 - Dean - CSDN博客</a></li>
+<li><a target="_blank" rel="noopener" href="https://my.oschina.net/u/876354/blog/1622896">大话深度残差网络（DRN）ResNet网络原理 - 雪饼的个人空间 - OSCHINA</a></li>
+<li><a target="_blank" rel="noopener" href="https://blog.csdn.net/u014380165/article/details/75142664/">DenseNet算法详解 - AI之路 - CSDN博客</a></li>
+<li><a target="_blank" rel="noopener" href="https://blog.csdn.net/stdcoutzyx/article/details/54025243">感知损失(Perceptual Losses)</a></li>
+<li><a target="_blank" rel="noopener" href="https://buptldy.github.io/2016/10/29/2016-10-29-deconv/">转置卷积、去卷积概念梳理</a></li>
+<li><a target="_blank" rel="noopener" href="https://blog.csdn.net/jacke121/article/details/79874555">训练loss不下降原因集合 - jacke121的专栏 - CSDN博客</a></li>
+<li><a target="_blank" rel="noopener" href="https://zhuanlan.zhihu.com/p/50757421">图像质量评价指标之 PSNR 和 SSIM - 知乎</a></li>
+</ul>
+<h2 id="3-结语"><a href="#3-结语" class="headerlink" title="3. 结语"></a>3. 结语</h2><p>总算是写到了本系列的最后一篇文章了，这个系列的结束，基本上意味着我在学校的最后工作也做完了，感谢在毕设5个月来一直帮助我的师兄，<br>接下来就是浪咯，好久没玩游戏了，最近应该也不会更新博文了吧，去放松一把啦。</p>
+
+    </div>
+
+    
+    
+    
+        <div class="reward-container">
+  <div>文章对你有帮助?打赏一下作者吧</div>
+  <button onclick="var qr = document.getElementById('qr'); qr.style.display = (qr.style.display === 'none') ? 'block' : 'none';">
+    打赏
+  </button>
+  <div id="qr" style="display: none;">
+      
+      <div style="display: inline-block;">
+        <img src="https://pic.downk.cc/item/5d064208451253d178a15b27.png" alt="Raven 微信支付">
+        <p>微信支付</p>
+      </div>
+      
+      <div style="display: inline-block;">
+        <img src="https://pic.downk.cc/item/5d0641c7451253d178a15376.png" alt="Raven 支付宝">
+        <p>支付宝</p>
+      </div>
+
+  </div>
+</div>
+
+        
+
+<div>
+<ul class="post-copyright">
+  <li class="post-copyright-author">
+    <strong>本文作者： </strong>Raven
+  </li>
+  <li class="post-copyright-link">
+    <strong>本文链接：</strong>
+    <a href="https://www.ravenxrz.ink/archives/2caf6b87.html" title="毕设总结五-杂项">https://www.ravenxrz.ink/archives/2caf6b87.html</a>
+  </li>
+  <li class="post-copyright-license">
+    <strong>版权声明： </strong>本博客所有文章除特别声明外，均采用 <span class="exturl" data-url="aHR0cHM6Ly9jcmVhdGl2ZWNvbW1vbnMub3JnL2xpY2Vuc2VzL2J5LW5jLXNhLzQuMC8="><i class="fa fa-fw fa-creative-commons"></i>BY-NC-SA</span> 许可协议。转载请注明出处！
+  </li>
+</ul>
+</div>
+
+
+      <footer class="post-footer">
+          
+          <div class="post-tags">
+              <a href="/tags/%E5%9B%BE%E5%83%8F%E5%8E%BB%E9%9B%BE/" rel="tag"><i class="fa fa-tag"></i> 图像去雾</a>
+          </div>
+
+        
+
+
+        
+    <div class="post-nav">
+      <div class="post-nav-item">
+    <a href="/archives/6631bc9b.html" rel="prev" title="毕设总结四-最终去雾方案的确定与实现-DeBlurGanToDehaze">
+      <i class="fa fa-chevron-left"></i> 毕设总结四-最终去雾方案的确定与实现-DeBlurGanToDehaze
+    </a></div>
+      <div class="post-nav-item">
+    <a href="/archives/d15edb4a.html" rel="next" title="坑记录-ubuntu中的eclipse不显示下划线解决方案">
+      坑记录-ubuntu中的eclipse不显示下划线解决方案 <i class="fa fa-chevron-right"></i>
+    </a></div>
+    </div>
+      </footer>
+    
+  </article>
+  
+  
+  
+
+
+
+          </div>
+          
+    <div class="comments" id="gitalk-container"></div>
+
+<script>
+  window.addEventListener('tabs:register', () => {
+    let { activeClass } = CONFIG.comments;
+    if (CONFIG.comments.storage) {
+      activeClass = localStorage.getItem('comments_active') || activeClass;
+    }
+    if (activeClass) {
+      let activeTab = document.querySelector(`a[href="#comment-${activeClass}"]`);
+      if (activeTab) {
+        activeTab.click();
+      }
+    }
+  });
+  if (CONFIG.comments.storage) {
+    window.addEventListener('tabs:click', event => {
+      if (!event.target.matches('.tabs-comment .tab-content .tab-pane')) return;
+      let commentClass = event.target.classList[1];
+      localStorage.setItem('comments_active', commentClass);
+    });
+  }
+</script>
+
+        </div>
+          
+  
+  <div class="toggle sidebar-toggle">
+    <span class="toggle-line toggle-line-first"></span>
+    <span class="toggle-line toggle-line-middle"></span>
+    <span class="toggle-line toggle-line-last"></span>
+  </div>
+
+  <aside class="sidebar">
+    <div class="sidebar-inner">
+
+      <ul class="sidebar-nav motion-element">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          站点概览
+        </li>
+      </ul>
+
+      <!--noindex-->
+      <div class="post-toc-wrap sidebar-panel">
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#1-%E5%89%8D%E8%A8%80"><span class="nav-text">1.  前言</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#2-%E4%B8%80%E4%BA%9B%E6%9D%82%E9%A1%B9"><span class="nav-text">2.  一些杂项</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#2-1-%E5%8E%BB%E9%9B%BE%E6%96%B0%E6%83%B3%E6%B3%95"><span class="nav-text">2.1 去雾新想法</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#2-2-%E5%B1%95%E6%9C%9B%E4%B8%8E%E4%B8%8D%E8%B6%B3"><span class="nav-text">2.2 展望与不足</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#2-3-Android-app%E5%B1%95%E7%A4%BA%E5%8E%BB%E9%9B%BE%EF%BC%9F"><span class="nav-text">2.3   Android app展示去雾？</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#2-4-Latex-%E5%86%99%E6%AF%95%E8%AE%BE%E8%AE%BA%E6%96%87%EF%BC%9F"><span class="nav-text">2.4 Latex 写毕设论文？</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#2-5-%E5%85%B6%E4%BB%96%E5%8F%82%E8%80%83%E8%B5%84%E6%96%99"><span class="nav-text">2.5 其他参考资料</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#3-%E7%BB%93%E8%AF%AD"><span class="nav-text">3. 结语</span></a></li></ol></div>
+      </div>
+      <!--/noindex-->
+
+      <div class="site-overview-wrap sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+    <img class="site-author-image" itemprop="image" alt="Raven"
+      src="https://pic.downk.cc/item/5e907515504f4bcb04b6f798.jpg">
+  <p class="site-author-name" itemprop="name">Raven</p>
+  <div class="site-description" itemprop="description">分享技术，记录生活</div>
+</div>
+<div class="site-state-wrap motion-element">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+          <a href="/archives/">
+        
+          <span class="site-state-item-count">120</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+            <a href="/categories/">
+          
+        <span class="site-state-item-count">17</span>
+        <span class="site-state-item-name">分类</span></a>
+      </div>
+      <div class="site-state-item site-state-tags">
+            <a href="/tags/">
+          
+        <span class="site-state-item-count">114</span>
+        <span class="site-state-item-name">标签</span></a>
+      </div>
+  </nav>
+</div>
+  <div class="links-of-author motion-element">
+      <span class="links-of-author-item">
+        <span class="exturl" data-url="aHR0cHM6Ly9naXRodWIuY29tL3JhdmVueHJ6" title="GitHub → https:&#x2F;&#x2F;github.com&#x2F;ravenxrz"><i class="fa fa-fw fa-fab fa-github"></i>GitHub</span>
+      </span>
+      <span class="links-of-author-item">
+        <span class="exturl" data-url="bWFpbHRvOnpoYWduLnhpbmdydWlAZm94bWFpbC5jb20=" title="E-Mail → mailto:zhagn.xingrui@foxmail.com"><i class="fa fa-fw fa-fa fa-envelope"></i>E-Mail</span>
+      </span>
+  </div>
+  <div class="cc-license motion-element" itemprop="license">
+    <span class="exturl cc-opacity" data-url="aHR0cHM6Ly9jcmVhdGl2ZWNvbW1vbnMub3JnL2xpY2Vuc2VzL2J5LW5jLXNhLzQuMC8="><img src="/images/cc-by-nc-sa.svg" alt="Creative Commons"></span>
+  </div>
+
+
+  <div class="links-of-blogroll motion-element">
+    <div class="links-of-blogroll-title">
+      <i class="fa fa-fw fa-fa fa-link"></i>
+      Links
+    </div>
+    <ul class="links-of-blogroll-list">
+        <li class="links-of-blogroll-item">
+          <a href="/resources" title="&#x2F;resources">我的资源</a>
+        </li>
+    </ul>
+  </div>
+
+      </div>
+
+    </div>
+  </aside>
+  <div id="sidebar-dimmer"></div>
+
+
+      </div>
+    </main>
+
+    <footer class="footer">
+      <div class="footer-inner">
+        
+
+        
+
+<div class="copyright">
+  
+  &copy; 2017 – 
+  <span itemprop="copyrightYear">2020</span>
+  <span class="with-love">
+    <i class="fa fa-fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">Raven</span>
+</div>
+  <div class="powered-by">由 <span class="exturl theme-link" data-url="aHR0cHM6Ly9oZXhvLmlv">Hexo</span> & <span class="exturl theme-link" data-url="aHR0cHM6Ly9taXN0LnRoZW1lLW5leHQub3Jn">NexT.Mist</span> 强力驱动
+  </div>
+
+        
+<div class="busuanzi-count">
+  <script async src="https://busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+    <span class="post-meta-item" id="busuanzi_container_site_uv" style="display: none;">
+      <span class="post-meta-item-icon">
+        <i class="fa fa-fa fa-user"></i>
+      </span>
+      <span class="site-uv" title="总访客量">
+        <span id="busuanzi_value_site_uv"></span>
+      </span>
+    </span>
+    <span class="post-meta-divider">|</span>
+    <span class="post-meta-item" id="busuanzi_container_site_pv" style="display: none;">
+      <span class="post-meta-item-icon">
+        <i class="fa fa-fa fa-eye"></i>
+      </span>
+      <span class="site-pv" title="总访问量">
+        <span id="busuanzi_value_site_pv"></span>
+      </span>
+    </span>
+</div>
+
+
+
+
+
+
+
+
+      </div>
+    </footer>
+  </div>
+
+  
+  <script src="//cdn.jsdelivr.net/npm/animejs@3.1.0/lib/anime.min.js"></script>
+  <script src="//cdn.jsdelivr.net/npm/medium-zoom@1/dist/medium-zoom.min.js"></script>
+  <script src="//cdn.jsdelivr.net/npm/lozad@1/dist/lozad.min.js"></script>
+  <script src="//cdn.jsdelivr.net/npm/pangu@4/dist/browser/pangu.min.js"></script>
+
+<script src="/js/utils.js"></script>
+
+
+<script src="/js/schemes/muse.js"></script>
+
+
+<script src="/js/next-boot.js"></script>
+
+
+
+
+  
+  <script>
+    (function(){
+      var bp = document.createElement('script');
+      var curProtocol = window.location.protocol.split(':')[0];
+      bp.src = (curProtocol === 'https') ? 'https://zz.bdstatic.com/linksubmit/push.js' : 'http://push.zhanzhang.baidu.com/push.js';
+      var s = document.getElementsByTagName("script")[0];
+      s.parentNode.insertBefore(bp, s);
+    })();
+  </script>
+
+
+
+
+  
+<script src="/js/local-search.js"></script>
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+  
+      
+
+<script>
+  if (typeof MathJax === 'undefined') {
+    window.MathJax = {
+      loader: {
+        source: {
+          '[tex]/amsCd': '[tex]/amscd',
+          '[tex]/AMScd': '[tex]/amscd'
+        }
+      },
+      tex: {
+        inlineMath: {'[+]': [['$', '$']]},
+        tags: 'ams'
+      },
+      options: {
+        renderActions: {
+          findScript: [10, doc => {
+            document.querySelectorAll('script[type^="math/tex"]').forEach(node => {
+              const display = !!node.type.match(/; *mode=display/);
+              const math = new doc.options.MathItem(node.textContent, doc.inputJax[0], display);
+              const text = document.createTextNode('');
+              node.parentNode.replaceChild(text, node);
+              math.start = {node: text, delim: '', n: 0};
+              math.end = {node: text, delim: '', n: 0};
+              doc.math.push(math);
+            });
+          }, '', false],
+          insertedScript: [200, () => {
+            document.querySelectorAll('mjx-container').forEach(node => {
+              let target = node.parentNode;
+              if (target.nodeName.toLowerCase() === 'li') {
+                target.parentNode.classList.add('has-jax');
+              }
+            });
+          }, '', false]
+        }
+      }
+    };
+    (function () {
+      var script = document.createElement('script');
+      script.src = '//cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js';
+      script.defer = true;
+      document.head.appendChild(script);
+    })();
+  } else {
+    MathJax.startup.document.state(0);
+    MathJax.texReset();
+    MathJax.typeset();
+  }
+</script>
+
+    
+
+  
+  <script src="//cdn.jsdelivr.net/npm/quicklink@1/dist/quicklink.umd.js"></script>
+  <script>
+      window.addEventListener('load', () => {
+      quicklink({
+        timeout : 3000,
+        priority: true,
+        ignores : [uri => uri.includes('#'),uri => uri === 'https://www.ravenxrz.ink/archives/2caf6b87.html',]
+      });
+      });
+  </script>
+
+<link rel="stylesheet" href="//cdn.jsdelivr.net/npm/gitalk@1/dist/gitalk.min.css">
+
+<script>
+NexT.utils.loadComments(document.querySelector('#gitalk-container'), () => {
+  NexT.utils.getScript('//cdn.jsdelivr.net/npm/gitalk@1/dist/gitalk.min.js', () => {
+    var gitalk = new Gitalk({
+      clientID    : 'b2fd373d2ca2e03e591e',
+      clientSecret: 'de4ab066908c1fbd32d3a45e091b3538761d685b',
+      repo        : 'BlogComment',
+      owner       : 'ravenxrz',
+      admin       : ['ravenxrz'],
+      id          : '99eb33283ea001ad49c2eaacaa2695ce',
+        language: '',
+      distractionFreeMode: true
+    });
+    gitalk.render('gitalk-container');
+  }, window.Gitalk);
+});
+</script>
+
+</body>
+</html>

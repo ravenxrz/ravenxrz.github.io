@@ -1,0 +1,700 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 5.1.1">
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+  <meta http-equiv="Cache-Control" content="no-transform">
+  <meta http-equiv="Cache-Control" content="no-siteapp">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+<link rel="stylesheet" href="//cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@5/css/all.min.css">
+  <link rel="stylesheet" href="//cdn.jsdelivr.net/npm/pace-js@1/themes/blue/pace-theme-minimal.css">
+  <script src="//cdn.jsdelivr.net/npm/pace-js@1/pace.min.js"></script>
+
+<script id="hexo-configurations">
+    var NexT = window.NexT || {};
+    var CONFIG = {"hostname":"www.ravenxrz.ink","root":"/","scheme":"Mist","version":"7.8.0","exturl":true,"sidebar":{"position":"left","display":"always","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":true,"show_result":true,"style":"flat"},"back2top":{"enable":true,"sidebar":false,"scrollpercent":true},"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":true,"lazyload":true,"pangu":true,"comments":{"style":"tabs","active":"gitalk","storage":true,"lazyload":true,"nav":null,"activeClass":"gitalk"},"algolia":{"hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":true,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},"motion":{"enable":false,"async":true,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}}};
+  </script>
+
+  <meta name="description" content="整理自youtube视频：  https:&#x2F;&#x2F;www.youtube.com&#x2F;watch?v&#x3D;U-OCdTeZLac https:&#x2F;&#x2F;www.youtube.com&#x2F;watch?v&#x3D;UuUgfCvt9-Q&amp;t&#x3D;29s  如有错误，还请指正。 RAID（Redundant Arrays of Independent Drives），中文名：独立磁盘冗余阵列。">
+<meta property="og:type" content="article">
+<meta property="og:title" content="知识扫盲-RAID0，RAID1，RAID5，RAID6，RAID10简介">
+<meta property="og:url" content="https://www.ravenxrz.ink/archives/f0834f1f.html">
+<meta property="og:site_name" content="Raven&#39;s Blog">
+<meta property="og:description" content="整理自youtube视频：  https:&#x2F;&#x2F;www.youtube.com&#x2F;watch?v&#x3D;U-OCdTeZLac https:&#x2F;&#x2F;www.youtube.com&#x2F;watch?v&#x3D;UuUgfCvt9-Q&amp;t&#x3D;29s  如有错误，还请指正。 RAID（Redundant Arrays of Independent Drives），中文名：独立磁盘冗余阵列。">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="https://ae01.alicdn.com/kf/He0ee05d95b9e4d659f3a46fda3660525l.jpg">
+<meta property="og:image" content="https://ae01.alicdn.com/kf/Hb416c7e77b8e41bf93b5a8a5e7337606p.jpg">
+<meta property="og:image" content="https://ae01.alicdn.com/kf/H089e91c047ce4e8a9d1dc911b2a75eabt.jpg">
+<meta property="og:image" content="https://ae01.alicdn.com/kf/Hc8771685928f4d9d8af3b66dfc109f1bp.jpg">
+<meta property="og:image" content="https://ae01.alicdn.com/kf/H7dfb85fc8614468393c7d11f7a90479fE.jpg">
+<meta property="article:published_time" content="2019-08-07T05:59:04.000Z">
+<meta property="article:modified_time" content="2020-09-06T02:45:08.063Z">
+<meta property="article:author" content="Raven">
+<meta property="article:tag" content="raid">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://ae01.alicdn.com/kf/He0ee05d95b9e4d659f3a46fda3660525l.jpg">
+
+<link rel="canonical" href="https://www.ravenxrz.ink/archives/f0834f1f.html">
+
+
+<script id="page-configurations">
+  // https://hexo.io/docs/variables.html
+  CONFIG.page = {
+    sidebar: "",
+    isHome : false,
+    isPost : true,
+    lang   : 'zh-CN'
+  };
+</script>
+
+  <title>知识扫盲-RAID0，RAID1，RAID5，RAID6，RAID10简介 | Raven's Blog</title>
+  
+
+
+
+
+
+
+  <noscript>
+  <style>
+  .use-motion .brand,
+  .use-motion .menu-item,
+  .sidebar-inner,
+  .use-motion .post-block,
+  .use-motion .pagination,
+  .use-motion .comments,
+  .use-motion .post-header,
+  .use-motion .post-body,
+  .use-motion .collection-header { opacity: initial; }
+
+  .use-motion .site-title,
+  .use-motion .site-subtitle {
+    opacity: initial;
+    top: initial;
+  }
+
+  .use-motion .logo-line-before i { left: initial; }
+  .use-motion .logo-line-after i { right: initial; }
+  </style>
+</noscript>
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage">
+  <div class="container">
+    <div class="headband"></div>
+
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切换导航栏">
+      <span class="toggle-line toggle-line-first"></span>
+      <span class="toggle-line toggle-line-middle"></span>
+      <span class="toggle-line toggle-line-last"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <span class="logo-line-before"><i></i></span>
+      <h1 class="site-title">Raven's Blog</h1>
+      <span class="logo-line-after"><i></i></span>
+    </a>
+      <p class="site-subtitle" itemprop="description">zhang.xingrui@foxmail.com</p>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger">
+        <i class="fa fa-search fa-fw fa-lg"></i>
+    </div>
+  </div>
+</div>
+
+
+
+
+<nav class="site-nav">
+  <ul id="menu" class="menu">
+        <li class="menu-item menu-item-home">
+
+    <a href="/" rel="section"><i class="fa fa-fw fa-fa fa-home"></i>首页</a>
+
+  </li>
+        <li class="menu-item menu-item-archives">
+
+    <a href="/archives/" rel="section"><i class="fa fa-fw fa-fa fa-archive"></i>归档<span class="badge">120</span></a>
+
+  </li>
+        <li class="menu-item menu-item-categories">
+
+    <a href="/categories/" rel="section"><i class="fa fa-fw fa-fa fa-th"></i>分类<span class="badge">17</span></a>
+
+  </li>
+        <li class="menu-item menu-item-tags">
+
+    <a href="/tags/" rel="section"><i class="fa fa-fw fa-fa fa-tags"></i>标签<span class="badge">114</span></a>
+
+  </li>
+        <li class="menu-item menu-item-about">
+
+    <a href="/about/" rel="section"><i class="fa fa-fw fa-fa fa-user"></i>关于</a>
+
+  </li>
+      <li class="menu-item menu-item-search">
+        <a role="button" class="popup-trigger"><i class="fa fa-search fa-fw"></i>搜索
+        </a>
+      </li>
+  </ul>
+</nav>
+
+
+
+  <div class="search-pop-overlay">
+    <div class="popup search-popup">
+        <div class="search-header">
+  <span class="search-icon">
+    <i class="fa fa-search"></i>
+  </span>
+  <div class="search-input-container">
+    <input autocomplete="off" autocapitalize="off"
+           placeholder="搜索..." spellcheck="false"
+           type="search" class="search-input">
+  </div>
+  <span class="popup-btn-close">
+    <i class="fa fa-times-circle"></i>
+  </span>
+</div>
+<div id="search-result">
+  <div id="no-result">
+    <i class="fa fa-spinner fa-pulse fa-5x fa-fw"></i>
+  </div>
+</div>
+
+    </div>
+  </div>
+
+</div>
+    </header>
+
+    
+  <div class="back-to-top">
+    <i class="fa fa-arrow-up"></i>
+    <span>0%</span>
+  </div>
+
+  <span class="exturl github-corner" data-url="aHR0cHM6Ly9naXRodWIuY29tL3JhdmVueHJ6" title="Follow me on GitHub" aria-label="Follow me on GitHub"><svg width="80" height="80" viewBox="0 0 250 250" aria-hidden="true"><path d="M0,0 L115,115 L130,115 L142,142 L250,250 L250,0 Z"></path><path d="M128.3,109.0 C113.8,99.7 119.0,89.6 119.0,89.6 C122.0,82.7 120.5,78.6 120.5,78.6 C119.2,72.0 123.4,76.3 123.4,76.3 C127.3,80.9 125.5,87.3 125.5,87.3 C122.9,97.6 130.6,101.9 134.4,103.2" fill="currentColor" style="transform-origin: 130px 106px;" class="octo-arm"></path><path d="M115.0,115.0 C114.9,115.1 118.7,116.5 119.8,115.4 L133.7,101.6 C136.9,99.2 139.9,98.4 142.2,98.6 C133.8,88.0 127.5,74.4 143.8,58.0 C148.5,53.4 154.0,51.2 159.7,51.0 C160.3,49.4 163.2,43.6 171.4,40.1 C171.4,40.1 176.1,42.5 178.8,56.2 C183.1,58.6 187.2,61.8 190.9,65.4 C194.5,69.0 197.7,73.2 200.1,77.6 C213.8,80.2 216.3,84.9 216.3,84.9 C212.7,93.1 206.9,96.0 205.4,96.6 C205.1,102.4 203.0,107.8 198.3,112.5 C181.9,128.9 168.3,122.5 157.7,114.1 C157.9,116.9 156.7,120.9 152.7,124.9 L141.0,136.5 C139.8,137.7 141.6,141.9 141.8,141.8 Z" fill="currentColor" class="octo-body"></path></svg></span>
+
+
+    <main class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          
+
+          <div class="content post posts-expand">
+            
+
+    
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="https://www.ravenxrz.ink/archives/f0834f1f.html">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="https://pic.downk.cc/item/5e907515504f4bcb04b6f798.jpg">
+      <meta itemprop="name" content="Raven">
+      <meta itemprop="description" content="分享技术，记录生活">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Raven's Blog">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          知识扫盲-RAID0，RAID1，RAID5，RAID6，RAID10简介
+        </h1>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+
+              <time title="创建时间：2019-08-07 13:59:04" itemprop="dateCreated datePublished" datetime="2019-08-07T13:59:04+08:00">2019-08-07</time>
+            </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-calendar-check-o"></i>
+                </span>
+                <span class="post-meta-item-text">更新于</span>
+                <time title="修改时间：2020-09-06 10:45:08" itemprop="dateModified" datetime="2020-09-06T10:45:08+08:00">2020-09-06</time>
+              </span>
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              <span class="post-meta-item-text">分类于</span>
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/%E6%9D%82%E6%96%87/" itemprop="url" rel="index"><span itemprop="name">杂文</span></a>
+                </span>
+            </span>
+
+          
+            <span class="post-meta-item" title="阅读次数" id="busuanzi_container_page_pv" style="display: none;">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-fa fa-eye"></i>
+              </span>
+              <span class="post-meta-item-text">阅读次数：</span>
+              <span id="busuanzi_value_page_pv"></span>
+            </span>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+        <p>整理自youtube视频：</p>
+<ol>
+<li><a target="_blank" rel="noopener" href="https://www.youtube.com/watch?v=U-OCdTeZLac">https://www.youtube.com/watch?v=U-OCdTeZLac</a></li>
+<li><a target="_blank" rel="noopener" href="https://www.youtube.com/watch?v=UuUgfCvt9-Q&amp;t=29s">https://www.youtube.com/watch?v=UuUgfCvt9-Q&amp;t=29s</a></li>
+</ol>
+<p>如有错误，还请指正。</p>
+<p>RAID（Redundant Arrays of Independent Drives），中文名：独立磁盘冗余阵列。</p>
+<a id="more"></a>
+<h3 id="为什么要有RAID呢？"><a href="#为什么要有RAID呢？" class="headerlink" title="为什么要有RAID呢？"></a>为什么要有RAID呢？</h3><p>我们都是知道存在磁盘中的数据是有可能丢失的，通过RAID中的“冗余“功能，我们可以一定程度的解决这个问题。</p>
+<p>i&gt; RAID有好几种，每种功能不同，适用的场合不同，常见的RAID有5种，分别是RAID0,RAID1,RAID5,RAID6和RAID10,下面就分别来介绍一下这几种RAID，说下他们的功能以及优缺点。</p>
+<h2 id="1-RAID-0"><a href="#1-RAID-0" class="headerlink" title="1. RAID 0"></a>1. RAID 0</h2><p>RAID 0是RAID中稍微特殊的一类，因为它不仅不能缓和数据丢失的情况，反而加重了数据丢失难以恢复的情况。为什么会这样呢？先来看看它的原理，如下图：</p>
+<p><img src="https://ae01.alicdn.com/kf/He0ee05d95b9e4d659f3a46fda3660525l.jpg"></p>
+<p>可以看到，数据来了以后，兵分两路，同时写入到两块磁盘中，这意味着，<strong>任意一块磁盘损坏后，整个数据都会丢失</strong>。那RAID 0有啥用？当然是IO速度加快咯。你想想现在数据可以同时向两块磁盘里写，肯定比原来一块磁盘块嘛。而且理论上磁盘越多速度越快。当然数据丢失的风险也会增加。</p>
+<ul>
+<li><p>优点：io速度加快</p>
+</li>
+<li><p>缺点：数据更易丢失</p>
+</li>
+</ul>
+<h2 id="2-RAID-1"><a href="#2-RAID-1" class="headerlink" title="2. RAID 1"></a>2. RAID 1</h2><p>RAID 1也至少需要两块磁盘，原理图如下：</p>
+<p><img src="https://ae01.alicdn.com/kf/Hb416c7e77b8e41bf93b5a8a5e7337606p.jpg"></p>
+<p>RAID 1的数据也是同时写入两块磁盘，与RAID0不同的是，RAID 1是将同一份数据分别写入到两块磁盘中。这样磁盘1相当于就是磁盘0的完全备份，当任一块磁盘损坏后，数据都不会受到影响。</p>
+<p>现在我们来想想RAID1的优缺点：</p>
+<ul>
+<li>优点：可以有一份完整的磁盘备份，当其中一块磁盘损坏后，数据不至于丢失。</li>
+<li>缺点：假定我们使用了两块磁盘，那么就会损失50%的存储空间。</li>
+</ul>
+<h2 id="3-RAID-10"><a href="#3-RAID-10" class="headerlink" title="3. RAID 10"></a>3. RAID 10</h2><p>咱们先来说RAID10，之后再来谈RAID5和6。 RAID10，其实并不是10（十），他是1和0的结合体。也就是说，他综合了RAID0和RAID1。使用RAID10，我们至少需要4块磁盘，原理图如下：</p>
+<p><img src="https://ae01.alicdn.com/kf/H089e91c047ce4e8a9d1dc911b2a75eabt.jpg"></p>
+<p>数据来了以后，首先遇到的是RAID0，还记得RAID0的特点吗？数据可以从这里分流，同时写入到两个分流中去。（速度加倍）。为了保证数据不那么容易丢失，在RAID0之后，紧跟了RAID1，也就是说数据将在这里“备份”，复制出一份副本，然后分别将原数据和副本写入到RAID1下面的两块磁盘中。</p>
+<p>优点：综合了RAID0和RAID 1的优点。</p>
+<p>缺点: 和RAID1 一样，浪费了一半的空间。</p>
+<h2 id="4-RAID-5"><a href="#4-RAID-5" class="headerlink" title="4. RAID 5"></a>4. RAID 5</h2><p>RAID 5 是被广泛使用的一种RAID，它至少需要3张磁盘，存储图如下：</p>
+<p><img src="https://ae01.alicdn.com/kf/Hc8771685928f4d9d8af3b66dfc109f1bp.jpg"></p>
+<p>数据可被同时存入其中3块磁盘，其中一块磁盘用于存储辅助信息– PARITY。同时可以观察到，PARITY的排布是有一定规律的，如果磁盘共有4块，并将磁盘阵列看成一个矩阵的话，它会以每一行左移位（右移位）出现。如第1行在第4列出现，第2行在第3列出现，以此类推（个人猜想是为了负载均衡，毕竟不这样排列，也能复原数据）。</p>
+<p>当任一块磁盘出现崩溃，我们可以借助其余三块磁盘来复原它，如此重建数据。</p>
+<p>那么它是如何重建数据的呢？首先得知道PARITY这个东西是什么。其实很简单，PARITY就是同一行其余数据求异或所得到的结果。如第一行：<br>$$<br>PARITY = A 异或 B 异或 C<br>$$<br>如: A = 1 B = 0 C = 1， 那么PARITY = 0。</p>
+<p>假设现在数据C丢失了。那么可通过异或将C重建。<br>$$<br>C = PARITY 异或 A 异或 B<br>$$<br>在之类 A = 1, B = 0 , PARITY = 0。于是C = 0 异或 1 异或 0 = 1。</p>
+<ul>
+<li>优点：数据得到了一定的保障。</li>
+<li>缺点：损失了一块磁盘的存储容量。如果用4块磁盘来组RAID5, 那么浪费率为25%。</li>
+</ul>
+<p>现在，我们在稍微延展一点，如果有两块磁盘都崩溃了呢？</p>
+<p>sorry，RAID5没办法复原了。这意味着有两块磁盘崩溃，所有数据都没有了。于是产生了RAID6</p>
+<h2 id="5-RAID-6"><a href="#5-RAID-6" class="headerlink" title="5. RAID 6"></a>5. RAID 6</h2><p>RAID6和RAID5类似，但是它需要至少4块磁盘，且在一行中存储两个PARITY。如下图：</p>
+<p><img src="https://ae01.alicdn.com/kf/H7dfb85fc8614468393c7d11f7a90479fE.jpg"></p>
+<p>当然了，此时的PARITY可就没那么简单了。牵扯一定的域论知识，超出本文的探讨范围内。如果要想了解，可参考：</p>
+<p><a target="_blank" rel="noopener" href="https://zh.wikipedia.org/wiki/RAID#RAID_6">https://zh.wikipedia.org/wiki/RAID#RAID_6</a></p>
+<ul>
+<li>优点：很强的容错性，同时丢失两块磁盘，也可重建</li>
+<li>缺点: 容量浪费大，读速度等同于RAID5，但是写速度低于RAID5，因为要写入两个PARITY。</li>
+</ul>
+
+    </div>
+
+    
+    
+    
+        <div class="reward-container">
+  <div>文章对你有帮助?打赏一下作者吧</div>
+  <button onclick="var qr = document.getElementById('qr'); qr.style.display = (qr.style.display === 'none') ? 'block' : 'none';">
+    打赏
+  </button>
+  <div id="qr" style="display: none;">
+      
+      <div style="display: inline-block;">
+        <img src="https://pic.downk.cc/item/5d064208451253d178a15b27.png" alt="Raven 微信支付">
+        <p>微信支付</p>
+      </div>
+      
+      <div style="display: inline-block;">
+        <img src="https://pic.downk.cc/item/5d0641c7451253d178a15376.png" alt="Raven 支付宝">
+        <p>支付宝</p>
+      </div>
+
+  </div>
+</div>
+
+        
+
+<div>
+<ul class="post-copyright">
+  <li class="post-copyright-author">
+    <strong>本文作者： </strong>Raven
+  </li>
+  <li class="post-copyright-link">
+    <strong>本文链接：</strong>
+    <a href="https://www.ravenxrz.ink/archives/f0834f1f.html" title="知识扫盲-RAID0，RAID1，RAID5，RAID6，RAID10简介">https://www.ravenxrz.ink/archives/f0834f1f.html</a>
+  </li>
+  <li class="post-copyright-license">
+    <strong>版权声明： </strong>本博客所有文章除特别声明外，均采用 <span class="exturl" data-url="aHR0cHM6Ly9jcmVhdGl2ZWNvbW1vbnMub3JnL2xpY2Vuc2VzL2J5LW5jLXNhLzQuMC8="><i class="fa fa-fw fa-creative-commons"></i>BY-NC-SA</span> 许可协议。转载请注明出处！
+  </li>
+</ul>
+</div>
+
+
+      <footer class="post-footer">
+          
+          <div class="post-tags">
+              <a href="/tags/raid/" rel="tag"><i class="fa fa-tag"></i> raid</a>
+          </div>
+
+        
+
+
+        
+    <div class="post-nav">
+      <div class="post-nav-item">
+    <a href="/archives/14ea3ef9.html" rel="prev" title="Ubuntu包管理的小知识">
+      <i class="fa fa-chevron-left"></i> Ubuntu包管理的小知识
+    </a></div>
+      <div class="post-nav-item">
+    <a href="/archives/e939b5b6.html" rel="next" title="SMSK-从短信中分析你的手机号注册过哪些公司账号">
+      SMSK-从短信中分析你的手机号注册过哪些公司账号 <i class="fa fa-chevron-right"></i>
+    </a></div>
+    </div>
+      </footer>
+    
+  </article>
+  
+  
+  
+
+
+
+          </div>
+          
+    <div class="comments" id="gitalk-container"></div>
+
+<script>
+  window.addEventListener('tabs:register', () => {
+    let { activeClass } = CONFIG.comments;
+    if (CONFIG.comments.storage) {
+      activeClass = localStorage.getItem('comments_active') || activeClass;
+    }
+    if (activeClass) {
+      let activeTab = document.querySelector(`a[href="#comment-${activeClass}"]`);
+      if (activeTab) {
+        activeTab.click();
+      }
+    }
+  });
+  if (CONFIG.comments.storage) {
+    window.addEventListener('tabs:click', event => {
+      if (!event.target.matches('.tabs-comment .tab-content .tab-pane')) return;
+      let commentClass = event.target.classList[1];
+      localStorage.setItem('comments_active', commentClass);
+    });
+  }
+</script>
+
+        </div>
+          
+  
+  <div class="toggle sidebar-toggle">
+    <span class="toggle-line toggle-line-first"></span>
+    <span class="toggle-line toggle-line-middle"></span>
+    <span class="toggle-line toggle-line-last"></span>
+  </div>
+
+  <aside class="sidebar">
+    <div class="sidebar-inner">
+
+      <ul class="sidebar-nav motion-element">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          站点概览
+        </li>
+      </ul>
+
+      <!--noindex-->
+      <div class="post-toc-wrap sidebar-panel">
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E4%B8%BA%E4%BB%80%E4%B9%88%E8%A6%81%E6%9C%89RAID%E5%91%A2%EF%BC%9F"><span class="nav-text">为什么要有RAID呢？</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#1-RAID-0"><span class="nav-text">1. RAID 0</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#2-RAID-1"><span class="nav-text">2. RAID 1</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#3-RAID-10"><span class="nav-text">3. RAID 10</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#4-RAID-5"><span class="nav-text">4. RAID 5</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#5-RAID-6"><span class="nav-text">5. RAID 6</span></a></div>
+      </div>
+      <!--/noindex-->
+
+      <div class="site-overview-wrap sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+    <img class="site-author-image" itemprop="image" alt="Raven"
+      src="https://pic.downk.cc/item/5e907515504f4bcb04b6f798.jpg">
+  <p class="site-author-name" itemprop="name">Raven</p>
+  <div class="site-description" itemprop="description">分享技术，记录生活</div>
+</div>
+<div class="site-state-wrap motion-element">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+          <a href="/archives/">
+        
+          <span class="site-state-item-count">120</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+            <a href="/categories/">
+          
+        <span class="site-state-item-count">17</span>
+        <span class="site-state-item-name">分类</span></a>
+      </div>
+      <div class="site-state-item site-state-tags">
+            <a href="/tags/">
+          
+        <span class="site-state-item-count">114</span>
+        <span class="site-state-item-name">标签</span></a>
+      </div>
+  </nav>
+</div>
+  <div class="links-of-author motion-element">
+      <span class="links-of-author-item">
+        <span class="exturl" data-url="aHR0cHM6Ly9naXRodWIuY29tL3JhdmVueHJ6" title="GitHub → https:&#x2F;&#x2F;github.com&#x2F;ravenxrz"><i class="fa fa-fw fa-fab fa-github"></i>GitHub</span>
+      </span>
+      <span class="links-of-author-item">
+        <span class="exturl" data-url="bWFpbHRvOnpoYWduLnhpbmdydWlAZm94bWFpbC5jb20=" title="E-Mail → mailto:zhagn.xingrui@foxmail.com"><i class="fa fa-fw fa-fa fa-envelope"></i>E-Mail</span>
+      </span>
+  </div>
+  <div class="cc-license motion-element" itemprop="license">
+    <span class="exturl cc-opacity" data-url="aHR0cHM6Ly9jcmVhdGl2ZWNvbW1vbnMub3JnL2xpY2Vuc2VzL2J5LW5jLXNhLzQuMC8="><img src="/images/cc-by-nc-sa.svg" alt="Creative Commons"></span>
+  </div>
+
+
+  <div class="links-of-blogroll motion-element">
+    <div class="links-of-blogroll-title">
+      <i class="fa fa-fw fa-fa fa-link"></i>
+      Links
+    </div>
+    <ul class="links-of-blogroll-list">
+        <li class="links-of-blogroll-item">
+          <a href="/resources" title="&#x2F;resources">我的资源</a>
+        </li>
+    </ul>
+  </div>
+
+      </div>
+
+    </div>
+  </aside>
+  <div id="sidebar-dimmer"></div>
+
+
+      </div>
+    </main>
+
+    <footer class="footer">
+      <div class="footer-inner">
+        
+
+        
+
+<div class="copyright">
+  
+  &copy; 2017 – 
+  <span itemprop="copyrightYear">2020</span>
+  <span class="with-love">
+    <i class="fa fa-fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">Raven</span>
+</div>
+  <div class="powered-by">由 <span class="exturl theme-link" data-url="aHR0cHM6Ly9oZXhvLmlv">Hexo</span> & <span class="exturl theme-link" data-url="aHR0cHM6Ly9taXN0LnRoZW1lLW5leHQub3Jn">NexT.Mist</span> 强力驱动
+  </div>
+
+        
+<div class="busuanzi-count">
+  <script async src="https://busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+    <span class="post-meta-item" id="busuanzi_container_site_uv" style="display: none;">
+      <span class="post-meta-item-icon">
+        <i class="fa fa-fa fa-user"></i>
+      </span>
+      <span class="site-uv" title="总访客量">
+        <span id="busuanzi_value_site_uv"></span>
+      </span>
+    </span>
+    <span class="post-meta-divider">|</span>
+    <span class="post-meta-item" id="busuanzi_container_site_pv" style="display: none;">
+      <span class="post-meta-item-icon">
+        <i class="fa fa-fa fa-eye"></i>
+      </span>
+      <span class="site-pv" title="总访问量">
+        <span id="busuanzi_value_site_pv"></span>
+      </span>
+    </span>
+</div>
+
+
+
+
+
+
+
+
+      </div>
+    </footer>
+  </div>
+
+  
+  <script src="//cdn.jsdelivr.net/npm/animejs@3.1.0/lib/anime.min.js"></script>
+  <script src="//cdn.jsdelivr.net/npm/medium-zoom@1/dist/medium-zoom.min.js"></script>
+  <script src="//cdn.jsdelivr.net/npm/lozad@1/dist/lozad.min.js"></script>
+  <script src="//cdn.jsdelivr.net/npm/pangu@4/dist/browser/pangu.min.js"></script>
+
+<script src="/js/utils.js"></script>
+
+
+<script src="/js/schemes/muse.js"></script>
+
+
+<script src="/js/next-boot.js"></script>
+
+
+
+
+  
+  <script>
+    (function(){
+      var bp = document.createElement('script');
+      var curProtocol = window.location.protocol.split(':')[0];
+      bp.src = (curProtocol === 'https') ? 'https://zz.bdstatic.com/linksubmit/push.js' : 'http://push.zhanzhang.baidu.com/push.js';
+      var s = document.getElementsByTagName("script")[0];
+      s.parentNode.insertBefore(bp, s);
+    })();
+  </script>
+
+
+
+
+  
+<script src="/js/local-search.js"></script>
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+  
+      
+
+<script>
+  if (typeof MathJax === 'undefined') {
+    window.MathJax = {
+      loader: {
+        source: {
+          '[tex]/amsCd': '[tex]/amscd',
+          '[tex]/AMScd': '[tex]/amscd'
+        }
+      },
+      tex: {
+        inlineMath: {'[+]': [['$', '$']]},
+        tags: 'ams'
+      },
+      options: {
+        renderActions: {
+          findScript: [10, doc => {
+            document.querySelectorAll('script[type^="math/tex"]').forEach(node => {
+              const display = !!node.type.match(/; *mode=display/);
+              const math = new doc.options.MathItem(node.textContent, doc.inputJax[0], display);
+              const text = document.createTextNode('');
+              node.parentNode.replaceChild(text, node);
+              math.start = {node: text, delim: '', n: 0};
+              math.end = {node: text, delim: '', n: 0};
+              doc.math.push(math);
+            });
+          }, '', false],
+          insertedScript: [200, () => {
+            document.querySelectorAll('mjx-container').forEach(node => {
+              let target = node.parentNode;
+              if (target.nodeName.toLowerCase() === 'li') {
+                target.parentNode.classList.add('has-jax');
+              }
+            });
+          }, '', false]
+        }
+      }
+    };
+    (function () {
+      var script = document.createElement('script');
+      script.src = '//cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js';
+      script.defer = true;
+      document.head.appendChild(script);
+    })();
+  } else {
+    MathJax.startup.document.state(0);
+    MathJax.texReset();
+    MathJax.typeset();
+  }
+</script>
+
+    
+
+  
+  <script src="//cdn.jsdelivr.net/npm/quicklink@1/dist/quicklink.umd.js"></script>
+  <script>
+      window.addEventListener('load', () => {
+      quicklink({
+        timeout : 3000,
+        priority: true,
+        ignores : [uri => uri.includes('#'),uri => uri === 'https://www.ravenxrz.ink/archives/f0834f1f.html',]
+      });
+      });
+  </script>
+
+<link rel="stylesheet" href="//cdn.jsdelivr.net/npm/gitalk@1/dist/gitalk.min.css">
+
+<script>
+NexT.utils.loadComments(document.querySelector('#gitalk-container'), () => {
+  NexT.utils.getScript('//cdn.jsdelivr.net/npm/gitalk@1/dist/gitalk.min.js', () => {
+    var gitalk = new Gitalk({
+      clientID    : 'b2fd373d2ca2e03e591e',
+      clientSecret: 'de4ab066908c1fbd32d3a45e091b3538761d685b',
+      repo        : 'BlogComment',
+      owner       : 'ravenxrz',
+      admin       : ['ravenxrz'],
+      id          : '63f34fa5fcf01b9badcb453258386138',
+        language: '',
+      distractionFreeMode: true
+    });
+    gitalk.render('gitalk-container');
+  }, window.Gitalk);
+});
+</script>
+
+</body>
+</html>

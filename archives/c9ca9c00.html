@@ -1,0 +1,705 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 5.1.1">
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+  <meta http-equiv="Cache-Control" content="no-transform">
+  <meta http-equiv="Cache-Control" content="no-siteapp">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+<link rel="stylesheet" href="//cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@5/css/all.min.css">
+  <link rel="stylesheet" href="//cdn.jsdelivr.net/npm/pace-js@1/themes/blue/pace-theme-minimal.css">
+  <script src="//cdn.jsdelivr.net/npm/pace-js@1/pace.min.js"></script>
+
+<script id="hexo-configurations">
+    var NexT = window.NexT || {};
+    var CONFIG = {"hostname":"www.ravenxrz.ink","root":"/","scheme":"Mist","version":"7.8.0","exturl":true,"sidebar":{"position":"left","display":"always","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":true,"show_result":true,"style":"flat"},"back2top":{"enable":true,"sidebar":false,"scrollpercent":true},"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":true,"lazyload":true,"pangu":true,"comments":{"style":"tabs","active":"gitalk","storage":true,"lazyload":true,"nav":null,"activeClass":"gitalk"},"algolia":{"hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":true,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},"motion":{"enable":false,"async":true,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}}};
+  </script>
+
+  <meta name="description" content="1. 遗传算法基本原理1.1 遗传算法基础种群是生物进化的基本单位的，生物进化的实质是种群基本频率的改变。基因突变和基因重组、自然选择以及隔离是物种形成过程中的三个基本环节，通过他们的综合作用，种群产生分化，最终导致新物种的形成。">
+<meta property="og:type" content="article">
+<meta property="og:title" content="遗传算法及其MATLAB实现">
+<meta property="og:url" content="https://www.ravenxrz.ink/archives/c9ca9c00.html">
+<meta property="og:site_name" content="Raven&#39;s Blog">
+<meta property="og:description" content="1. 遗传算法基本原理1.1 遗传算法基础种群是生物进化的基本单位的，生物进化的实质是种群基本频率的改变。基因突变和基因重组、自然选择以及隔离是物种形成过程中的三个基本环节，通过他们的综合作用，种群产生分化，最终导致新物种的形成。">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="https://pic.superbed.cn/item/5cfbad5d451253d178d9531f.jpg">
+<meta property="og:image" content="https://pic.superbed.cn/item/5cfbad67451253d178d953a6.jpg">
+<meta property="og:image" content="https://pic.superbed.cn/item/5cfbad75451253d178d95496.jpg">
+<meta property="og:image" content="https://pic1.superbed.cn/item/5cfbae91451253d178d96266.jpg">
+<meta property="article:published_time" content="2017-08-25T05:59:30.000Z">
+<meta property="article:modified_time" content="2020-09-06T02:45:08.073Z">
+<meta property="article:author" content="Raven">
+<meta property="article:tag" content="算法">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://pic.superbed.cn/item/5cfbad5d451253d178d9531f.jpg">
+
+<link rel="canonical" href="https://www.ravenxrz.ink/archives/c9ca9c00.html">
+
+
+<script id="page-configurations">
+  // https://hexo.io/docs/variables.html
+  CONFIG.page = {
+    sidebar: "",
+    isHome : false,
+    isPost : true,
+    lang   : 'zh-CN'
+  };
+</script>
+
+  <title>遗传算法及其MATLAB实现 | Raven's Blog</title>
+  
+
+
+
+
+
+
+  <noscript>
+  <style>
+  .use-motion .brand,
+  .use-motion .menu-item,
+  .sidebar-inner,
+  .use-motion .post-block,
+  .use-motion .pagination,
+  .use-motion .comments,
+  .use-motion .post-header,
+  .use-motion .post-body,
+  .use-motion .collection-header { opacity: initial; }
+
+  .use-motion .site-title,
+  .use-motion .site-subtitle {
+    opacity: initial;
+    top: initial;
+  }
+
+  .use-motion .logo-line-before i { left: initial; }
+  .use-motion .logo-line-after i { right: initial; }
+  </style>
+</noscript>
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage">
+  <div class="container">
+    <div class="headband"></div>
+
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切换导航栏">
+      <span class="toggle-line toggle-line-first"></span>
+      <span class="toggle-line toggle-line-middle"></span>
+      <span class="toggle-line toggle-line-last"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <span class="logo-line-before"><i></i></span>
+      <h1 class="site-title">Raven's Blog</h1>
+      <span class="logo-line-after"><i></i></span>
+    </a>
+      <p class="site-subtitle" itemprop="description">zhang.xingrui@foxmail.com</p>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger">
+        <i class="fa fa-search fa-fw fa-lg"></i>
+    </div>
+  </div>
+</div>
+
+
+
+
+<nav class="site-nav">
+  <ul id="menu" class="menu">
+        <li class="menu-item menu-item-home">
+
+    <a href="/" rel="section"><i class="fa fa-fw fa-fa fa-home"></i>首页</a>
+
+  </li>
+        <li class="menu-item menu-item-archives">
+
+    <a href="/archives/" rel="section"><i class="fa fa-fw fa-fa fa-archive"></i>归档<span class="badge">120</span></a>
+
+  </li>
+        <li class="menu-item menu-item-categories">
+
+    <a href="/categories/" rel="section"><i class="fa fa-fw fa-fa fa-th"></i>分类<span class="badge">17</span></a>
+
+  </li>
+        <li class="menu-item menu-item-tags">
+
+    <a href="/tags/" rel="section"><i class="fa fa-fw fa-fa fa-tags"></i>标签<span class="badge">114</span></a>
+
+  </li>
+        <li class="menu-item menu-item-about">
+
+    <a href="/about/" rel="section"><i class="fa fa-fw fa-fa fa-user"></i>关于</a>
+
+  </li>
+      <li class="menu-item menu-item-search">
+        <a role="button" class="popup-trigger"><i class="fa fa-search fa-fw"></i>搜索
+        </a>
+      </li>
+  </ul>
+</nav>
+
+
+
+  <div class="search-pop-overlay">
+    <div class="popup search-popup">
+        <div class="search-header">
+  <span class="search-icon">
+    <i class="fa fa-search"></i>
+  </span>
+  <div class="search-input-container">
+    <input autocomplete="off" autocapitalize="off"
+           placeholder="搜索..." spellcheck="false"
+           type="search" class="search-input">
+  </div>
+  <span class="popup-btn-close">
+    <i class="fa fa-times-circle"></i>
+  </span>
+</div>
+<div id="search-result">
+  <div id="no-result">
+    <i class="fa fa-spinner fa-pulse fa-5x fa-fw"></i>
+  </div>
+</div>
+
+    </div>
+  </div>
+
+</div>
+    </header>
+
+    
+  <div class="back-to-top">
+    <i class="fa fa-arrow-up"></i>
+    <span>0%</span>
+  </div>
+
+  <span class="exturl github-corner" data-url="aHR0cHM6Ly9naXRodWIuY29tL3JhdmVueHJ6" title="Follow me on GitHub" aria-label="Follow me on GitHub"><svg width="80" height="80" viewBox="0 0 250 250" aria-hidden="true"><path d="M0,0 L115,115 L130,115 L142,142 L250,250 L250,0 Z"></path><path d="M128.3,109.0 C113.8,99.7 119.0,89.6 119.0,89.6 C122.0,82.7 120.5,78.6 120.5,78.6 C119.2,72.0 123.4,76.3 123.4,76.3 C127.3,80.9 125.5,87.3 125.5,87.3 C122.9,97.6 130.6,101.9 134.4,103.2" fill="currentColor" style="transform-origin: 130px 106px;" class="octo-arm"></path><path d="M115.0,115.0 C114.9,115.1 118.7,116.5 119.8,115.4 L133.7,101.6 C136.9,99.2 139.9,98.4 142.2,98.6 C133.8,88.0 127.5,74.4 143.8,58.0 C148.5,53.4 154.0,51.2 159.7,51.0 C160.3,49.4 163.2,43.6 171.4,40.1 C171.4,40.1 176.1,42.5 178.8,56.2 C183.1,58.6 187.2,61.8 190.9,65.4 C194.5,69.0 197.7,73.2 200.1,77.6 C213.8,80.2 216.3,84.9 216.3,84.9 C212.7,93.1 206.9,96.0 205.4,96.6 C205.1,102.4 203.0,107.8 198.3,112.5 C181.9,128.9 168.3,122.5 157.7,114.1 C157.9,116.9 156.7,120.9 152.7,124.9 L141.0,136.5 C139.8,137.7 141.6,141.9 141.8,141.8 Z" fill="currentColor" class="octo-body"></path></svg></span>
+
+
+    <main class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          
+
+          <div class="content post posts-expand">
+            
+
+    
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="https://www.ravenxrz.ink/archives/c9ca9c00.html">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="https://pic.downk.cc/item/5e907515504f4bcb04b6f798.jpg">
+      <meta itemprop="name" content="Raven">
+      <meta itemprop="description" content="分享技术，记录生活">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Raven's Blog">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          遗传算法及其MATLAB实现
+        </h1>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+
+              <time title="创建时间：2017-08-25 13:59:30" itemprop="dateCreated datePublished" datetime="2017-08-25T13:59:30+08:00">2017-08-25</time>
+            </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-calendar-check-o"></i>
+                </span>
+                <span class="post-meta-item-text">更新于</span>
+                <time title="修改时间：2020-09-06 10:45:08" itemprop="dateModified" datetime="2020-09-06T10:45:08+08:00">2020-09-06</time>
+              </span>
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              <span class="post-meta-item-text">分类于</span>
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/%E6%95%B0%E5%AD%A6%E5%BB%BA%E6%A8%A1/" itemprop="url" rel="index"><span itemprop="name">数学建模</span></a>
+                </span>
+            </span>
+
+          
+            <span class="post-meta-item" title="阅读次数" id="busuanzi_container_page_pv" style="display: none;">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-fa fa-eye"></i>
+              </span>
+              <span class="post-meta-item-text">阅读次数：</span>
+              <span id="busuanzi_value_page_pv"></span>
+            </span>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+        <h2 id="1-遗传算法基本原理"><a href="#1-遗传算法基本原理" class="headerlink" title="1. 遗传算法基本原理"></a>1. 遗传算法基本原理</h2><h3 id="1-1-遗传算法基础"><a href="#1-1-遗传算法基础" class="headerlink" title="1.1 遗传算法基础"></a>1.1 遗传算法基础</h3><p>种群是生物进化的基本单位的，生物进化的实质是种群基本频率的改变。基因突变和基因重组、自然选择以及隔离是物种形成过程中的三个基本环节，通过他们的综合作用，种群产生分化，最终导致新物种的形成。</p>
+<a id="more"></a>
+<h3 id="1-2-遗传算法实现步骤"><a href="#1-2-遗传算法实现步骤" class="headerlink" title="1.2 遗传算法实现步骤"></a>1.2 遗传算法实现步骤</h3><h5 id="1-编码"><a href="#1-编码" class="headerlink" title="1. 编码"></a>1. 编码</h5><p>遗传算法的编码有浮点编码和二进制编码两种。这里介绍为禁止编码。设某一参数的取值范围为$（L,U）$，使用长度为k的二进制编码表示改参数，则它共有$2^k$中不同的编码，每相邻的编码的两个编码的间隔是$\Delta$，容易知道</p>
+<p>$\Delta= \frac{(U-L)}{(2^k-1)}$ </p>
+<h5 id="2-解码"><a href="#2-解码" class="headerlink" title="2. 解码"></a>2. 解码</h5><p><strong>解码的目的就是将不直观的二进制数据串还原成十进制。</strong></p>
+<p>遗传算法的编码和解码在宏观上可以对应生物的基因型和表现型，在围观上可以对应DNA的转录和翻译两个过程。</p>
+<h5 id="3-交配"><a href="#3-交配" class="headerlink" title="3. 交配"></a>3. 交配</h5><p>“交配运算”是使用单点或者多点进行交叉的算子。首先用随机数产生一个或者多个叫叫配电的位置，然后两个个题在叫配电位置互换部分基因码，形成两个子个体。如下图：</p>
+<p><img src="https://pic.superbed.cn/item/5cfbad5d451253d178d9531f.jpg" alt="交配运算"></p>
+<p><strong>两个基因在”/“处进行了交换</strong></p>
+<h5 id="4-突变"><a href="#4-突变" class="headerlink" title="4.突变"></a>4.突变</h5><p>“突变运算”是使用基本位进行基因突变 。例如，将染色体S=11001101第3位上的0变为1，即S = 11101101=S’.S’可以被看做是原染色S的子代染色体。</p>
+<h5 id="5-倒位"><a href="#5-倒位" class="headerlink" title="5.倒位"></a>5.倒位</h5><p>将染色体基因的一部分进行逆序排列。例如：S = 100/1100/11,倒位以后为S’ = 100/0011/11.</p>
+<h5 id="6-个体适应度评估"><a href="#6-个体适应度评估" class="headerlink" title="6.个体适应度评估"></a>6.个体适应度评估</h5><p> 遗传算法依照与个体适应度成正比的几率决定当前种群中各个个体遗传都下一代群体中的机会。通常求<strong>目标函数最大值的问题可以直接把目标函数作为检测个体适应度大小的函数</strong>。</p>
+<h5 id="7-复制"><a href="#7-复制" class="headerlink" title="7.复制"></a>7.复制</h5><p> 复制运算时根据个体适应度大小决定其下代遗传的可能性。弱设种群中个体总数为N，个体i的适应度为fi，则个体i被选取的几率为：<br>$Pi = \frac{f_i}{总适应度}$</p>
+<h2 id="2-遗传算法的MATLAB程序设计"><a href="#2-遗传算法的MATLAB程序设计" class="headerlink" title="2. 遗传算法的MATLAB程序设计"></a>2. 遗传算法的MATLAB程序设计</h2><h3 id="2-1-程序设计流程及参数选取"><a href="#2-1-程序设计流程及参数选取" class="headerlink" title="2.1 程序设计流程及参数选取"></a>2.1 程序设计流程及参数选取</h3><h4 id="1-伪代码"><a href="#1-伪代码" class="headerlink" title="1.伪代码"></a>1.伪代码</h4><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line">% 遗传算法的伪代码</span><br><span class="line">BEGIN</span><br><span class="line">   t &#x3D; 0;  %遗传代数</span><br><span class="line">   初始化P(t);%初始化种群或者染色体</span><br><span class="line">   计算P(t)的适应值;</span><br><span class="line">   while(不满足停止准则) do</span><br><span class="line">       begin</span><br><span class="line">       t &#x3D; t+1;</span><br><span class="line">       从P(t-1)中选择P(t); %选择</span><br><span class="line">       重组P(t);</span><br><span class="line">       计算P(t)的适应值;</span><br><span class="line">        end</span><br><span class="line">   end</span><br><span class="line">END</span><br></pre></td></tr></table></figure>
+
+<h4 id="2-遗传算法的参数设计原则"><a href="#2-遗传算法的参数设计原则" class="headerlink" title="2.遗传算法的参数设计原则"></a>2.遗传算法的参数设计原则</h4><p>1.种群的规模<br>种群不宜过大也不宜过小。种群规模的一个建议值为<strong>0-100</strong>。</p>
+<p>2.变异概率<br>变异概率也不宜过大或者过小。一般取值为<strong>0.0001-0.2</strong></p>
+<p>3.交配概率<br>同上，不宜过大或者过小。一般取值 为<strong>0.4-0.99</strong></p>
+<p>4.进化代数<br>同上，不宜过大或者过小。一般取值为<strong>100-500</strong>。</p>
+<p>5.种群初始化<br>初始种群的生成是随机的。在出是种群的赋予之前，尽量进行一个大概的区间估计，避免初始种群分布在远离最优解的编码空间，导致遗传算法的搜索范围受到限制。</p>
+<h4 id="3-遗传算法适应度函数设计"><a href="#3-遗传算法适应度函数设计" class="headerlink" title="3.遗传算法适应度函数设计"></a>3.遗传算法适应度函数设计</h4><p>1.遗传算法和直接搜索工具箱中的函数ga是求解目标函数的最小值，所以如果目标函数为求解最小值，则直接令目标函数为适应度函数即可。编写的适应度函数，语法如下:</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">function f &#x3D; fitnesscn(x)</span><br><span class="line">f &#x3D; f(x);</span><br><span class="line">end</span><br></pre></td></tr></table></figure>
+<p>2.如果有约束条件（包括自变量的取值范围），对于求解函数的最小值问题，语法如下：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">function f &#x3D; fitnessfcx(x)</span><br><span class="line">    if x&lt;&#x3D;-1||x&gt;3</span><br><span class="line">        f &#x3D; inf;</span><br><span class="line">    else</span><br><span class="line">        f &#x3D; f(x);</span><br><span class="line">    end</span><br><span class="line">end</span><br></pre></td></tr></table></figure>
+<p>3.如果有约束条件（包括自变量的取值范围），对于求解函数的最大值问题，语法如下：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">function f &#x3D; fitnessfcx(x)</span><br><span class="line">    if x&lt;&#x3D;-1||x&gt;3</span><br><span class="line">        f &#x3D; inf;</span><br><span class="line">    else</span><br><span class="line">        f &#x3D; -f(x);</span><br><span class="line">    end</span><br><span class="line">end</span><br></pre></td></tr></table></figure>
+
+<p><strong>注意：最后求解出来的目标函数为-fval而不是fval</strong></p>
+<h2 id="3-遗传算法应用案例"><a href="#3-遗传算法应用案例" class="headerlink" title="3. 遗传算法应用案例"></a>3. 遗传算法应用案例</h2><p>这里给出三个案例。<br><strong>案例一：无约束目标函数的最大值</strong><br>求解 $max f(x) = 200 \times e^{(-0.05x)} \times sinx ;x∈[-2,2]$</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br><span class="line">75</span><br><span class="line">76</span><br><span class="line">77</span><br><span class="line">78</span><br><span class="line">79</span><br><span class="line">80</span><br><span class="line">81</span><br><span class="line">82</span><br><span class="line">83</span><br><span class="line">84</span><br><span class="line">85</span><br><span class="line">86</span><br><span class="line">87</span><br><span class="line">88</span><br><span class="line">89</span><br><span class="line">90</span><br><span class="line">91</span><br><span class="line">92</span><br><span class="line">93</span><br><span class="line">94</span><br><span class="line">95</span><br><span class="line">96</span><br><span class="line">97</span><br><span class="line">98</span><br><span class="line">99</span><br><span class="line">100</span><br><span class="line">101</span><br><span class="line">102</span><br><span class="line">103</span><br><span class="line">104</span><br><span class="line">105</span><br><span class="line">106</span><br><span class="line">107</span><br><span class="line">108</span><br><span class="line">109</span><br><span class="line">110</span><br><span class="line">111</span><br><span class="line">112</span><br><span class="line">113</span><br><span class="line">114</span><br><span class="line">115</span><br><span class="line">116</span><br><span class="line">117</span><br><span class="line">118</span><br><span class="line">119</span><br><span class="line">120</span><br><span class="line">121</span><br><span class="line">122</span><br><span class="line">123</span><br><span class="line">124</span><br><span class="line">125</span><br><span class="line">126</span><br><span class="line">127</span><br><span class="line">128</span><br><span class="line">129</span><br><span class="line">130</span><br><span class="line">131</span><br><span class="line">132</span><br><span class="line">133</span><br><span class="line">134</span><br><span class="line">135</span><br><span class="line">136</span><br><span class="line">137</span><br><span class="line">138</span><br><span class="line">139</span><br><span class="line">140</span><br><span class="line">141</span><br><span class="line">142</span><br><span class="line">143</span><br><span class="line">144</span><br><span class="line">145</span><br><span class="line">146</span><br><span class="line">147</span><br><span class="line">148</span><br><span class="line">149</span><br><span class="line">150</span><br><span class="line">151</span><br><span class="line">152</span><br><span class="line">153</span><br></pre></td><td class="code"><pre><span class="line">% 案例一：无约束目标函数的最大值</span><br><span class="line">% 求解maxf(x)&#x3D;200*e(−0.05x)*sinx; x∈[−2,2]</span><br><span class="line">%主程序：用遗传算法求解y&#x3D;200*exp(-0.05*x).*sin(x)在[-2 2]区间上的最大值</span><br><span class="line">clc;</span><br><span class="line">clear ;</span><br><span class="line">close all;</span><br><span class="line">global BitLength</span><br><span class="line">global boundsbegin</span><br><span class="line">global boundsend</span><br><span class="line">bounds&#x3D;[-2 2];%一维自变量的取值范围</span><br><span class="line">precision&#x3D;0.0001; %运算精度</span><br><span class="line">boundsbegin&#x3D;bounds(:,1);</span><br><span class="line">boundsend&#x3D;bounds(:,2);</span><br><span class="line">%计算如果满足求解精度至少需要多长的染色体</span><br><span class="line">BitLength&#x3D;ceil(log2((boundsend-boundsbegin)&#39; .&#x2F; precision));</span><br><span class="line">popsize&#x3D;50; %初始种群大小</span><br><span class="line">Generationnmax&#x3D;12;  %最大代数</span><br><span class="line">pcrossover&#x3D;0.90; %交配概率</span><br><span class="line">pmutation&#x3D;0.09; %变异概率</span><br><span class="line">%产生初始种群</span><br><span class="line">population&#x3D;round(rand(popsize,BitLength));</span><br><span class="line">%计算适应度,返回适应度Fitvalue和累积概率cumsump</span><br><span class="line">[Fitvalue,cumsump]&#x3D;fitnessfun(population);</span><br><span class="line">Generation&#x3D;1;</span><br><span class="line">while Generation&lt;Generationnmax+1</span><br><span class="line">    for j&#x3D;1:2:popsize</span><br><span class="line">        %选择操作</span><br><span class="line">        seln&#x3D;selection(population,cumsump);</span><br><span class="line">        %交叉操作</span><br><span class="line">        scro&#x3D;crossover(population,seln,pcrossover);</span><br><span class="line">        scnew(j,:)&#x3D;scro(1,:);</span><br><span class="line">        scnew(j+1,:)&#x3D;scro(2,:);</span><br><span class="line">        %变异操作（在原交叉基础上有进行变异)</span><br><span class="line">        smnew(j,:)&#x3D;mutation(scnew(j,:),pmutation);</span><br><span class="line">        smnew(j+1,:)&#x3D;mutation(scnew(j+1,:),pmutation);</span><br><span class="line">    end</span><br><span class="line">    population&#x3D;smnew;  %产生了新的种群</span><br><span class="line">    %计算新种群的适应度</span><br><span class="line">    [Fitvalue,cumsump]&#x3D;fitnessfun(population);</span><br><span class="line">    %记录当前代最好的适应度和平均适应度</span><br><span class="line">    [fmax,nmax]&#x3D;max(Fitvalue);</span><br><span class="line">    fmean&#x3D;mean(Fitvalue);</span><br><span class="line">    ymax(Generation)&#x3D;fmax;</span><br><span class="line">    ymean(Generation)&#x3D;fmean;</span><br><span class="line">    %记录当前代的最佳染色体个体</span><br><span class="line">    x&#x3D;transform2to10(population(nmax,:));</span><br><span class="line">    %自变量取值范围是[-2 2],需要把经过遗传运算的最佳染色体整合到[-2 2]区间</span><br><span class="line">    xx&#x3D;boundsbegin+x*(boundsend-boundsbegin)&#x2F;(power((boundsend),BitLength)-1);</span><br><span class="line">    xmax(Generation)&#x3D;xx;</span><br><span class="line">    Generation&#x3D;Generation+1</span><br><span class="line">end</span><br><span class="line">Generation&#x3D;Generation-1;</span><br><span class="line">Bestpopulation&#x3D;xx</span><br><span class="line">Besttargetfunvalue&#x3D;targetfun(xx)</span><br><span class="line">%绘制经过遗传运算后的适应度曲线。一般地，如果进化过程中种群的平均适应度与最大适</span><br><span class="line">%应度在曲线上有相互趋同的形态，表示算法收敛进行得很顺利，没有出现震荡；在这种前</span><br><span class="line">%提下，最大适应度个体连续若干代都没有发生进化表明种群已经成熟。</span><br><span class="line">figure(1);</span><br><span class="line">hand1&#x3D;plot(1:Generation,ymax);</span><br><span class="line">set(hand1,&#39;linestyle&#39;,&#39;-&#39;,&#39;linewidth&#39;,1.8,&#39;marker&#39;,&#39;*&#39;,&#39;markersize&#39;,6)</span><br><span class="line">hold on;</span><br><span class="line">hand2&#x3D;plot(1:Generation,ymean);</span><br><span class="line">set(hand2,&#39;color&#39;,&#39;r&#39;,&#39;linestyle&#39;,&#39;-&#39;,&#39;linewidth&#39;,1.8,...</span><br><span class="line">    &#39;marker&#39;,&#39;h&#39;,&#39;markersize&#39;,6)</span><br><span class="line">xlabel(&#39;进化代数&#39;);ylabel(&#39;最大&#x2F;平均适应度&#39;);xlim([1 Generationnmax]);</span><br><span class="line">legend(&#39;最大适应度&#39;,&#39;平均适应度&#39;);</span><br><span class="line">box off;hold off;</span><br><span class="line"></span><br><span class="line">%子程序：新种群交叉操作,函数名称存储为crossover.m</span><br><span class="line">function scro&#x3D;crossover(population,seln,pc)</span><br><span class="line">BitLength&#x3D;size(population,2);</span><br><span class="line">pcc&#x3D;IfCroIfMut(pc);  %根据交叉概率决定是否进行交叉操作，1则是，0则否</span><br><span class="line">if pcc&#x3D;&#x3D;1</span><br><span class="line">    chb&#x3D;round(rand*(BitLength-2))+1;  %在[1,BitLength-1]范围内随机产生一个交叉位</span><br><span class="line">    scro(1,:)&#x3D;[population(seln(1),1:chb) population(seln(2),chb+1:BitLength)];</span><br><span class="line">    scro(2,:)&#x3D;[population(seln(2),1:chb) population(seln(1),chb+1:BitLength)];</span><br><span class="line">else</span><br><span class="line">    scro(1,:)&#x3D;population(seln(1),:);</span><br><span class="line">    scro(2,:)&#x3D;population(seln(2),:);</span><br><span class="line">end</span><br><span class="line">end</span><br><span class="line"></span><br><span class="line">%子程序：计算适应度函数, 函数名称存储为fitnessfun</span><br><span class="line">function [Fitvalue,cumsump]&#x3D;fitnessfun(population)</span><br><span class="line">global BitLength</span><br><span class="line">global boundsbegin</span><br><span class="line">global boundsend</span><br><span class="line">popsize&#x3D;size(population,1);   %有popsize个个体</span><br><span class="line">for i&#x3D;1:popsize</span><br><span class="line">    x&#x3D;transform2to10(population(i,:));  %将二进制转换为十进制</span><br><span class="line">    %转化为[-2,2]区间的实数</span><br><span class="line">    xx&#x3D;boundsbegin+x*(boundsend-boundsbegin)&#x2F;(power((boundsend),BitLength)-1);</span><br><span class="line">    Fitvalue(i)&#x3D;targetfun(xx);  %计算函数值，即适应度</span><br><span class="line">end</span><br><span class="line">%给适应度函数加上一个大小合理的数以便保证种群适应值为正数</span><br><span class="line">Fitvalue&#x3D;Fitvalue&#39;+230;</span><br><span class="line">%计算选择概率</span><br><span class="line">fsum&#x3D;sum(Fitvalue);</span><br><span class="line">Pperpopulation&#x3D;Fitvalue&#x2F;fsum;</span><br><span class="line">%计算累积概率</span><br><span class="line">cumsump &#x3D; cumsum(Pperpopulation);</span><br><span class="line">cumsump&#x3D;cumsump&#39;;</span><br><span class="line">end</span><br><span class="line">%子程序：新种群变异操作，函数名称存储为mutation.m</span><br><span class="line">function snnew&#x3D;mutation(snew,pmutation)</span><br><span class="line">BitLength&#x3D;size(snew,2);</span><br><span class="line">snnew&#x3D;snew;</span><br><span class="line">pmm&#x3D;IfCroIfMut(pmutation);  %根据变异概率决定是否进行变异操作，1则是，0则否</span><br><span class="line">if pmm&#x3D;&#x3D;1</span><br><span class="line">    chb&#x3D;round(rand*(BitLength-1))+1;  %在[1,BitLength]范围内随机产生一个变异位</span><br><span class="line">    snnew(chb)&#x3D;abs(snew(chb)-1);   %进行一个0-1,1-0的反转</span><br><span class="line">end</span><br><span class="line">end</span><br><span class="line"></span><br><span class="line">%子程序：判断遗传运算是否需要进行交叉或变异, 函数名称存储为IfCroIfMut.m</span><br><span class="line">function pcc&#x3D;IfCroIfMut(mutORcro)</span><br><span class="line">% 生成一个长为100的序列，随机选中一个点，该点前面的所有数为1，后面为1,</span><br><span class="line">% 然后又随机生成一个数进行判断是1还是0.</span><br><span class="line">test(1:100)&#x3D;0;</span><br><span class="line">l&#x3D;round(100*mutORcro);</span><br><span class="line">test(1:l)&#x3D;1;</span><br><span class="line">n&#x3D;round(rand*99)+1;</span><br><span class="line">pcc&#x3D;test(n);</span><br><span class="line">end</span><br><span class="line"></span><br><span class="line">%子程序：新种群选择操作, 函数名称存储为selection.m</span><br><span class="line">function seln&#x3D;selection(population,cumsump)</span><br><span class="line">%从种群中选择两个个体</span><br><span class="line">for i&#x3D;1:2</span><br><span class="line">    r&#x3D;rand;  %产生一个随机数</span><br><span class="line">    prand&#x3D;cumsump-r;</span><br><span class="line">    j&#x3D;1;</span><br><span class="line">    while prand(j)&lt;0</span><br><span class="line">        j&#x3D;j+1;</span><br><span class="line">    end</span><br><span class="line">    seln(i)&#x3D;j; %选中个体的序号</span><br><span class="line">end</span><br><span class="line">end</span><br><span class="line">%子程序：将2进制数转换为10进制数,函数名称存储为transform2to10.m</span><br><span class="line">function x&#x3D;transform2to10(Population)</span><br><span class="line">BitLength&#x3D;size(Population,2);</span><br><span class="line">x&#x3D;Population(BitLength);</span><br><span class="line">for i&#x3D;1:BitLength-1</span><br><span class="line">    x&#x3D;x+Population(BitLength-i)*power(2,i);</span><br><span class="line">end</span><br><span class="line">end</span><br><span class="line"></span><br><span class="line">%子程序：对于优化最大值或极大值函数问题，目标函数可以作为适应度函数</span><br><span class="line">%函数名称存储为targetfun.m</span><br><span class="line"></span><br><span class="line">function y&#x3D;targetfun(x) %目标函数</span><br><span class="line">y&#x3D;200*exp(-0.05*x).*sin(x);</span><br><span class="line">end</span><br></pre></td></tr></table></figure>
+
+<p>程序结果：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"></span><br><span class="line">Bestpopulation &#x3D;</span><br><span class="line"></span><br><span class="line">   1.575677119096666</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">Besttargetfunvalue &#x3D;</span><br><span class="line"></span><br><span class="line">     1.848457326200009e+02</span><br></pre></td></tr></table></figure>
+
+
+
+<p><img src="https://pic.superbed.cn/item/5cfbad67451253d178d953a6.jpg" alt="算法迭代"></p>
+<p><strong>案例二：多约束非线性规划问题</strong></p>
+<p>$$<br>min f(x) = e^{x_1} (4x_1^2+2x_2^2+4x_1x_2+2_2+1) \\<br>s.t. \left\{<br>             \begin{array}{lr}<br>             x=\dfrac{3\pi}{2}(1+2t)\cos(\dfrac{3\pi}{2}(1+2t)), &amp;  \\<br>             y=s, &amp; 0\leq s\leq L,|t|\leq1.\\<br>             z=\dfrac{3\pi}{2}(1+2t)\sin(\dfrac{3\pi}{2}(1+2t)), &amp;<br>             \end{array}<br>\right.<br>$$</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br></pre></td><td class="code"><pre><span class="line">%主程序：本程序采用遗传算法接力进化，</span><br><span class="line">%将上次进化结束后得到的最终种群作为下次输入的初始种群</span><br><span class="line">clc;</span><br><span class="line">close all;</span><br><span class="line">clear all;</span><br><span class="line">%进化的代数</span><br><span class="line">T&#x3D;100;</span><br><span class="line">optionsOrigin&#x3D;gaoptimset(&#39;Generations&#39;,T&#x2F;2);</span><br><span class="line">[x,fval,reason,output,final_pop]&#x3D;ga(@ch14_2f,2,optionsOrigin);</span><br><span class="line">%进行第二次接力进化</span><br><span class="line">options1&#x3D;gaoptimset(&#39;Generations&#39;,T&#x2F;2,&#39;InitialPopulation&#39;,final_pop,...</span><br><span class="line">    &#39;PlotFcns&#39;,@gaplotbestf);</span><br><span class="line">[x,fval,reason,output,final_pop]&#x3D;ga(@ch14_2f,2,options1);</span><br><span class="line">Bestx&#x3D;x</span><br><span class="line">BestFval&#x3D;fval</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">%子函数：适应度函数同时也是目标函数,函数存储名称为ch14_2f.m</span><br><span class="line">function f&#x3D;ch14_2f(x)</span><br><span class="line">g1&#x3D;1.5+x(1)*x(2)-x(1)-x(2);</span><br><span class="line">g2&#x3D;-x(1)*x(2);</span><br><span class="line">if (g1&gt;0||g2&gt;10)</span><br><span class="line">    f&#x3D;100;</span><br><span class="line">else</span><br><span class="line">    f&#x3D;exp(x(1))*(4*x(1)^2+2*x(2)^2+4*x(1)*x(2)+2*x(2)+1);</span><br><span class="line">end</span><br><span class="line">end</span><br></pre></td></tr></table></figure>
+
+<p>程序结果:</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line">Optimization terminated: maximum number of generations exceeded.</span><br><span class="line">Optimization terminated: maximum number of generations exceeded.</span><br><span class="line"></span><br><span class="line">Bestx &#x3D;</span><br><span class="line"></span><br><span class="line">  -9.026449478668987   1.105769708316651</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">BestFval &#x3D;</span><br><span class="line"></span><br><span class="line">   0.035051699473142</span><br><span class="line"></span><br><span class="line">&gt;&gt;</span><br></pre></td></tr></table></figure>
+
+<p><strong>案例三：经典TSP问题</strong><br>假设有一个旅行商人要拜访n个城市，他必须选择所要走的路径，路径的限制是每个城市只能拜访一次，而且最后要回到原来出发的城市。路径的选择目标是要求得的路径路程为所有路径之中的最小值。</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br><span class="line">75</span><br><span class="line">76</span><br><span class="line">77</span><br><span class="line">78</span><br><span class="line">79</span><br><span class="line">80</span><br><span class="line">81</span><br><span class="line">82</span><br><span class="line">83</span><br><span class="line">84</span><br><span class="line">85</span><br></pre></td><td class="code"><pre><span class="line">% 利用遗传算法，解决TSP问题模板</span><br><span class="line">tic</span><br><span class="line">clc,clear</span><br><span class="line">sj &#x3D; load(&#39;yichuansuanfadata.txt&#39;); %加载敌方100 个目标的数据</span><br><span class="line">x&#x3D;sj(:,1:2:8);x&#x3D;x(:);</span><br><span class="line">y&#x3D;sj(:,2:2:8);y&#x3D;y(:);</span><br><span class="line">sj&#x3D;[x y];</span><br><span class="line">figure(1);</span><br><span class="line">plot(x,y);</span><br><span class="line">d1&#x3D;[70,40];</span><br><span class="line">sj0&#x3D;[d1;sj;d1];</span><br><span class="line">%距离矩阵d</span><br><span class="line">sj&#x3D;sj0*pi&#x2F;180;</span><br><span class="line">d&#x3D;zeros(102);</span><br><span class="line">for i&#x3D;1:101</span><br><span class="line">    for j&#x3D;i+1:102</span><br><span class="line">        temp&#x3D;cos(sj(i,1)-sj(j,1))*cos(sj(i,2))*cos(sj(j,2))+sin(sj(i,2))*sin(sj(j,2));</span><br><span class="line">        d(i,j)&#x3D;6370*acos(temp);</span><br><span class="line">    end</span><br><span class="line">end</span><br><span class="line">d&#x3D;d+d&#39;;L&#x3D;102;w&#x3D;50;dai&#x3D;100;</span><br><span class="line">%通过改良圈算法选取优良父代A</span><br><span class="line">for k&#x3D;1:w</span><br><span class="line">    c&#x3D;randperm(100);</span><br><span class="line">    c1&#x3D;[1,c+1,102];</span><br><span class="line">    flag&#x3D;1;</span><br><span class="line">    while flag&gt;0</span><br><span class="line">        flag&#x3D;0;</span><br><span class="line">        for m&#x3D;1:L-3</span><br><span class="line">            for n&#x3D;m+2:L-1</span><br><span class="line">                if d(c1(m),c1(n))+d(c1(m+1),c1(n+1))&lt;d(c1(m),c1(m+1))+d(c1(n),c1(n+1))</span><br><span class="line">                    flag&#x3D;1;</span><br><span class="line">                    c1(m+1:n)&#x3D;c1(n:-1:m+1);</span><br><span class="line">                end</span><br><span class="line">            end</span><br><span class="line">        end</span><br><span class="line">    end</span><br><span class="line">    J(k,c1)&#x3D;1:102;</span><br><span class="line">end</span><br><span class="line">J&#x3D;J&#x2F;102;</span><br><span class="line">J(:,1)&#x3D;0;J(:,102)&#x3D;1;</span><br><span class="line">rand(&#39;state&#39;,sum(clock));</span><br><span class="line">%遗传算法实现过程</span><br><span class="line">A&#x3D;J;</span><br><span class="line">for k&#x3D;1:dai %产生0～1 间随机数列进行编码</span><br><span class="line">    B&#x3D;A;</span><br><span class="line">    c&#x3D;randperm(w);</span><br><span class="line">    %交配产生子代B</span><br><span class="line">    for i&#x3D;1:2:w</span><br><span class="line">        F&#x3D;2+floor(100*rand(1));</span><br><span class="line">        temp&#x3D;B(c(i),F:102);</span><br><span class="line">        B(c(i),F:102)&#x3D;B(c(i+1),F:102);</span><br><span class="line">        B(c(i+1),F:102)&#x3D;temp;</span><br><span class="line">    end</span><br><span class="line">    %变异产生子代C</span><br><span class="line">    by&#x3D;find(rand(1,w)&lt;0.1);</span><br><span class="line">    if length(by)&#x3D;&#x3D;0</span><br><span class="line">        by&#x3D;floor(w*rand(1))+1;</span><br><span class="line">    end</span><br><span class="line">    C&#x3D;A(by,:);</span><br><span class="line">    L3&#x3D;length(by);</span><br><span class="line">    for j&#x3D;1:L3</span><br><span class="line">        bw&#x3D;2+floor(100*rand(1,3));</span><br><span class="line">        bw&#x3D;sort(bw);</span><br><span class="line">        C(j,:)&#x3D;C(j,[1:bw(1)-1,bw(2)+1:bw(3),bw(1):bw(2),bw(3)+1:102]);</span><br><span class="line">    end</span><br><span class="line">    G&#x3D;[A;B;C];</span><br><span class="line">    TL&#x3D;size(G,1);</span><br><span class="line">    %在父代和子代中选择优良品种作为新的父代</span><br><span class="line">    [dd,IX]&#x3D;sort(G,2);temp(1:TL)&#x3D;0;</span><br><span class="line">    for j&#x3D;1:TL</span><br><span class="line">        for i&#x3D;1:101</span><br><span class="line">            temp(j)&#x3D;temp(j)+d(IX(j,i),IX(j,i+1));</span><br><span class="line">        end</span><br><span class="line">    end</span><br><span class="line">    [DZ,IZ]&#x3D;sort(temp);</span><br><span class="line">    A&#x3D;G(IZ(1:w),:);</span><br><span class="line">end</span><br><span class="line">path&#x3D;IX(IZ(1),:)</span><br><span class="line">long&#x3D;DZ(1)</span><br><span class="line">toc</span><br><span class="line">xx&#x3D;sj0(path,1);yy&#x3D;sj0(path,2);</span><br><span class="line">%plot(xx,yy,&#39;-o&#39;,)</span><br><span class="line">figure(2);</span><br><span class="line">plot(xx,yy,&#39;-o&#39;)</span><br></pre></td></tr></table></figure>
+
+<p>其中”yichuansuanfadata.txt”为各点之间的经纬坐标,数据如下:</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br></pre></td><td class="code"><pre><span class="line">53.7121   15.3046	51.1758    0.0322	46.3253   28.2753	30.3313    6.9348</span><br><span class="line">56.5432   21.4188	10.8198   16.2529	22.7891   23.1045	10.1584   12.4819</span><br><span class="line">20.1050   15.4562	1.9451    0.2057	26.4951   22.1221	31.4847    8.9640</span><br><span class="line">26.2418   18.1760	44.0356   13.5401	28.9836   25.9879	38.4722   20.1731</span><br><span class="line">28.2694   29.0011	32.1910    5.8699	36.4863   29.7284	0.9718   28.1477</span><br><span class="line">8.9586   24.6635	16.5618   23.6143	10.5597   15.1178	50.2111   10.2944</span><br><span class="line">8.1519    9.5325	22.1075   18.5569	0.1215   18.8726	48.2077   16.8889</span><br><span class="line">31.9499   17.6309	0.7732    0.4656	47.4134   23.7783	41.8671    3.5667</span><br><span class="line">43.5474    3.9061	53.3524   26.7256	30.8165   13.4595	27.7133    5.0706</span><br><span class="line">23.9222    7.6306	51.9612   22.8511	12.7938   15.7307	4.9568    8.3669</span><br><span class="line">21.5051   24.0909	15.2548   27.2111	6.2070    5.1442	49.2430   16.7044</span><br><span class="line">17.1168   20.0354	34.1688   22.7571	9.4402    3.9200	11.5812   14.5677</span><br><span class="line">52.1181    0.4088	9.5559   11.4219	24.4509    6.5634	26.7213   28.5667</span><br><span class="line">37.5848   16.8474	35.6619    9.9333	24.4654    3.1644	0.7775    6.9576</span><br><span class="line">14.4703   13.6368	19.8660   15.1224	3.1616    4.2428	18.5245   14.3598</span><br><span class="line">58.6849   27.1485	39.5168   16.9371	56.5089   13.7090	52.5211   15.7957</span><br><span class="line">38.4300    8.4648	51.8181   23.0159	8.9983   23.6440	50.1156   23.7816</span><br><span class="line">13.7909    1.9510	34.0574   23.3960	23.0624    8.4319	19.9857    5.7902</span><br><span class="line">40.8801   14.2978	58.8289   14.5229	18.6635    6.7436	52.8423   27.2880</span><br><span class="line">39.9494   29.5114	47.5099   24.0664	10.1121   27.2662	28.7812   27.6659</span><br><span class="line">8.0831   27.6705	9.1556   14.1304	53.7989    0.2199	33.6490    0.3980</span><br><span class="line">1.3496   16.8359	49.9816    6.0828	19.3635   17.6622	36.9545   23.0265</span><br><span class="line">15.7320   19.5697	11.5118   17.3884	44.0398   16.2635	39.7139   28.4203</span><br><span class="line">6.9909   23.1804	38.3392   19.9950	24.6543   19.6057	36.9980   24.3992</span><br><span class="line">4.1591    3.1853	40.1400   20.3030	23.9876    9.4030	41.1084   27.7149</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+
+<p><strong>其中奇数列为经度，偶数列为纬度</strong></p>
+<p>求解结果如下：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br></pre></td><td class="code"><pre><span class="line"></span><br><span class="line">path &#x3D;</span><br><span class="line"></span><br><span class="line">  1 至 19 列</span><br><span class="line"></span><br><span class="line">     1    17     3    36    43    93    46    59   100    98    51    80    50    15    42    20    30    74    83</span><br><span class="line"></span><br><span class="line">  20 至 38 列</span><br><span class="line"></span><br><span class="line">    87    92     2    45    67    82    48    72    14    27    10    84    18    40    79    77    31    97    85</span><br><span class="line"></span><br><span class="line">  39 至 57 列</span><br><span class="line"></span><br><span class="line">    65    64    11    76    69    94    70    19    63    62    26    29    34    66    90    86     8    39    78</span><br><span class="line"></span><br><span class="line">  58 至 76 列</span><br><span class="line"></span><br><span class="line">    47    23    58    81    22    71    37     7    68    25    49    28    57    88    61    16    91    41     4</span><br><span class="line"></span><br><span class="line">  77 至 95 列</span><br><span class="line"></span><br><span class="line">    73    13    24    32    12    53    33    75     5    60     9    38    44    54    55    96    89     6    56</span><br><span class="line"></span><br><span class="line">  96 至 102 列</span><br><span class="line"></span><br><span class="line">    21    99   101    52    95    35   102</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">long &#x3D;</span><br><span class="line"></span><br><span class="line">     4.087894090467779e+04</span><br><span class="line"></span><br><span class="line">时间已过 8.865015 秒。</span><br><span class="line">&gt;&gt; </span><br></pre></td></tr></table></figure>
+
+
+
+<p><img src="https://pic.superbed.cn/item/5cfbad75451253d178d95496.jpg" alt="TSP原路径"></p>
+<p><img src="https://pic1.superbed.cn/item/5cfbae91451253d178d96266.jpg" alt="求解后路径"></p>
+
+    </div>
+
+    
+    
+    
+        <div class="reward-container">
+  <div>文章对你有帮助?打赏一下作者吧</div>
+  <button onclick="var qr = document.getElementById('qr'); qr.style.display = (qr.style.display === 'none') ? 'block' : 'none';">
+    打赏
+  </button>
+  <div id="qr" style="display: none;">
+      
+      <div style="display: inline-block;">
+        <img src="https://pic.downk.cc/item/5d064208451253d178a15b27.png" alt="Raven 微信支付">
+        <p>微信支付</p>
+      </div>
+      
+      <div style="display: inline-block;">
+        <img src="https://pic.downk.cc/item/5d0641c7451253d178a15376.png" alt="Raven 支付宝">
+        <p>支付宝</p>
+      </div>
+
+  </div>
+</div>
+
+        
+
+<div>
+<ul class="post-copyright">
+  <li class="post-copyright-author">
+    <strong>本文作者： </strong>Raven
+  </li>
+  <li class="post-copyright-link">
+    <strong>本文链接：</strong>
+    <a href="https://www.ravenxrz.ink/archives/c9ca9c00.html" title="遗传算法及其MATLAB实现">https://www.ravenxrz.ink/archives/c9ca9c00.html</a>
+  </li>
+  <li class="post-copyright-license">
+    <strong>版权声明： </strong>本博客所有文章除特别声明外，均采用 <span class="exturl" data-url="aHR0cHM6Ly9jcmVhdGl2ZWNvbW1vbnMub3JnL2xpY2Vuc2VzL2J5LW5jLXNhLzQuMC8="><i class="fa fa-fw fa-creative-commons"></i>BY-NC-SA</span> 许可协议。转载请注明出处！
+  </li>
+</ul>
+</div>
+
+
+      <footer class="post-footer">
+          
+          <div class="post-tags">
+              <a href="/tags/%E7%AE%97%E6%B3%95/" rel="tag"><i class="fa fa-tag"></i> 算法</a>
+          </div>
+
+        
+
+
+        
+    <div class="post-nav">
+      <div class="post-nav-item">
+    <a href="/archives/3b36af0a.html" rel="prev" title="蚁群算法及其MATLAB实现">
+      <i class="fa fa-chevron-left"></i> 蚁群算法及其MATLAB实现
+    </a></div>
+      <div class="post-nav-item">
+    <a href="/archives/41d67bcb.html" rel="next" title="Java中的值传递和引用传递">
+      Java中的值传递和引用传递 <i class="fa fa-chevron-right"></i>
+    </a></div>
+    </div>
+      </footer>
+    
+  </article>
+  
+  
+  
+
+
+
+          </div>
+          
+    <div class="comments" id="gitalk-container"></div>
+
+<script>
+  window.addEventListener('tabs:register', () => {
+    let { activeClass } = CONFIG.comments;
+    if (CONFIG.comments.storage) {
+      activeClass = localStorage.getItem('comments_active') || activeClass;
+    }
+    if (activeClass) {
+      let activeTab = document.querySelector(`a[href="#comment-${activeClass}"]`);
+      if (activeTab) {
+        activeTab.click();
+      }
+    }
+  });
+  if (CONFIG.comments.storage) {
+    window.addEventListener('tabs:click', event => {
+      if (!event.target.matches('.tabs-comment .tab-content .tab-pane')) return;
+      let commentClass = event.target.classList[1];
+      localStorage.setItem('comments_active', commentClass);
+    });
+  }
+</script>
+
+        </div>
+          
+  
+  <div class="toggle sidebar-toggle">
+    <span class="toggle-line toggle-line-first"></span>
+    <span class="toggle-line toggle-line-middle"></span>
+    <span class="toggle-line toggle-line-last"></span>
+  </div>
+
+  <aside class="sidebar">
+    <div class="sidebar-inner">
+
+      <ul class="sidebar-nav motion-element">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          站点概览
+        </li>
+      </ul>
+
+      <!--noindex-->
+      <div class="post-toc-wrap sidebar-panel">
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#1-%E9%81%97%E4%BC%A0%E7%AE%97%E6%B3%95%E5%9F%BA%E6%9C%AC%E5%8E%9F%E7%90%86"><span class="nav-text">1. 遗传算法基本原理</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#1-1-%E9%81%97%E4%BC%A0%E7%AE%97%E6%B3%95%E5%9F%BA%E7%A1%80"><span class="nav-text">1.1 遗传算法基础</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#1-2-%E9%81%97%E4%BC%A0%E7%AE%97%E6%B3%95%E5%AE%9E%E7%8E%B0%E6%AD%A5%E9%AA%A4"><span class="nav-text">1.2 遗传算法实现步骤</span></a><ol class="nav-child"><li class="nav-item nav-level-5"><a class="nav-link" href="#1-%E7%BC%96%E7%A0%81"><span class="nav-text">1. 编码</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#2-%E8%A7%A3%E7%A0%81"><span class="nav-text">2. 解码</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#3-%E4%BA%A4%E9%85%8D"><span class="nav-text">3. 交配</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#4-%E7%AA%81%E5%8F%98"><span class="nav-text">4.突变</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#5-%E5%80%92%E4%BD%8D"><span class="nav-text">5.倒位</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#6-%E4%B8%AA%E4%BD%93%E9%80%82%E5%BA%94%E5%BA%A6%E8%AF%84%E4%BC%B0"><span class="nav-text">6.个体适应度评估</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#7-%E5%A4%8D%E5%88%B6"><span class="nav-text">7.复制</span></a></li></ol></li></ol></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#2-%E9%81%97%E4%BC%A0%E7%AE%97%E6%B3%95%E7%9A%84MATLAB%E7%A8%8B%E5%BA%8F%E8%AE%BE%E8%AE%A1"><span class="nav-text">2. 遗传算法的MATLAB程序设计</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#2-1-%E7%A8%8B%E5%BA%8F%E8%AE%BE%E8%AE%A1%E6%B5%81%E7%A8%8B%E5%8F%8A%E5%8F%82%E6%95%B0%E9%80%89%E5%8F%96"><span class="nav-text">2.1 程序设计流程及参数选取</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#1-%E4%BC%AA%E4%BB%A3%E7%A0%81"><span class="nav-text">1.伪代码</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#2-%E9%81%97%E4%BC%A0%E7%AE%97%E6%B3%95%E7%9A%84%E5%8F%82%E6%95%B0%E8%AE%BE%E8%AE%A1%E5%8E%9F%E5%88%99"><span class="nav-text">2.遗传算法的参数设计原则</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#3-%E9%81%97%E4%BC%A0%E7%AE%97%E6%B3%95%E9%80%82%E5%BA%94%E5%BA%A6%E5%87%BD%E6%95%B0%E8%AE%BE%E8%AE%A1"><span class="nav-text">3.遗传算法适应度函数设计</span></a></li></ol></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#3-%E9%81%97%E4%BC%A0%E7%AE%97%E6%B3%95%E5%BA%94%E7%94%A8%E6%A1%88%E4%BE%8B"><span class="nav-text">3. 遗传算法应用案例</span></a></li></ol></div>
+      </div>
+      <!--/noindex-->
+
+      <div class="site-overview-wrap sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+    <img class="site-author-image" itemprop="image" alt="Raven"
+      src="https://pic.downk.cc/item/5e907515504f4bcb04b6f798.jpg">
+  <p class="site-author-name" itemprop="name">Raven</p>
+  <div class="site-description" itemprop="description">分享技术，记录生活</div>
+</div>
+<div class="site-state-wrap motion-element">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+          <a href="/archives/">
+        
+          <span class="site-state-item-count">120</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+            <a href="/categories/">
+          
+        <span class="site-state-item-count">17</span>
+        <span class="site-state-item-name">分类</span></a>
+      </div>
+      <div class="site-state-item site-state-tags">
+            <a href="/tags/">
+          
+        <span class="site-state-item-count">114</span>
+        <span class="site-state-item-name">标签</span></a>
+      </div>
+  </nav>
+</div>
+  <div class="links-of-author motion-element">
+      <span class="links-of-author-item">
+        <span class="exturl" data-url="aHR0cHM6Ly9naXRodWIuY29tL3JhdmVueHJ6" title="GitHub → https:&#x2F;&#x2F;github.com&#x2F;ravenxrz"><i class="fa fa-fw fa-fab fa-github"></i>GitHub</span>
+      </span>
+      <span class="links-of-author-item">
+        <span class="exturl" data-url="bWFpbHRvOnpoYWduLnhpbmdydWlAZm94bWFpbC5jb20=" title="E-Mail → mailto:zhagn.xingrui@foxmail.com"><i class="fa fa-fw fa-fa fa-envelope"></i>E-Mail</span>
+      </span>
+  </div>
+  <div class="cc-license motion-element" itemprop="license">
+    <span class="exturl cc-opacity" data-url="aHR0cHM6Ly9jcmVhdGl2ZWNvbW1vbnMub3JnL2xpY2Vuc2VzL2J5LW5jLXNhLzQuMC8="><img src="/images/cc-by-nc-sa.svg" alt="Creative Commons"></span>
+  </div>
+
+
+  <div class="links-of-blogroll motion-element">
+    <div class="links-of-blogroll-title">
+      <i class="fa fa-fw fa-fa fa-link"></i>
+      Links
+    </div>
+    <ul class="links-of-blogroll-list">
+        <li class="links-of-blogroll-item">
+          <a href="/resources" title="&#x2F;resources">我的资源</a>
+        </li>
+    </ul>
+  </div>
+
+      </div>
+
+    </div>
+  </aside>
+  <div id="sidebar-dimmer"></div>
+
+
+      </div>
+    </main>
+
+    <footer class="footer">
+      <div class="footer-inner">
+        
+
+        
+
+<div class="copyright">
+  
+  &copy; 2017 – 
+  <span itemprop="copyrightYear">2020</span>
+  <span class="with-love">
+    <i class="fa fa-fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">Raven</span>
+</div>
+  <div class="powered-by">由 <span class="exturl theme-link" data-url="aHR0cHM6Ly9oZXhvLmlv">Hexo</span> & <span class="exturl theme-link" data-url="aHR0cHM6Ly9taXN0LnRoZW1lLW5leHQub3Jn">NexT.Mist</span> 强力驱动
+  </div>
+
+        
+<div class="busuanzi-count">
+  <script async src="https://busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+    <span class="post-meta-item" id="busuanzi_container_site_uv" style="display: none;">
+      <span class="post-meta-item-icon">
+        <i class="fa fa-fa fa-user"></i>
+      </span>
+      <span class="site-uv" title="总访客量">
+        <span id="busuanzi_value_site_uv"></span>
+      </span>
+    </span>
+    <span class="post-meta-divider">|</span>
+    <span class="post-meta-item" id="busuanzi_container_site_pv" style="display: none;">
+      <span class="post-meta-item-icon">
+        <i class="fa fa-fa fa-eye"></i>
+      </span>
+      <span class="site-pv" title="总访问量">
+        <span id="busuanzi_value_site_pv"></span>
+      </span>
+    </span>
+</div>
+
+
+
+
+
+
+
+
+      </div>
+    </footer>
+  </div>
+
+  
+  <script src="//cdn.jsdelivr.net/npm/animejs@3.1.0/lib/anime.min.js"></script>
+  <script src="//cdn.jsdelivr.net/npm/medium-zoom@1/dist/medium-zoom.min.js"></script>
+  <script src="//cdn.jsdelivr.net/npm/lozad@1/dist/lozad.min.js"></script>
+  <script src="//cdn.jsdelivr.net/npm/pangu@4/dist/browser/pangu.min.js"></script>
+
+<script src="/js/utils.js"></script>
+
+
+<script src="/js/schemes/muse.js"></script>
+
+
+<script src="/js/next-boot.js"></script>
+
+
+
+
+  
+  <script>
+    (function(){
+      var bp = document.createElement('script');
+      var curProtocol = window.location.protocol.split(':')[0];
+      bp.src = (curProtocol === 'https') ? 'https://zz.bdstatic.com/linksubmit/push.js' : 'http://push.zhanzhang.baidu.com/push.js';
+      var s = document.getElementsByTagName("script")[0];
+      s.parentNode.insertBefore(bp, s);
+    })();
+  </script>
+
+
+
+
+  
+<script src="/js/local-search.js"></script>
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+  
+      
+
+<script>
+  if (typeof MathJax === 'undefined') {
+    window.MathJax = {
+      loader: {
+        source: {
+          '[tex]/amsCd': '[tex]/amscd',
+          '[tex]/AMScd': '[tex]/amscd'
+        }
+      },
+      tex: {
+        inlineMath: {'[+]': [['$', '$']]},
+        tags: 'ams'
+      },
+      options: {
+        renderActions: {
+          findScript: [10, doc => {
+            document.querySelectorAll('script[type^="math/tex"]').forEach(node => {
+              const display = !!node.type.match(/; *mode=display/);
+              const math = new doc.options.MathItem(node.textContent, doc.inputJax[0], display);
+              const text = document.createTextNode('');
+              node.parentNode.replaceChild(text, node);
+              math.start = {node: text, delim: '', n: 0};
+              math.end = {node: text, delim: '', n: 0};
+              doc.math.push(math);
+            });
+          }, '', false],
+          insertedScript: [200, () => {
+            document.querySelectorAll('mjx-container').forEach(node => {
+              let target = node.parentNode;
+              if (target.nodeName.toLowerCase() === 'li') {
+                target.parentNode.classList.add('has-jax');
+              }
+            });
+          }, '', false]
+        }
+      }
+    };
+    (function () {
+      var script = document.createElement('script');
+      script.src = '//cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js';
+      script.defer = true;
+      document.head.appendChild(script);
+    })();
+  } else {
+    MathJax.startup.document.state(0);
+    MathJax.texReset();
+    MathJax.typeset();
+  }
+</script>
+
+    
+
+  
+  <script src="//cdn.jsdelivr.net/npm/quicklink@1/dist/quicklink.umd.js"></script>
+  <script>
+      window.addEventListener('load', () => {
+      quicklink({
+        timeout : 3000,
+        priority: true,
+        ignores : [uri => uri.includes('#'),uri => uri === 'https://www.ravenxrz.ink/archives/c9ca9c00.html',]
+      });
+      });
+  </script>
+
+<link rel="stylesheet" href="//cdn.jsdelivr.net/npm/gitalk@1/dist/gitalk.min.css">
+
+<script>
+NexT.utils.loadComments(document.querySelector('#gitalk-container'), () => {
+  NexT.utils.getScript('//cdn.jsdelivr.net/npm/gitalk@1/dist/gitalk.min.js', () => {
+    var gitalk = new Gitalk({
+      clientID    : 'b2fd373d2ca2e03e591e',
+      clientSecret: 'de4ab066908c1fbd32d3a45e091b3538761d685b',
+      repo        : 'BlogComment',
+      owner       : 'ravenxrz',
+      admin       : ['ravenxrz'],
+      id          : 'de3bc7c2d2f76ca247ff1579957e4f69',
+        language: '',
+      distractionFreeMode: true
+    });
+    gitalk.render('gitalk-container');
+  }, window.Gitalk);
+});
+</script>
+
+</body>
+</html>

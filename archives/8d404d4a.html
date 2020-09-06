@@ -1,0 +1,775 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 5.1.1">
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+  <meta http-equiv="Cache-Control" content="no-transform">
+  <meta http-equiv="Cache-Control" content="no-siteapp">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+<link rel="stylesheet" href="//cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@5/css/all.min.css">
+  <link rel="stylesheet" href="//cdn.jsdelivr.net/npm/pace-js@1/themes/blue/pace-theme-minimal.css">
+  <script src="//cdn.jsdelivr.net/npm/pace-js@1/pace.min.js"></script>
+
+<script id="hexo-configurations">
+    var NexT = window.NexT || {};
+    var CONFIG = {"hostname":"www.ravenxrz.ink","root":"/","scheme":"Mist","version":"7.8.0","exturl":true,"sidebar":{"position":"left","display":"always","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":true,"show_result":true,"style":"flat"},"back2top":{"enable":true,"sidebar":false,"scrollpercent":true},"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":true,"lazyload":true,"pangu":true,"comments":{"style":"tabs","active":"gitalk","storage":true,"lazyload":true,"nav":null,"activeClass":"gitalk"},"algolia":{"hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":true,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},"motion":{"enable":false,"async":true,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}}};
+  </script>
+
+  <meta name="description" content="Linux文件系统基础知识Linux文件系统基础知识 本文整理自《鸟哥的Linux私房菜-基础学习篇》 我们都知道，在Linux下，文件除了文件本身的数据外，还有非常多的其他属性（如文件的权限，所属者，时间参数等等）。Linux文件系统是如何实现它们的呢？">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Linux文件系统基础知识">
+<meta property="og:url" content="https://www.ravenxrz.ink/archives/8d404d4a.html">
+<meta property="og:site_name" content="Raven&#39;s Blog">
+<meta property="og:description" content="Linux文件系统基础知识Linux文件系统基础知识 本文整理自《鸟哥的Linux私房菜-基础学习篇》 我们都知道，在Linux下，文件除了文件本身的数据外，还有非常多的其他属性（如文件的权限，所属者，时间参数等等）。Linux文件系统是如何实现它们的呢？">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="https://ae01.alicdn.com/kf/H4825a8de043640cd9ce3822519fac15fu.jpg">
+<meta property="og:image" content="https://ae01.alicdn.com/kf/H0b2edc6c293d4c03b19f4d46da34796c2.jpg">
+<meta property="og:image" content="https://ae01.alicdn.com/kf/H4bcc6986edde488e9f4d687613bdaad31.jpg">
+<meta property="og:image" content="https://ae01.alicdn.com/kf/H34a635582d244422afc1bbcd7c1619edS.jpg">
+<meta property="og:image" content="https://ae01.alicdn.com/kf/H5ff1bd2454f74431b10c7379cc782de4w.jpg">
+<meta property="og:image" content="https://ae01.alicdn.com/kf/H43da9f0121f1400da38ff9c885f11054y.jpg">
+<meta property="article:published_time" content="2019-08-02T05:58:11.000Z">
+<meta property="article:modified_time" content="2020-09-06T02:45:08.035Z">
+<meta property="article:author" content="Raven">
+<meta property="article:tag" content="文件系统">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://ae01.alicdn.com/kf/H4825a8de043640cd9ce3822519fac15fu.jpg">
+
+<link rel="canonical" href="https://www.ravenxrz.ink/archives/8d404d4a.html">
+
+
+<script id="page-configurations">
+  // https://hexo.io/docs/variables.html
+  CONFIG.page = {
+    sidebar: "",
+    isHome : false,
+    isPost : true,
+    lang   : 'zh-CN'
+  };
+</script>
+
+  <title>Linux文件系统基础知识 | Raven's Blog</title>
+  
+
+
+
+
+
+
+  <noscript>
+  <style>
+  .use-motion .brand,
+  .use-motion .menu-item,
+  .sidebar-inner,
+  .use-motion .post-block,
+  .use-motion .pagination,
+  .use-motion .comments,
+  .use-motion .post-header,
+  .use-motion .post-body,
+  .use-motion .collection-header { opacity: initial; }
+
+  .use-motion .site-title,
+  .use-motion .site-subtitle {
+    opacity: initial;
+    top: initial;
+  }
+
+  .use-motion .logo-line-before i { left: initial; }
+  .use-motion .logo-line-after i { right: initial; }
+  </style>
+</noscript>
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage">
+  <div class="container">
+    <div class="headband"></div>
+
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切换导航栏">
+      <span class="toggle-line toggle-line-first"></span>
+      <span class="toggle-line toggle-line-middle"></span>
+      <span class="toggle-line toggle-line-last"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <span class="logo-line-before"><i></i></span>
+      <h1 class="site-title">Raven's Blog</h1>
+      <span class="logo-line-after"><i></i></span>
+    </a>
+      <p class="site-subtitle" itemprop="description">zhang.xingrui@foxmail.com</p>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger">
+        <i class="fa fa-search fa-fw fa-lg"></i>
+    </div>
+  </div>
+</div>
+
+
+
+
+<nav class="site-nav">
+  <ul id="menu" class="menu">
+        <li class="menu-item menu-item-home">
+
+    <a href="/" rel="section"><i class="fa fa-fw fa-fa fa-home"></i>首页</a>
+
+  </li>
+        <li class="menu-item menu-item-archives">
+
+    <a href="/archives/" rel="section"><i class="fa fa-fw fa-fa fa-archive"></i>归档<span class="badge">120</span></a>
+
+  </li>
+        <li class="menu-item menu-item-categories">
+
+    <a href="/categories/" rel="section"><i class="fa fa-fw fa-fa fa-th"></i>分类<span class="badge">17</span></a>
+
+  </li>
+        <li class="menu-item menu-item-tags">
+
+    <a href="/tags/" rel="section"><i class="fa fa-fw fa-fa fa-tags"></i>标签<span class="badge">114</span></a>
+
+  </li>
+        <li class="menu-item menu-item-about">
+
+    <a href="/about/" rel="section"><i class="fa fa-fw fa-fa fa-user"></i>关于</a>
+
+  </li>
+      <li class="menu-item menu-item-search">
+        <a role="button" class="popup-trigger"><i class="fa fa-search fa-fw"></i>搜索
+        </a>
+      </li>
+  </ul>
+</nav>
+
+
+
+  <div class="search-pop-overlay">
+    <div class="popup search-popup">
+        <div class="search-header">
+  <span class="search-icon">
+    <i class="fa fa-search"></i>
+  </span>
+  <div class="search-input-container">
+    <input autocomplete="off" autocapitalize="off"
+           placeholder="搜索..." spellcheck="false"
+           type="search" class="search-input">
+  </div>
+  <span class="popup-btn-close">
+    <i class="fa fa-times-circle"></i>
+  </span>
+</div>
+<div id="search-result">
+  <div id="no-result">
+    <i class="fa fa-spinner fa-pulse fa-5x fa-fw"></i>
+  </div>
+</div>
+
+    </div>
+  </div>
+
+</div>
+    </header>
+
+    
+  <div class="back-to-top">
+    <i class="fa fa-arrow-up"></i>
+    <span>0%</span>
+  </div>
+
+  <span class="exturl github-corner" data-url="aHR0cHM6Ly9naXRodWIuY29tL3JhdmVueHJ6" title="Follow me on GitHub" aria-label="Follow me on GitHub"><svg width="80" height="80" viewBox="0 0 250 250" aria-hidden="true"><path d="M0,0 L115,115 L130,115 L142,142 L250,250 L250,0 Z"></path><path d="M128.3,109.0 C113.8,99.7 119.0,89.6 119.0,89.6 C122.0,82.7 120.5,78.6 120.5,78.6 C119.2,72.0 123.4,76.3 123.4,76.3 C127.3,80.9 125.5,87.3 125.5,87.3 C122.9,97.6 130.6,101.9 134.4,103.2" fill="currentColor" style="transform-origin: 130px 106px;" class="octo-arm"></path><path d="M115.0,115.0 C114.9,115.1 118.7,116.5 119.8,115.4 L133.7,101.6 C136.9,99.2 139.9,98.4 142.2,98.6 C133.8,88.0 127.5,74.4 143.8,58.0 C148.5,53.4 154.0,51.2 159.7,51.0 C160.3,49.4 163.2,43.6 171.4,40.1 C171.4,40.1 176.1,42.5 178.8,56.2 C183.1,58.6 187.2,61.8 190.9,65.4 C194.5,69.0 197.7,73.2 200.1,77.6 C213.8,80.2 216.3,84.9 216.3,84.9 C212.7,93.1 206.9,96.0 205.4,96.6 C205.1,102.4 203.0,107.8 198.3,112.5 C181.9,128.9 168.3,122.5 157.7,114.1 C157.9,116.9 156.7,120.9 152.7,124.9 L141.0,136.5 C139.8,137.7 141.6,141.9 141.8,141.8 Z" fill="currentColor" class="octo-body"></path></svg></span>
+
+
+    <main class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          
+
+          <div class="content post posts-expand">
+            
+
+    
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="https://www.ravenxrz.ink/archives/8d404d4a.html">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="https://pic.downk.cc/item/5e907515504f4bcb04b6f798.jpg">
+      <meta itemprop="name" content="Raven">
+      <meta itemprop="description" content="分享技术，记录生活">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Raven's Blog">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          Linux文件系统基础知识
+        </h1>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+
+              <time title="创建时间：2019-08-02 13:58:11" itemprop="dateCreated datePublished" datetime="2019-08-02T13:58:11+08:00">2019-08-02</time>
+            </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-calendar-check-o"></i>
+                </span>
+                <span class="post-meta-item-text">更新于</span>
+                <time title="修改时间：2020-09-06 10:45:08" itemprop="dateModified" datetime="2020-09-06T10:45:08+08:00">2020-09-06</time>
+              </span>
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              <span class="post-meta-item-text">分类于</span>
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/Linux/" itemprop="url" rel="index"><span itemprop="name">Linux</span></a>
+                </span>
+            </span>
+
+          
+            <span class="post-meta-item" title="阅读次数" id="busuanzi_container_page_pv" style="display: none;">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-fa fa-eye"></i>
+              </span>
+              <span class="post-meta-item-text">阅读次数：</span>
+              <span id="busuanzi_value_page_pv"></span>
+            </span>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+        <h1 id="Linux文件系统基础知识"><a href="#Linux文件系统基础知识" class="headerlink" title="Linux文件系统基础知识"></a>Linux文件系统基础知识</h1><p>Linux文件系统基础知识</p>
+<p>本文整理自《鸟哥的Linux私房菜-基础学习篇》</p>
+<p>我们都知道，在Linux下，文件除了文件本身的数据外，还有非常多的其他属性（如文件的权限，所属者，时间参数等等）。Linux文件系统是如何实现它们的呢？</p>
+<a id="more"></a>
+<h2 id="1-Linux文件系统特性"><a href="#1-Linux文件系统特性" class="headerlink" title="1. Linux文件系统特性"></a>1. Linux文件系统特性</h2><p>文件系统通常会将这两部分的数据分别存放在不同的区块中，<strong>权限与属性放置到 inode 中，至于实际数据则放置到 data block 区块中 **，除此之外，还有一个</strong>超级区块 （superblock） 会记录整个文件系统的整体信息**，包括 inode 与 block 的总量、使用量、剩余量等。 </p>
+<p>i&gt; tips: 通过dumpe2fs + 设备名 查看文件系统的信息。如 dumpe2fs /dev/sda1</p>
+<p>每个 inode 与 block 都有编号，至于这三个数据的意义可以简略说明如下： </p>
+<ul>
+<li>superblock：记录此 filesystem 的整体信息，包括inode/block的总量、使用量、剩余量， 以及文件系统的格式与相关信息等；</li>
+<li>inode：记录文件的属性，<strong>一个文件占用一个inode</strong>，同时记录此文件的数据所在的 block 号码；</li>
+<li>block：实际记录文件的内容，若<strong>文件太大时，会占用多个 block</strong> 。 </li>
+</ul>
+<p>我们将inode和block的存储方式用图来说明一下：</p>
+<p><img src="https://ae01.alicdn.com/kf/H4825a8de043640cd9ce3822519fac15fu.jpg"></p>
+<p>上图的灰色区块表示的是inode区块，蓝青色（是这个色？？？）区块表示的是block区块。4号inode区块将存储文件的属性及权限信息，同时还包含了实际存储文件内容的block编号。通过读取inode，我们可以一次性将所有block编号得到，操作系统就能够据此来排列磁盘的读取顺序，可以一口气将四个 block 内容读出来 ！</p>
+<p>i&gt; tips: inode+block的这种存储方式被称为索引式文件系统。</p>
+<p>为说明inode+block的这种方式的优势，我们拿FAT为例进行对比。它的存储方式如下图：</p>
+<p><img src="https://ae01.alicdn.com/kf/H0b2edc6c293d4c03b19f4d46da34796c2.jpg"></p>
+<p>FAT是无法将这个文件的所有block一开始就读取出来的，它更像是一个链表，只要读到一块才能知道下一块在哪里。这样的致命缺点是，当数据在磁盘上分布得过于分散时，磁盘将多转几圈才能完整的读取到这个文件的内容。</p>
+<p>i&gt; tips: 要解决FAT由于数据分布过散而导致的性能降低问题，我们常常会使用“磁盘重组“技术，通过重组将同一个文件所属的 blocks 汇整在一起，这样数据的读取会比较容易啊！ </p>
+<h2 id="2-Linux-的-EXT2-文件系统（inode）"><a href="#2-Linux-的-EXT2-文件系统（inode）" class="headerlink" title="2. Linux 的 EXT2 文件系统（inode）"></a>2. Linux 的 EXT2 文件系统（inode）</h2><p>如同前一小节所说的，inode 的内容在记录文件的权限与相关属性，至于 block 区块则是在记录文件的实际内容。 而且<strong>文件系统一开始就将 inode 与 block 规划好了，除非重新格式化（或者利用 resize2fs 等指令变更文件系统大小），否则 inode 与 block 固定后就不再变动</strong>。但是如果仔细考虑一下，如果我的文件系统高达数百GB时， 那么将所有的 inode 与 block 通通放置在一起将是很不智的决定，因为 inode 与block 的数量太庞大，不容易管理 。所以<strong>Ext2采用了多个区块群组 （block group ）</strong>来进行管理。如下图：</p>
+<p><img src="https://ae01.alicdn.com/kf/H4bcc6986edde488e9f4d687613bdaad31.jpg"></p>
+<p>每个区块群组都有独立的inode/block/superblock 系统。 </p>
+<ul>
+<li>文件系统的最开始Boot Sector（开机山区）其实和我们存储数据没多大关系，但是这个开机扇区可以安装开机管理程序，这样我们就可以将不同的开机管理程序安装到个别的文件系统了。这样不用覆盖整个磁盘唯一的MBR，才能制作<strong>多重开机环境</strong>啊。</li>
+</ul>
+<p>现在我们再来详细的解释每个区群里面的内容。</p>
+<h3 id="2-1-data-block-（数据区块）"><a href="#2-1-data-block-（数据区块）" class="headerlink" title="2.1 data block （数据区块）"></a>2.1 data block （数据区块）</h3><p>data block 是用来放置文件内容数据地方，在 Ext2 文件系统中所支持的 block 大小有 1K, 2K 及 4K 三种 ，在格式化时 block 的大小就固定了，且每个 block 都有编号，以方便 inode 的记录。由于 block 大小的差异，会导致该文件系统能够支持的最大磁盘容量与最大单一文件大小并不相同。 因为 block 大小而产生的 Ext2 文件系统限制如下 ：</p>
+<table>
+<thead>
+<tr>
+<th align="center">Block 大小</th>
+<th align="center">1KB</th>
+<th align="center">2KB</th>
+<th align="center">4KB</th>
+</tr>
+</thead>
+<tbody><tr>
+<td align="center">最大单一文件限制</td>
+<td align="center">16GB</td>
+<td align="center">256GB</td>
+<td align="center">2TB</td>
+</tr>
+<tr>
+<td align="center">最大文件系统总容量</td>
+<td align="center">2TB</td>
+<td align="center">8TB</td>
+<td align="center">16TB</td>
+</tr>
+</tbody></table>
+<p>至于为什么会出现这样的现象，得在了解了inode结构之后才能解释。</p>
+<p>除此之外 Ext2 文件系统的 block 还有什么限制呢？有的！基本限制如下：</p>
+<ul>
+<li>原则上，block 的大小与数量在格式化完就不能够再改变了（除非重新格式化）；</li>
+<li>每个 block 内最多只能够放置一个文件的数据；</li>
+<li>承上，如果文件大于 block 的大小，则一个文件会占用多个 block 数量；</li>
+<li>承上，若文件小于 block ，则该 block 的剩余容量就不能够再被使用了（磁盘空间会浪费）。 </li>
+</ul>
+<h3 id="2-2-inode-table（inode表）"><a href="#2-2-inode-table（inode表）" class="headerlink" title="2.2 inode table（inode表）"></a>2.2 inode table（inode表）</h3><p>现在来谈谈inode吧。它记录了文件的属性以及实际存储文件的block的编号。特性包含以下几点：</p>
+<ul>
+<li>每个 inode 大小均固定为 <strong>128 Bytes</strong> （新的 ext4 与 xfs 可设置到 256 Bytes）；</li>
+<li>每个文件都仅会占用一个 inode 而已；</li>
+<li>承上，因此文件系统能够创建的文件数量与 inode 的数量有关；</li>
+<li>系统读取文件时需要先找到 inode，并分析 inode 所记录的权限与使用者是否符合，若符合才能够开始实际读取 block 的内容。 </li>
+</ul>
+<p>细心的读者应该有注意到inode大小仅有128字节，这么点大小却要存放相当多的内容。我们来简单的举个例子说明一下：假设存放一个block需要4字节的大小，现有一个400M的文件，并假定文件系统格式化时指定的block大小为4k，那我们需要十万笔block编号才能存储这样文件！</p>
+<p>好在Ext2的设计者们早就想到了解决办法，很聪明的将 inode 记录 block 号码的区域定义为12个直接，一个间接, 一个双间接与一个三间接记录区 。结构可见下图：</p>
+<p><img src="https://ae01.alicdn.com/kf/H34a635582d244422afc1bbcd7c1619edS.jpg"></p>
+<p>图最左边为 inode 本身 （128 Bytes），里面有 12 个直接指向 block 号码的对照，这 12 笔记录就能够直接取得 block 号码啦！ 至于所谓的间接就是再拿一个 block 来当作记录 block 号码的记录区，如果文件太大时， 就会使用间接的 block 来记录号码。如上图当中间接只是拿一个 block 来记录额外的号码而已。 同理，如果文件持续长大，那么就会利用所谓的双间接，第一个 block 仅再指出下一个记录号码的 block 在哪里， 实际记录的在第二个 block 当中。依此类推，三间接就是利用第三层 block 来记录号码啦！ </p>
+<p>i&gt; 这像不像多级页表呢？</p>
+<p>好了，看到这里，我们就可以解释为什么不同block的大小会导致最大单一文件限制以及最大文件系统限制了</p>
+<p>以Block大小为1KB为例，我们来计算一波：</p>
+<ul>
+<li>12个直接记录： 12*1K = 12K</li>
+<li>一级间接记录：在inode中每个block编号项需要4Bytes，那么1个间接记录block为1K，则有1K/4Bytes项Block编号，最后乘上Block大小即可。也就是：1K/4Bytes x 1K = 256 K</li>
+<li>二级间接记录：同上解释，256 x 256  x 1K =$ 256^2 $K</li>
+<li>三级间接记录：同上解释，256 x 256 x 256 x 1K =$ 256^3 $K</li>
+</ul>
+<p>所以将所有记录相加，可得：12 + 256 + 256<em>256 + 256</em>256*256 （K） = 16GB 。这就是为什么block size =1 K的时候，最大单一文件只能有16G了。</p>
+<h3 id="2-3-Superblock-（超级区块）"><a href="#2-3-Superblock-（超级区块）" class="headerlink" title="2.3 Superblock （超级区块）"></a>2.3 Superblock （超级区块）</h3><p>Superblock 是记录整个 filesystem 相关信息的地方， 他记录的信息主要有： </p>
+<ul>
+<li>block 与 inode 的总量；</li>
+<li>未使用与已使用的 inode / block 总数量；</li>
+<li>block 与 inode 的大小 （block 为 1, 2, 4K，inode 为 128Bytes 或 256Bytes）；</li>
+<li>filesystem 的挂载时间、最近一次写入数据的时间、最近一次检验磁盘 （fsck） 的时间等文件系统的相关信息；</li>
+<li>一个 valid bit 数值，若此文件系统已被挂载，则 valid bit 为 0 ，若未被挂载，则 valid bit 为 1 。 </li>
+</ul>
+<p>x&gt; superblock记录的是文件系统的信息，如果 superblock 死掉了， 你的文件系统可能就坏掉咯。在第二节开头我们说过，<strong>每个区块群组都有独立的inode/block/superblock 系统。</strong> 这就有点矛盾了，因为superblock只用记录文件系统的信息。</p>
+<p>事实上除了第一个 block group 内会含有 superblock 之外，后续的 block group 不一定含有 superblock ， 而若含有 superblock 则该 superblock主要是做为第一个 block group 内 superblock 的备份咯，这样可以进行 superblock 的救援呢！ </p>
+<h3 id="2-4-Filesystem-Description-（文件系统描述说明）"><a href="#2-4-Filesystem-Description-（文件系统描述说明）" class="headerlink" title="2.4 Filesystem Description （文件系统描述说明）"></a>2.4 Filesystem Description （文件系统描述说明）</h3><p>这个区段可以描述每个 block group 的开始与结束的 block 号码 </p>
+<h3 id="2-5-block-bitmap-（区块对照表）"><a href="#2-5-block-bitmap-（区块对照表）" class="headerlink" title="2.5 block bitmap （区块对照表）"></a>2.5 block bitmap （区块对照表）</h3><p>如果你想要新增文件时总会用到 block 吧！那你要使用哪个 block 来记录呢？当然是选择“空的 block ”来记录新文件的数据啰。 那你怎么知道哪个 block 是空的？这就得要通过 block bitmap 的辅助了。<strong>从 block bitmap 当中可以知道哪些 block 是空的</strong>，因此我们的系统就能够很快速的找到可使用的空间来处置文件啰。<br>同样的，如果你删除某些文件时，那么那些文件原本占用的 block 号码就得要释放出来， 此时在 block bitmap 当中相对应到该 block 号码的标志就得要修改成为“未使用中”啰！这就是 bitmap 的功能。 </p>
+<h3 id="2-6-inode-bitmap-（inode-对照表）"><a href="#2-6-inode-bitmap-（inode-对照表）" class="headerlink" title="2. 6  inode bitmap （inode 对照表）"></a>2. 6  inode bitmap （inode 对照表）</h3><p>同block bitmap相似，inode bitmap 则是记录使用与未使用的 inode 号码啰！ </p>
+<h2 id="3-inode-block与目录树的关系"><a href="#3-inode-block与目录树的关系" class="headerlink" title="3. inode+block与目录树的关系"></a>3. inode+block与目录树的关系</h2><h3 id="3-1-目录"><a href="#3-1-目录" class="headerlink" title="3.1 目录"></a>3.1 目录</h3><p>要知道目录树，首先得知道什么是目录。目录本质上也是一种文件（要知道linux一切皆文件，虽然网卡先生表示不服），当我们在 Linux 下的文件系统创建一个目录时，文件系统会分配一个 inode 与至少一块 block 给该目录。其中，inode 记录该目录的相关权限与属性，并可记录分配到的那块 block 号码； 而 block 则是记录在这个目录下的文件名与该文件名占用的 inode 号码数据。 目录存储信息结构可见下图：</p>
+<p><img src="https://ae01.alicdn.com/kf/H5ff1bd2454f74431b10c7379cc782de4w.jpg"></p>
+<p>i&gt; 查看inode信息，可使用 <code>ls -i</code>命令</p>
+<h3 id="3-2-文件"><a href="#3-2-文件" class="headerlink" title="3.2 文件"></a>3.2 文件</h3><p>当我们在 Linux 下的 ext2 创建一个一般文件时， ext2 会分配一个 inode 与相对于该文件大小的 block 数量给该文件。 </p>
+<h3 id="3-3-目录树读取"><a href="#3-3-目录树读取" class="headerlink" title="3.3 目录树读取"></a>3.3 目录树读取</h3><p>通过对目录的说明，你应该知道了文件本身并不存储文件名，文件名仅存放在目录之中，于是当我们通过文件名去访问一个文件时，就必然会经过目录，通过目录的文件名与文件inode的映射关系知道该文件的inode，再进行下一步的操作。现在我们以一个例子来对目录树读取进行说明。</p>
+<p>执行<code>lll -di / /etc /etc/passwd </code>命名，系统会做哪些操作呢？</p>
+<p><img src="https://ae01.alicdn.com/kf/H43da9f0121f1400da38ff9c885f11054y.jpg"></p>
+<p>1./ 的 inode： </p>
+<p>通过挂载点的信息找到 inode 号码为 128 的根目录 inode，且 inode 规范的权限让我们可以读取该 block 的内容（有与 x） ；</p>
+<p>2./ 的 block： </p>
+<p>经过上个步骤取得 block 的号码，并找到该内容有 etc/ 目录的 inode 号码 （33595521）； </p>
+<p>3.etc/ 的 inode： </p>
+<p>读取 33595521 号 inode 得知 dmtsai 具有 r 与 x 的权限，因此可以读取 etc/ 的 block 内容； </p>
+<p>4.etc/ 的 block： </p>
+<p>经过上个步骤取得 block 号码，并找到该内容有 passwd 文件的 inode 号码 （36628004）； </p>
+<p>5.passwd 的 inode： </p>
+<p>读取 36628004 号 inode 得知 dmtsai 具有 r 的权限，因此可以读取 passwd 的 block 内容； </p>
+<p>6.passwd 的 block： </p>
+<p>最后将该 block 内容的数据读出来。 </p>
+<p>其实基本上就是：<strong>通过文件名找文件inode-&gt;比对inode信息，查看是否有权限访问-&gt;找到inode对应的block-&gt;反复</strong></p>
+<h2 id="4-日志式文件系统"><a href="#4-日志式文件系统" class="headerlink" title="4. 日志式文件系统"></a>4. 日志式文件系统</h2><p>i&gt;  日志式文件系统是为了解决数据的不一致状态</p>
+<h3 id="4-1-写入数据时的操作"><a href="#4-1-写入数据时的操作" class="headerlink" title="4.1 写入数据时的操作"></a>4.1 写入数据时的操作</h3><ol>
+<li>先确定使用者对于欲新增文件的目录是否具有 w 与 x 的权限，若有的话才能新增；</li>
+<li>根据 inode bitmap 找到没有使用的 inode 号码，并将新文件的权限/属性写入；</li>
+<li>根据 block bitmap 找到没有使用中的 block 号码，并将实际的数据写入 block 中，且更新 inode 的 block 指向数据；</li>
+<li>将刚刚写入的 inode 与 block 数据同步更新 inode bitmap 与 block bitmap，并更新 superblock 的内容。 </li>
+</ol>
+<h3 id="4-2-数据不一致状态"><a href="#4-2-数据不一致状态" class="headerlink" title="4.2 数据不一致状态"></a>4.2 数据不一致状态</h3><p>在一般正常的情况下，上述的新增动作当然可以顺利的完成。但是如果有个万一怎么办？ 例如你的文件在写入文件系统时，因为不知名原因导致系统中断（例如突然的停电啊、 系统核心发生错误啊～等等的怪事发生时），所以写入的数据仅有 inode table 及 data block 而已，最后一个同步更新中介数据的步骤并没有做完，此时就会发生 metadata 的内容与实际数据存放区产生不一致 （Inconsistent） 的情况了。 </p>
+<h3 id="4-3-日志式文件系统-（Journaling-filesystem）"><a href="#4-3-日志式文件系统-（Journaling-filesystem）" class="headerlink" title="4.3 日志式文件系统 （Journaling filesystem）"></a>4.3 日志式文件系统 （Journaling filesystem）</h3><p>为了避免上述提到的文件系统不一致的情况发生，因此我们的前辈们想到一个方式， 如果在我们的 filesystem 当中规划出一个区块，该区块专门在记录写入或修订文件时的步骤， 那不就可以简化一致性检查的步骤了？也就是说： </p>
+<ol>
+<li>预备：当系统要写入一个文件时，会先在日志记录区块中纪录某个文件准备要写入的信息；</li>
+<li>实际写入：开始写入文件的权限与数据；开始更新 metadata 的数据；</li>
+<li>结束：完成数据与 metadata 的更新后，在日志记录区块当中完成该文件的纪录。 </li>
+</ol>
+
+    </div>
+
+    
+    
+    
+        <div class="reward-container">
+  <div>文章对你有帮助?打赏一下作者吧</div>
+  <button onclick="var qr = document.getElementById('qr'); qr.style.display = (qr.style.display === 'none') ? 'block' : 'none';">
+    打赏
+  </button>
+  <div id="qr" style="display: none;">
+      
+      <div style="display: inline-block;">
+        <img src="https://pic.downk.cc/item/5d064208451253d178a15b27.png" alt="Raven 微信支付">
+        <p>微信支付</p>
+      </div>
+      
+      <div style="display: inline-block;">
+        <img src="https://pic.downk.cc/item/5d0641c7451253d178a15376.png" alt="Raven 支付宝">
+        <p>支付宝</p>
+      </div>
+
+  </div>
+</div>
+
+        
+
+<div>
+<ul class="post-copyright">
+  <li class="post-copyright-author">
+    <strong>本文作者： </strong>Raven
+  </li>
+  <li class="post-copyright-link">
+    <strong>本文链接：</strong>
+    <a href="https://www.ravenxrz.ink/archives/8d404d4a.html" title="Linux文件系统基础知识">https://www.ravenxrz.ink/archives/8d404d4a.html</a>
+  </li>
+  <li class="post-copyright-license">
+    <strong>版权声明： </strong>本博客所有文章除特别声明外，均采用 <span class="exturl" data-url="aHR0cHM6Ly9jcmVhdGl2ZWNvbW1vbnMub3JnL2xpY2Vuc2VzL2J5LW5jLXNhLzQuMC8="><i class="fa fa-fw fa-creative-commons"></i>BY-NC-SA</span> 许可协议。转载请注明出处！
+  </li>
+</ul>
+</div>
+
+
+      <footer class="post-footer">
+          
+          <div class="post-tags">
+              <a href="/tags/%E6%96%87%E4%BB%B6%E7%B3%BB%E7%BB%9F/" rel="tag"><i class="fa fa-tag"></i> 文件系统</a>
+          </div>
+
+        
+
+
+        
+    <div class="post-nav">
+      <div class="post-nav-item">
+    <a href="/archives/f81072e7.html" rel="prev" title="Linux中硬链与软链详解">
+      <i class="fa fa-chevron-left"></i> Linux中硬链与软链详解
+    </a></div>
+      <div class="post-nav-item">
+    <a href="/archives/7543dac6.html" rel="next" title="知识整理-分区表MBR与GPT">
+      知识整理-分区表MBR与GPT <i class="fa fa-chevron-right"></i>
+    </a></div>
+    </div>
+      </footer>
+    
+  </article>
+  
+  
+  
+
+
+
+          </div>
+          
+    <div class="comments" id="gitalk-container"></div>
+
+<script>
+  window.addEventListener('tabs:register', () => {
+    let { activeClass } = CONFIG.comments;
+    if (CONFIG.comments.storage) {
+      activeClass = localStorage.getItem('comments_active') || activeClass;
+    }
+    if (activeClass) {
+      let activeTab = document.querySelector(`a[href="#comment-${activeClass}"]`);
+      if (activeTab) {
+        activeTab.click();
+      }
+    }
+  });
+  if (CONFIG.comments.storage) {
+    window.addEventListener('tabs:click', event => {
+      if (!event.target.matches('.tabs-comment .tab-content .tab-pane')) return;
+      let commentClass = event.target.classList[1];
+      localStorage.setItem('comments_active', commentClass);
+    });
+  }
+</script>
+
+        </div>
+          
+  
+  <div class="toggle sidebar-toggle">
+    <span class="toggle-line toggle-line-first"></span>
+    <span class="toggle-line toggle-line-middle"></span>
+    <span class="toggle-line toggle-line-last"></span>
+  </div>
+
+  <aside class="sidebar">
+    <div class="sidebar-inner">
+
+      <ul class="sidebar-nav motion-element">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          站点概览
+        </li>
+      </ul>
+
+      <!--noindex-->
+      <div class="post-toc-wrap sidebar-panel">
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#Linux%E6%96%87%E4%BB%B6%E7%B3%BB%E7%BB%9F%E5%9F%BA%E7%A1%80%E7%9F%A5%E8%AF%86"><span class="nav-text">Linux文件系统基础知识</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#1-Linux%E6%96%87%E4%BB%B6%E7%B3%BB%E7%BB%9F%E7%89%B9%E6%80%A7"><span class="nav-text">1. Linux文件系统特性</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#2-Linux-%E7%9A%84-EXT2-%E6%96%87%E4%BB%B6%E7%B3%BB%E7%BB%9F%EF%BC%88inode%EF%BC%89"><span class="nav-text">2. Linux 的 EXT2 文件系统（inode）</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#2-1-data-block-%EF%BC%88%E6%95%B0%E6%8D%AE%E5%8C%BA%E5%9D%97%EF%BC%89"><span class="nav-text">2.1 data block （数据区块）</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#2-2-inode-table%EF%BC%88inode%E8%A1%A8%EF%BC%89"><span class="nav-text">2.2 inode table（inode表）</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#2-3-Superblock-%EF%BC%88%E8%B6%85%E7%BA%A7%E5%8C%BA%E5%9D%97%EF%BC%89"><span class="nav-text">2.3 Superblock （超级区块）</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#2-4-Filesystem-Description-%EF%BC%88%E6%96%87%E4%BB%B6%E7%B3%BB%E7%BB%9F%E6%8F%8F%E8%BF%B0%E8%AF%B4%E6%98%8E%EF%BC%89"><span class="nav-text">2.4 Filesystem Description （文件系统描述说明）</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#2-5-block-bitmap-%EF%BC%88%E5%8C%BA%E5%9D%97%E5%AF%B9%E7%85%A7%E8%A1%A8%EF%BC%89"><span class="nav-text">2.5 block bitmap （区块对照表）</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#2-6-inode-bitmap-%EF%BC%88inode-%E5%AF%B9%E7%85%A7%E8%A1%A8%EF%BC%89"><span class="nav-text">2. 6  inode bitmap （inode 对照表）</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#3-inode-block%E4%B8%8E%E7%9B%AE%E5%BD%95%E6%A0%91%E7%9A%84%E5%85%B3%E7%B3%BB"><span class="nav-text">3. inode+block与目录树的关系</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#3-1-%E7%9B%AE%E5%BD%95"><span class="nav-text">3.1 目录</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#3-2-%E6%96%87%E4%BB%B6"><span class="nav-text">3.2 文件</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#3-3-%E7%9B%AE%E5%BD%95%E6%A0%91%E8%AF%BB%E5%8F%96"><span class="nav-text">3.3 目录树读取</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#4-%E6%97%A5%E5%BF%97%E5%BC%8F%E6%96%87%E4%BB%B6%E7%B3%BB%E7%BB%9F"><span class="nav-text">4. 日志式文件系统</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#4-1-%E5%86%99%E5%85%A5%E6%95%B0%E6%8D%AE%E6%97%B6%E7%9A%84%E6%93%8D%E4%BD%9C"><span class="nav-text">4.1 写入数据时的操作</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#4-2-%E6%95%B0%E6%8D%AE%E4%B8%8D%E4%B8%80%E8%87%B4%E7%8A%B6%E6%80%81"><span class="nav-text">4.2 数据不一致状态</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#4-3-%E6%97%A5%E5%BF%97%E5%BC%8F%E6%96%87%E4%BB%B6%E7%B3%BB%E7%BB%9F-%EF%BC%88Journaling-filesystem%EF%BC%89"><span class="nav-text">4.3 日志式文件系统 （Journaling filesystem）</span></a></li></ol></li></ol></li></ol></div>
+      </div>
+      <!--/noindex-->
+
+      <div class="site-overview-wrap sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+    <img class="site-author-image" itemprop="image" alt="Raven"
+      src="https://pic.downk.cc/item/5e907515504f4bcb04b6f798.jpg">
+  <p class="site-author-name" itemprop="name">Raven</p>
+  <div class="site-description" itemprop="description">分享技术，记录生活</div>
+</div>
+<div class="site-state-wrap motion-element">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+          <a href="/archives/">
+        
+          <span class="site-state-item-count">120</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+            <a href="/categories/">
+          
+        <span class="site-state-item-count">17</span>
+        <span class="site-state-item-name">分类</span></a>
+      </div>
+      <div class="site-state-item site-state-tags">
+            <a href="/tags/">
+          
+        <span class="site-state-item-count">114</span>
+        <span class="site-state-item-name">标签</span></a>
+      </div>
+  </nav>
+</div>
+  <div class="links-of-author motion-element">
+      <span class="links-of-author-item">
+        <span class="exturl" data-url="aHR0cHM6Ly9naXRodWIuY29tL3JhdmVueHJ6" title="GitHub → https:&#x2F;&#x2F;github.com&#x2F;ravenxrz"><i class="fa fa-fw fa-fab fa-github"></i>GitHub</span>
+      </span>
+      <span class="links-of-author-item">
+        <span class="exturl" data-url="bWFpbHRvOnpoYWduLnhpbmdydWlAZm94bWFpbC5jb20=" title="E-Mail → mailto:zhagn.xingrui@foxmail.com"><i class="fa fa-fw fa-fa fa-envelope"></i>E-Mail</span>
+      </span>
+  </div>
+  <div class="cc-license motion-element" itemprop="license">
+    <span class="exturl cc-opacity" data-url="aHR0cHM6Ly9jcmVhdGl2ZWNvbW1vbnMub3JnL2xpY2Vuc2VzL2J5LW5jLXNhLzQuMC8="><img src="/images/cc-by-nc-sa.svg" alt="Creative Commons"></span>
+  </div>
+
+
+  <div class="links-of-blogroll motion-element">
+    <div class="links-of-blogroll-title">
+      <i class="fa fa-fw fa-fa fa-link"></i>
+      Links
+    </div>
+    <ul class="links-of-blogroll-list">
+        <li class="links-of-blogroll-item">
+          <a href="/resources" title="&#x2F;resources">我的资源</a>
+        </li>
+    </ul>
+  </div>
+
+      </div>
+
+    </div>
+  </aside>
+  <div id="sidebar-dimmer"></div>
+
+
+      </div>
+    </main>
+
+    <footer class="footer">
+      <div class="footer-inner">
+        
+
+        
+
+<div class="copyright">
+  
+  &copy; 2017 – 
+  <span itemprop="copyrightYear">2020</span>
+  <span class="with-love">
+    <i class="fa fa-fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">Raven</span>
+</div>
+  <div class="powered-by">由 <span class="exturl theme-link" data-url="aHR0cHM6Ly9oZXhvLmlv">Hexo</span> & <span class="exturl theme-link" data-url="aHR0cHM6Ly9taXN0LnRoZW1lLW5leHQub3Jn">NexT.Mist</span> 强力驱动
+  </div>
+
+        
+<div class="busuanzi-count">
+  <script async src="https://busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+    <span class="post-meta-item" id="busuanzi_container_site_uv" style="display: none;">
+      <span class="post-meta-item-icon">
+        <i class="fa fa-fa fa-user"></i>
+      </span>
+      <span class="site-uv" title="总访客量">
+        <span id="busuanzi_value_site_uv"></span>
+      </span>
+    </span>
+    <span class="post-meta-divider">|</span>
+    <span class="post-meta-item" id="busuanzi_container_site_pv" style="display: none;">
+      <span class="post-meta-item-icon">
+        <i class="fa fa-fa fa-eye"></i>
+      </span>
+      <span class="site-pv" title="总访问量">
+        <span id="busuanzi_value_site_pv"></span>
+      </span>
+    </span>
+</div>
+
+
+
+
+
+
+
+
+      </div>
+    </footer>
+  </div>
+
+  
+  <script src="//cdn.jsdelivr.net/npm/animejs@3.1.0/lib/anime.min.js"></script>
+  <script src="//cdn.jsdelivr.net/npm/medium-zoom@1/dist/medium-zoom.min.js"></script>
+  <script src="//cdn.jsdelivr.net/npm/lozad@1/dist/lozad.min.js"></script>
+  <script src="//cdn.jsdelivr.net/npm/pangu@4/dist/browser/pangu.min.js"></script>
+
+<script src="/js/utils.js"></script>
+
+
+<script src="/js/schemes/muse.js"></script>
+
+
+<script src="/js/next-boot.js"></script>
+
+
+
+
+  
+  <script>
+    (function(){
+      var bp = document.createElement('script');
+      var curProtocol = window.location.protocol.split(':')[0];
+      bp.src = (curProtocol === 'https') ? 'https://zz.bdstatic.com/linksubmit/push.js' : 'http://push.zhanzhang.baidu.com/push.js';
+      var s = document.getElementsByTagName("script")[0];
+      s.parentNode.insertBefore(bp, s);
+    })();
+  </script>
+
+
+
+
+  
+<script src="/js/local-search.js"></script>
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+  
+      
+
+<script>
+  if (typeof MathJax === 'undefined') {
+    window.MathJax = {
+      loader: {
+        source: {
+          '[tex]/amsCd': '[tex]/amscd',
+          '[tex]/AMScd': '[tex]/amscd'
+        }
+      },
+      tex: {
+        inlineMath: {'[+]': [['$', '$']]},
+        tags: 'ams'
+      },
+      options: {
+        renderActions: {
+          findScript: [10, doc => {
+            document.querySelectorAll('script[type^="math/tex"]').forEach(node => {
+              const display = !!node.type.match(/; *mode=display/);
+              const math = new doc.options.MathItem(node.textContent, doc.inputJax[0], display);
+              const text = document.createTextNode('');
+              node.parentNode.replaceChild(text, node);
+              math.start = {node: text, delim: '', n: 0};
+              math.end = {node: text, delim: '', n: 0};
+              doc.math.push(math);
+            });
+          }, '', false],
+          insertedScript: [200, () => {
+            document.querySelectorAll('mjx-container').forEach(node => {
+              let target = node.parentNode;
+              if (target.nodeName.toLowerCase() === 'li') {
+                target.parentNode.classList.add('has-jax');
+              }
+            });
+          }, '', false]
+        }
+      }
+    };
+    (function () {
+      var script = document.createElement('script');
+      script.src = '//cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js';
+      script.defer = true;
+      document.head.appendChild(script);
+    })();
+  } else {
+    MathJax.startup.document.state(0);
+    MathJax.texReset();
+    MathJax.typeset();
+  }
+</script>
+
+    
+
+  
+  <script src="//cdn.jsdelivr.net/npm/quicklink@1/dist/quicklink.umd.js"></script>
+  <script>
+      window.addEventListener('load', () => {
+      quicklink({
+        timeout : 3000,
+        priority: true,
+        ignores : [uri => uri.includes('#'),uri => uri === 'https://www.ravenxrz.ink/archives/8d404d4a.html',]
+      });
+      });
+  </script>
+
+<link rel="stylesheet" href="//cdn.jsdelivr.net/npm/gitalk@1/dist/gitalk.min.css">
+
+<script>
+NexT.utils.loadComments(document.querySelector('#gitalk-container'), () => {
+  NexT.utils.getScript('//cdn.jsdelivr.net/npm/gitalk@1/dist/gitalk.min.js', () => {
+    var gitalk = new Gitalk({
+      clientID    : 'b2fd373d2ca2e03e591e',
+      clientSecret: 'de4ab066908c1fbd32d3a45e091b3538761d685b',
+      repo        : 'BlogComment',
+      owner       : 'ravenxrz',
+      admin       : ['ravenxrz'],
+      id          : '6743d4a8fb7a57fcb7548423875ee3b5',
+        language: '',
+      distractionFreeMode: true
+    });
+    gitalk.render('gitalk-container');
+  }, window.Gitalk);
+});
+</script>
+
+</body>
+</html>

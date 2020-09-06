@@ -1,0 +1,738 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 5.1.1">
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+  <meta http-equiv="Cache-Control" content="no-transform">
+  <meta http-equiv="Cache-Control" content="no-siteapp">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+<link rel="stylesheet" href="//cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@5/css/all.min.css">
+  <link rel="stylesheet" href="//cdn.jsdelivr.net/npm/pace-js@1/themes/blue/pace-theme-minimal.css">
+  <script src="//cdn.jsdelivr.net/npm/pace-js@1/pace.min.js"></script>
+
+<script id="hexo-configurations">
+    var NexT = window.NexT || {};
+    var CONFIG = {"hostname":"www.ravenxrz.ink","root":"/","scheme":"Mist","version":"7.8.0","exturl":true,"sidebar":{"position":"left","display":"always","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":true,"show_result":true,"style":"flat"},"back2top":{"enable":true,"sidebar":false,"scrollpercent":true},"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":true,"lazyload":true,"pangu":true,"comments":{"style":"tabs","active":"gitalk","storage":true,"lazyload":true,"nav":null,"activeClass":"gitalk"},"algolia":{"hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":true,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},"motion":{"enable":false,"async":true,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}}};
+  </script>
+
+  <meta name="description" content="1. 前言笔者是个比较喜欢尝试新东西的人，最近找到一个好玩又好用的数学绘图网站。可用于数值计算，函数绘图（支持动态函数），几何绘图等等。在数学建模，论文函数绘制，动态展示函数变化等等方面可能会用到。所以，就来介绍一下这个网站。">
+<meta property="og:type" content="article">
+<meta property="og:title" content="好玩的数学网站-Desmos">
+<meta property="og:url" content="https://www.ravenxrz.ink/archives/27d14722.html">
+<meta property="og:site_name" content="Raven&#39;s Blog">
+<meta property="og:description" content="1. 前言笔者是个比较喜欢尝试新东西的人，最近找到一个好玩又好用的数学绘图网站。可用于数值计算，函数绘图（支持动态函数），几何绘图等等。在数学建模，论文函数绘制，动态展示函数变化等等方面可能会用到。所以，就来介绍一下这个网站。">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="https://pic3.superbed.cn/item/5cfbad1a451253d178d94d0d.jpg">
+<meta property="og:image" content="https://pic3.superbed.cn/item/5cfbad1e451253d178d94d57.jpg">
+<meta property="og:image" content="https://pic.superbed.cn/item/5cfbad24451253d178d94dd0.jpg">
+<meta property="og:image" content="https://pic.superbed.cn/item/5cfbad26451253d178d94e10.jpg">
+<meta property="og:image" content="https://pic2.superbed.cn/item/5cfbad28451253d178d94e4a.jpg">
+<meta property="og:image" content="https://pic.superbed.cn/item/5cfbad2b451253d178d94e8a.jpg">
+<meta property="og:image" content="https://pic3.superbed.cn/item/5cfbad2c451253d178d94ec5.jpg">
+<meta property="og:image" content="https://pic.superbed.cn/item/5cfbad2d451253d178d94f03.jpg">
+<meta property="og:image" content="https://pic3.superbed.cn/item/5cfbad2f451253d178d94f3b.jpg">
+<meta property="og:image" content="https://pic.superbed.cn/item/5cfbad32451253d178d94f7e.jpg">
+<meta property="og:image" content="https://pic.superbed.cn/item/5cfbad34451253d178d94fb9.jpg">
+<meta property="og:image" content="https://pic1.superbed.cn/item/5cfbad37451253d178d94ffe.jpg">
+<meta property="og:image" content="https://pic1.superbed.cn/item/5cfbad3a451253d178d95058.jpg">
+<meta property="og:image" content="https://pic.superbed.cn/item/5cfbad3d451253d178d95096.jpg">
+<meta property="og:image" content="https://pic.superbed.cn/item/5cfbad43451253d178d95110.jpg">
+<meta property="og:image" content="https://raw.githubusercontent.com/ravenxrz/BlogPic/master/img/007LxXtnly1g2ofycr6udg311s0jjk3z.gif">
+<meta property="og:image" content="https://pic.superbed.cn/item/5cfbad45451253d178d95147.jpg">
+<meta property="og:image" content="https://pic1.superbed.cn/item/5cfbad4b451253d178d951a6.jpg">
+<meta property="og:image" content="https://pic.superbed.cn/item/5cfbad4d451253d178d951ef.jpg">
+<meta property="og:image" content="https://pic.superbed.cn/item/5cfbad51451253d178d9523c.jpg">
+<meta property="og:image" content="https://pic.superbed.cn/item/5cfbad58451253d178d952cf.jpg">
+<meta property="article:published_time" content="2019-01-25T05:58:47.000Z">
+<meta property="article:modified_time" content="2020-09-06T02:45:08.057Z">
+<meta property="article:author" content="Raven">
+<meta property="article:tag" content="Desmos">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://pic3.superbed.cn/item/5cfbad1a451253d178d94d0d.jpg">
+
+<link rel="canonical" href="https://www.ravenxrz.ink/archives/27d14722.html">
+
+
+<script id="page-configurations">
+  // https://hexo.io/docs/variables.html
+  CONFIG.page = {
+    sidebar: "",
+    isHome : false,
+    isPost : true,
+    lang   : 'zh-CN'
+  };
+</script>
+
+  <title>好玩的数学网站-Desmos | Raven's Blog</title>
+  
+
+
+
+
+
+
+  <noscript>
+  <style>
+  .use-motion .brand,
+  .use-motion .menu-item,
+  .sidebar-inner,
+  .use-motion .post-block,
+  .use-motion .pagination,
+  .use-motion .comments,
+  .use-motion .post-header,
+  .use-motion .post-body,
+  .use-motion .collection-header { opacity: initial; }
+
+  .use-motion .site-title,
+  .use-motion .site-subtitle {
+    opacity: initial;
+    top: initial;
+  }
+
+  .use-motion .logo-line-before i { left: initial; }
+  .use-motion .logo-line-after i { right: initial; }
+  </style>
+</noscript>
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage">
+  <div class="container">
+    <div class="headband"></div>
+
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切换导航栏">
+      <span class="toggle-line toggle-line-first"></span>
+      <span class="toggle-line toggle-line-middle"></span>
+      <span class="toggle-line toggle-line-last"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <span class="logo-line-before"><i></i></span>
+      <h1 class="site-title">Raven's Blog</h1>
+      <span class="logo-line-after"><i></i></span>
+    </a>
+      <p class="site-subtitle" itemprop="description">zhang.xingrui@foxmail.com</p>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger">
+        <i class="fa fa-search fa-fw fa-lg"></i>
+    </div>
+  </div>
+</div>
+
+
+
+
+<nav class="site-nav">
+  <ul id="menu" class="menu">
+        <li class="menu-item menu-item-home">
+
+    <a href="/" rel="section"><i class="fa fa-fw fa-fa fa-home"></i>首页</a>
+
+  </li>
+        <li class="menu-item menu-item-archives">
+
+    <a href="/archives/" rel="section"><i class="fa fa-fw fa-fa fa-archive"></i>归档<span class="badge">120</span></a>
+
+  </li>
+        <li class="menu-item menu-item-categories">
+
+    <a href="/categories/" rel="section"><i class="fa fa-fw fa-fa fa-th"></i>分类<span class="badge">17</span></a>
+
+  </li>
+        <li class="menu-item menu-item-tags">
+
+    <a href="/tags/" rel="section"><i class="fa fa-fw fa-fa fa-tags"></i>标签<span class="badge">114</span></a>
+
+  </li>
+        <li class="menu-item menu-item-about">
+
+    <a href="/about/" rel="section"><i class="fa fa-fw fa-fa fa-user"></i>关于</a>
+
+  </li>
+      <li class="menu-item menu-item-search">
+        <a role="button" class="popup-trigger"><i class="fa fa-search fa-fw"></i>搜索
+        </a>
+      </li>
+  </ul>
+</nav>
+
+
+
+  <div class="search-pop-overlay">
+    <div class="popup search-popup">
+        <div class="search-header">
+  <span class="search-icon">
+    <i class="fa fa-search"></i>
+  </span>
+  <div class="search-input-container">
+    <input autocomplete="off" autocapitalize="off"
+           placeholder="搜索..." spellcheck="false"
+           type="search" class="search-input">
+  </div>
+  <span class="popup-btn-close">
+    <i class="fa fa-times-circle"></i>
+  </span>
+</div>
+<div id="search-result">
+  <div id="no-result">
+    <i class="fa fa-spinner fa-pulse fa-5x fa-fw"></i>
+  </div>
+</div>
+
+    </div>
+  </div>
+
+</div>
+    </header>
+
+    
+  <div class="back-to-top">
+    <i class="fa fa-arrow-up"></i>
+    <span>0%</span>
+  </div>
+
+  <span class="exturl github-corner" data-url="aHR0cHM6Ly9naXRodWIuY29tL3JhdmVueHJ6" title="Follow me on GitHub" aria-label="Follow me on GitHub"><svg width="80" height="80" viewBox="0 0 250 250" aria-hidden="true"><path d="M0,0 L115,115 L130,115 L142,142 L250,250 L250,0 Z"></path><path d="M128.3,109.0 C113.8,99.7 119.0,89.6 119.0,89.6 C122.0,82.7 120.5,78.6 120.5,78.6 C119.2,72.0 123.4,76.3 123.4,76.3 C127.3,80.9 125.5,87.3 125.5,87.3 C122.9,97.6 130.6,101.9 134.4,103.2" fill="currentColor" style="transform-origin: 130px 106px;" class="octo-arm"></path><path d="M115.0,115.0 C114.9,115.1 118.7,116.5 119.8,115.4 L133.7,101.6 C136.9,99.2 139.9,98.4 142.2,98.6 C133.8,88.0 127.5,74.4 143.8,58.0 C148.5,53.4 154.0,51.2 159.7,51.0 C160.3,49.4 163.2,43.6 171.4,40.1 C171.4,40.1 176.1,42.5 178.8,56.2 C183.1,58.6 187.2,61.8 190.9,65.4 C194.5,69.0 197.7,73.2 200.1,77.6 C213.8,80.2 216.3,84.9 216.3,84.9 C212.7,93.1 206.9,96.0 205.4,96.6 C205.1,102.4 203.0,107.8 198.3,112.5 C181.9,128.9 168.3,122.5 157.7,114.1 C157.9,116.9 156.7,120.9 152.7,124.9 L141.0,136.5 C139.8,137.7 141.6,141.9 141.8,141.8 Z" fill="currentColor" class="octo-body"></path></svg></span>
+
+
+    <main class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          
+
+          <div class="content post posts-expand">
+            
+
+    
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="https://www.ravenxrz.ink/archives/27d14722.html">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="https://pic.downk.cc/item/5e907515504f4bcb04b6f798.jpg">
+      <meta itemprop="name" content="Raven">
+      <meta itemprop="description" content="分享技术，记录生活">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Raven's Blog">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          好玩的数学网站-Desmos
+        </h1>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+
+              <time title="创建时间：2019-01-25 13:58:47" itemprop="dateCreated datePublished" datetime="2019-01-25T13:58:47+08:00">2019-01-25</time>
+            </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-calendar-check-o"></i>
+                </span>
+                <span class="post-meta-item-text">更新于</span>
+                <time title="修改时间：2020-09-06 10:45:08" itemprop="dateModified" datetime="2020-09-06T10:45:08+08:00">2020-09-06</time>
+              </span>
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              <span class="post-meta-item-text">分类于</span>
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/%E6%95%B0%E5%AD%A6%E5%BB%BA%E6%A8%A1/" itemprop="url" rel="index"><span itemprop="name">数学建模</span></a>
+                </span>
+            </span>
+
+          
+            <span class="post-meta-item" title="阅读次数" id="busuanzi_container_page_pv" style="display: none;">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-fa fa-eye"></i>
+              </span>
+              <span class="post-meta-item-text">阅读次数：</span>
+              <span id="busuanzi_value_page_pv"></span>
+            </span>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+        <h2 id="1-前言"><a href="#1-前言" class="headerlink" title="1. 前言"></a>1. 前言</h2><p>笔者是个比较喜欢尝试新东西的人，最近找到一个好玩又好用的数学绘图网站。可用于数值计算，函数绘图（支持动态函数），几何绘图等等。在数学建模，论文函数绘制，动态展示函数变化等等方面可能会用到。所以，就来介绍一下这个网站。</p>
+<a id="more"></a>
+<h2 id="2-使用介绍"><a href="#2-使用介绍" class="headerlink" title="2. 使用介绍"></a>2. 使用介绍</h2><p>首先当然是贴出它的官网了：<a target="_blank" rel="noopener" href="https://www.desmos.com/">https://www.desmos.com/</a></p>
+<p><img src="https://pic3.superbed.cn/item/5cfbad1a451253d178d94d0d.jpg" alt="官网"></p>
+<p>点击<strong>Start Graphing</strong>就可以开始了，<em>下面几个蓝色按钮是它的几个子功能，不用太关注</em>。</p>
+<h3 id="2-1-主界面功能介绍"><a href="#2-1-主界面功能介绍" class="headerlink" title="2.1 主界面功能介绍"></a>2.1 主界面功能介绍</h3><p><img src="https://pic3.superbed.cn/item/5cfbad1e451253d178d94d57.jpg" alt="主界面"></p>
+<p>主要关注左边的空白区域，因为后续的操作几乎都是围绕着这片区域来完成。除此之外，可通过<strong>分享按钮来下载你绘制好的图像</strong>，<strong>问号按钮有相关的入门教程</strong>（视频教程在youtube上，所以可能需要到科学上网）。</p>
+<p><img src="https://pic.superbed.cn/item/5cfbad24451253d178d94dd0.jpg" alt="侧边栏"></p>
+<p>点击侧边栏，可以看到该网站给我们很多模板，我们可以随便点击一个来看看效果，这里我打开了一个四阶多项式拟合：</p>
+<p><img src="https://pic.superbed.cn/item/5cfbad26451253d178d94e10.jpg" alt="拟合"></p>
+<p>左边是整个绘制的核心。</p>
+<p>首先是输入了散点的<code>x，y</code>坐标，然后第二栏中输入要拟合的表达式，在<code>desmos</code>中，**~<strong>代表回归拟合的意思，拟合的参数有<code>a,b,c,d,f</code>。输入完成后，它会</strong>自动拟合并绘制图图像，然后将各参数显示出来。**</p>
+<h3 id="2-2-基本功能入门"><a href="#2-2-基本功能入门" class="headerlink" title="2.2 基本功能入门"></a>2.2 基本功能入门</h3><h4 id="2-2-1-基本函数绘制与计算"><a href="#2-2-1-基本函数绘制与计算" class="headerlink" title="2.2.1 基本函数绘制与计算"></a>2.2.1 基本函数绘制与计算</h4><p>新建一个绘图板。在第一栏中输入$f(x) = sin(x)$。可以得到下图:</p>
+<p><img src="https://pic2.superbed.cn/item/5cfbad28451253d178d94e4a.jpg" alt="sin函数"></p>
+<p>如何获取函数在某点的值呢？有三种方式:</p>
+<ul>
+<li><p>鼠标点击图形获取，这个最简单，但是也最不精确。</p>
+</li>
+<li><p>通过子栏输入获取：</p>
+</li>
+</ul>
+<p><img src="https://pic.superbed.cn/item/5cfbad2b451253d178d94e8a.jpg" alt="子栏获取"></p>
+<ul>
+<li>转换为表格获取，点击坐标面板的设置按钮，点击<strong>convert to table</strong>。得到下图:</li>
+</ul>
+<p><img src="https://pic3.superbed.cn/item/5cfbad2c451253d178d94ec5.jpg" alt="转换表格获取"></p>
+<p>  可在x轴中的任意位置插入<code>x</code>的值，它会自动给出结果。如我要知道$x=pi，f(x)$等于多少。</p>
+<p><img src="https://pic.superbed.cn/item/5cfbad2d451253d178d94f03.jpg" alt="pi值对应f(x)"></p>
+<p>另外，也可以增加列（增加其他函数），得到相同x值下的不同函数值:</p>
+<p><img src="https://pic3.superbed.cn/item/5cfbad2f451253d178d94f3b.jpg" alt="增加列"></p>
+<p>在得到不同的函数值的同时，也得到了增加的函数的散点图。如何修改绘图样式呢？长按$cos(x)$左边绿色的图标，得到下图：</p>
+<p><img src="https://pic.superbed.cn/item/5cfbad32451253d178d94f7e.jpg" alt="颜色更改"></p>
+<p>这里可以修改样式和颜色，具体的效果可以自己的尝试，我这里就把线也加上吧。</p>
+<p><img src="https://pic.superbed.cn/item/5cfbad34451253d178d94fb9.jpg" alt="更改样式"></p>
+<p><strong>额外补充一点，该网站支持的函数集合可通过下图查看</strong>：</p>
+<p><img src="https://pic1.superbed.cn/item/5cfbad37451253d178d94ffe.jpg" alt="支持函数"></p>
+<h4 id="2-2-2-文件夹"><a href="#2-2-2-文件夹" class="headerlink" title="2.2.2 文件夹"></a>2.2.2 文件夹</h4><p>当要绘制多个图形时，我们需要一种方式来管理多个图。好在<code>desmos</code>提供了文件夹管理方式，我们可以通过文件夹来一键隐藏/显示多个函数。使用方式如下:</p>
+<ol>
+<li>点击左上角的+号，新建一个文件夹</li>
+<li>书写任意表达式，通过拖拽的方式把书写的表达式放进文件夹中。</li>
+<li>点击文件夹坐标的图标就可以实现多个图形的同时隐藏和显示了</li>
+</ol>
+<h4 id="2-2-3-列表"><a href="#2-2-3-列表" class="headerlink" title="2.2.3 列表"></a>2.2.3 列表</h4><p>在<code>desmos</code>中，可定义列表来表达多个图形，定义方式如下:</p>
+<p><code>a = [1,2,3]</code></p>
+<p>也可以通过步长来定义</p>
+<p><code>a = [1...10]</code> 默认步长1</p>
+<p>或者<code>a=[0,5...100]</code>推导出步长为5</p>
+<p>然后可以像下图这样使用：</p>
+<p><img src="https://pic1.superbed.cn/item/5cfbad3a451253d178d95058.jpg" alt="列表使用1"></p>
+<p>或者也可以同时画多个点：</p>
+<p><img src="https://pic.superbed.cn/item/5cfbad3d451253d178d95096.jpg" alt="列表使用2"></p>
+<h4 id="2-2-4-滑动变量（slider"><a href="#2-2-4-滑动变量（slider" class="headerlink" title="2.2.4 滑动变量（slider)"></a>2.2.4 滑动变量（slider)</h4><p>在<code>desmos</code>中可定义滑动变量来绘制动态图像。</p>
+<p>定义一个滑动变量很简单，只要记住一个规则：不要使用常用数学符号,<code>x,y,t,r</code>等。然后再书写表达式desmos会自动提示是否生成滑动变量。如：</p>
+<p><img src="https://pic.superbed.cn/item/5cfbad43451253d178d95110.jpg" alt="slider变量"></p>
+<p>通过滑动滑杆或者点击播放，右侧的绘图区会绘制出动态图。（提示：点击播放后右侧有调速滑杆）。</p>
+<p>下面展示一个高级点的：</p>
+<p><img src="https://raw.githubusercontent.com/ravenxrz/BlogPic/master/img/007LxXtnly1g2ofycr6udg311s0jjk3z.gif" alt="动态切线"></p>
+<p>是不是感觉很好玩勒。</p>
+<h4 id="2-2-5-参数方程与极坐标"><a href="#2-2-5-参数方程与极坐标" class="headerlink" title="2.2.5 参数方程与极坐标"></a>2.2.5 参数方程与极坐标</h4><p><code>desmos</code>也是支持参数方程，例如我们利用参数方程绘制一个圆形:</p>
+<p><img src="https://pic.superbed.cn/item/5cfbad45451253d178d95147.jpg" alt="绘制圆"></p>
+<p>再看看极坐标</p>
+<p>在<code>desmos</code>中，极坐标以符号r和$\theta$表示，画个四叶草？？？</p>
+<p><img src="https://pic1.superbed.cn/item/5cfbad4b451253d178d951a6.jpg" alt="四叶草"></p>
+<p>相当简单是吧。</p>
+<h4 id="2-2-6-不等式"><a href="#2-2-6-不等式" class="headerlink" title="2.2.6 不等式"></a>2.2.6 不等式</h4><p>讲解不等式之前，先说说如何在<code>desmos</code>中限制定义域或者值域。通过在大括号{}之间添加限制条件即可。如下:</p>
+<p><img src="https://pic.superbed.cn/item/5cfbad4d451253d178d951ef.jpg" alt="范围限制"></p>
+<p>OK,知道了这一点，咱们再来看看使用不等式的使用方式。假设我要绘制一个这样的图形:</p>
+<p>$$<br>\left\{<br>\begin{array}{c}<br>x \lt 2    \\<br>0 \lt y \lt x -1<br>\end{array}<br>\right.<br>$$</p>
+<p>那么这样写就画出来啦。</p>
+<p><img src="https://pic.superbed.cn/item/5cfbad51451253d178d9523c.jpg" alt="不等式绘制"></p>
+<p>(ps:高中的时候有一类求解极大极小值就是需要画图来做吧)</p>
+<h4 id="2-2-7-积分"><a href="#2-2-7-积分" class="headerlink" title="2.2.7 积分"></a>2.2.7 积分</h4><p><code>desmos</code>支持积分计算，也支持变上（下）限函数。通过输入<code>int</code>自动添加积分符号，如：</p>
+<p><img src="https://pic.superbed.cn/item/5cfbad58451253d178d952cf.jpg" alt="积分计算"></p>
+<h2 id="3-结语"><a href="#3-结语" class="headerlink" title="3. 结语"></a>3. 结语</h2><p>嗯，<code>desmos</code>的基础入门就这样了吧，还有很多高级用法可以阅读它提供的模板和文档，当然也可观看<code>desmos</code>的官方教程。笔者觉得蛮好玩的就学习了一下，希望能够对你有所帮助。</p>
+
+    </div>
+
+    
+    
+    
+        <div class="reward-container">
+  <div>文章对你有帮助?打赏一下作者吧</div>
+  <button onclick="var qr = document.getElementById('qr'); qr.style.display = (qr.style.display === 'none') ? 'block' : 'none';">
+    打赏
+  </button>
+  <div id="qr" style="display: none;">
+      
+      <div style="display: inline-block;">
+        <img src="https://pic.downk.cc/item/5d064208451253d178a15b27.png" alt="Raven 微信支付">
+        <p>微信支付</p>
+      </div>
+      
+      <div style="display: inline-block;">
+        <img src="https://pic.downk.cc/item/5d0641c7451253d178a15376.png" alt="Raven 支付宝">
+        <p>支付宝</p>
+      </div>
+
+  </div>
+</div>
+
+        
+
+<div>
+<ul class="post-copyright">
+  <li class="post-copyright-author">
+    <strong>本文作者： </strong>Raven
+  </li>
+  <li class="post-copyright-link">
+    <strong>本文链接：</strong>
+    <a href="https://www.ravenxrz.ink/archives/27d14722.html" title="好玩的数学网站-Desmos">https://www.ravenxrz.ink/archives/27d14722.html</a>
+  </li>
+  <li class="post-copyright-license">
+    <strong>版权声明： </strong>本博客所有文章除特别声明外，均采用 <span class="exturl" data-url="aHR0cHM6Ly9jcmVhdGl2ZWNvbW1vbnMub3JnL2xpY2Vuc2VzL2J5LW5jLXNhLzQuMC8="><i class="fa fa-fw fa-creative-commons"></i>BY-NC-SA</span> 许可协议。转载请注明出处！
+  </li>
+</ul>
+</div>
+
+
+      <footer class="post-footer">
+          
+          <div class="post-tags">
+              <a href="/tags/Desmos/" rel="tag"><i class="fa fa-tag"></i> Desmos</a>
+          </div>
+
+        
+
+
+        
+    <div class="post-nav">
+      <div class="post-nav-item">
+    <a href="/archives/b1ec495.html" rel="prev" title="这些年，我所用过的精品软件（网站干货篇)">
+      <i class="fa fa-chevron-left"></i> 这些年，我所用过的精品软件（网站干货篇)
+    </a></div>
+      <div class="post-nav-item">
+    <a href="/archives/a5232e28.html" rel="next" title="Linux内核学习踩坑日记-为你的主机加上Linux内核APi手册">
+      Linux内核学习踩坑日记-为你的主机加上Linux内核APi手册 <i class="fa fa-chevron-right"></i>
+    </a></div>
+    </div>
+      </footer>
+    
+  </article>
+  
+  
+  
+
+
+
+          </div>
+          
+    <div class="comments" id="gitalk-container"></div>
+
+<script>
+  window.addEventListener('tabs:register', () => {
+    let { activeClass } = CONFIG.comments;
+    if (CONFIG.comments.storage) {
+      activeClass = localStorage.getItem('comments_active') || activeClass;
+    }
+    if (activeClass) {
+      let activeTab = document.querySelector(`a[href="#comment-${activeClass}"]`);
+      if (activeTab) {
+        activeTab.click();
+      }
+    }
+  });
+  if (CONFIG.comments.storage) {
+    window.addEventListener('tabs:click', event => {
+      if (!event.target.matches('.tabs-comment .tab-content .tab-pane')) return;
+      let commentClass = event.target.classList[1];
+      localStorage.setItem('comments_active', commentClass);
+    });
+  }
+</script>
+
+        </div>
+          
+  
+  <div class="toggle sidebar-toggle">
+    <span class="toggle-line toggle-line-first"></span>
+    <span class="toggle-line toggle-line-middle"></span>
+    <span class="toggle-line toggle-line-last"></span>
+  </div>
+
+  <aside class="sidebar">
+    <div class="sidebar-inner">
+
+      <ul class="sidebar-nav motion-element">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          站点概览
+        </li>
+      </ul>
+
+      <!--noindex-->
+      <div class="post-toc-wrap sidebar-panel">
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#1-%E5%89%8D%E8%A8%80"><span class="nav-text">1. 前言</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#2-%E4%BD%BF%E7%94%A8%E4%BB%8B%E7%BB%8D"><span class="nav-text">2. 使用介绍</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#2-1-%E4%B8%BB%E7%95%8C%E9%9D%A2%E5%8A%9F%E8%83%BD%E4%BB%8B%E7%BB%8D"><span class="nav-text">2.1 主界面功能介绍</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#2-2-%E5%9F%BA%E6%9C%AC%E5%8A%9F%E8%83%BD%E5%85%A5%E9%97%A8"><span class="nav-text">2.2 基本功能入门</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#2-2-1-%E5%9F%BA%E6%9C%AC%E5%87%BD%E6%95%B0%E7%BB%98%E5%88%B6%E4%B8%8E%E8%AE%A1%E7%AE%97"><span class="nav-text">2.2.1 基本函数绘制与计算</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#2-2-2-%E6%96%87%E4%BB%B6%E5%A4%B9"><span class="nav-text">2.2.2 文件夹</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#2-2-3-%E5%88%97%E8%A1%A8"><span class="nav-text">2.2.3 列表</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#2-2-4-%E6%BB%91%E5%8A%A8%E5%8F%98%E9%87%8F%EF%BC%88slider"><span class="nav-text">2.2.4 滑动变量（slider)</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#2-2-5-%E5%8F%82%E6%95%B0%E6%96%B9%E7%A8%8B%E4%B8%8E%E6%9E%81%E5%9D%90%E6%A0%87"><span class="nav-text">2.2.5 参数方程与极坐标</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#2-2-6-%E4%B8%8D%E7%AD%89%E5%BC%8F"><span class="nav-text">2.2.6 不等式</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#2-2-7-%E7%A7%AF%E5%88%86"><span class="nav-text">2.2.7 积分</span></a></li></ol></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#3-%E7%BB%93%E8%AF%AD"><span class="nav-text">3. 结语</span></a></li></ol></div>
+      </div>
+      <!--/noindex-->
+
+      <div class="site-overview-wrap sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+    <img class="site-author-image" itemprop="image" alt="Raven"
+      src="https://pic.downk.cc/item/5e907515504f4bcb04b6f798.jpg">
+  <p class="site-author-name" itemprop="name">Raven</p>
+  <div class="site-description" itemprop="description">分享技术，记录生活</div>
+</div>
+<div class="site-state-wrap motion-element">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+          <a href="/archives/">
+        
+          <span class="site-state-item-count">120</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+            <a href="/categories/">
+          
+        <span class="site-state-item-count">17</span>
+        <span class="site-state-item-name">分类</span></a>
+      </div>
+      <div class="site-state-item site-state-tags">
+            <a href="/tags/">
+          
+        <span class="site-state-item-count">114</span>
+        <span class="site-state-item-name">标签</span></a>
+      </div>
+  </nav>
+</div>
+  <div class="links-of-author motion-element">
+      <span class="links-of-author-item">
+        <span class="exturl" data-url="aHR0cHM6Ly9naXRodWIuY29tL3JhdmVueHJ6" title="GitHub → https:&#x2F;&#x2F;github.com&#x2F;ravenxrz"><i class="fa fa-fw fa-fab fa-github"></i>GitHub</span>
+      </span>
+      <span class="links-of-author-item">
+        <span class="exturl" data-url="bWFpbHRvOnpoYWduLnhpbmdydWlAZm94bWFpbC5jb20=" title="E-Mail → mailto:zhagn.xingrui@foxmail.com"><i class="fa fa-fw fa-fa fa-envelope"></i>E-Mail</span>
+      </span>
+  </div>
+  <div class="cc-license motion-element" itemprop="license">
+    <span class="exturl cc-opacity" data-url="aHR0cHM6Ly9jcmVhdGl2ZWNvbW1vbnMub3JnL2xpY2Vuc2VzL2J5LW5jLXNhLzQuMC8="><img src="/images/cc-by-nc-sa.svg" alt="Creative Commons"></span>
+  </div>
+
+
+  <div class="links-of-blogroll motion-element">
+    <div class="links-of-blogroll-title">
+      <i class="fa fa-fw fa-fa fa-link"></i>
+      Links
+    </div>
+    <ul class="links-of-blogroll-list">
+        <li class="links-of-blogroll-item">
+          <a href="/resources" title="&#x2F;resources">我的资源</a>
+        </li>
+    </ul>
+  </div>
+
+      </div>
+
+    </div>
+  </aside>
+  <div id="sidebar-dimmer"></div>
+
+
+      </div>
+    </main>
+
+    <footer class="footer">
+      <div class="footer-inner">
+        
+
+        
+
+<div class="copyright">
+  
+  &copy; 2017 – 
+  <span itemprop="copyrightYear">2020</span>
+  <span class="with-love">
+    <i class="fa fa-fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">Raven</span>
+</div>
+  <div class="powered-by">由 <span class="exturl theme-link" data-url="aHR0cHM6Ly9oZXhvLmlv">Hexo</span> & <span class="exturl theme-link" data-url="aHR0cHM6Ly9taXN0LnRoZW1lLW5leHQub3Jn">NexT.Mist</span> 强力驱动
+  </div>
+
+        
+<div class="busuanzi-count">
+  <script async src="https://busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+    <span class="post-meta-item" id="busuanzi_container_site_uv" style="display: none;">
+      <span class="post-meta-item-icon">
+        <i class="fa fa-fa fa-user"></i>
+      </span>
+      <span class="site-uv" title="总访客量">
+        <span id="busuanzi_value_site_uv"></span>
+      </span>
+    </span>
+    <span class="post-meta-divider">|</span>
+    <span class="post-meta-item" id="busuanzi_container_site_pv" style="display: none;">
+      <span class="post-meta-item-icon">
+        <i class="fa fa-fa fa-eye"></i>
+      </span>
+      <span class="site-pv" title="总访问量">
+        <span id="busuanzi_value_site_pv"></span>
+      </span>
+    </span>
+</div>
+
+
+
+
+
+
+
+
+      </div>
+    </footer>
+  </div>
+
+  
+  <script src="//cdn.jsdelivr.net/npm/animejs@3.1.0/lib/anime.min.js"></script>
+  <script src="//cdn.jsdelivr.net/npm/medium-zoom@1/dist/medium-zoom.min.js"></script>
+  <script src="//cdn.jsdelivr.net/npm/lozad@1/dist/lozad.min.js"></script>
+  <script src="//cdn.jsdelivr.net/npm/pangu@4/dist/browser/pangu.min.js"></script>
+
+<script src="/js/utils.js"></script>
+
+
+<script src="/js/schemes/muse.js"></script>
+
+
+<script src="/js/next-boot.js"></script>
+
+
+
+
+  
+  <script>
+    (function(){
+      var bp = document.createElement('script');
+      var curProtocol = window.location.protocol.split(':')[0];
+      bp.src = (curProtocol === 'https') ? 'https://zz.bdstatic.com/linksubmit/push.js' : 'http://push.zhanzhang.baidu.com/push.js';
+      var s = document.getElementsByTagName("script")[0];
+      s.parentNode.insertBefore(bp, s);
+    })();
+  </script>
+
+
+
+
+  
+<script src="/js/local-search.js"></script>
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+  
+      
+
+<script>
+  if (typeof MathJax === 'undefined') {
+    window.MathJax = {
+      loader: {
+        source: {
+          '[tex]/amsCd': '[tex]/amscd',
+          '[tex]/AMScd': '[tex]/amscd'
+        }
+      },
+      tex: {
+        inlineMath: {'[+]': [['$', '$']]},
+        tags: 'ams'
+      },
+      options: {
+        renderActions: {
+          findScript: [10, doc => {
+            document.querySelectorAll('script[type^="math/tex"]').forEach(node => {
+              const display = !!node.type.match(/; *mode=display/);
+              const math = new doc.options.MathItem(node.textContent, doc.inputJax[0], display);
+              const text = document.createTextNode('');
+              node.parentNode.replaceChild(text, node);
+              math.start = {node: text, delim: '', n: 0};
+              math.end = {node: text, delim: '', n: 0};
+              doc.math.push(math);
+            });
+          }, '', false],
+          insertedScript: [200, () => {
+            document.querySelectorAll('mjx-container').forEach(node => {
+              let target = node.parentNode;
+              if (target.nodeName.toLowerCase() === 'li') {
+                target.parentNode.classList.add('has-jax');
+              }
+            });
+          }, '', false]
+        }
+      }
+    };
+    (function () {
+      var script = document.createElement('script');
+      script.src = '//cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js';
+      script.defer = true;
+      document.head.appendChild(script);
+    })();
+  } else {
+    MathJax.startup.document.state(0);
+    MathJax.texReset();
+    MathJax.typeset();
+  }
+</script>
+
+    
+
+  
+  <script src="//cdn.jsdelivr.net/npm/quicklink@1/dist/quicklink.umd.js"></script>
+  <script>
+      window.addEventListener('load', () => {
+      quicklink({
+        timeout : 3000,
+        priority: true,
+        ignores : [uri => uri.includes('#'),uri => uri === 'https://www.ravenxrz.ink/archives/27d14722.html',]
+      });
+      });
+  </script>
+
+<link rel="stylesheet" href="//cdn.jsdelivr.net/npm/gitalk@1/dist/gitalk.min.css">
+
+<script>
+NexT.utils.loadComments(document.querySelector('#gitalk-container'), () => {
+  NexT.utils.getScript('//cdn.jsdelivr.net/npm/gitalk@1/dist/gitalk.min.js', () => {
+    var gitalk = new Gitalk({
+      clientID    : 'b2fd373d2ca2e03e591e',
+      clientSecret: 'de4ab066908c1fbd32d3a45e091b3538761d685b',
+      repo        : 'BlogComment',
+      owner       : 'ravenxrz',
+      admin       : ['ravenxrz'],
+      id          : 'a4bab672435bb275272c9b7e1594a0eb',
+        language: '',
+      distractionFreeMode: true
+    });
+    gitalk.render('gitalk-container');
+  }, window.Gitalk);
+});
+</script>
+
+</body>
+</html>

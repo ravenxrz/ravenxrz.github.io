@@ -1,0 +1,856 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 5.1.1">
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+  <meta http-equiv="Cache-Control" content="no-transform">
+  <meta http-equiv="Cache-Control" content="no-siteapp">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+<link rel="stylesheet" href="//cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@5/css/all.min.css">
+  <link rel="stylesheet" href="//cdn.jsdelivr.net/npm/pace-js@1/themes/blue/pace-theme-minimal.css">
+  <script src="//cdn.jsdelivr.net/npm/pace-js@1/pace.min.js"></script>
+
+<script id="hexo-configurations">
+    var NexT = window.NexT || {};
+    var CONFIG = {"hostname":"www.ravenxrz.ink","root":"/","scheme":"Mist","version":"7.8.0","exturl":true,"sidebar":{"position":"left","display":"always","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":true,"show_result":true,"style":"flat"},"back2top":{"enable":true,"sidebar":false,"scrollpercent":true},"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":true,"lazyload":true,"pangu":true,"comments":{"style":"tabs","active":"gitalk","storage":true,"lazyload":true,"nav":null,"activeClass":"gitalk"},"algolia":{"hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":true,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},"motion":{"enable":false,"async":true,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}}};
+  </script>
+
+  <meta name="description" content="1.前言今天是2018&#x2F;09&#x2F;06，好像又快到数学建模国赛的日子了。一直觉得自己应该写点东西，但又觉得自己还是不够资格，毕竟在数学建模上的建树不多甚至很差。但是还是想把自己的一些经验分享给即将参加国赛的学弟学妹吧。我想在此之前你已经看过很多国赛一等二等大佬们的经验分享，所以如果想换个口味，我这种建模loser的文章也可以看看，就当玩咯，反正也花不了多少时间。 不过成功的案例，我还是推荐一个帮助过我">
+<meta property="og:type" content="article">
+<meta property="og:title" content="一份失败的数学建模心得">
+<meta property="og:url" content="https://www.ravenxrz.ink/archives/5c3da6c9.html">
+<meta property="og:site_name" content="Raven&#39;s Blog">
+<meta property="og:description" content="1.前言今天是2018&#x2F;09&#x2F;06，好像又快到数学建模国赛的日子了。一直觉得自己应该写点东西，但又觉得自己还是不够资格，毕竟在数学建模上的建树不多甚至很差。但是还是想把自己的一些经验分享给即将参加国赛的学弟学妹吧。我想在此之前你已经看过很多国赛一等二等大佬们的经验分享，所以如果想换个口味，我这种建模loser的文章也可以看看，就当玩咯，反正也花不了多少时间。 不过成功的案例，我还是推荐一个帮助过我">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="https://pic.superbed.cn/item/5cfba717451253d178d8f5b3.png">
+<meta property="og:image" content="https://pic.superbed.cn/item/5cfba896451253d178d907ae.png">
+<meta property="og:image" content="https://pic2.superbed.cn/item/5cfba89a451253d178d90819.png">
+<meta property="og:image" content="https://pic1.superbed.cn/item/5cfba89d451253d178d90871.png">
+<meta property="og:image" content="https://pic.superbed.cn/item/5cfba8a0451253d178d908b8.png">
+<meta property="article:published_time" content="2018-09-06T05:58:25.000Z">
+<meta property="article:modified_time" content="2020-09-06T02:45:08.048Z">
+<meta property="article:author" content="Raven">
+<meta property="article:tag" content="心得">
+<meta property="article:tag" content="总结">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://pic.superbed.cn/item/5cfba717451253d178d8f5b3.png">
+
+<link rel="canonical" href="https://www.ravenxrz.ink/archives/5c3da6c9.html">
+
+
+<script id="page-configurations">
+  // https://hexo.io/docs/variables.html
+  CONFIG.page = {
+    sidebar: "",
+    isHome : false,
+    isPost : true,
+    lang   : 'zh-CN'
+  };
+</script>
+
+  <title>一份失败的数学建模心得 | Raven's Blog</title>
+  
+
+
+
+
+
+
+  <noscript>
+  <style>
+  .use-motion .brand,
+  .use-motion .menu-item,
+  .sidebar-inner,
+  .use-motion .post-block,
+  .use-motion .pagination,
+  .use-motion .comments,
+  .use-motion .post-header,
+  .use-motion .post-body,
+  .use-motion .collection-header { opacity: initial; }
+
+  .use-motion .site-title,
+  .use-motion .site-subtitle {
+    opacity: initial;
+    top: initial;
+  }
+
+  .use-motion .logo-line-before i { left: initial; }
+  .use-motion .logo-line-after i { right: initial; }
+  </style>
+</noscript>
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage">
+  <div class="container">
+    <div class="headband"></div>
+
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切换导航栏">
+      <span class="toggle-line toggle-line-first"></span>
+      <span class="toggle-line toggle-line-middle"></span>
+      <span class="toggle-line toggle-line-last"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <span class="logo-line-before"><i></i></span>
+      <h1 class="site-title">Raven's Blog</h1>
+      <span class="logo-line-after"><i></i></span>
+    </a>
+      <p class="site-subtitle" itemprop="description">zhang.xingrui@foxmail.com</p>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger">
+        <i class="fa fa-search fa-fw fa-lg"></i>
+    </div>
+  </div>
+</div>
+
+
+
+
+<nav class="site-nav">
+  <ul id="menu" class="menu">
+        <li class="menu-item menu-item-home">
+
+    <a href="/" rel="section"><i class="fa fa-fw fa-fa fa-home"></i>首页</a>
+
+  </li>
+        <li class="menu-item menu-item-archives">
+
+    <a href="/archives/" rel="section"><i class="fa fa-fw fa-fa fa-archive"></i>归档<span class="badge">120</span></a>
+
+  </li>
+        <li class="menu-item menu-item-categories">
+
+    <a href="/categories/" rel="section"><i class="fa fa-fw fa-fa fa-th"></i>分类<span class="badge">17</span></a>
+
+  </li>
+        <li class="menu-item menu-item-tags">
+
+    <a href="/tags/" rel="section"><i class="fa fa-fw fa-fa fa-tags"></i>标签<span class="badge">114</span></a>
+
+  </li>
+        <li class="menu-item menu-item-about">
+
+    <a href="/about/" rel="section"><i class="fa fa-fw fa-fa fa-user"></i>关于</a>
+
+  </li>
+      <li class="menu-item menu-item-search">
+        <a role="button" class="popup-trigger"><i class="fa fa-search fa-fw"></i>搜索
+        </a>
+      </li>
+  </ul>
+</nav>
+
+
+
+  <div class="search-pop-overlay">
+    <div class="popup search-popup">
+        <div class="search-header">
+  <span class="search-icon">
+    <i class="fa fa-search"></i>
+  </span>
+  <div class="search-input-container">
+    <input autocomplete="off" autocapitalize="off"
+           placeholder="搜索..." spellcheck="false"
+           type="search" class="search-input">
+  </div>
+  <span class="popup-btn-close">
+    <i class="fa fa-times-circle"></i>
+  </span>
+</div>
+<div id="search-result">
+  <div id="no-result">
+    <i class="fa fa-spinner fa-pulse fa-5x fa-fw"></i>
+  </div>
+</div>
+
+    </div>
+  </div>
+
+</div>
+    </header>
+
+    
+  <div class="back-to-top">
+    <i class="fa fa-arrow-up"></i>
+    <span>0%</span>
+  </div>
+
+  <span class="exturl github-corner" data-url="aHR0cHM6Ly9naXRodWIuY29tL3JhdmVueHJ6" title="Follow me on GitHub" aria-label="Follow me on GitHub"><svg width="80" height="80" viewBox="0 0 250 250" aria-hidden="true"><path d="M0,0 L115,115 L130,115 L142,142 L250,250 L250,0 Z"></path><path d="M128.3,109.0 C113.8,99.7 119.0,89.6 119.0,89.6 C122.0,82.7 120.5,78.6 120.5,78.6 C119.2,72.0 123.4,76.3 123.4,76.3 C127.3,80.9 125.5,87.3 125.5,87.3 C122.9,97.6 130.6,101.9 134.4,103.2" fill="currentColor" style="transform-origin: 130px 106px;" class="octo-arm"></path><path d="M115.0,115.0 C114.9,115.1 118.7,116.5 119.8,115.4 L133.7,101.6 C136.9,99.2 139.9,98.4 142.2,98.6 C133.8,88.0 127.5,74.4 143.8,58.0 C148.5,53.4 154.0,51.2 159.7,51.0 C160.3,49.4 163.2,43.6 171.4,40.1 C171.4,40.1 176.1,42.5 178.8,56.2 C183.1,58.6 187.2,61.8 190.9,65.4 C194.5,69.0 197.7,73.2 200.1,77.6 C213.8,80.2 216.3,84.9 216.3,84.9 C212.7,93.1 206.9,96.0 205.4,96.6 C205.1,102.4 203.0,107.8 198.3,112.5 C181.9,128.9 168.3,122.5 157.7,114.1 C157.9,116.9 156.7,120.9 152.7,124.9 L141.0,136.5 C139.8,137.7 141.6,141.9 141.8,141.8 Z" fill="currentColor" class="octo-body"></path></svg></span>
+
+
+    <main class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          
+
+          <div class="content post posts-expand">
+            
+
+    
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="https://www.ravenxrz.ink/archives/5c3da6c9.html">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="https://pic.downk.cc/item/5e907515504f4bcb04b6f798.jpg">
+      <meta itemprop="name" content="Raven">
+      <meta itemprop="description" content="分享技术，记录生活">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Raven's Blog">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          一份失败的数学建模心得
+        </h1>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+
+              <time title="创建时间：2018-09-06 13:58:25" itemprop="dateCreated datePublished" datetime="2018-09-06T13:58:25+08:00">2018-09-06</time>
+            </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-calendar-check-o"></i>
+                </span>
+                <span class="post-meta-item-text">更新于</span>
+                <time title="修改时间：2020-09-06 10:45:08" itemprop="dateModified" datetime="2020-09-06T10:45:08+08:00">2020-09-06</time>
+              </span>
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              <span class="post-meta-item-text">分类于</span>
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/%E6%95%B0%E5%AD%A6%E5%BB%BA%E6%A8%A1/" itemprop="url" rel="index"><span itemprop="name">数学建模</span></a>
+                </span>
+            </span>
+
+          
+            <span class="post-meta-item" title="阅读次数" id="busuanzi_container_page_pv" style="display: none;">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-fa fa-eye"></i>
+              </span>
+              <span class="post-meta-item-text">阅读次数：</span>
+              <span id="busuanzi_value_page_pv"></span>
+            </span>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+        <h2 id="1-前言"><a href="#1-前言" class="headerlink" title="1.前言"></a>1.前言</h2><p>今天是<strong>2018/09/06</strong>，好像又快到数学建模国赛的日子了。一直觉得自己应该写点东西，但又觉得自己还是不够资格，毕竟在数学建模上的建树不多甚至很差。但是还是想把自己的一些经验分享给即将参加国赛的学弟学妹吧。我想在此之前你已经看过很多国赛一等二等大佬们的经验分享，所以如果想换个口味，我这种建模loser的文章也可以看看，就当玩咯，反正也花不了多少时间。</p>
+<p>不过成功的案例，我还是推荐一个帮助过我很多的学长的经验分享–<a target="_blank" rel="noopener" href="https://www.jianshu.com/p/56d1ee857ee9">我的零经验数模路</a></p>
+<p>不想看多余的废话的，可以直接跳到–<a href="#4">超多干货分享</a></p>
+<a id="more"></a>
+<h2 id="2-我的数学建模经历"><a href="#2-我的数学建模经历" class="headerlink" title="2.我的数学建模经历"></a>2.我的数学建模经历</h2><blockquote>
+<p>为什么我要参见数学建模竞赛？</p>
+</blockquote>
+<p>因为这个竞赛是我所在学校获取保研资格的竞赛之一。虽然我承认数学建模的过程中的确能获得很多知识，不过不好意思，最初始的目的就是为了保送研究生。</p>
+<p>我的角色：coder</p>
+<h3 id="2-1初遇数学建模"><a href="#2-1初遇数学建模" class="headerlink" title="2.1初遇数学建模"></a>2.1初遇数学建模</h3><p>初次遇见数学建模竞赛是在大一下的举行的校数学建模竞赛，听说了这个比赛的重要程度（当然不是校赛就能保研，校赛只是用于选拔），加上收到当时所在协会的学姐的鼓励（啥也不会，只用Excel就得了个二等奖)，所以和同室友马上就参加了。拿到题目后直接傻眼了，我记得当时是从”深圳垃圾处理“、”水能节源减排“和“生物医疗”的题目选择一道，不过当时确实什么都不会，首先就上贴吧啊，论坛啊之类的搜答案去了，结果也可想而之–<strong>全是卖论文的</strong>，关于“网上共享答案”这一点我会在<a href="#3">之后</a>给出我的一点点小建议。最后大一的校内比赛不了了之了。</p>
+<p><strong>收获:</strong></p>
+<ul>
+<li>像个傻逼一样地体验了一把数学建模</li>
+</ul>
+<h3 id="2-2-再遇数学建模"><a href="#2-2-再遇数学建模" class="headerlink" title="2.2 再遇数学建模"></a>2.2 再遇数学建模</h3><h4 id="2-2-1-学习阶段"><a href="#2-2-1-学习阶段" class="headerlink" title="2.2.1 学习阶段"></a>2.2.1 学习阶段</h4><p>转眼就到了大二下，为了不走大一的老路，从大约2017年4月中下旬开始，拿了一两本MATLAB和lingo的书每天呆在实验室啃。系统学习完MATLAB（现在，我不推荐学习lingo，因为有更好的替代品–<a target="_blank" rel="noopener" href="https://www.jianshu.com/p/e1c45b3d8d8a">yalmip</a>，当然已经学习了的肯定是不错的，毕竟各有各的优点)，就向国一学长借了两本数学建模的书籍正式刚模型。同时，和同实验室的一个朋友组好了队，一起学习数学建模，等着6月的校内选拔赛。</p>
+<h4 id="2-2-2-校内选拔"><a href="#2-2-2-校内选拔" class="headerlink" title="2.2.2 校内选拔"></a>2.2.2 校内选拔</h4><p>不久后，6月校内选拔赛开始了，虽然没能学习完两本书，但是一些基本模型是掌握了的。这次的题目有”钢结构优化“，”宜居城市评定“和”深圳垃圾处理”（垃圾处理真是热门。。。）。拿到题目后，稍微文献分析了一下，第一题和建筑物理有关，不大适合就干脆放弃了。第三题数据量没做过处理就没做了。锁定了最简单的第二题后，准备开干。</p>
+<p><em>然而，这个时候，一个队友有事回家，另一个队友却说想打篮球晚点来。。。。其实当时心里真的是哔了dog的感觉，毕竟准备了挺长的时间而且也是很重要的一个比赛</em>。</p>
+<p>虽然比赛时间为一周，但是这一周也要上课嘛。不过咬咬牙自己单干了一两天，差不多把文献资料整理了一下，分析了一些重要的文献。比赛结束的前一晚，请学长过来帮忙看了看，终于完成了第一份数学建模的论文。</p>
+<p>大约两周后，成绩下来了，不过很遗憾的是，只得到了建模二等奖。</p>
+<p><strong>阶段分工：</strong></p>
+<ul>
+<li>我负责编程：掌握MATLAB，lingo，会查阅一些简单资料，excel绘图，数据搜索</li>
+<li>team member1: 掌握SPSS，会写部分论文，整体上进行建模，数据搜索，excel绘图</li>
+<li>team member2: 论文编写，数据搜索，文献查看</li>
+</ul>
+<p><strong>阶段收获：</strong></p>
+<ul>
+<li>系统地学习了MATLAB和Lingo</li>
+<li>掌握了一些基础的数学模型</li>
+<li>完成了第一份数学建模论文</li>
+</ul>
+<h3 id="2-3-数模培训集中营"><a href="#2-3-数模培训集中营" class="headerlink" title="2.3 数模培训集中营"></a>2.3 数模培训集中营</h3><h4 id="2-3-1-背景"><a href="#2-3-1-背景" class="headerlink" title="2.3.1 背景"></a>2.3.1 背景</h4><p><strong>学校背景：</strong></p>
+<ul>
+<li>数学建模一直都是我们学校重视的竞赛，前文也说到了这个比赛可保研，学生们也很积极。所以每年通过校赛选拔后的参赛队都会参加学校为期半个月的数模培训+3次模拟训练</li>
+</ul>
+<p><strong>我的情况：</strong></p>
+<ul>
+<li>可能对二等奖的结果不满意吧，加上之前单干过一阵子所以心情不大好，就找了个年级第一的大佬，加入了他们队。</li>
+</ul>
+<p><strong>培训方式：</strong></p>
+<ul>
+<li>半月培训：学校数理院的老师们会对学生们”全面洗脑“,传授大部分的数学模型，对优秀论文进行分析。<strong>（不过这个阶段真的是很枯燥，收获并不多，不如自己看书来得快）</strong></li>
+<li>中途会放假很长一段时间，具体时间忘了，不过就我本人来说大约玩了个10天。这个阶段布置了第一套模拟题（当然，和队友们约定这个阶段不看题目，只管玩）</li>
+</ul>
+<h4 id="2-3-2-第一套模拟题"><a href="#2-3-2-第一套模拟题" class="headerlink" title="2.3.2 第一套模拟题"></a>2.3.2 第一套模拟题</h4><p>浪完了后，回到学校正式解决第一套题目，这次题目有：“能源相关的题目”，”交通分析”，“快递派送”。因为受到学长论文的影响，很喜欢元胞自动机模型（学长论文中就是使用元胞自动机模型），这个模型很适合做交通类别的题目，所以选择了第二题，依葫芦画瓢的想搬过来用用，使用这个模型大约一下午+一晚上。晚上走的时候决定放弃了，在编程实现的时候，堵塞等待，红路灯时间设置，转向等问题不好实现，所以放弃了。</p>
+<p>之后转向了<strong>VISSIM（交通仿真软件）</strong>学习，大约花了两到三天掌握了VISSIM的基本功能，队友们也将模型建立好了就等实现。不过，<strong>最后实现的效果并不好–有红绿灯反而使得交通更拥堵了</strong>。这样一来，所有工作全部废掉了，心情很是沮丧，和队友反复检验哪里有问题，到最后也没发现什么问题，因为不设置红绿灯时，汽车自己懂得避让然后转向。所以无奈，<strong>重新选题</strong>（这个时候距离第一次训练交卷大约还剩一个星期）。</p>
+<p>之后选择了“快递派送”题目，这个题目做起来就很顺手了，一天半基本上就解决了所有问题。之后就是修改论文，对team member2写完的论文进行仔细推敲，反复修改，甚至是重写。因为特别想写好，所以这套题目花费了3-4天3个人同时写、修改论文。最后交卷并且去听了讨论会（每套题目，都会让完成组去分享）。</p>
+<p><strong>结果：</strong></p>
+<ul>
+<li>我们的论文：老师觉得写得很不错，基本没有什么需要修改的地方，当然还有细节修改。（信心倍增，但是自己也明白这样写，国赛时间根本不够）</li>
+<li>别人的论文（因为是第一套题目，就没有去分享自己的论文写作，只听了听别人的）：<ul>
+<li>“交通分析”：发现了一个队和我们之前的想法完全一致（因为查到了相同的论文），**那么为什么别人做出来了，我们没做出来?**最后发现是在设置VISSIM时，对方编程的同学关闭了车辆变道选项，大大降低了拥塞率。</li>
+<li>“快递派送”：这道题目比较简单，不过有人居然做了“灵敏性分析”，这点我们组倒是没有想到。</li>
+</ul>
+</li>
+</ul>
+<p><strong>收获：</strong></p>
+<ul>
+<li>实际使用了自己学习过的一些模型</li>
+<li>掌握新软件VISSIM</li>
+<li>注意“灵敏性分析”（这一点还是很重要的，国赛里面也是一个分值点）</li>
+<li>提升团队默契度</li>
+</ul>
+<h4 id="2-3-3-第二套和第三套题目"><a href="#2-3-3-第二套和第三套题目" class="headerlink" title="2.3.3 第二套和第三套题目"></a>2.3.3 第二套和第三套题目</h4><p><strong>第二套：</strong></p>
+<ul>
+<li><p>第一套结束后，休息了一天就开始了第二套，这次又选择了一个“派送优化”类型的题目（这是一个错误的决定，即使我们学到了一些东西）。第二套题目是最累的一次训练，因为要解决的问题很多，但时间一共4天，最后我们完成的论文差不多有60页。</p>
+</li>
+<li><p>对启发式算法进行了实际运用，学习了<strong>yalmip</strong>(强烈建议学习这个东西，优化类型的题目真的很好用)</p>
+</li>
+<li><p>对比了别人做的方案，我们发现我们的模型还是相当不错的，本来想去分享的，但是还没走上台其他人就冲上去了。所以这次也没能分享。</p>
+</li>
+</ul>
+<p><strong>第三套：</strong></p>
+<ul>
+<li>照样地，第二套结束后，休息了一天又开始了第三套，选择了“银行收支分析”的一个题目，然而从未做过数据分析的我们显得特别地力不从心，对很多数据处理好后都不知道怎么分析，绘制好的图也不知道怎么去描述。<strong>最后这道题没有做完。</strong>（大家都很累了，信心都很受挫，甚至第三套结束后，我还提议去做第四套，不过做了半天后就放弃了，因为实在太累了）</li>
+<li>了解了我们不擅长数据处理（应该说除了优化类型题目，我们对其他领域都比较陌生）。</li>
+<li>听完了别人的分享，发现其实也不是很难，但是为什么我们当时就没想到呢。</li>
+</ul>
+<h4 id="2-3-4-训练结束"><a href="#2-3-4-训练结束" class="headerlink" title="2.3.4 训练结束"></a>2.3.4 训练结束</h4><p>训练结束了，收获到很多东西，书上的内容基本都看完了，基本上每行代码都看了敲了，但是却没什么信心（这大概也在预兆了我们的失败）。结束训练后，大概也开学了，这期间对所有模型进行了总结归类，写论文的同学也对模板进行了重排版，购买好零食，电脑做完清理，等等xxx。反正<strong>这段时间就是在为国赛做好准备</strong>。</p>
+<h3 id="2-4-国赛开始！"><a href="#2-4-国赛开始！" class="headerlink" title="2.4 国赛开始！"></a>2.4 国赛开始！</h3><p>2017年的国赛是晚上8点开始的，拿到题目后，首先还是题目分析。不过我们组很简单了，收到第三套题目的影响，B题是一道数据处理类型的题目，所以1个多小时就pass了(反观隔壁组大约花了3-4个小时选题)，就做起了A题“CT图像复原”。</p>
+<p><strong>过程：</strong></p>
+<ul>
+<li>国赛的过程很难受，我们花了大约2天才解决第一题，全员除了第一天睡了大约6-7个小时，后来的三天每天睡眠都在3-4小时内，到了第三天下午我们才解决第2题的三分之二。<strong>到了第三天晚上（凌晨就是交卷的时候），虽然之前就觉得做不完了，但是这个时候我们更确定自己做不完了。队员们的情绪都很不好，我和年级第一的大佬发生了解题意见上的冲突，因为一些很杂碎的事情，我也对写论文的队员发了脾气（这里真的很对不起两位队员）</strong>，最后，简单整理了第二题，第三题和第四题时终于还是去网络上搜查了一些答案，加入了一些讨论群（这个工作本应该在国赛前做的），然后加上自己的想法写在了论文里，写完时已经第二天的5点过了，赶在了6点前（交论文的最后时间）提交了。</li>
+</ul>
+<p><strong>一点小感悟：</strong></p>
+<ul>
+<li>虽然我们花了两天才解决第一题，但是后来翻看论文时，发现我们做得实在是太细了，一些基本定理（一条固定斜率的直线，切椭圆时，过中点的弦长最长这种定理我们全部采用了理论和程序去证明，最后也花费了很多时间在作图上），所以我强烈的建议即将参赛的学弟学妹们别走我们的老路。</li>
+</ul>
+<p><strong>结果：</strong></p>
+<ul>
+<li>不出意外的，啥也没有。（得到这样的结果时，当时真的挺难受的，不过我们确实很多地方没有做好）</li>
+</ul>
+<p><em>不甘心的我，在一学期之后又继续组队参加了美赛，不过结果还是不好，我也就不废话了。</em>下面就综合我个人的感受给大家一些建议吧：</p>
+<h2 id="3-一些小小的建议"><a href="#3-一些小小的建议" class="headerlink" title="3.一些小小的建议"></a>3.一些小小的建议</h2><ol>
+<li><p>先给队里的程序员：<strong>别去优化你的程序</strong>，不要想着去抽象、简化代码，这样没有任何意义，反而浪费了很多时间。</p>
+</li>
+<li><p>再给所有队员们：只要不是特别过分的错误，任何时候都<strong>别去责怪你的队员</strong>，题目困难，大家都是一样的，所以撸起袖子加油干吧！！！</p>
+</li>
+<li><p>在平常训练的时候，不要只做擅长的类型，既然是训练就应该<strong>涉猎广一点</strong>。</p>
+</li>
+<li><p>团队的配合真的很重要，<strong>一个人的实力再强也没什么用</strong>，因为你的精力和时间都是有限的，合理的对全队分工才是真正重要的。<strong>一个团队应该选择一个有决定权力的队长来管理分工团队</strong>。</p>
+</li>
+<li><p>放宽心态：别因为一时的错误，失败，贬低就没了自信，很多时候有自信才能做好这个工作，看我们团队和学长的团队这就是很大的区别（<a target="_blank" rel="noopener" href="https://www.jianshu.com/p/56d1ee857ee9">学长文章</a>)。</p>
+</li>
+<li><p>适当加入一些网上的讨论群（虽然比赛大纲里说了不允许交流，但是私下交流其实蛮重要的，毕竟我们团队就是太过封闭，完全自己动手解决也是蛮痛苦的），但是一定不要依赖这个，而是在你们一筹莫展的时候有时候能找到一些突破点。</p>
+</li>
+<li><p>适当地进行放松，合理地时间规划：这个得根据你们平时训练时的节点进行安排，我觉得没有固定的时间节点，因为每个团队都是不一样的，每个人的精力也都是不一样的。但是尽量让团队中的三个人一起工作一起休息，这样能够更好的发挥效率，另外结合我的经历，我不鼓励体力战术，因为实在是太累了，效率也相当低下。</p>
+</li>
+<li><p>如果不是特别擅长精确类型的题目，尽量选择模糊类型题目，这样更容易获得好成绩（美赛经验，当然国赛也适合）。</p>
+</li>
+</ol>
+<p>差不多就这些，虽然大部分是鸡汤，但是其实这些所谓的鸡汤也真的很重要。最后，就来分享一大堆干货吧。</p>
+<h2 id="4-超多干货分享"><a href="#4-超多干货分享" class="headerlink" title="4.超多干货分享"></a>4.超多干货分享</h2><h4 id="搜索引擎的正确使用姿势："><a href="#搜索引擎的正确使用姿势：" class="headerlink" title="搜索引擎的正确使用姿势："></a>搜索引擎的正确使用姿势：</h4><blockquote>
+<p>第一，也是非常重要的前提，<strong>请一定要能翻墙</strong>。</p>
+</blockquote>
+<p>如果你还不能翻墙，要么去买VPN，要么也可以使用chrome的插件（chrome内核系的浏览器都可以用）–<strong>谷歌访问助手</strong>：</p>
+<p>链接：<a target="_blank" rel="noopener" href="https://pan.baidu.com/s/1zsSkUgL-m7pqwXdmeb2ovA">https://pan.baidu.com/s/1zsSkUgL-m7pqwXdmeb2ovA</a> 密码：cqj5</p>
+<p>现在我假设你已经能翻墙了，个人推荐使用搜索引擎的顺序：</p>
+<p><strong>Google&gt;360搜索&gt;百度   (微软的bing我不知道怎么样)</strong></p>
+<p>接下来就是非常重要的三条搜索指令:</p>
+<ul>
+<li>filetype</li>
+<li>intitle</li>
+<li>site</li>
+</ul>
+<p>上述三条搜索指令请一定一定要掌握，所有的指令都是command:content形式。如<strong>filetype</strong>:xls，以天气数据为例,可以得到下图</p>
+<p><img src="https://pic.superbed.cn/item/5cfba717451253d178d8f5b3.png" alt="天气数据.png"></p>
+<p>相信你已经懂了这个指令的意义了，对于天气数据关键字，只搜索xls类型文件。这对于搜索论文(pdf类型文件)，数据(xls,csv,txt等)，非常有用。基本上是我用得最多的指令之一了。</p>
+<p>在如<strong>intitle</strong>指令，这个指令的意思是，在我所搜索的条目中，标题一定要包含:后面的内容，如:</p>
+<p><img src="https://pic.superbed.cn/item/5cfba896451253d178d907ae.png" alt="weather.png"></p>
+<p>可以看到，所有条目全部包含”weather”关键字。其实还有个指令-**””（英文的双引号)**，把所要搜索的内容用””包含起来，所得到的结果是，所搜索的内容必须包含这个关键字，不限于内容还是标题。如下图:</p>
+<p><img src="https://pic2.superbed.cn/item/5cfba89a451253d178d90819.png" alt="RavenXr.png"></p>
+<p>可以看到，从搜索结果来看，只要内容包含“Raven XR”就会显示。</p>
+<p>最后在介绍很重要的指令<strong>site</strong>。这条指令的意思是，所要搜索的内容只在site:后的网站中进行搜索。</p>
+<p>如，只在CSDN中搜索数据结构:</p>
+<p><img src="https://pic1.superbed.cn/item/5cfba89d451253d178d90871.png" alt="site指令.png"></p>
+<p>所有的指令可以交叉使用，这就留给你自己去探讨了，如果你想学习其他有用的指令，也可去查一下哦，我认为最常用的3个就是上面这3个了。</p>
+<p>综合的搜索引擎：<a target="_blank" rel="noopener" href="http://search.chongbuluo.com/">http://search.chongbuluo.com/</a></p>
+<h4 id="文献管理工具"><a href="#文献管理工具" class="headerlink" title="文献管理工具"></a>文献管理工具</h4><p>就我个人来说，还是推荐综合使用Zotero和EndNote两款文献管理工具：</p>
+<ul>
+<li><p>Zotero的优点在于提供chrome插件，便于保存资料，也提供汉化版本，提供在线笔记，团队文献资料共享。Zotero的具体使用可参考：<a target="_blank" rel="noopener" href="https://www.yangzhiping.com/tech/zotero1.html">https://www.yangzhiping.com/tech/zotero1.html</a></p>
+</li>
+<li><p>EndNote的优点在于支持各种格式导出，内置文献标记，排序，文献重要程度排行标记等等。但是不支持汉化，而且略微卡顿。</p>
+</li>
+</ul>
+<p>如果你使用Word排版的话，<strong>两款工具都提供文献插入标号和自动更新</strong>，不过好像Zotero才支持国标吧，这点你可以自己去查实咯。</p>
+<h4 id="团队协作"><a href="#团队协作" class="headerlink" title="团队协作"></a>团队协作</h4><p>如果你不想所有数据全丢在QQ群然后各种重命名的话，推荐<strong>坚果云</strong>，把相关资料共享，然后建立一个以自己名字为名的文件夹，然后大家都共享咯。</p>
+<h4 id="到底使用Word还是Latex排版？"><a href="#到底使用Word还是Latex排版？" class="headerlink" title="到底使用Word还是Latex排版？"></a>到底使用Word还是Latex排版？</h4><p>虽然我个人超爱Latex的文字排版，但是我还是建议参加国赛的同学，在不熟练使用Latex的情况下，除了<strong>书写公式</strong>以外，还是老老实实用Word吧。</p>
+<p>对于要使用Latex的同学，这里给个模板：</p>
+<p><a target="_blank" rel="noopener" href="http://www.latexstudio.net/archives/10834.html">http://www.latexstudio.net/archives/10834.html</a></p>
+<p><a target="_blank" rel="noopener" href="https://github.com/latexstudio/CUMCMThesis">https://github.com/latexstudio/CUMCMThesis</a></p>
+<p>参加美赛的同学，就更推荐Latex一点了，因为Latex对英文的支持是相当好的，排版出来的感觉也是很美的，只管写内容不关心排版不是很爽吗（反观没学习Latex之前，在论文写作完成后，排版总是会花费很长的时间，所以参加美赛的同学学习一下Latex还是不错的），美赛模板如下：</p>
+<p><a target="_blank" rel="noopener" href="http://www.latexstudio.net/archives/9333.html">http://www.latexstudio.net/archives/9333.html</a> </p>
+<p>如果使用Latex排版，我想<strong>制表</strong>应该是所有使用Latex的人一个诟病，所以这里提供一个解决方案：</p>
+<p><a target="_blank" rel="noopener" href="http://www.tablesgenerator.com/">http://www.tablesgenerator.com/</a></p>
+<p>如果你使用Word排版，<strong>那么书写公式一定让你头疼</strong>，<strong>那么我劝你还是花费一天去学下Latex公式书写（其他的什么都别学）然后使用pandoc转成word公式（不要害怕，安装pandoc很简单，转化也只需要一条命令行）</strong>，当然也可以使用<strong>MathType</strong>。</p>
+<p>如何将latex公式转为word公式？我写了篇博文和配套视频，可以参考：<br>[post cid=”145” /]</p>
+<h4 id="代码搜索"><a href="#代码搜索" class="headerlink" title="代码搜索"></a>代码搜索</h4><p><strong>Github</strong>当然是首推的：<a target="_blank" rel="noopener" href="https://github.com/">https://github.com/</a></p>
+<p><strong>联合开发网</strong>：<a target="_blank" rel="noopener" href="http://www.pudn.com/">http://www.pudn.com</a></p>
+<p>codeproject：<a target="_blank" rel="noopener" href="https://www.codeproject.com/">https://www.codeproject.com/</a></p>
+<p>oh，还有个<strong>我自己整理的代码</strong>（不算搜索，但是常用的代码还是有的）：<a target="_blank" rel="noopener" href="https://github.com/zzbb1199/Mathematical-Modeling">https://github.com/zzbb1199/Mathematical-Modeling</a></p>
+<h4 id="一些数学建模的网站"><a href="#一些数学建模的网站" class="headerlink" title="一些数学建模的网站"></a>一些数学建模的网站</h4><p><a target="_blank" rel="noopener" href="http://nveyun.com/">http://nveyun.com/</a></p>
+<p><a target="_blank" rel="noopener" href="http://www.mcm.dept.ccut.edu.cn/">http://www.mcm.dept.ccut.edu.cn/</a></p>
+<p><a target="_blank" rel="noopener" href="http://www.mcm.edu.cn/">http://www.mcm.edu.cn/</a></p>
+<p><a target="_blank" rel="noopener" href="http://www.madio.net/forum.php">http://www.madio.net/forum.php</a></p>
+<h4 id="论文搜索"><a href="#论文搜索" class="headerlink" title="论文搜索"></a>论文搜索</h4><p>一个综合的网站:<a target="_blank" rel="noopener" href="http://scholar.chongbuluo.com/">http://scholar.chongbuluo.com/</a></p>
+<p><strong>Google学术</strong>:<a target="_blank" rel="noopener" href="https://scholar.google.co.jp/schhp?hl=zh-CN">https://scholar.google.co.jp/schhp?hl=zh-CN</a></p>
+<p><strong>知网</strong>:<a target="_blank" rel="noopener" href="http://kns.cnki.net/kns/brief/default_result.aspx">http://kns.cnki.net/kns/brief/default_result.aspx</a></p>
+<p><strong>维普</strong>:<a target="_blank" rel="noopener" href="http://qikan.cqvip.com/">http://qikan.cqvip.com/</a></p>
+<p>万方:<a target="_blank" rel="noopener" href="http://www.wanfangdata.com.cn/index.html">http://www.wanfangdata.com.cn/index.html</a></p>
+<p>有很多英文的站点，但是做数模嘛，其实好好用好上面的几个网站就够了。</p>
+<h4 id="数据搜索网站"><a href="#数据搜索网站" class="headerlink" title="数据搜索网站"></a>数据搜索网站</h4><p><strong>国家统计局</strong>：<a target="_blank" rel="noopener" href="http://www.stats.gov.cn/tjsj/ndsj/">http://www.stats.gov.cn/tjsj/ndsj/</a></p>
+<p><strong>国际数据</strong>:<a target="_blank" rel="noopener" href="http://data.stats.gov.cn/index.htm">http://data.stats.gov.cn/index.htm</a></p>
+<p>统计年鉴：<a target="_blank" rel="noopener" href="http://www.yearbookchina.com/">http://www.yearbookchina.com/</a></p>
+<p>**数析网(很推荐)**：<a target="_blank" rel="noopener" href="http://www.tjsql.com/index.aspx">http://www.tjsql.com/index.aspx</a></p>
+<p>搜数：<a target="_blank" rel="noopener" href="http://www.soshoo.com/index.do">http://www.soshoo.com/index.do</a></p>
+<p>谷歌数据集：<a target="_blank" rel="noopener" href="https://toolbox.google.com/datasetsearch">https://toolbox.google.com/datasetsearch</a></p>
+<p>中国统计信息网：<a target="_blank" rel="noopener" href="http://www.tjcn.org/">http://www.tjcn.org/</a></p>
+<p>优易数据：<a target="_blank" rel="noopener" href="https://www.youedata.com/">https://www.youedata.com/</a></p>
+<p>别的博主整理的：<a target="_blank" rel="noopener" href="https://blog.csdn.net/juanjuan1314/article/details/50895793">https://blog.csdn.net/juanjuan1314/article/details/50895793</a></p>
+<h4 id="查重"><a href="#查重" class="headerlink" title="查重"></a>查重</h4><p><strong>PaperFree</strong>:<a target="_blank" rel="noopener" href="https://www.paperfree.cn/">https://www.paperfree.cn/</a></p>
+<p>大雅：<a target="_blank" rel="noopener" href="http://dsa.dayainfo.com/">http://dsa.dayainfo.com/</a></p>
+<p>知网:<a target="_blank" rel="noopener" href="http://www.cnki.cn/free.html">http://www.cnki.cn/free.html</a></p>
+<p>PaperYY:<a target="_blank" rel="noopener" href="https://www.paperyy.com/">https://www.paperyy.com/</a></p>
+<h4 id="翻译"><a href="#翻译" class="headerlink" title="翻译"></a>翻译</h4><p>翻译狗:<a target="_blank" rel="noopener" href="https://www.fanyigou.net/">https://www.fanyigou.net/</a></p>
+<p>谷歌:<a target="_blank" rel="noopener" href="https://translate.google.cn/">https://translate.google.cn/</a></p>
+<p><strong>百度</strong>:<a target="_blank" rel="noopener" href="https://fanyi.baidu.com/?aldtype=16047#auto/zh">https://fanyi.baidu.com/?aldtype=16047#auto/zh</a></p>
+<p>有道:<a target="_blank" rel="noopener" href="http://fanyi.youdao.com/">http://fanyi.youdao.com/</a></p>
+<p>虽然很多人喜欢谷歌，但是个人更喜欢百度。</p>
+<p>对了,有道的客户端也是支持pdf翻译的，如图:</p>
+<p><img src="https://pic.superbed.cn/item/5cfba8a0451253d178d908b8.png" alt="有道翻译.png"></p>
+<h4 id="MATLAB工具箱"><a href="#MATLAB工具箱" class="headerlink" title="MATLAB工具箱"></a>MATLAB工具箱</h4><p>gatbx工具箱(遗传算法工具箱):<a target="_blank" rel="noopener" href="https://download.csdn.net/download/qq_35109096/10554786">https://download.csdn.net/download/qq_35109096/10554786</a></p>
+<p><strong>yalmip工具箱(优化求解器）</strong>:<a target="_blank" rel="noopener" href="https://download.csdn.net/download/qq_35109096/10554783">https://download.csdn.net/download/qq_35109096/10554783</a> (记住一定要配置<strong>gurobi</strong>)</p>
+<p>lpsolve工具箱(优化求解器):<a target="_blank" rel="noopener" href="https://download.csdn.net/download/qq_35109096/10554779">https://download.csdn.net/download/qq_35109096/10554779</a></p>
+<p>libsvm工具箱(更好的SVM工具箱):<a target="_blank" rel="noopener" href="https://download.csdn.net/download/qq_35109096/10554782">https://download.csdn.net/download/qq_35109096/10554782</a></p>
+<h4 id="一些软件分享"><a href="#一些软件分享" class="headerlink" title="一些软件分享"></a>一些软件分享</h4><p>MATLAB2014:链接：<a target="_blank" rel="noopener" href="https://pan.baidu.com/s/1v--5kvgXWEg34MWjVEWFcg">https://pan.baidu.com/s/1v--5kvgXWEg34MWjVEWFcg</a> 密码：z722</p>
+<p>SPSS:链接：<a target="_blank" rel="noopener" href="https://pan.baidu.com/s/1Y8lztXXo5zGcPvCWfkJNKw">https://pan.baidu.com/s/1Y8lztXXo5zGcPvCWfkJNKw</a> 密码：xabq</p>
+<h4 id="一些视频教程"><a href="#一些视频教程" class="headerlink" title="一些视频教程"></a>一些视频教程</h4><p>VISIO：链接：<a target="_blank" rel="noopener" href="https://pan.baidu.com/s/1qm4TwNMxR2yW2UTolb5leA">https://pan.baidu.com/s/1qm4TwNMxR2yW2UTolb5leA</a> 密码：u8yt</p>
+<p>VISSIM：链接：<a target="_blank" rel="noopener" href="https://pan.baidu.com/s/1D7EbPFRWCoFYUKd_NlRjOg">https://pan.baidu.com/s/1D7EbPFRWCoFYUKd_NlRjOg</a> 密码：d70j</p>
+<h4 id="关于数据可视化"><a href="#关于数据可视化" class="headerlink" title="关于数据可视化"></a>关于数据可视化</h4><p>有些同学很想把图做得精美一点，ok，我理解，毕竟我也是这样过来的，但是我不推荐把过多的时间放在这上面。但是如果有时间，可以试试以下方式：</p>
+<ol>
+<li><strong>Excel+合理配色</strong>（各类颜色：<a target="_blank" rel="noopener" href="https://www.materialui.co/colors%EF%BC%89">https://www.materialui.co/colors）</a></li>
+<li>会js的同学使用：<a target="_blank" rel="noopener" href="http://echarts.baidu.com/feature.html">http://echarts.baidu.com/feature.html</a></li>
+<li>会python的同学使用:<a target="_blank" rel="noopener" href="http://pyecharts.org/#/">http://pyecharts.org/#/</a></li>
+</ol>
+<p>呼，或许有点多了，不过我觉得重要的还是加粗了。有需要的同学可以看看吧。那，，，就这样了呗。</p>
+<h5 id="最后，预祝所有学弟学妹们建模都能取得好成绩。"><a href="#最后，预祝所有学弟学妹们建模都能取得好成绩。" class="headerlink" title="最后，预祝所有学弟学妹们建模都能取得好成绩。"></a>最后，预祝所有学弟学妹们建模都能取得好成绩。</h5>
+    </div>
+
+    
+    
+    
+        <div class="reward-container">
+  <div>文章对你有帮助?打赏一下作者吧</div>
+  <button onclick="var qr = document.getElementById('qr'); qr.style.display = (qr.style.display === 'none') ? 'block' : 'none';">
+    打赏
+  </button>
+  <div id="qr" style="display: none;">
+      
+      <div style="display: inline-block;">
+        <img src="https://pic.downk.cc/item/5d064208451253d178a15b27.png" alt="Raven 微信支付">
+        <p>微信支付</p>
+      </div>
+      
+      <div style="display: inline-block;">
+        <img src="https://pic.downk.cc/item/5d0641c7451253d178a15376.png" alt="Raven 支付宝">
+        <p>支付宝</p>
+      </div>
+
+  </div>
+</div>
+
+        
+
+<div>
+<ul class="post-copyright">
+  <li class="post-copyright-author">
+    <strong>本文作者： </strong>Raven
+  </li>
+  <li class="post-copyright-link">
+    <strong>本文链接：</strong>
+    <a href="https://www.ravenxrz.ink/archives/5c3da6c9.html" title="一份失败的数学建模心得">https://www.ravenxrz.ink/archives/5c3da6c9.html</a>
+  </li>
+  <li class="post-copyright-license">
+    <strong>版权声明： </strong>本博客所有文章除特别声明外，均采用 <span class="exturl" data-url="aHR0cHM6Ly9jcmVhdGl2ZWNvbW1vbnMub3JnL2xpY2Vuc2VzL2J5LW5jLXNhLzQuMC8="><i class="fa fa-fw fa-creative-commons"></i>BY-NC-SA</span> 许可协议。转载请注明出处！
+  </li>
+</ul>
+</div>
+
+
+      <footer class="post-footer">
+          
+          <div class="post-tags">
+              <a href="/tags/%E5%BF%83%E5%BE%97/" rel="tag"><i class="fa fa-tag"></i> 心得</a>
+              <a href="/tags/%E6%80%BB%E7%BB%93/" rel="tag"><i class="fa fa-tag"></i> 总结</a>
+          </div>
+
+        
+
+
+        
+    <div class="post-nav">
+      <div class="post-nav-item">
+    <a href="/archives/8df54bf5.html" rel="prev" title="Yalmip使用学习">
+      <i class="fa fa-chevron-left"></i> Yalmip使用学习
+    </a></div>
+      <div class="post-nav-item">
+    <a href="/archives/6b2122f5.html" rel="next" title="旧手机再利用-基于Aria2的下载机">
+      旧手机再利用-基于Aria2的下载机 <i class="fa fa-chevron-right"></i>
+    </a></div>
+    </div>
+      </footer>
+    
+  </article>
+  
+  
+  
+
+
+
+          </div>
+          
+    <div class="comments" id="gitalk-container"></div>
+
+<script>
+  window.addEventListener('tabs:register', () => {
+    let { activeClass } = CONFIG.comments;
+    if (CONFIG.comments.storage) {
+      activeClass = localStorage.getItem('comments_active') || activeClass;
+    }
+    if (activeClass) {
+      let activeTab = document.querySelector(`a[href="#comment-${activeClass}"]`);
+      if (activeTab) {
+        activeTab.click();
+      }
+    }
+  });
+  if (CONFIG.comments.storage) {
+    window.addEventListener('tabs:click', event => {
+      if (!event.target.matches('.tabs-comment .tab-content .tab-pane')) return;
+      let commentClass = event.target.classList[1];
+      localStorage.setItem('comments_active', commentClass);
+    });
+  }
+</script>
+
+        </div>
+          
+  
+  <div class="toggle sidebar-toggle">
+    <span class="toggle-line toggle-line-first"></span>
+    <span class="toggle-line toggle-line-middle"></span>
+    <span class="toggle-line toggle-line-last"></span>
+  </div>
+
+  <aside class="sidebar">
+    <div class="sidebar-inner">
+
+      <ul class="sidebar-nav motion-element">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          站点概览
+        </li>
+      </ul>
+
+      <!--noindex-->
+      <div class="post-toc-wrap sidebar-panel">
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#1-%E5%89%8D%E8%A8%80"><span class="nav-text">1.前言</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#2-%E6%88%91%E7%9A%84%E6%95%B0%E5%AD%A6%E5%BB%BA%E6%A8%A1%E7%BB%8F%E5%8E%86"><span class="nav-text">2.我的数学建模经历</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#2-1%E5%88%9D%E9%81%87%E6%95%B0%E5%AD%A6%E5%BB%BA%E6%A8%A1"><span class="nav-text">2.1初遇数学建模</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#2-2-%E5%86%8D%E9%81%87%E6%95%B0%E5%AD%A6%E5%BB%BA%E6%A8%A1"><span class="nav-text">2.2 再遇数学建模</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#2-2-1-%E5%AD%A6%E4%B9%A0%E9%98%B6%E6%AE%B5"><span class="nav-text">2.2.1 学习阶段</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#2-2-2-%E6%A0%A1%E5%86%85%E9%80%89%E6%8B%94"><span class="nav-text">2.2.2 校内选拔</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#2-3-%E6%95%B0%E6%A8%A1%E5%9F%B9%E8%AE%AD%E9%9B%86%E4%B8%AD%E8%90%A5"><span class="nav-text">2.3 数模培训集中营</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#2-3-1-%E8%83%8C%E6%99%AF"><span class="nav-text">2.3.1 背景</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#2-3-2-%E7%AC%AC%E4%B8%80%E5%A5%97%E6%A8%A1%E6%8B%9F%E9%A2%98"><span class="nav-text">2.3.2 第一套模拟题</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#2-3-3-%E7%AC%AC%E4%BA%8C%E5%A5%97%E5%92%8C%E7%AC%AC%E4%B8%89%E5%A5%97%E9%A2%98%E7%9B%AE"><span class="nav-text">2.3.3 第二套和第三套题目</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#2-3-4-%E8%AE%AD%E7%BB%83%E7%BB%93%E6%9D%9F"><span class="nav-text">2.3.4 训练结束</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#2-4-%E5%9B%BD%E8%B5%9B%E5%BC%80%E5%A7%8B%EF%BC%81"><span class="nav-text">2.4 国赛开始！</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#3-%E4%B8%80%E4%BA%9B%E5%B0%8F%E5%B0%8F%E7%9A%84%E5%BB%BA%E8%AE%AE"><span class="nav-text">3.一些小小的建议</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#4-%E8%B6%85%E5%A4%9A%E5%B9%B2%E8%B4%A7%E5%88%86%E4%BA%AB"><span class="nav-text">4.超多干货分享</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#%E6%90%9C%E7%B4%A2%E5%BC%95%E6%93%8E%E7%9A%84%E6%AD%A3%E7%A1%AE%E4%BD%BF%E7%94%A8%E5%A7%BF%E5%8A%BF%EF%BC%9A"><span class="nav-text">搜索引擎的正确使用姿势：</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E6%96%87%E7%8C%AE%E7%AE%A1%E7%90%86%E5%B7%A5%E5%85%B7"><span class="nav-text">文献管理工具</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E5%9B%A2%E9%98%9F%E5%8D%8F%E4%BD%9C"><span class="nav-text">团队协作</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E5%88%B0%E5%BA%95%E4%BD%BF%E7%94%A8Word%E8%BF%98%E6%98%AFLatex%E6%8E%92%E7%89%88%EF%BC%9F"><span class="nav-text">到底使用Word还是Latex排版？</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E4%BB%A3%E7%A0%81%E6%90%9C%E7%B4%A2"><span class="nav-text">代码搜索</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E4%B8%80%E4%BA%9B%E6%95%B0%E5%AD%A6%E5%BB%BA%E6%A8%A1%E7%9A%84%E7%BD%91%E7%AB%99"><span class="nav-text">一些数学建模的网站</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E8%AE%BA%E6%96%87%E6%90%9C%E7%B4%A2"><span class="nav-text">论文搜索</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E6%95%B0%E6%8D%AE%E6%90%9C%E7%B4%A2%E7%BD%91%E7%AB%99"><span class="nav-text">数据搜索网站</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E6%9F%A5%E9%87%8D"><span class="nav-text">查重</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E7%BF%BB%E8%AF%91"><span class="nav-text">翻译</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#MATLAB%E5%B7%A5%E5%85%B7%E7%AE%B1"><span class="nav-text">MATLAB工具箱</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E4%B8%80%E4%BA%9B%E8%BD%AF%E4%BB%B6%E5%88%86%E4%BA%AB"><span class="nav-text">一些软件分享</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E4%B8%80%E4%BA%9B%E8%A7%86%E9%A2%91%E6%95%99%E7%A8%8B"><span class="nav-text">一些视频教程</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E5%85%B3%E4%BA%8E%E6%95%B0%E6%8D%AE%E5%8F%AF%E8%A7%86%E5%8C%96"><span class="nav-text">关于数据可视化</span></a><ol class="nav-child"><li class="nav-item nav-level-5"><a class="nav-link" href="#%E6%9C%80%E5%90%8E%EF%BC%8C%E9%A2%84%E7%A5%9D%E6%89%80%E6%9C%89%E5%AD%A6%E5%BC%9F%E5%AD%A6%E5%A6%B9%E4%BB%AC%E5%BB%BA%E6%A8%A1%E9%83%BD%E8%83%BD%E5%8F%96%E5%BE%97%E5%A5%BD%E6%88%90%E7%BB%A9%E3%80%82"><span class="nav-text">最后，预祝所有学弟学妹们建模都能取得好成绩。</span></a></li></ol></li></ol></li></ol></li></ol></div>
+      </div>
+      <!--/noindex-->
+
+      <div class="site-overview-wrap sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+    <img class="site-author-image" itemprop="image" alt="Raven"
+      src="https://pic.downk.cc/item/5e907515504f4bcb04b6f798.jpg">
+  <p class="site-author-name" itemprop="name">Raven</p>
+  <div class="site-description" itemprop="description">分享技术，记录生活</div>
+</div>
+<div class="site-state-wrap motion-element">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+          <a href="/archives/">
+        
+          <span class="site-state-item-count">120</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+            <a href="/categories/">
+          
+        <span class="site-state-item-count">17</span>
+        <span class="site-state-item-name">分类</span></a>
+      </div>
+      <div class="site-state-item site-state-tags">
+            <a href="/tags/">
+          
+        <span class="site-state-item-count">114</span>
+        <span class="site-state-item-name">标签</span></a>
+      </div>
+  </nav>
+</div>
+  <div class="links-of-author motion-element">
+      <span class="links-of-author-item">
+        <span class="exturl" data-url="aHR0cHM6Ly9naXRodWIuY29tL3JhdmVueHJ6" title="GitHub → https:&#x2F;&#x2F;github.com&#x2F;ravenxrz"><i class="fa fa-fw fa-fab fa-github"></i>GitHub</span>
+      </span>
+      <span class="links-of-author-item">
+        <span class="exturl" data-url="bWFpbHRvOnpoYWduLnhpbmdydWlAZm94bWFpbC5jb20=" title="E-Mail → mailto:zhagn.xingrui@foxmail.com"><i class="fa fa-fw fa-fa fa-envelope"></i>E-Mail</span>
+      </span>
+  </div>
+  <div class="cc-license motion-element" itemprop="license">
+    <span class="exturl cc-opacity" data-url="aHR0cHM6Ly9jcmVhdGl2ZWNvbW1vbnMub3JnL2xpY2Vuc2VzL2J5LW5jLXNhLzQuMC8="><img src="/images/cc-by-nc-sa.svg" alt="Creative Commons"></span>
+  </div>
+
+
+  <div class="links-of-blogroll motion-element">
+    <div class="links-of-blogroll-title">
+      <i class="fa fa-fw fa-fa fa-link"></i>
+      Links
+    </div>
+    <ul class="links-of-blogroll-list">
+        <li class="links-of-blogroll-item">
+          <a href="/resources" title="&#x2F;resources">我的资源</a>
+        </li>
+    </ul>
+  </div>
+
+      </div>
+
+    </div>
+  </aside>
+  <div id="sidebar-dimmer"></div>
+
+
+      </div>
+    </main>
+
+    <footer class="footer">
+      <div class="footer-inner">
+        
+
+        
+
+<div class="copyright">
+  
+  &copy; 2017 – 
+  <span itemprop="copyrightYear">2020</span>
+  <span class="with-love">
+    <i class="fa fa-fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">Raven</span>
+</div>
+  <div class="powered-by">由 <span class="exturl theme-link" data-url="aHR0cHM6Ly9oZXhvLmlv">Hexo</span> & <span class="exturl theme-link" data-url="aHR0cHM6Ly9taXN0LnRoZW1lLW5leHQub3Jn">NexT.Mist</span> 强力驱动
+  </div>
+
+        
+<div class="busuanzi-count">
+  <script async src="https://busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+    <span class="post-meta-item" id="busuanzi_container_site_uv" style="display: none;">
+      <span class="post-meta-item-icon">
+        <i class="fa fa-fa fa-user"></i>
+      </span>
+      <span class="site-uv" title="总访客量">
+        <span id="busuanzi_value_site_uv"></span>
+      </span>
+    </span>
+    <span class="post-meta-divider">|</span>
+    <span class="post-meta-item" id="busuanzi_container_site_pv" style="display: none;">
+      <span class="post-meta-item-icon">
+        <i class="fa fa-fa fa-eye"></i>
+      </span>
+      <span class="site-pv" title="总访问量">
+        <span id="busuanzi_value_site_pv"></span>
+      </span>
+    </span>
+</div>
+
+
+
+
+
+
+
+
+      </div>
+    </footer>
+  </div>
+
+  
+  <script src="//cdn.jsdelivr.net/npm/animejs@3.1.0/lib/anime.min.js"></script>
+  <script src="//cdn.jsdelivr.net/npm/medium-zoom@1/dist/medium-zoom.min.js"></script>
+  <script src="//cdn.jsdelivr.net/npm/lozad@1/dist/lozad.min.js"></script>
+  <script src="//cdn.jsdelivr.net/npm/pangu@4/dist/browser/pangu.min.js"></script>
+
+<script src="/js/utils.js"></script>
+
+
+<script src="/js/schemes/muse.js"></script>
+
+
+<script src="/js/next-boot.js"></script>
+
+
+
+
+  
+  <script>
+    (function(){
+      var bp = document.createElement('script');
+      var curProtocol = window.location.protocol.split(':')[0];
+      bp.src = (curProtocol === 'https') ? 'https://zz.bdstatic.com/linksubmit/push.js' : 'http://push.zhanzhang.baidu.com/push.js';
+      var s = document.getElementsByTagName("script")[0];
+      s.parentNode.insertBefore(bp, s);
+    })();
+  </script>
+
+
+
+
+  
+<script src="/js/local-search.js"></script>
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+  
+      
+
+<script>
+  if (typeof MathJax === 'undefined') {
+    window.MathJax = {
+      loader: {
+        source: {
+          '[tex]/amsCd': '[tex]/amscd',
+          '[tex]/AMScd': '[tex]/amscd'
+        }
+      },
+      tex: {
+        inlineMath: {'[+]': [['$', '$']]},
+        tags: 'ams'
+      },
+      options: {
+        renderActions: {
+          findScript: [10, doc => {
+            document.querySelectorAll('script[type^="math/tex"]').forEach(node => {
+              const display = !!node.type.match(/; *mode=display/);
+              const math = new doc.options.MathItem(node.textContent, doc.inputJax[0], display);
+              const text = document.createTextNode('');
+              node.parentNode.replaceChild(text, node);
+              math.start = {node: text, delim: '', n: 0};
+              math.end = {node: text, delim: '', n: 0};
+              doc.math.push(math);
+            });
+          }, '', false],
+          insertedScript: [200, () => {
+            document.querySelectorAll('mjx-container').forEach(node => {
+              let target = node.parentNode;
+              if (target.nodeName.toLowerCase() === 'li') {
+                target.parentNode.classList.add('has-jax');
+              }
+            });
+          }, '', false]
+        }
+      }
+    };
+    (function () {
+      var script = document.createElement('script');
+      script.src = '//cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js';
+      script.defer = true;
+      document.head.appendChild(script);
+    })();
+  } else {
+    MathJax.startup.document.state(0);
+    MathJax.texReset();
+    MathJax.typeset();
+  }
+</script>
+
+    
+
+  
+  <script src="//cdn.jsdelivr.net/npm/quicklink@1/dist/quicklink.umd.js"></script>
+  <script>
+      window.addEventListener('load', () => {
+      quicklink({
+        timeout : 3000,
+        priority: true,
+        ignores : [uri => uri.includes('#'),uri => uri === 'https://www.ravenxrz.ink/archives/5c3da6c9.html',]
+      });
+      });
+  </script>
+
+<link rel="stylesheet" href="//cdn.jsdelivr.net/npm/gitalk@1/dist/gitalk.min.css">
+
+<script>
+NexT.utils.loadComments(document.querySelector('#gitalk-container'), () => {
+  NexT.utils.getScript('//cdn.jsdelivr.net/npm/gitalk@1/dist/gitalk.min.js', () => {
+    var gitalk = new Gitalk({
+      clientID    : 'b2fd373d2ca2e03e591e',
+      clientSecret: 'de4ab066908c1fbd32d3a45e091b3538761d685b',
+      repo        : 'BlogComment',
+      owner       : 'ravenxrz',
+      admin       : ['ravenxrz'],
+      id          : '5d32a52058ea542f40ccc203997f2b24',
+        language: '',
+      distractionFreeMode: true
+    });
+    gitalk.render('gitalk-container');
+  }, window.Gitalk);
+});
+</script>
+
+</body>
+</html>

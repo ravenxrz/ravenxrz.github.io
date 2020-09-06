@@ -1,0 +1,755 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 5.1.1">
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+  <meta http-equiv="Cache-Control" content="no-transform">
+  <meta http-equiv="Cache-Control" content="no-siteapp">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+<link rel="stylesheet" href="//cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@5/css/all.min.css">
+  <link rel="stylesheet" href="//cdn.jsdelivr.net/npm/pace-js@1/themes/blue/pace-theme-minimal.css">
+  <script src="//cdn.jsdelivr.net/npm/pace-js@1/pace.min.js"></script>
+
+<script id="hexo-configurations">
+    var NexT = window.NexT || {};
+    var CONFIG = {"hostname":"www.ravenxrz.ink","root":"/","scheme":"Mist","version":"7.8.0","exturl":true,"sidebar":{"position":"left","display":"always","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":true,"show_result":true,"style":"flat"},"back2top":{"enable":true,"sidebar":false,"scrollpercent":true},"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":true,"lazyload":true,"pangu":true,"comments":{"style":"tabs","active":"gitalk","storage":true,"lazyload":true,"nav":null,"activeClass":"gitalk"},"algolia":{"hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":true,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},"motion":{"enable":false,"async":true,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}}};
+  </script>
+
+  <meta name="description" content="本文中，你可以学习到：  什么是指针常量和常量指针 如何巧记两者的区别  9月，决定以后走c++路线，于是买了c++ primer再看，看到指针常量和常量指针的概念觉得蛮绕的，于是搜了一下巧记两者的方式，特此记录。">
+<meta property="og:type" content="article">
+<meta property="og:title" content="巧记指针常量和常量指针">
+<meta property="og:url" content="https://www.ravenxrz.ink/archives/e16de5be.html">
+<meta property="og:site_name" content="Raven&#39;s Blog">
+<meta property="og:description" content="本文中，你可以学习到：  什么是指针常量和常量指针 如何巧记两者的区别  9月，决定以后走c++路线，于是买了c++ primer再看，看到指针常量和常量指针的概念觉得蛮绕的，于是搜了一下巧记两者的方式，特此记录。">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="https://ae01.alicdn.com/kf/H2b34a04551584b1ea2862656a42d22deo.jpg">
+<meta property="article:published_time" content="2019-09-17T05:58:51.000Z">
+<meta property="article:modified_time" content="2020-09-06T02:45:08.058Z">
+<meta property="article:author" content="Raven">
+<meta property="article:tag" content="指针">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://ae01.alicdn.com/kf/H2b34a04551584b1ea2862656a42d22deo.jpg">
+
+<link rel="canonical" href="https://www.ravenxrz.ink/archives/e16de5be.html">
+
+
+<script id="page-configurations">
+  // https://hexo.io/docs/variables.html
+  CONFIG.page = {
+    sidebar: "",
+    isHome : false,
+    isPost : true,
+    lang   : 'zh-CN'
+  };
+</script>
+
+  <title>巧记指针常量和常量指针 | Raven's Blog</title>
+  
+
+
+
+
+
+
+  <noscript>
+  <style>
+  .use-motion .brand,
+  .use-motion .menu-item,
+  .sidebar-inner,
+  .use-motion .post-block,
+  .use-motion .pagination,
+  .use-motion .comments,
+  .use-motion .post-header,
+  .use-motion .post-body,
+  .use-motion .collection-header { opacity: initial; }
+
+  .use-motion .site-title,
+  .use-motion .site-subtitle {
+    opacity: initial;
+    top: initial;
+  }
+
+  .use-motion .logo-line-before i { left: initial; }
+  .use-motion .logo-line-after i { right: initial; }
+  </style>
+</noscript>
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage">
+  <div class="container">
+    <div class="headband"></div>
+
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切换导航栏">
+      <span class="toggle-line toggle-line-first"></span>
+      <span class="toggle-line toggle-line-middle"></span>
+      <span class="toggle-line toggle-line-last"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <span class="logo-line-before"><i></i></span>
+      <h1 class="site-title">Raven's Blog</h1>
+      <span class="logo-line-after"><i></i></span>
+    </a>
+      <p class="site-subtitle" itemprop="description">zhang.xingrui@foxmail.com</p>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger">
+        <i class="fa fa-search fa-fw fa-lg"></i>
+    </div>
+  </div>
+</div>
+
+
+
+
+<nav class="site-nav">
+  <ul id="menu" class="menu">
+        <li class="menu-item menu-item-home">
+
+    <a href="/" rel="section"><i class="fa fa-fw fa-fa fa-home"></i>首页</a>
+
+  </li>
+        <li class="menu-item menu-item-archives">
+
+    <a href="/archives/" rel="section"><i class="fa fa-fw fa-fa fa-archive"></i>归档<span class="badge">120</span></a>
+
+  </li>
+        <li class="menu-item menu-item-categories">
+
+    <a href="/categories/" rel="section"><i class="fa fa-fw fa-fa fa-th"></i>分类<span class="badge">17</span></a>
+
+  </li>
+        <li class="menu-item menu-item-tags">
+
+    <a href="/tags/" rel="section"><i class="fa fa-fw fa-fa fa-tags"></i>标签<span class="badge">114</span></a>
+
+  </li>
+        <li class="menu-item menu-item-about">
+
+    <a href="/about/" rel="section"><i class="fa fa-fw fa-fa fa-user"></i>关于</a>
+
+  </li>
+      <li class="menu-item menu-item-search">
+        <a role="button" class="popup-trigger"><i class="fa fa-search fa-fw"></i>搜索
+        </a>
+      </li>
+  </ul>
+</nav>
+
+
+
+  <div class="search-pop-overlay">
+    <div class="popup search-popup">
+        <div class="search-header">
+  <span class="search-icon">
+    <i class="fa fa-search"></i>
+  </span>
+  <div class="search-input-container">
+    <input autocomplete="off" autocapitalize="off"
+           placeholder="搜索..." spellcheck="false"
+           type="search" class="search-input">
+  </div>
+  <span class="popup-btn-close">
+    <i class="fa fa-times-circle"></i>
+  </span>
+</div>
+<div id="search-result">
+  <div id="no-result">
+    <i class="fa fa-spinner fa-pulse fa-5x fa-fw"></i>
+  </div>
+</div>
+
+    </div>
+  </div>
+
+</div>
+    </header>
+
+    
+  <div class="back-to-top">
+    <i class="fa fa-arrow-up"></i>
+    <span>0%</span>
+  </div>
+
+  <span class="exturl github-corner" data-url="aHR0cHM6Ly9naXRodWIuY29tL3JhdmVueHJ6" title="Follow me on GitHub" aria-label="Follow me on GitHub"><svg width="80" height="80" viewBox="0 0 250 250" aria-hidden="true"><path d="M0,0 L115,115 L130,115 L142,142 L250,250 L250,0 Z"></path><path d="M128.3,109.0 C113.8,99.7 119.0,89.6 119.0,89.6 C122.0,82.7 120.5,78.6 120.5,78.6 C119.2,72.0 123.4,76.3 123.4,76.3 C127.3,80.9 125.5,87.3 125.5,87.3 C122.9,97.6 130.6,101.9 134.4,103.2" fill="currentColor" style="transform-origin: 130px 106px;" class="octo-arm"></path><path d="M115.0,115.0 C114.9,115.1 118.7,116.5 119.8,115.4 L133.7,101.6 C136.9,99.2 139.9,98.4 142.2,98.6 C133.8,88.0 127.5,74.4 143.8,58.0 C148.5,53.4 154.0,51.2 159.7,51.0 C160.3,49.4 163.2,43.6 171.4,40.1 C171.4,40.1 176.1,42.5 178.8,56.2 C183.1,58.6 187.2,61.8 190.9,65.4 C194.5,69.0 197.7,73.2 200.1,77.6 C213.8,80.2 216.3,84.9 216.3,84.9 C212.7,93.1 206.9,96.0 205.4,96.6 C205.1,102.4 203.0,107.8 198.3,112.5 C181.9,128.9 168.3,122.5 157.7,114.1 C157.9,116.9 156.7,120.9 152.7,124.9 L141.0,136.5 C139.8,137.7 141.6,141.9 141.8,141.8 Z" fill="currentColor" class="octo-body"></path></svg></span>
+
+
+    <main class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          
+
+          <div class="content post posts-expand">
+            
+
+    
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="https://www.ravenxrz.ink/archives/e16de5be.html">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="https://pic.downk.cc/item/5e907515504f4bcb04b6f798.jpg">
+      <meta itemprop="name" content="Raven">
+      <meta itemprop="description" content="分享技术，记录生活">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Raven's Blog">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          巧记指针常量和常量指针
+        </h1>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+
+              <time title="创建时间：2019-09-17 13:58:51" itemprop="dateCreated datePublished" datetime="2019-09-17T13:58:51+08:00">2019-09-17</time>
+            </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-calendar-check-o"></i>
+                </span>
+                <span class="post-meta-item-text">更新于</span>
+                <time title="修改时间：2020-09-06 10:45:08" itemprop="dateModified" datetime="2020-09-06T10:45:08+08:00">2020-09-06</time>
+              </span>
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              <span class="post-meta-item-text">分类于</span>
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/%E7%BC%96%E7%A8%8B%E8%AF%AD%E8%A8%80/" itemprop="url" rel="index"><span itemprop="name">编程语言</span></a>
+                </span>
+            </span>
+
+          
+            <span class="post-meta-item" title="阅读次数" id="busuanzi_container_page_pv" style="display: none;">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-fa fa-eye"></i>
+              </span>
+              <span class="post-meta-item-text">阅读次数：</span>
+              <span id="busuanzi_value_page_pv"></span>
+            </span>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+        <p>本文中，你可以学习到：</p>
+<ul>
+<li>什么是指针常量和常量指针</li>
+<li>如何巧记两者的区别</li>
+</ul>
+<p>9月，决定以后走c++路线，于是买了c++ primer再看，看到指针常量和常量指针的概念觉得蛮绕的，于是搜了一下巧记两者的方式，特此记录。</p>
+<a id="more"></a>
+<!-- more -->
+<h2 id="0-问题提出"><a href="#0-问题提出" class="headerlink" title="0. 问题提出"></a>0. 问题提出</h2><p>先提出问题吧，问问自己分得清下列几种情况吗？</p>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">int</span> val = <span class="number">10</span>;</span><br><span class="line"><span class="keyword">const</span> <span class="keyword">int</span> *p1 = &amp;val;</span><br><span class="line"><span class="keyword">int</span> <span class="keyword">const</span> *p2 = &amp;val;</span><br><span class="line"><span class="keyword">int</span> *<span class="keyword">const</span> p3 = &amp;val;</span><br><span class="line"><span class="keyword">const</span> <span class="keyword">int</span> *<span class="keyword">const</span> p4 = &amp;val;</span><br><span class="line"><span class="keyword">int</span> <span class="keyword">const</span> *<span class="keyword">const</span> p5 = &amp;val;</span><br></pre></td></tr></table></figure>
+
+<p>OK，晕了吗？现在让我们来区别它们吧。</p>
+<h2 id="1-指针常量和常量指针"><a href="#1-指针常量和常量指针" class="headerlink" title="1. 指针常量和常量指针"></a>1. 指针常量和常量指针</h2><h3 id="1-1-指针常量"><a href="#1-1-指针常量" class="headerlink" title="1.1 指针常量"></a>1.1 指针常量</h3><p>其实叫指针常量是略有不准确的，准确的说法是“指向常量的指针”。<strong>它不能改变其所指对象的值，但要想存放常量对象的地址，只能使用指向常量的指针。</strong></p>
+<p>eg:</p>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">const</span> <span class="keyword">int</span> val = <span class="number">10</span>;</span><br><span class="line"><span class="keyword">int</span> val2 = <span class="number">10</span>;</span><br><span class="line"><span class="keyword">int</span> *p1 = &amp;val;	<span class="comment">// error! val是常量，普通指针这样指向是错误的</span></span><br><span class="line"><span class="keyword">const</span> <span class="keyword">int</span> *p2 = &amp;val; <span class="comment">//correct</span></span><br><span class="line">*p2 = <span class="number">0</span>;	<span class="comment">// error! p2 指向的是常量，自然也就无法更改对象的值咯</span></span><br><span class="line">p2 = &amp;val2;	<span class="comment">//correct p2 本身还是可以指向另一个对象</span></span><br></pre></td></tr></table></figure>
+
+<h3 id="1-2-常量指针"><a href="#1-2-常量指针" class="headerlink" title="1.2 常量指针"></a>1.2 常量指针</h3><p>指针是一种对象，同其它对象一样，允许把指针本身定为常量。指针常量的特点在于，<strong>一旦完成指针的初始化，那它的值（也就是指针存放的地址）将无法再更改，换言之这类指针无法再指向其它对象。</strong></p>
+<p>eg：</p>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">int</span> val = <span class="number">0</span>;</span><br><span class="line"><span class="keyword">int</span> val2 = <span class="number">0</span>;</span><br><span class="line"><span class="keyword">int</span> *<span class="keyword">const</span> p1 = &amp;val;</span><br><span class="line">*p1 = <span class="number">10</span>;	<span class="comment">// correct 常量指针是可以通过 * 解引用来赋值的</span></span><br><span class="line">p1 = &amp;val2; <span class="comment">// error! 指针常量完成初始化后就无法再指指向其它对象了</span></span><br></pre></td></tr></table></figure>
+
+<h3 id="1-3-两者区别"><a href="#1-3-两者区别" class="headerlink" title="1.3 两者区别"></a>1.3 两者区别</h3><p>常量指针和指针常量是互斥的，可以由下表表示</p>
+<table>
+<thead>
+<tr>
+<th align="center"></th>
+<th align="center">是否可更改存放的地址值</th>
+<th align="center">是否可更改指向对象的值</th>
+</tr>
+</thead>
+<tbody><tr>
+<td align="center">指针常量</td>
+<td align="center">Yes</td>
+<td align="center">No</td>
+</tr>
+<tr>
+<td align="center">常量指针</td>
+<td align="center">No</td>
+<td align="center">Yes</td>
+</tr>
+</tbody></table>
+<p>如果一个指针既是指向常量的指针，本身也是个常量指针怎么办？</p>
+<p>eg:</p>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">int</span> val = <span class="number">0</span>;</span><br><span class="line"><span class="keyword">const</span> <span class="keyword">int</span> *<span class="keyword">const</span> p = &amp;val;</span><br></pre></td></tr></table></figure>
+
+<p><strong>那它既不可以更改存放的地址值，也不可以更改指向的对象的值。</strong></p>
+<h2 id="2-如何巧记？"><a href="#2-如何巧记？" class="headerlink" title="2. 如何巧记？"></a>2. 如何巧记？</h2><p>看完两者的介绍，难免容易搞混，const一会儿放这儿，一会放那儿的，于是给一个巧记的方法：</p>
+<p>C++ Primer给出了一条法则：</p>
+<blockquote>
+<p>当在阅读一个复合型的变量时，可以把一条语句从右往左来阅读来确定变量的类型。</p>
+</blockquote>
+<p>再结合参考[2]，我们就可以把一条语句展开成英文，进而辅助我们判断。举几个例子：</p>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">const</span> <span class="keyword">int</span> *p1 = &amp;val;</span><br></pre></td></tr></table></figure>
+
+<p>我们从右往左展开，</p>
+<p>p1 is a pointer  (int type) which point to int const</p>
+<p>也就是说p1是一个指针，它指向了一个整数常量。</p>
+<p>又如:</p>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">int</span> <span class="keyword">const</span> *p1 = &amp;val;</span><br></pre></td></tr></table></figure>
+
+<p>p1 is a pointer which point to const int</p>
+<p>p1是一个指针，指向了一个整数常量，也就是和上面的类型相同，注意到const的位置是可以在int左右交换的。</p>
+<p>上面两个例子都是“指针常量”– 指向常量的指针。</p>
+<p>再来，</p>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">int</span> *<span class="keyword">const</span> p1 = &amp;val;</span><br></pre></td></tr></table></figure>
+
+<p>p1 is a const point which point to int.</p>
+<p>p1是一个常量指针，指向了整数类型。</p>
+<p>最后：</p>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">const</span> <span class="keyword">int</span> *<span class="keyword">const</span> p1 = &amp;val;</span><br><span class="line"><span class="keyword">int</span> <span class="keyword">const</span> *<span class="keyword">const</span> p2 = &amp;val;</span><br></pre></td></tr></table></figure>
+
+<p>p1 is a const pointer which point to int const</p>
+<p>p1 is a const pointer which point to const int</p>
+<p>两个const，即指向常量的常量指针！</p>
+<h2 id="3-Answer"><a href="#3-Answer" class="headerlink" title="3. Answer"></a>3. Answer</h2><p>现在可以对文初提出的问题做一个解答了：</p>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">int</span> val = <span class="number">10</span>;</span><br><span class="line"><span class="keyword">const</span> <span class="keyword">int</span> *p1 = &amp;val;	<span class="comment">// p1 is a pointer point to int const 指针常量</span></span><br><span class="line"><span class="keyword">int</span> <span class="keyword">const</span> *p2 = &amp;val;	<span class="comment">// p2 is a pointer point to const int 指针常量</span></span><br><span class="line"><span class="keyword">int</span> *<span class="keyword">const</span> p3 = &amp;val;	<span class="comment">// p3 is a const pointer point to int 常量指针</span></span><br><span class="line"><span class="keyword">const</span> <span class="keyword">int</span> *<span class="keyword">const</span> p4 = &amp;val;	<span class="comment">// double const </span></span><br><span class="line"><span class="keyword">int</span> <span class="keyword">const</span> *<span class="keyword">const</span> p5 = &amp;val; <span class="comment">// double const</span></span><br></pre></td></tr></table></figure>
+
+
+
+<h2 id="4-额外补充"><a href="#4-额外补充" class="headerlink" title="4. 额外补充"></a>4. 额外补充</h2><p>如果前面3节你已经晕了，那最好就别看这一小节了。</p>
+<p>通过前面3节的说明，相信你已经比较能分清指针常量和常量指针了。可是这里我再给你一个例子，也许会让你有点晕，不过我会慢慢来解释。</p>
+<p>先看例子：</p>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">typedef</span> <span class="keyword">char</span> *pstring;</span><br><span class="line"><span class="keyword">const</span> pstring cstr = <span class="literal">nullptr</span>;</span><br><span class="line">cosnt <span class="keyword">char</span> *pstr = <span class="literal">nullptr</span>;</span><br></pre></td></tr></table></figure>
+
+<p>现在的问题是 cstr 和 pstr是一个类型吗？它们都是指针常量吗？</p>
+<p>so，答案是，pstr是指针常量，而cstr是一个常量指针。验证的方法，就是直接写个程序看编译器通得过不咯。如下图：</p>
+<p><img src="https://ae01.alicdn.com/kf/H2b34a04551584b1ea2862656a42d22deo.jpg"></p>
+<p>可以看在语句<code>*cstr = &amp;val</code>上报错了，也验证了<code>cstr</code>不是一个指针常量。</p>
+<p>其实大部分人都会犯一个错误，那就是将typedef所重定义的数据类型在语句中直接展开，在大部分的场景下是行得通的，但是这里不行。要理解为什么，我们首先需要理解一条声明语句是如何组成的。</p>
+<p>i&gt; 声明语句 = 修饰符 + 基本数据类型 + 声明符列表</p>
+<ul>
+<li>修饰符， 对基本数据类型进行修饰，如const</li>
+<li>基本数据类型， 如int float</li>
+<li>声明符列表，如 * &amp;</li>
+</ul>
+<p>《C++ primer》 中只有 基于数据类型 + 声明符*，我个人觉得把修饰符单独拿出来好理解一点。</p>
+<p>举个例子：</p>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">int</span> val = <span class="number">1</span>;	<span class="comment">// int 为基本数据类型 val 为声明符</span></span><br><span class="line"><span class="keyword">int</span> *p = &amp;val;  <span class="comment">// int 为基本数据类型 *val 为声明符</span></span><br><span class="line"><span class="keyword">const</span> <span class="keyword">int</span> *ptr = &amp;val; <span class="comment">// const 为修饰符 int为基本数据类型 *ptr 为声明符</span></span><br></pre></td></tr></table></figure>
+
+<p>好，理解了一条声明语句是如何构成的，就可以分析分析我们的老朋友，指针常量：</p>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">int</span> val = <span class="number">10</span>;</span><br><span class="line"><span class="keyword">const</span> <span class="keyword">char</span> *ptr = &amp;val; <span class="comment">// const 为修饰符 char 为基本数据类型 *ptr 为声明符</span></span><br></pre></td></tr></table></figure>
+
+<p>以从右往左的原则，*ptr声明符表明 ptr变量为一个指针，而这个指针与基本类型char 相关，最后基本类型char由修饰符const限定，说明char为一个常量。</p>
+<p>那么看看加入typedef后是怎么回事呢？</p>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">int</span> val = <span class="number">10</span>;</span><br><span class="line"><span class="keyword">typedef</span> <span class="keyword">char</span> *pstring;</span><br><span class="line"><span class="keyword">const</span> pstring ptr = &amp;val; <span class="comment">// 得把pstring看为一个整体，那么const 为修饰符, char *为基本数据类型，ptr 为声明符</span></span><br></pre></td></tr></table></figure>
+
+<p>还是从右往左看，ptr代表变量名，这个变量是一个char <em>的类型，而const则表明它是一个char \</em>型的常量指针。</p>
+<p>i&gt; 不能简单地对typedef进行展开，而应该把重定义的数据类型看成一个整体</p>
+<h2 id="参考"><a href="#参考" class="headerlink" title="参考"></a>参考</h2><ul>
+<li><a target="_blank" rel="noopener" href="https://book.douban.com/subject/25708312/">C++ Primer 中文版（第 5 版)</a></li>
+<li><a target="_blank" rel="noopener" href="https://blog.csdn.net/youyou519/article/details/82704401">指针常量和常量指针的区别和巧记方式</a></li>
+</ul>
+
+    </div>
+
+    
+    
+    
+        <div class="reward-container">
+  <div>文章对你有帮助?打赏一下作者吧</div>
+  <button onclick="var qr = document.getElementById('qr'); qr.style.display = (qr.style.display === 'none') ? 'block' : 'none';">
+    打赏
+  </button>
+  <div id="qr" style="display: none;">
+      
+      <div style="display: inline-block;">
+        <img src="https://pic.downk.cc/item/5d064208451253d178a15b27.png" alt="Raven 微信支付">
+        <p>微信支付</p>
+      </div>
+      
+      <div style="display: inline-block;">
+        <img src="https://pic.downk.cc/item/5d0641c7451253d178a15376.png" alt="Raven 支付宝">
+        <p>支付宝</p>
+      </div>
+
+  </div>
+</div>
+
+        
+
+<div>
+<ul class="post-copyright">
+  <li class="post-copyright-author">
+    <strong>本文作者： </strong>Raven
+  </li>
+  <li class="post-copyright-link">
+    <strong>本文链接：</strong>
+    <a href="https://www.ravenxrz.ink/archives/e16de5be.html" title="巧记指针常量和常量指针">https://www.ravenxrz.ink/archives/e16de5be.html</a>
+  </li>
+  <li class="post-copyright-license">
+    <strong>版权声明： </strong>本博客所有文章除特别声明外，均采用 <span class="exturl" data-url="aHR0cHM6Ly9jcmVhdGl2ZWNvbW1vbnMub3JnL2xpY2Vuc2VzL2J5LW5jLXNhLzQuMC8="><i class="fa fa-fw fa-creative-commons"></i>BY-NC-SA</span> 许可协议。转载请注明出处！
+  </li>
+</ul>
+</div>
+
+
+      <footer class="post-footer">
+          
+          <div class="post-tags">
+              <a href="/tags/%E6%8C%87%E9%92%88/" rel="tag"><i class="fa fa-tag"></i> 指针</a>
+          </div>
+
+        
+
+
+        
+    <div class="post-nav">
+      <div class="post-nav-item">
+    <a href="/archives/8db8ac8b.html" rel="prev" title="ssr+proxifier+onenote加快你的onenote同步速度">
+      <i class="fa fa-chevron-left"></i> ssr+proxifier+onenote加快你的onenote同步速度
+    </a></div>
+      <div class="post-nav-item">
+    <a href="/archives/9c2ab089.html" rel="next" title="导读-Log-structuredFileSystem">
+      导读-Log-structuredFileSystem <i class="fa fa-chevron-right"></i>
+    </a></div>
+    </div>
+      </footer>
+    
+  </article>
+  
+  
+  
+
+
+
+          </div>
+          
+    <div class="comments" id="gitalk-container"></div>
+
+<script>
+  window.addEventListener('tabs:register', () => {
+    let { activeClass } = CONFIG.comments;
+    if (CONFIG.comments.storage) {
+      activeClass = localStorage.getItem('comments_active') || activeClass;
+    }
+    if (activeClass) {
+      let activeTab = document.querySelector(`a[href="#comment-${activeClass}"]`);
+      if (activeTab) {
+        activeTab.click();
+      }
+    }
+  });
+  if (CONFIG.comments.storage) {
+    window.addEventListener('tabs:click', event => {
+      if (!event.target.matches('.tabs-comment .tab-content .tab-pane')) return;
+      let commentClass = event.target.classList[1];
+      localStorage.setItem('comments_active', commentClass);
+    });
+  }
+</script>
+
+        </div>
+          
+  
+  <div class="toggle sidebar-toggle">
+    <span class="toggle-line toggle-line-first"></span>
+    <span class="toggle-line toggle-line-middle"></span>
+    <span class="toggle-line toggle-line-last"></span>
+  </div>
+
+  <aside class="sidebar">
+    <div class="sidebar-inner">
+
+      <ul class="sidebar-nav motion-element">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          站点概览
+        </li>
+      </ul>
+
+      <!--noindex-->
+      <div class="post-toc-wrap sidebar-panel">
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#0-%E9%97%AE%E9%A2%98%E6%8F%90%E5%87%BA"><span class="nav-text">0. 问题提出</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#1-%E6%8C%87%E9%92%88%E5%B8%B8%E9%87%8F%E5%92%8C%E5%B8%B8%E9%87%8F%E6%8C%87%E9%92%88"><span class="nav-text">1. 指针常量和常量指针</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#1-1-%E6%8C%87%E9%92%88%E5%B8%B8%E9%87%8F"><span class="nav-text">1.1 指针常量</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#1-2-%E5%B8%B8%E9%87%8F%E6%8C%87%E9%92%88"><span class="nav-text">1.2 常量指针</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#1-3-%E4%B8%A4%E8%80%85%E5%8C%BA%E5%88%AB"><span class="nav-text">1.3 两者区别</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#2-%E5%A6%82%E4%BD%95%E5%B7%A7%E8%AE%B0%EF%BC%9F"><span class="nav-text">2. 如何巧记？</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#3-Answer"><span class="nav-text">3. Answer</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#4-%E9%A2%9D%E5%A4%96%E8%A1%A5%E5%85%85"><span class="nav-text">4. 额外补充</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%8F%82%E8%80%83"><span class="nav-text">参考</span></a></li></ol></div>
+      </div>
+      <!--/noindex-->
+
+      <div class="site-overview-wrap sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+    <img class="site-author-image" itemprop="image" alt="Raven"
+      src="https://pic.downk.cc/item/5e907515504f4bcb04b6f798.jpg">
+  <p class="site-author-name" itemprop="name">Raven</p>
+  <div class="site-description" itemprop="description">分享技术，记录生活</div>
+</div>
+<div class="site-state-wrap motion-element">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+          <a href="/archives/">
+        
+          <span class="site-state-item-count">120</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+            <a href="/categories/">
+          
+        <span class="site-state-item-count">17</span>
+        <span class="site-state-item-name">分类</span></a>
+      </div>
+      <div class="site-state-item site-state-tags">
+            <a href="/tags/">
+          
+        <span class="site-state-item-count">114</span>
+        <span class="site-state-item-name">标签</span></a>
+      </div>
+  </nav>
+</div>
+  <div class="links-of-author motion-element">
+      <span class="links-of-author-item">
+        <span class="exturl" data-url="aHR0cHM6Ly9naXRodWIuY29tL3JhdmVueHJ6" title="GitHub → https:&#x2F;&#x2F;github.com&#x2F;ravenxrz"><i class="fa fa-fw fa-fab fa-github"></i>GitHub</span>
+      </span>
+      <span class="links-of-author-item">
+        <span class="exturl" data-url="bWFpbHRvOnpoYWduLnhpbmdydWlAZm94bWFpbC5jb20=" title="E-Mail → mailto:zhagn.xingrui@foxmail.com"><i class="fa fa-fw fa-fa fa-envelope"></i>E-Mail</span>
+      </span>
+  </div>
+  <div class="cc-license motion-element" itemprop="license">
+    <span class="exturl cc-opacity" data-url="aHR0cHM6Ly9jcmVhdGl2ZWNvbW1vbnMub3JnL2xpY2Vuc2VzL2J5LW5jLXNhLzQuMC8="><img src="/images/cc-by-nc-sa.svg" alt="Creative Commons"></span>
+  </div>
+
+
+  <div class="links-of-blogroll motion-element">
+    <div class="links-of-blogroll-title">
+      <i class="fa fa-fw fa-fa fa-link"></i>
+      Links
+    </div>
+    <ul class="links-of-blogroll-list">
+        <li class="links-of-blogroll-item">
+          <a href="/resources" title="&#x2F;resources">我的资源</a>
+        </li>
+    </ul>
+  </div>
+
+      </div>
+
+    </div>
+  </aside>
+  <div id="sidebar-dimmer"></div>
+
+
+      </div>
+    </main>
+
+    <footer class="footer">
+      <div class="footer-inner">
+        
+
+        
+
+<div class="copyright">
+  
+  &copy; 2017 – 
+  <span itemprop="copyrightYear">2020</span>
+  <span class="with-love">
+    <i class="fa fa-fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">Raven</span>
+</div>
+  <div class="powered-by">由 <span class="exturl theme-link" data-url="aHR0cHM6Ly9oZXhvLmlv">Hexo</span> & <span class="exturl theme-link" data-url="aHR0cHM6Ly9taXN0LnRoZW1lLW5leHQub3Jn">NexT.Mist</span> 强力驱动
+  </div>
+
+        
+<div class="busuanzi-count">
+  <script async src="https://busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+    <span class="post-meta-item" id="busuanzi_container_site_uv" style="display: none;">
+      <span class="post-meta-item-icon">
+        <i class="fa fa-fa fa-user"></i>
+      </span>
+      <span class="site-uv" title="总访客量">
+        <span id="busuanzi_value_site_uv"></span>
+      </span>
+    </span>
+    <span class="post-meta-divider">|</span>
+    <span class="post-meta-item" id="busuanzi_container_site_pv" style="display: none;">
+      <span class="post-meta-item-icon">
+        <i class="fa fa-fa fa-eye"></i>
+      </span>
+      <span class="site-pv" title="总访问量">
+        <span id="busuanzi_value_site_pv"></span>
+      </span>
+    </span>
+</div>
+
+
+
+
+
+
+
+
+      </div>
+    </footer>
+  </div>
+
+  
+  <script src="//cdn.jsdelivr.net/npm/animejs@3.1.0/lib/anime.min.js"></script>
+  <script src="//cdn.jsdelivr.net/npm/medium-zoom@1/dist/medium-zoom.min.js"></script>
+  <script src="//cdn.jsdelivr.net/npm/lozad@1/dist/lozad.min.js"></script>
+  <script src="//cdn.jsdelivr.net/npm/pangu@4/dist/browser/pangu.min.js"></script>
+
+<script src="/js/utils.js"></script>
+
+
+<script src="/js/schemes/muse.js"></script>
+
+
+<script src="/js/next-boot.js"></script>
+
+
+
+
+  
+  <script>
+    (function(){
+      var bp = document.createElement('script');
+      var curProtocol = window.location.protocol.split(':')[0];
+      bp.src = (curProtocol === 'https') ? 'https://zz.bdstatic.com/linksubmit/push.js' : 'http://push.zhanzhang.baidu.com/push.js';
+      var s = document.getElementsByTagName("script")[0];
+      s.parentNode.insertBefore(bp, s);
+    })();
+  </script>
+
+
+
+
+  
+<script src="/js/local-search.js"></script>
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+  
+      
+
+<script>
+  if (typeof MathJax === 'undefined') {
+    window.MathJax = {
+      loader: {
+        source: {
+          '[tex]/amsCd': '[tex]/amscd',
+          '[tex]/AMScd': '[tex]/amscd'
+        }
+      },
+      tex: {
+        inlineMath: {'[+]': [['$', '$']]},
+        tags: 'ams'
+      },
+      options: {
+        renderActions: {
+          findScript: [10, doc => {
+            document.querySelectorAll('script[type^="math/tex"]').forEach(node => {
+              const display = !!node.type.match(/; *mode=display/);
+              const math = new doc.options.MathItem(node.textContent, doc.inputJax[0], display);
+              const text = document.createTextNode('');
+              node.parentNode.replaceChild(text, node);
+              math.start = {node: text, delim: '', n: 0};
+              math.end = {node: text, delim: '', n: 0};
+              doc.math.push(math);
+            });
+          }, '', false],
+          insertedScript: [200, () => {
+            document.querySelectorAll('mjx-container').forEach(node => {
+              let target = node.parentNode;
+              if (target.nodeName.toLowerCase() === 'li') {
+                target.parentNode.classList.add('has-jax');
+              }
+            });
+          }, '', false]
+        }
+      }
+    };
+    (function () {
+      var script = document.createElement('script');
+      script.src = '//cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js';
+      script.defer = true;
+      document.head.appendChild(script);
+    })();
+  } else {
+    MathJax.startup.document.state(0);
+    MathJax.texReset();
+    MathJax.typeset();
+  }
+</script>
+
+    
+
+  
+  <script src="//cdn.jsdelivr.net/npm/quicklink@1/dist/quicklink.umd.js"></script>
+  <script>
+      window.addEventListener('load', () => {
+      quicklink({
+        timeout : 3000,
+        priority: true,
+        ignores : [uri => uri.includes('#'),uri => uri === 'https://www.ravenxrz.ink/archives/e16de5be.html',]
+      });
+      });
+  </script>
+
+<link rel="stylesheet" href="//cdn.jsdelivr.net/npm/gitalk@1/dist/gitalk.min.css">
+
+<script>
+NexT.utils.loadComments(document.querySelector('#gitalk-container'), () => {
+  NexT.utils.getScript('//cdn.jsdelivr.net/npm/gitalk@1/dist/gitalk.min.js', () => {
+    var gitalk = new Gitalk({
+      clientID    : 'b2fd373d2ca2e03e591e',
+      clientSecret: 'de4ab066908c1fbd32d3a45e091b3538761d685b',
+      repo        : 'BlogComment',
+      owner       : 'ravenxrz',
+      admin       : ['ravenxrz'],
+      id          : '6c69e3d91039fdb2102282a355024114',
+        language: '',
+      distractionFreeMode: true
+    });
+    gitalk.render('gitalk-container');
+  }, window.Gitalk);
+});
+</script>
+
+</body>
+</html>

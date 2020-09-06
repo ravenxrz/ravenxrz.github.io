@@ -1,0 +1,734 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 5.1.1">
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+  <meta http-equiv="Cache-Control" content="no-transform">
+  <meta http-equiv="Cache-Control" content="no-siteapp">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+<link rel="stylesheet" href="//cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@5/css/all.min.css">
+  <link rel="stylesheet" href="//cdn.jsdelivr.net/npm/pace-js@1/themes/blue/pace-theme-minimal.css">
+  <script src="//cdn.jsdelivr.net/npm/pace-js@1/pace.min.js"></script>
+
+<script id="hexo-configurations">
+    var NexT = window.NexT || {};
+    var CONFIG = {"hostname":"www.ravenxrz.ink","root":"/","scheme":"Mist","version":"7.8.0","exturl":true,"sidebar":{"position":"left","display":"always","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":true,"show_result":true,"style":"flat"},"back2top":{"enable":true,"sidebar":false,"scrollpercent":true},"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":true,"lazyload":true,"pangu":true,"comments":{"style":"tabs","active":"gitalk","storage":true,"lazyload":true,"nav":null,"activeClass":"gitalk"},"algolia":{"hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":true,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},"motion":{"enable":false,"async":true,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}}};
+  </script>
+
+  <meta name="description" content="0. 前言非科班出身，特此来补计算机基础知识。 本文为转载文章，原文地址：https:&#x2F;&#x2F;www.toutiao.com&#x2F;i6726140001773421067&#x2F; 本文导言：  比尔·盖茨在上世纪80年代说的“640K ought to be enough for anyone”  也就是“640K内存对哪个人来说都够用了” 那个年代，微软开发的还是DOS操作系统，程序员们还在绞尽脑汁，想要用好">
+<meta property="og:type" content="article">
+<meta property="og:title" content="转载-计算机组成原理-程序的装载">
+<meta property="og:url" content="https://www.ravenxrz.ink/archives/9374b389.html">
+<meta property="og:site_name" content="Raven&#39;s Blog">
+<meta property="og:description" content="0. 前言非科班出身，特此来补计算机基础知识。 本文为转载文章，原文地址：https:&#x2F;&#x2F;www.toutiao.com&#x2F;i6726140001773421067&#x2F; 本文导言：  比尔·盖茨在上世纪80年代说的“640K ought to be enough for anyone”  也就是“640K内存对哪个人来说都够用了” 那个年代，微软开发的还是DOS操作系统，程序员们还在绞尽脑汁，想要用好">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="https://ae01.alicdn.com/kf/H1544bb9c9a1e458ebee9e7413e62ef013.jpg">
+<meta property="og:image" content="https://ae01.alicdn.com/kf/He9124d47ce1941ed9b4d124ea4a24fe8R.jpg">
+<meta property="og:image" content="https://ae01.alicdn.com/kf/H3e6966db80ea4bb6b5c04df88765da84h.jpg">
+<meta property="og:image" content="https://ae01.alicdn.com/kf/H78221bd1dab9433f9d7e0ffadaa0c9dcP.jpg">
+<meta property="article:published_time" content="2019-08-20T05:59:25.000Z">
+<meta property="article:modified_time" content="2020-09-06T02:45:08.071Z">
+<meta property="article:author" content="Raven">
+<meta property="article:tag" content="计算机组成原理">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://ae01.alicdn.com/kf/H1544bb9c9a1e458ebee9e7413e62ef013.jpg">
+
+<link rel="canonical" href="https://www.ravenxrz.ink/archives/9374b389.html">
+
+
+<script id="page-configurations">
+  // https://hexo.io/docs/variables.html
+  CONFIG.page = {
+    sidebar: "",
+    isHome : false,
+    isPost : true,
+    lang   : 'zh-CN'
+  };
+</script>
+
+  <title>转载-计算机组成原理-程序的装载 | Raven's Blog</title>
+  
+
+
+
+
+
+
+  <noscript>
+  <style>
+  .use-motion .brand,
+  .use-motion .menu-item,
+  .sidebar-inner,
+  .use-motion .post-block,
+  .use-motion .pagination,
+  .use-motion .comments,
+  .use-motion .post-header,
+  .use-motion .post-body,
+  .use-motion .collection-header { opacity: initial; }
+
+  .use-motion .site-title,
+  .use-motion .site-subtitle {
+    opacity: initial;
+    top: initial;
+  }
+
+  .use-motion .logo-line-before i { left: initial; }
+  .use-motion .logo-line-after i { right: initial; }
+  </style>
+</noscript>
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage">
+  <div class="container">
+    <div class="headband"></div>
+
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切换导航栏">
+      <span class="toggle-line toggle-line-first"></span>
+      <span class="toggle-line toggle-line-middle"></span>
+      <span class="toggle-line toggle-line-last"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <span class="logo-line-before"><i></i></span>
+      <h1 class="site-title">Raven's Blog</h1>
+      <span class="logo-line-after"><i></i></span>
+    </a>
+      <p class="site-subtitle" itemprop="description">zhang.xingrui@foxmail.com</p>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger">
+        <i class="fa fa-search fa-fw fa-lg"></i>
+    </div>
+  </div>
+</div>
+
+
+
+
+<nav class="site-nav">
+  <ul id="menu" class="menu">
+        <li class="menu-item menu-item-home">
+
+    <a href="/" rel="section"><i class="fa fa-fw fa-fa fa-home"></i>首页</a>
+
+  </li>
+        <li class="menu-item menu-item-archives">
+
+    <a href="/archives/" rel="section"><i class="fa fa-fw fa-fa fa-archive"></i>归档<span class="badge">120</span></a>
+
+  </li>
+        <li class="menu-item menu-item-categories">
+
+    <a href="/categories/" rel="section"><i class="fa fa-fw fa-fa fa-th"></i>分类<span class="badge">17</span></a>
+
+  </li>
+        <li class="menu-item menu-item-tags">
+
+    <a href="/tags/" rel="section"><i class="fa fa-fw fa-fa fa-tags"></i>标签<span class="badge">114</span></a>
+
+  </li>
+        <li class="menu-item menu-item-about">
+
+    <a href="/about/" rel="section"><i class="fa fa-fw fa-fa fa-user"></i>关于</a>
+
+  </li>
+      <li class="menu-item menu-item-search">
+        <a role="button" class="popup-trigger"><i class="fa fa-search fa-fw"></i>搜索
+        </a>
+      </li>
+  </ul>
+</nav>
+
+
+
+  <div class="search-pop-overlay">
+    <div class="popup search-popup">
+        <div class="search-header">
+  <span class="search-icon">
+    <i class="fa fa-search"></i>
+  </span>
+  <div class="search-input-container">
+    <input autocomplete="off" autocapitalize="off"
+           placeholder="搜索..." spellcheck="false"
+           type="search" class="search-input">
+  </div>
+  <span class="popup-btn-close">
+    <i class="fa fa-times-circle"></i>
+  </span>
+</div>
+<div id="search-result">
+  <div id="no-result">
+    <i class="fa fa-spinner fa-pulse fa-5x fa-fw"></i>
+  </div>
+</div>
+
+    </div>
+  </div>
+
+</div>
+    </header>
+
+    
+  <div class="back-to-top">
+    <i class="fa fa-arrow-up"></i>
+    <span>0%</span>
+  </div>
+
+  <span class="exturl github-corner" data-url="aHR0cHM6Ly9naXRodWIuY29tL3JhdmVueHJ6" title="Follow me on GitHub" aria-label="Follow me on GitHub"><svg width="80" height="80" viewBox="0 0 250 250" aria-hidden="true"><path d="M0,0 L115,115 L130,115 L142,142 L250,250 L250,0 Z"></path><path d="M128.3,109.0 C113.8,99.7 119.0,89.6 119.0,89.6 C122.0,82.7 120.5,78.6 120.5,78.6 C119.2,72.0 123.4,76.3 123.4,76.3 C127.3,80.9 125.5,87.3 125.5,87.3 C122.9,97.6 130.6,101.9 134.4,103.2" fill="currentColor" style="transform-origin: 130px 106px;" class="octo-arm"></path><path d="M115.0,115.0 C114.9,115.1 118.7,116.5 119.8,115.4 L133.7,101.6 C136.9,99.2 139.9,98.4 142.2,98.6 C133.8,88.0 127.5,74.4 143.8,58.0 C148.5,53.4 154.0,51.2 159.7,51.0 C160.3,49.4 163.2,43.6 171.4,40.1 C171.4,40.1 176.1,42.5 178.8,56.2 C183.1,58.6 187.2,61.8 190.9,65.4 C194.5,69.0 197.7,73.2 200.1,77.6 C213.8,80.2 216.3,84.9 216.3,84.9 C212.7,93.1 206.9,96.0 205.4,96.6 C205.1,102.4 203.0,107.8 198.3,112.5 C181.9,128.9 168.3,122.5 157.7,114.1 C157.9,116.9 156.7,120.9 152.7,124.9 L141.0,136.5 C139.8,137.7 141.6,141.9 141.8,141.8 Z" fill="currentColor" class="octo-body"></path></svg></span>
+
+
+    <main class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          
+
+          <div class="content post posts-expand">
+            
+
+    
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="https://www.ravenxrz.ink/archives/9374b389.html">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="https://pic.downk.cc/item/5e907515504f4bcb04b6f798.jpg">
+      <meta itemprop="name" content="Raven">
+      <meta itemprop="description" content="分享技术，记录生活">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Raven's Blog">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          转载-计算机组成原理-程序的装载
+        </h1>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+
+              <time title="创建时间：2019-08-20 13:59:25" itemprop="dateCreated datePublished" datetime="2019-08-20T13:59:25+08:00">2019-08-20</time>
+            </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-calendar-check-o"></i>
+                </span>
+                <span class="post-meta-item-text">更新于</span>
+                <time title="修改时间：2020-09-06 10:45:08" itemprop="dateModified" datetime="2020-09-06T10:45:08+08:00">2020-09-06</time>
+              </span>
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              <span class="post-meta-item-text">分类于</span>
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/%E7%9F%A5%E8%AF%86%E7%90%86%E8%AE%BA/" itemprop="url" rel="index"><span itemprop="name">知识理论</span></a>
+                </span>
+            </span>
+
+          
+            <span class="post-meta-item" title="阅读次数" id="busuanzi_container_page_pv" style="display: none;">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-fa fa-eye"></i>
+              </span>
+              <span class="post-meta-item-text">阅读次数：</span>
+              <span id="busuanzi_value_page_pv"></span>
+            </span>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+        <h2 id="0-前言"><a href="#0-前言" class="headerlink" title="0. 前言"></a>0. 前言</h2><p>非科班出身，特此来补计算机基础知识。</p>
+<p>本文为转载文章，原文地址：<a target="_blank" rel="noopener" href="https://www.toutiao.com/i6726140001773421067/">https://www.toutiao.com/i6726140001773421067/</a></p>
+<p><strong>本文导言：</strong></p>
+<blockquote>
+<p>比尔·盖茨在上世纪80年代说的“640K ought to be enough for anyone”</p>
+</blockquote>
+<p>也就是“640K内存对哪个人来说都够用了”</p>
+<p>那个年代，微软开发的还是DOS操作系统，程序员们还在绞尽脑汁，想要用好这极为有限的640K内存</p>
+<p>而现在，我手头的Mac Book Pro已经是16G内存了，上升了一万倍还不止。</p>
+<p>那比尔·盖茨这句话在当时也是完全的无稽之谈么？有没有哪怕一点点的道理呢？这一讲里，我就和你一起来看一看。</p>
+<a id="more"></a>
+
+<h2 id="1-程序装载的挑战"><a href="#1-程序装载的挑战" class="headerlink" title="1 程序装载的挑战"></a>1 程序装载的挑战</h2><p>在运行这些可执行文件的时候，我们其实是通过一个装载器，解析ELF（linux下的可执行文件格式）或者PE（Windows下的可执行文件格式）的可执行文件。</p>
+<p>装载器会把对应的指令和数据加载到内存里面来，让CPU去执行。</p>
+<p>装载到内存**,装载器需要满足两个要求：**</p>
+<ol>
+<li>可执行程序加载后<strong>占用的内存空间应该是连续的</strong>：  执行指令的时候，程序计数器是顺序地一条一条指令执行。这意味着，这一条条指令需要连续地存储在一起。</li>
+<li>需要同时加载很多个程序，并且<strong>不能让程序自己规定在内存中加载的位置</strong>：虽然编译出来的指令里已经有了对应的各种各样的内存地址，但是实际加载的时候，我们其实没有办法确保，这个程序一定加载在哪一段内存地址上。因为现在的计算机通常会同时运行很多个程序，可能你想要的内存地址已经被其他加载了的程序占用</li>
+</ol>
+<p>要满足这两个基本的要求，我们很容易想到一个办法。那就是我们可以在内存里面，找到一段连续的内存空间，然后分配给装载的程序，然后把这段连续的内存空间地址，和整个程序指令里指定的内存地址做一个映射。</p>
+<ol>
+<li><p>指令里用到的内存地址叫作<strong>虚拟内存地址（Virtual Memory Address）</strong></p>
+</li>
+<li><p>实际在内存硬件里面的空间地址，我们叫<strong>物理内存地址（Physical Memory Address）</strong></p>
+</li>
+</ol>
+<p>程序里有指令和各种内存地址，我们只需要关心虚拟内存地址就行了。</p>
+<p>对于任何一个程序来说，它看到的都是同样的内存地址。我们维护一个虚拟内存到物理内存的映射表，这样实际程序指令执行的时候，会通过虚拟内存地址，找到对应的物理内存地址，然后执行。因为是连续的内存地址空间，所以我们只需要<strong>维护映射关系的起始地址和对应的空间大小</strong>就可以了。</p>
+<h2 id="2-内存分段"><a href="#2-内存分段" class="headerlink" title="2 内存分段"></a>2 内存分段</h2><p>这种找出一段连续的物理内存和虚拟内存地址进行映射的方法，我们叫<strong>分段（Segmentation）</strong>。</p>
+<p>这里的段，就是指系统分配出来的那个连续的内存空间。</p>
+<p><img src="https://ae01.alicdn.com/kf/H1544bb9c9a1e458ebee9e7413e62ef013.jpg"></p>
+<p>分段的办法很好，解决了程序本身不需要关心具体的物理内存地址的问题，但它也有一些不足之处，第一个就是<strong>内存碎片（Memory Fragmentation）</strong>。</p>
+<p><strong>举个例子</strong></p>
+<p>电脑有1GB的内存<br>先启动一个图形渲染程序，占用了512MB的内存<br>接着启动一个Chrome浏览器，占用了128MB内存<br>再启动一个PY程序，占用了256MB内存<br>这个时候，我们关掉Chrome，于是空闲内存还有1024 - 512 - 256 = 256MB<br>按理来说，我们有足够的空间再去装载一个200MB的程序。但是，这256MB的内存空间不是连续的，而是被分成了两段128MB的内存</p>
+<p>因此，实际情况是，我们的程序<strong>没办法加载进来</strong>。</p>
+<p><img src="https://ae01.alicdn.com/kf/He9124d47ce1941ed9b4d124ea4a24fe8R.jpg"></p>
+<p>当然了,有办法解决 --- <strong>内存交换（Memory Swapping）</strong></p>
+<p>我们可以把Python程序占用的256MB内存写到硬盘，再从硬盘上读回来到内存里面</p>
+<p>不过读回来的时候，我们不再把它加载到原来的位置，而是紧紧跟在那已经被占用了的512MB内存后面</p>
+<p>这样，我们就有了连续的256MB内存空间，就可以去加载一个新的200MB的程序。<em>如果你自己安装过Linux操作系统，你应该遇到过分配一个swap硬盘分区的问题</em></p>
+<p>这块分出来的磁盘空间，其实就是专门给Linux操作系统进行<strong>内存交换</strong>用的。</p>
+<p><strong>虚拟内存、分段，再加上内存交换</strong></p>
+<p>看起来似乎已经解决了计算机同时装载运行很多个程序的问题</p>
+<p>不过三者的组合仍然会遇到一个性能瓶颈</p>
+<ul>
+<li>硬盘的访问速度要比内存慢很多</li>
+<li>而每一次内存交换，我们都需要把一大段连续的内存数据写到硬盘上</li>
+</ul>
+<p>所以，如果内存交换的时候，交换的是一个很占内存空间的程序，这样整个机器都会显得卡顿。</p>
+<h2 id="3-内存分页"><a href="#3-内存分页" class="headerlink" title="3 内存分页"></a>3 内存分页</h2><p>既然问题<em>出在内存碎片和内存交换的空间太大</em></p>
+<p>上，那么解决问题的办法就是：</p>
+<ol>
+<li><p>少出现一些内存碎片。</p>
+</li>
+<li><p>当需要进行内存交换的时候，让需要交换写入或者从磁盘装载的数据更少一点。</p>
+</li>
+</ol>
+<p>这个办法，在现在计算机的内存管理里面，就叫作<strong>内存分页（Paging）</strong></p>
+<p>和分段这样分配一整段连续的空间给到程序相比，分页则是把整个物理内存空间切成一段段固定尺寸的大小</p>
+<p>而对应的程序所需要占用的虚拟内存空间，也会同样切成一段段固定尺寸的大小。</p>
+<p>这样一个连续并且尺寸固定的内存空间，我们叫<strong>页（Page）</strong>。</p>
+<p>从虚拟内存到物理内存的映射，不再是拿整段连续的内存的物理地址，而是按照一个个页来的。</p>
+<p>页的尺寸一般远远小于整个程序的大小。</p>
+<p><strong>在Linux下，我们通常只设置成4KB</strong>。你可以通过命令看看你手头的Linux系统设置的页的大小。</p>
+<p><img src="https://ae01.alicdn.com/kf/H3e6966db80ea4bb6b5c04df88765da84h.jpg"></p>
+<p>有了内存分页的技术，就可以对应上面两个问题：</p>
+<ol>
+<li><p>由于内存空间都是预先划分好的，也就没有不能使用的碎片，而只有被释放出来的很多4KB的页。</p>
+</li>
+<li><p>即使内存空间不够，需要让现有的、正在运行的其他程序，通过内存交换释放出一些内存的页出来，一次性写入磁盘的也只有少数的一个页或者几个页，不会花太多时间，让整个机器被内存交换的过程给卡住。</p>
+</li>
+</ol>
+<p><img src="https://ae01.alicdn.com/kf/H78221bd1dab9433f9d7e0ffadaa0c9dcP.jpg"></p>
+<p>分页的方式使得加载程序的时候，<strong>不再需要一次性把程序加载到物理内存中</strong>，可以在进行虚拟内存和物理内存的页之间的映射后，并不真的把页加载到物理内存里，而是只在程序运行中<strong>，需要用到对应虚拟内存页里面的指令和数据时，再加载到物理内存里面去。</strong></p>
+<p>实际上，我们的操作系统，的确是这么做的：</p>
+<p>当要读取特定的页，却发现数据并没有加载到物理内存里的时候，就会触发一个来自于CPU的<strong>缺页错误（Page Fault）</strong>，操作系统会捕捉到这个错误，然后将对应的页，从存放在硬盘上的虚拟内存里读取出来，加载到物理内存里。这种方式，<strong>使得我们可以运行那些远大于我们实际物理内存的程序</strong>。同时，这样一来，任何程序都不需要一次性加载完所有指令和数据，只需要加载当前需要用到就行了。</p>
+<p>通过<strong>虚拟内存、内存交换和内存分页</strong>这三个技术的组合，我们最终得到了一个让程序不需要考虑实际的物理内存地址、大小和当前分配空间的解决方案。</p>
+<p>这些技术和方法，对于我们程序的编写、编译和链接过程都是透明的。这也是我们在计算机的软硬件开发中常用的一种方法，就是<strong>加入一个间接层</strong>。</p>
+<p>通过引入虚拟内存、页映射和内存交换，我们的程序本身，就不再需要考虑对应的真实的内存地址、程序加载、内存管理等问题了。任何一个程序，都只需要把内存当成是一块完整而连续的空间来直接使用。</p>
+<h2 id="4-总结"><a href="#4-总结" class="headerlink" title="4 总结"></a>4 总结</h2><p>电脑只要640K内存就够了吗？很显然，现在来看，比尔·盖茨的这个判断是不合理的，那为什么他会这么认为呢？因为他也是一个很优秀的程序员啊！</p>
+<p>在虚拟内存、内存交换和内存分页这三者结合之下，你会发现，其实要运行一个程序，“必需”的内存是很少的。CPU只需要执行当前的指令，极限情况下，内存也只需要加载一页就好了。再大的程序，也可以分成一页。每次，只在需要用到对应的数据和指令的时候，从硬盘上交换到内存里面来就好了。以我们现在4K内存一页的大小，640K内存也能放下足足160页呢，也无怪乎在比尔·盖茨会说出“640K ought to be enough for anyone”这样的话。</p>
+<p>不过呢，硬盘的访问速度比内存慢很多，所以我们现在的计算机，没有个几G的内存都不好意思和人打招呼。</p>
+<p>那么，除了程序分页装载这种方式之外，我们还有其他优化内存使用的方式么？下一讲，我们就一起来看看“动态装载”，学习一下让两个不同的应用程序，共用一个共享程序库的办法。</p>
+<h2 id="5-推荐阅读"><a href="#5-推荐阅读" class="headerlink" title="5 推荐阅读"></a>5 推荐阅读</h2><p>想要更深入地了解代码装载的详细过程，推荐你阅读《程序员的自我修养——链接、装载和库》的第1章和第6章。</p>
+<h2 id="6-思考"><a href="#6-思考" class="headerlink" title="6 思考"></a>6 思考</h2><p>在Java这样使用虚拟机的编程语言里面，我们写的程序是怎么装载到内存里面来的呢？它也和我们讲的一样，是通过内存分页和内存交换的方式加载到内存里面来的么？</p>
+<p>jvm已经是上层应用，无需考虑物理分页，一般更直接是考虑对象本身的空间大小，物理硬件管理统一由承载jvm的操纵系统去解决吧</p>
+<h2 id="参考"><a href="#参考" class="headerlink" title="参考"></a>参考</h2><p>深入浅出计算机组成原理</p>
+
+    </div>
+
+    
+    
+    
+        <div class="reward-container">
+  <div>文章对你有帮助?打赏一下作者吧</div>
+  <button onclick="var qr = document.getElementById('qr'); qr.style.display = (qr.style.display === 'none') ? 'block' : 'none';">
+    打赏
+  </button>
+  <div id="qr" style="display: none;">
+      
+      <div style="display: inline-block;">
+        <img src="https://pic.downk.cc/item/5d064208451253d178a15b27.png" alt="Raven 微信支付">
+        <p>微信支付</p>
+      </div>
+      
+      <div style="display: inline-block;">
+        <img src="https://pic.downk.cc/item/5d0641c7451253d178a15376.png" alt="Raven 支付宝">
+        <p>支付宝</p>
+      </div>
+
+  </div>
+</div>
+
+        
+
+<div>
+<ul class="post-copyright">
+  <li class="post-copyright-author">
+    <strong>本文作者： </strong>Raven
+  </li>
+  <li class="post-copyright-link">
+    <strong>本文链接：</strong>
+    <a href="https://www.ravenxrz.ink/archives/9374b389.html" title="转载-计算机组成原理-程序的装载">https://www.ravenxrz.ink/archives/9374b389.html</a>
+  </li>
+  <li class="post-copyright-license">
+    <strong>版权声明： </strong>本博客所有文章除特别声明外，均采用 <span class="exturl" data-url="aHR0cHM6Ly9jcmVhdGl2ZWNvbW1vbnMub3JnL2xpY2Vuc2VzL2J5LW5jLXNhLzQuMC8="><i class="fa fa-fw fa-creative-commons"></i>BY-NC-SA</span> 许可协议。转载请注明出处！
+  </li>
+</ul>
+</div>
+
+
+      <footer class="post-footer">
+          
+          <div class="post-tags">
+              <a href="/tags/%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%BB%84%E6%88%90%E5%8E%9F%E7%90%86/" rel="tag"><i class="fa fa-tag"></i> 计算机组成原理</a>
+          </div>
+
+        
+
+
+        
+    <div class="post-nav">
+      <div class="post-nav-item">
+    <a href="/archives/e1fc9c68.html" rel="prev" title="转载-计算机组成原理-从二进制谈字符编码">
+      <i class="fa fa-chevron-left"></i> 转载-计算机组成原理-从二进制谈字符编码
+    </a></div>
+      <div class="post-nav-item">
+    <a href="/archives/41155787.html" rel="next" title="记录-POSTMAN中发送带Cookie的请求">
+      记录-POSTMAN中发送带Cookie的请求 <i class="fa fa-chevron-right"></i>
+    </a></div>
+    </div>
+      </footer>
+    
+  </article>
+  
+  
+  
+
+
+
+          </div>
+          
+    <div class="comments" id="gitalk-container"></div>
+
+<script>
+  window.addEventListener('tabs:register', () => {
+    let { activeClass } = CONFIG.comments;
+    if (CONFIG.comments.storage) {
+      activeClass = localStorage.getItem('comments_active') || activeClass;
+    }
+    if (activeClass) {
+      let activeTab = document.querySelector(`a[href="#comment-${activeClass}"]`);
+      if (activeTab) {
+        activeTab.click();
+      }
+    }
+  });
+  if (CONFIG.comments.storage) {
+    window.addEventListener('tabs:click', event => {
+      if (!event.target.matches('.tabs-comment .tab-content .tab-pane')) return;
+      let commentClass = event.target.classList[1];
+      localStorage.setItem('comments_active', commentClass);
+    });
+  }
+</script>
+
+        </div>
+          
+  
+  <div class="toggle sidebar-toggle">
+    <span class="toggle-line toggle-line-first"></span>
+    <span class="toggle-line toggle-line-middle"></span>
+    <span class="toggle-line toggle-line-last"></span>
+  </div>
+
+  <aside class="sidebar">
+    <div class="sidebar-inner">
+
+      <ul class="sidebar-nav motion-element">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          站点概览
+        </li>
+      </ul>
+
+      <!--noindex-->
+      <div class="post-toc-wrap sidebar-panel">
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#0-%E5%89%8D%E8%A8%80"><span class="nav-text">0. 前言</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#1-%E7%A8%8B%E5%BA%8F%E8%A3%85%E8%BD%BD%E7%9A%84%E6%8C%91%E6%88%98"><span class="nav-text">1 程序装载的挑战</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#2-%E5%86%85%E5%AD%98%E5%88%86%E6%AE%B5"><span class="nav-text">2 内存分段</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#3-%E5%86%85%E5%AD%98%E5%88%86%E9%A1%B5"><span class="nav-text">3 内存分页</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#4-%E6%80%BB%E7%BB%93"><span class="nav-text">4 总结</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#5-%E6%8E%A8%E8%8D%90%E9%98%85%E8%AF%BB"><span class="nav-text">5 推荐阅读</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#6-%E6%80%9D%E8%80%83"><span class="nav-text">6 思考</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%8F%82%E8%80%83"><span class="nav-text">参考</span></a></li></ol></div>
+      </div>
+      <!--/noindex-->
+
+      <div class="site-overview-wrap sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+    <img class="site-author-image" itemprop="image" alt="Raven"
+      src="https://pic.downk.cc/item/5e907515504f4bcb04b6f798.jpg">
+  <p class="site-author-name" itemprop="name">Raven</p>
+  <div class="site-description" itemprop="description">分享技术，记录生活</div>
+</div>
+<div class="site-state-wrap motion-element">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+          <a href="/archives/">
+        
+          <span class="site-state-item-count">120</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+            <a href="/categories/">
+          
+        <span class="site-state-item-count">17</span>
+        <span class="site-state-item-name">分类</span></a>
+      </div>
+      <div class="site-state-item site-state-tags">
+            <a href="/tags/">
+          
+        <span class="site-state-item-count">114</span>
+        <span class="site-state-item-name">标签</span></a>
+      </div>
+  </nav>
+</div>
+  <div class="links-of-author motion-element">
+      <span class="links-of-author-item">
+        <span class="exturl" data-url="aHR0cHM6Ly9naXRodWIuY29tL3JhdmVueHJ6" title="GitHub → https:&#x2F;&#x2F;github.com&#x2F;ravenxrz"><i class="fa fa-fw fa-fab fa-github"></i>GitHub</span>
+      </span>
+      <span class="links-of-author-item">
+        <span class="exturl" data-url="bWFpbHRvOnpoYWduLnhpbmdydWlAZm94bWFpbC5jb20=" title="E-Mail → mailto:zhagn.xingrui@foxmail.com"><i class="fa fa-fw fa-fa fa-envelope"></i>E-Mail</span>
+      </span>
+  </div>
+  <div class="cc-license motion-element" itemprop="license">
+    <span class="exturl cc-opacity" data-url="aHR0cHM6Ly9jcmVhdGl2ZWNvbW1vbnMub3JnL2xpY2Vuc2VzL2J5LW5jLXNhLzQuMC8="><img src="/images/cc-by-nc-sa.svg" alt="Creative Commons"></span>
+  </div>
+
+
+  <div class="links-of-blogroll motion-element">
+    <div class="links-of-blogroll-title">
+      <i class="fa fa-fw fa-fa fa-link"></i>
+      Links
+    </div>
+    <ul class="links-of-blogroll-list">
+        <li class="links-of-blogroll-item">
+          <a href="/resources" title="&#x2F;resources">我的资源</a>
+        </li>
+    </ul>
+  </div>
+
+      </div>
+
+    </div>
+  </aside>
+  <div id="sidebar-dimmer"></div>
+
+
+      </div>
+    </main>
+
+    <footer class="footer">
+      <div class="footer-inner">
+        
+
+        
+
+<div class="copyright">
+  
+  &copy; 2017 – 
+  <span itemprop="copyrightYear">2020</span>
+  <span class="with-love">
+    <i class="fa fa-fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">Raven</span>
+</div>
+  <div class="powered-by">由 <span class="exturl theme-link" data-url="aHR0cHM6Ly9oZXhvLmlv">Hexo</span> & <span class="exturl theme-link" data-url="aHR0cHM6Ly9taXN0LnRoZW1lLW5leHQub3Jn">NexT.Mist</span> 强力驱动
+  </div>
+
+        
+<div class="busuanzi-count">
+  <script async src="https://busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+    <span class="post-meta-item" id="busuanzi_container_site_uv" style="display: none;">
+      <span class="post-meta-item-icon">
+        <i class="fa fa-fa fa-user"></i>
+      </span>
+      <span class="site-uv" title="总访客量">
+        <span id="busuanzi_value_site_uv"></span>
+      </span>
+    </span>
+    <span class="post-meta-divider">|</span>
+    <span class="post-meta-item" id="busuanzi_container_site_pv" style="display: none;">
+      <span class="post-meta-item-icon">
+        <i class="fa fa-fa fa-eye"></i>
+      </span>
+      <span class="site-pv" title="总访问量">
+        <span id="busuanzi_value_site_pv"></span>
+      </span>
+    </span>
+</div>
+
+
+
+
+
+
+
+
+      </div>
+    </footer>
+  </div>
+
+  
+  <script src="//cdn.jsdelivr.net/npm/animejs@3.1.0/lib/anime.min.js"></script>
+  <script src="//cdn.jsdelivr.net/npm/medium-zoom@1/dist/medium-zoom.min.js"></script>
+  <script src="//cdn.jsdelivr.net/npm/lozad@1/dist/lozad.min.js"></script>
+  <script src="//cdn.jsdelivr.net/npm/pangu@4/dist/browser/pangu.min.js"></script>
+
+<script src="/js/utils.js"></script>
+
+
+<script src="/js/schemes/muse.js"></script>
+
+
+<script src="/js/next-boot.js"></script>
+
+
+
+
+  
+  <script>
+    (function(){
+      var bp = document.createElement('script');
+      var curProtocol = window.location.protocol.split(':')[0];
+      bp.src = (curProtocol === 'https') ? 'https://zz.bdstatic.com/linksubmit/push.js' : 'http://push.zhanzhang.baidu.com/push.js';
+      var s = document.getElementsByTagName("script")[0];
+      s.parentNode.insertBefore(bp, s);
+    })();
+  </script>
+
+
+
+
+  
+<script src="/js/local-search.js"></script>
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+  
+      
+
+<script>
+  if (typeof MathJax === 'undefined') {
+    window.MathJax = {
+      loader: {
+        source: {
+          '[tex]/amsCd': '[tex]/amscd',
+          '[tex]/AMScd': '[tex]/amscd'
+        }
+      },
+      tex: {
+        inlineMath: {'[+]': [['$', '$']]},
+        tags: 'ams'
+      },
+      options: {
+        renderActions: {
+          findScript: [10, doc => {
+            document.querySelectorAll('script[type^="math/tex"]').forEach(node => {
+              const display = !!node.type.match(/; *mode=display/);
+              const math = new doc.options.MathItem(node.textContent, doc.inputJax[0], display);
+              const text = document.createTextNode('');
+              node.parentNode.replaceChild(text, node);
+              math.start = {node: text, delim: '', n: 0};
+              math.end = {node: text, delim: '', n: 0};
+              doc.math.push(math);
+            });
+          }, '', false],
+          insertedScript: [200, () => {
+            document.querySelectorAll('mjx-container').forEach(node => {
+              let target = node.parentNode;
+              if (target.nodeName.toLowerCase() === 'li') {
+                target.parentNode.classList.add('has-jax');
+              }
+            });
+          }, '', false]
+        }
+      }
+    };
+    (function () {
+      var script = document.createElement('script');
+      script.src = '//cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js';
+      script.defer = true;
+      document.head.appendChild(script);
+    })();
+  } else {
+    MathJax.startup.document.state(0);
+    MathJax.texReset();
+    MathJax.typeset();
+  }
+</script>
+
+    
+
+  
+  <script src="//cdn.jsdelivr.net/npm/quicklink@1/dist/quicklink.umd.js"></script>
+  <script>
+      window.addEventListener('load', () => {
+      quicklink({
+        timeout : 3000,
+        priority: true,
+        ignores : [uri => uri.includes('#'),uri => uri === 'https://www.ravenxrz.ink/archives/9374b389.html',]
+      });
+      });
+  </script>
+
+<link rel="stylesheet" href="//cdn.jsdelivr.net/npm/gitalk@1/dist/gitalk.min.css">
+
+<script>
+NexT.utils.loadComments(document.querySelector('#gitalk-container'), () => {
+  NexT.utils.getScript('//cdn.jsdelivr.net/npm/gitalk@1/dist/gitalk.min.js', () => {
+    var gitalk = new Gitalk({
+      clientID    : 'b2fd373d2ca2e03e591e',
+      clientSecret: 'de4ab066908c1fbd32d3a45e091b3538761d685b',
+      repo        : 'BlogComment',
+      owner       : 'ravenxrz',
+      admin       : ['ravenxrz'],
+      id          : '5269955c223af8a35d59d26ad687d9d9',
+        language: '',
+      distractionFreeMode: true
+    });
+    gitalk.render('gitalk-container');
+  }, window.Gitalk);
+});
+</script>
+
+</body>
+</html>

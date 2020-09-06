@@ -1,0 +1,743 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 5.1.1">
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+  <meta http-equiv="Cache-Control" content="no-transform">
+  <meta http-equiv="Cache-Control" content="no-siteapp">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+<link rel="stylesheet" href="//cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@5/css/all.min.css">
+  <link rel="stylesheet" href="//cdn.jsdelivr.net/npm/pace-js@1/themes/blue/pace-theme-minimal.css">
+  <script src="//cdn.jsdelivr.net/npm/pace-js@1/pace.min.js"></script>
+
+<script id="hexo-configurations">
+    var NexT = window.NexT || {};
+    var CONFIG = {"hostname":"www.ravenxrz.ink","root":"/","scheme":"Mist","version":"7.8.0","exturl":true,"sidebar":{"position":"left","display":"always","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":true,"show_result":true,"style":"flat"},"back2top":{"enable":true,"sidebar":false,"scrollpercent":true},"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":true,"lazyload":true,"pangu":true,"comments":{"style":"tabs","active":"gitalk","storage":true,"lazyload":true,"nav":null,"activeClass":"gitalk"},"algolia":{"hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":true,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},"motion":{"enable":false,"async":true,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}}};
+  </script>
+
+  <meta name="description" content="文本转载自: Java NIO之拥抱Path和Files 加上整理了些 《Java核心技术卷2 – 高级特性》第2章. JAVA IO流总结">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Java Path和Files类使用介绍">
+<meta property="og:url" content="https://www.ravenxrz.ink/archives/c932cb39.html">
+<meta property="og:site_name" content="Raven&#39;s Blog">
+<meta property="og:description" content="文本转载自: Java NIO之拥抱Path和Files 加上整理了些 《Java核心技术卷2 – 高级特性》第2章. JAVA IO流总结">
+<meta property="og:locale" content="zh_CN">
+<meta property="article:published_time" content="2020-03-05T02:53:17.000Z">
+<meta property="article:modified_time" content="2020-09-06T02:45:08.033Z">
+<meta property="article:author" content="Raven">
+<meta property="article:tag" content="java">
+<meta property="article:tag" content="Path和Files">
+<meta name="twitter:card" content="summary">
+
+<link rel="canonical" href="https://www.ravenxrz.ink/archives/c932cb39.html">
+
+
+<script id="page-configurations">
+  // https://hexo.io/docs/variables.html
+  CONFIG.page = {
+    sidebar: "",
+    isHome : false,
+    isPost : true,
+    lang   : 'zh-CN'
+  };
+</script>
+
+  <title>Java Path和Files类使用介绍 | Raven's Blog</title>
+  
+
+
+
+
+
+
+  <noscript>
+  <style>
+  .use-motion .brand,
+  .use-motion .menu-item,
+  .sidebar-inner,
+  .use-motion .post-block,
+  .use-motion .pagination,
+  .use-motion .comments,
+  .use-motion .post-header,
+  .use-motion .post-body,
+  .use-motion .collection-header { opacity: initial; }
+
+  .use-motion .site-title,
+  .use-motion .site-subtitle {
+    opacity: initial;
+    top: initial;
+  }
+
+  .use-motion .logo-line-before i { left: initial; }
+  .use-motion .logo-line-after i { right: initial; }
+  </style>
+</noscript>
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage">
+  <div class="container">
+    <div class="headband"></div>
+
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切换导航栏">
+      <span class="toggle-line toggle-line-first"></span>
+      <span class="toggle-line toggle-line-middle"></span>
+      <span class="toggle-line toggle-line-last"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <span class="logo-line-before"><i></i></span>
+      <h1 class="site-title">Raven's Blog</h1>
+      <span class="logo-line-after"><i></i></span>
+    </a>
+      <p class="site-subtitle" itemprop="description">zhang.xingrui@foxmail.com</p>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger">
+        <i class="fa fa-search fa-fw fa-lg"></i>
+    </div>
+  </div>
+</div>
+
+
+
+
+<nav class="site-nav">
+  <ul id="menu" class="menu">
+        <li class="menu-item menu-item-home">
+
+    <a href="/" rel="section"><i class="fa fa-fw fa-fa fa-home"></i>首页</a>
+
+  </li>
+        <li class="menu-item menu-item-archives">
+
+    <a href="/archives/" rel="section"><i class="fa fa-fw fa-fa fa-archive"></i>归档<span class="badge">120</span></a>
+
+  </li>
+        <li class="menu-item menu-item-categories">
+
+    <a href="/categories/" rel="section"><i class="fa fa-fw fa-fa fa-th"></i>分类<span class="badge">17</span></a>
+
+  </li>
+        <li class="menu-item menu-item-tags">
+
+    <a href="/tags/" rel="section"><i class="fa fa-fw fa-fa fa-tags"></i>标签<span class="badge">114</span></a>
+
+  </li>
+        <li class="menu-item menu-item-about">
+
+    <a href="/about/" rel="section"><i class="fa fa-fw fa-fa fa-user"></i>关于</a>
+
+  </li>
+      <li class="menu-item menu-item-search">
+        <a role="button" class="popup-trigger"><i class="fa fa-search fa-fw"></i>搜索
+        </a>
+      </li>
+  </ul>
+</nav>
+
+
+
+  <div class="search-pop-overlay">
+    <div class="popup search-popup">
+        <div class="search-header">
+  <span class="search-icon">
+    <i class="fa fa-search"></i>
+  </span>
+  <div class="search-input-container">
+    <input autocomplete="off" autocapitalize="off"
+           placeholder="搜索..." spellcheck="false"
+           type="search" class="search-input">
+  </div>
+  <span class="popup-btn-close">
+    <i class="fa fa-times-circle"></i>
+  </span>
+</div>
+<div id="search-result">
+  <div id="no-result">
+    <i class="fa fa-spinner fa-pulse fa-5x fa-fw"></i>
+  </div>
+</div>
+
+    </div>
+  </div>
+
+</div>
+    </header>
+
+    
+  <div class="back-to-top">
+    <i class="fa fa-arrow-up"></i>
+    <span>0%</span>
+  </div>
+
+  <span class="exturl github-corner" data-url="aHR0cHM6Ly9naXRodWIuY29tL3JhdmVueHJ6" title="Follow me on GitHub" aria-label="Follow me on GitHub"><svg width="80" height="80" viewBox="0 0 250 250" aria-hidden="true"><path d="M0,0 L115,115 L130,115 L142,142 L250,250 L250,0 Z"></path><path d="M128.3,109.0 C113.8,99.7 119.0,89.6 119.0,89.6 C122.0,82.7 120.5,78.6 120.5,78.6 C119.2,72.0 123.4,76.3 123.4,76.3 C127.3,80.9 125.5,87.3 125.5,87.3 C122.9,97.6 130.6,101.9 134.4,103.2" fill="currentColor" style="transform-origin: 130px 106px;" class="octo-arm"></path><path d="M115.0,115.0 C114.9,115.1 118.7,116.5 119.8,115.4 L133.7,101.6 C136.9,99.2 139.9,98.4 142.2,98.6 C133.8,88.0 127.5,74.4 143.8,58.0 C148.5,53.4 154.0,51.2 159.7,51.0 C160.3,49.4 163.2,43.6 171.4,40.1 C171.4,40.1 176.1,42.5 178.8,56.2 C183.1,58.6 187.2,61.8 190.9,65.4 C194.5,69.0 197.7,73.2 200.1,77.6 C213.8,80.2 216.3,84.9 216.3,84.9 C212.7,93.1 206.9,96.0 205.4,96.6 C205.1,102.4 203.0,107.8 198.3,112.5 C181.9,128.9 168.3,122.5 157.7,114.1 C157.9,116.9 156.7,120.9 152.7,124.9 L141.0,136.5 C139.8,137.7 141.6,141.9 141.8,141.8 Z" fill="currentColor" class="octo-body"></path></svg></span>
+
+
+    <main class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          
+
+          <div class="content post posts-expand">
+            
+
+    
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="https://www.ravenxrz.ink/archives/c932cb39.html">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="https://pic.downk.cc/item/5e907515504f4bcb04b6f798.jpg">
+      <meta itemprop="name" content="Raven">
+      <meta itemprop="description" content="分享技术，记录生活">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Raven's Blog">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          Java Path和Files类使用介绍
+        </h1>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+
+              <time title="创建时间：2020-03-05 10:53:17" itemprop="dateCreated datePublished" datetime="2020-03-05T10:53:17+08:00">2020-03-05</time>
+            </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-calendar-check-o"></i>
+                </span>
+                <span class="post-meta-item-text">更新于</span>
+                <time title="修改时间：2020-09-06 10:45:08" itemprop="dateModified" datetime="2020-09-06T10:45:08+08:00">2020-09-06</time>
+              </span>
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              <span class="post-meta-item-text">分类于</span>
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/%E7%BC%96%E7%A8%8B%E8%AF%AD%E8%A8%80/" itemprop="url" rel="index"><span itemprop="name">编程语言</span></a>
+                </span>
+            </span>
+
+          
+            <span class="post-meta-item" title="阅读次数" id="busuanzi_container_page_pv" style="display: none;">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-fa fa-eye"></i>
+              </span>
+              <span class="post-meta-item-text">阅读次数：</span>
+              <span id="busuanzi_value_page_pv"></span>
+            </span>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+        <p>文本转载自: <a target="_blank" rel="noopener" href="https://segmentfault.com/a/1190000014901038">Java NIO之拥抱Path和Files</a></p>
+<p>加上整理了些 《Java核心技术卷2 – 高级特性》第2章.</p>
+<p><a href="https://www.ravenxrz.ink/archives/a068fc76.html">JAVA IO流总结</a></p>
+<a id="more"></a>
+
+<h2 id="一-文件I-O基石：Path"><a href="#一-文件I-O基石：Path" class="headerlink" title="一 文件I/O基石：Path"></a>一 文件I/O基石：Path</h2><p>Java7中文件IO发生了很大的变化，专门引入了很多新的类来取代原来的基于java.io.File的文件IO操作方式：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> java.nio.file.DirectoryStream;</span><br><span class="line"><span class="keyword">import</span> java.nio.file.FileSystem;</span><br><span class="line"><span class="keyword">import</span> java.nio.file.FileSystems;</span><br><span class="line"><span class="keyword">import</span> java.nio.file.Files;</span><br><span class="line"><span class="keyword">import</span> java.nio.file.Path;</span><br><span class="line"><span class="keyword">import</span> java.nio.file.Paths;</span><br><span class="line"><span class="keyword">import</span> java.nio.file.attribute.FileAttribute;</span><br><span class="line"><span class="keyword">import</span> java.nio.file.attribute.PosixFilePermission;</span><br><span class="line"><span class="keyword">import</span> java.nio.file.attribute.PosixFilePermissions;·</span><br><span class="line"></span><br><span class="line">......等等</span><br></pre></td></tr></table></figure>
+
+<p>我们将从下面几个方面来学习Path类:</p>
+<ul>
+<li>创建一个Path</li>
+<li>File和Path之间的转换，File和URI之间的转换</li>
+<li>获取Path的相关信息</li>
+<li>移除Path中的冗余项</li>
+</ul>
+<h3 id="1-创建一个Path"><a href="#1-创建一个Path" class="headerlink" title="1 创建一个Path"></a>1 创建一个Path</h3><p>创建Path实例可以通过 <strong>Paths工具类</strong> 的 <strong>get（）方法：</strong></p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">//使用绝对路径</span></span><br><span class="line"> Path path= Paths.get(<span class="string">&quot;c:\\data\\myfile.txt&quot;</span>);</span><br><span class="line"><span class="comment">//使用相对路径</span></span><br><span class="line">Path path = Paths.get(<span class="string">&quot;/home/jakobjenkov/myfile.txt&quot;</span>);</span><br></pre></td></tr></table></figure>
+
+<p>下面这种创建方式和上面等效：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">Path path = FileSystems.getDefault().getPath(<span class="string">&quot;c:\\data\\myfile.txt&quot;</span>);</span><br></pre></td></tr></table></figure>
+
+<h3 id="2-File和Path之间的转换，File和URI之间的转换"><a href="#2-File和Path之间的转换，File和URI之间的转换" class="headerlink" title="2 File和Path之间的转换，File和URI之间的转换"></a>2 File和Path之间的转换，File和URI之间的转换</h3><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">File file = <span class="keyword">new</span> File(<span class="string">&quot;C:/my.ini&quot;</span>);</span><br><span class="line">Path p1 = file.toPath();</span><br><span class="line">p1.toFile();</span><br><span class="line">file.toURI();</span><br></pre></td></tr></table></figure>
+
+<h3 id="3-获取Path的相关信息"><a href="#3-获取Path的相关信息" class="headerlink" title="3 获取Path的相关信息"></a>3 获取Path的相关信息</h3><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">//使用Paths工具类的get()方法创建</span></span><br><span class="line">Path path = Paths.get(<span class="string">&quot;D:\\XMind\\bcl-java.txt&quot;</span>);</span><br><span class="line"><span class="comment">//使用FileSystems工具类创建</span></span><br><span class="line"><span class="comment">//Path path2 = FileSystems.getDefault().getPath(&quot;c:\\data\\myfile.txt&quot;);</span></span><br><span class="line">System.out.println(<span class="string">&quot;文件名：&quot;</span> + path.getFileName());</span><br><span class="line">System.out.println(<span class="string">&quot;名称元素的数量：&quot;</span> + path.getNameCount());</span><br><span class="line">System.out.println(<span class="string">&quot;父路径：&quot;</span> + path.getParent());</span><br><span class="line">System.out.println(<span class="string">&quot;根路径：&quot;</span> + path.getRoot());</span><br><span class="line">System.out.println(<span class="string">&quot;是否是绝对路径：&quot;</span> + path.isAbsolute());</span><br><span class="line"><span class="comment">//startsWith()方法的参数既可以是字符串也可以是Path对象</span></span><br><span class="line">System.out.println(<span class="string">&quot;是否是以为给定的路径D:开始：&quot;</span> + path.startsWith(<span class="string">&quot;D:\\&quot;</span>) );</span><br><span class="line">System.out.println(<span class="string">&quot;该路径的字符串形式：&quot;</span> + path.toString());</span><br></pre></td></tr></table></figure>
+
+<p><strong>结果：</strong></p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">文件名：bcl-java.txt</span><br><span class="line">名称元素的数量：<span class="number">2</span></span><br><span class="line">父路径：D:\XMind</span><br><span class="line">根路径：D:\</span><br><span class="line">是否是绝对路径：<span class="keyword">true</span></span><br><span class="line">是否是以为给定的路径D:开始：<span class="keyword">true</span></span><br><span class="line">该路径的字符串形式：D:\XMind\bcl-java.txt</span><br></pre></td></tr></table></figure>
+
+<h3 id="4-移除冗余项"><a href="#4-移除冗余项" class="headerlink" title="4 移除冗余项"></a>4 移除冗余项</h3><p>某些时候在我们需要处理的Path路径中可能会有一个或两个点</p>
+<ul>
+<li>.表示的是当前目录</li>
+<li>..表示父目录或者说是上一级目录：</li>
+</ul>
+<p>下面通过实例来演示一下使用Path类的normalize()和toRealPath()方法把.和..去除。</p>
+<ul>
+<li><strong>normalize()</strong> : 返回一个路径，该路径是冗余名称元素的消除。</li>
+<li><strong>toRealPath()</strong> : 融合了toAbsolutePath()方法和normalize()方法</li>
+</ul>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">//.表示的是当前目录</span></span><br><span class="line">Path currentDir = Paths.get(<span class="string">&quot;.&quot;</span>);</span><br><span class="line">System.out.println(currentDir.toAbsolutePath());<span class="comment">//输出C:\Users\Administrator\NIODemo\.</span></span><br><span class="line">Path currentDir2 = Paths.get(<span class="string">&quot;.\\NIODemo.iml&quot;</span>);</span><br><span class="line">System.out.println(<span class="string">&quot;原始路径格式：&quot;</span>+currentDir2.toAbsolutePath());</span><br><span class="line">System.out.println(<span class="string">&quot;执行normalize（）方法之后：&quot;</span>+currentDir2.toAbsolutePath().normalize());</span><br><span class="line">System.out.println(<span class="string">&quot;执行toRealPath()方法之后：&quot;</span>+currentDir2.toRealPath());</span><br><span class="line"></span><br><span class="line"><span class="comment">//..表示父目录或者说是上一级目录：</span></span><br><span class="line">Path currentDir3 = Paths.get(<span class="string">&quot;..&quot;</span>);</span><br><span class="line">System.out.println(<span class="string">&quot;原始路径格式：&quot;</span>+currentDir3.toAbsolutePath());</span><br><span class="line">System.out.println(<span class="string">&quot;执行normalize（）方法之后：&quot;</span>+currentDir3.toAbsolutePath().normalize());</span><br><span class="line">System.out.println(<span class="string">&quot;执行toRealPath()方法之后：&quot;</span>+currentDir3.toRealPath());</span><br></pre></td></tr></table></figure>
+
+<p><strong>结果：</strong></p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">C:\Users\Administrator\NIODemo\.</span><br><span class="line">原始路径格式：C:\Users\Administrator\NIODemo\.\NIODemo.iml</span><br><span class="line">执行normalize（）方法之后：C:\Users\Administrator\NIODemo\NIODemo.iml</span><br><span class="line">执行toRealPath()方法之后：C:\Users\Administrator\NIODemo\NIODemo.iml</span><br><span class="line">原始路径格式：C:\Users\Administrator\NIODemo\..</span><br><span class="line">执行normalize（）方法之后：C:\Users\Administrator</span><br><span class="line">执行toRealPath()方法之后：C:\Users\Administrator</span><br></pre></td></tr></table></figure>
+
+
+<h2 id="二-拥抱Files类"><a href="#二-拥抱Files类" class="headerlink" title="二 拥抱Files类"></a>二 拥抱Files类</h2><p>Java NIO中的Files类（java.nio.file.Files）提供了多种操作文件系统中文件的方法。本节教程将覆盖大部分方法。Files类包含了很多方法，所以如果本文没有提到的你也可以直接查询JavaDoc文档。</p>
+<p>java.nio.file.Files类是和java.nio.file.Path相结合使用的</p>
+<h3 id="1-检查给定的Path在文件系统中是否存在"><a href="#1-检查给定的Path在文件系统中是否存在" class="headerlink" title="1 检查给定的Path在文件系统中是否存在"></a>1 检查给定的Path在文件系统中是否存在</h3><p>通过 <strong>Files.exists()</strong> 检测文件路径是否存在：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">Path path = Paths.get(<span class="string">&quot;D:\\XMind\\bcl-java.txt&quot;</span>);</span><br><span class="line"></span><br><span class="line"> <span class="keyword">boolean</span> pathExists =</span><br><span class="line">         Files.exists(path,</span><br><span class="line">                 <span class="keyword">new</span> LinkOption[]&#123;LinkOption.NOFOLLOW_LINKS&#125;);</span><br><span class="line"> System.out.println(pathExists);<span class="comment">//true</span></span><br></pre></td></tr></table></figure>
+
+<p>注意Files.exists()的的第二个参数。它是一个数组，这个参数直接影响到Files.exists()如何确定一个路径是否存在。在本例中，这个数组内包含了LinkOptions.NOFOLLOW_LINKS，表示检测时不包含符号链接文件。</p>
+<h3 id="2-创建文件-文件夹"><a href="#2-创建文件-文件夹" class="headerlink" title="2 创建文件/文件夹"></a>2 创建文件/文件夹</h3><ul>
+<li><strong>创建文件：</strong></li>
+</ul>
+<p>通过 <strong>Files.createFile()</strong> 创建文件,</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">Path target2 = Paths.get(<span class="string">&quot;C:\\mystuff.txt&quot;</span>);</span><br><span class="line"><span class="keyword">try</span> &#123;</span><br><span class="line">    <span class="keyword">if</span>(!Files.exists(target2))</span><br><span class="line">        Files.createFile(target2);</span><br><span class="line">&#125; <span class="keyword">catch</span> (IOException e) &#123;</span><br><span class="line">    e.printStackTrace();</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<ul>
+<li><strong>创建文件夹：</strong><ul>
+<li>通过 <strong>Files.createDirectory()</strong> 创建文件夹</li>
+<li>通过 <strong>Files.createDirectories()</strong> 创建文件夹</li>
+</ul>
+</li>
+</ul>
+<p>Files.createDirectories()会首先创建所有不存在的父目录来创建目录，而Files.createDirectory()方法只是创建目录，如果它的上级目录不存在就会报错。比如下面的程序使用<strong>Files.createDirectory()</strong> 方法创建就会报错，这是因为我的D盘下没有data文件夹，加入存在data文件夹的话则没问题。</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line">Path path = Paths.get(<span class="string">&quot;D://data//test&quot;</span>);</span><br><span class="line"></span><br><span class="line"><span class="keyword">try</span> &#123;</span><br><span class="line">    Path newDir = Files.createDirectories(path);</span><br><span class="line">&#125; <span class="keyword">catch</span>(FileAlreadyExistsException e)&#123;</span><br><span class="line">    <span class="comment">// the directory already exists.</span></span><br><span class="line">&#125; <span class="keyword">catch</span> (IOException e) &#123;</span><br><span class="line">    <span class="comment">//something else went wrong</span></span><br><span class="line">    e.printStackTrace();</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h3 id="3-删除文件或目录"><a href="#3-删除文件或目录" class="headerlink" title="3 删除文件或目录"></a>3 删除文件或目录</h3><p>通过 <strong>Files.delete()方法</strong> 可以删除一个文件或目录：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">Path path = Paths.get(<span class="string">&quot;data/subdir/logging-moved.properties&quot;</span>);</span><br><span class="line"></span><br><span class="line"><span class="keyword">try</span> &#123;</span><br><span class="line">    Files.delete(path);</span><br><span class="line">&#125; <span class="keyword">catch</span> (IOException e) &#123;</span><br><span class="line">    <span class="comment">//deleting file failed</span></span><br><span class="line">    e.printStackTrace();</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h3 id="4-把一个文件从一个地址复制到另一个位置"><a href="#4-把一个文件从一个地址复制到另一个位置" class="headerlink" title="4 把一个文件从一个地址复制到另一个位置"></a>4 把一个文件从一个地址复制到另一个位置</h3><p>通过Files.copy()方法可以吧一个文件从一个地址复制到另一个位置,这个方法适合中小型文件，大型文件推荐使用Java的IO流，如BufferWriter等。</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line">Path sourcePath      &#x3D; Paths.get(&quot;data&#x2F;logging.properties&quot;);</span><br><span class="line">Path destinationPath &#x3D; Paths.get(&quot;data&#x2F;logging-copy.properties&quot;);</span><br><span class="line"></span><br><span class="line">try &#123;</span><br><span class="line">    Files.copy(sourcePath, destinationPath);</span><br><span class="line">&#125; catch(FileAlreadyExistsException e) &#123;</span><br><span class="line">    &#x2F;&#x2F;destination file already exists</span><br><span class="line">&#125; catch (IOException e) &#123;</span><br><span class="line">    &#x2F;&#x2F;something else went wrong</span><br><span class="line">    e.printStackTrace();</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>copy操作还可可以强制覆盖已经存在的目标文件，只需要将上面的copy()方法改为如下格式：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">Files.copy(sourcePath, destinationPath,</span><br><span class="line">        StandardCopyOption.REPLACE_EXISTING);</span><br></pre></td></tr></table></figure>
+
+<h3 id="5-获取文件属性"><a href="#5-获取文件属性" class="headerlink" title="5 获取文件属性"></a>5 获取文件属性</h3><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">Path path = Paths.get(<span class="string">&quot;D:\\XMind\\bcl-java.txt&quot;</span>);</span><br><span class="line">System.out.println(Files.getLastModifiedTime(path));</span><br><span class="line">System.out.println(Files.size(path));</span><br><span class="line">System.out.println(Files.isSymbolicLink(path));</span><br><span class="line">System.out.println(Files.isDirectory(path));</span><br><span class="line">System.out.println(Files.readAttributes(path, <span class="string">&quot;*&quot;</span>));</span><br></pre></td></tr></table></figure>
+
+<p>结果：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">2016-05-18T08:01:44Z</span><br><span class="line">18934</span><br><span class="line">false</span><br><span class="line">false</span><br><span class="line">&#123;lastAccessTime&#x3D;2017-04-12T01:42:21.149351Z, lastModifiedTime&#x3D;2016-05-18T08:01:44Z, size&#x3D;18934, creationTime&#x3D;2017-04-12T01:42:21.149351Z, isSymbolicLink&#x3D;false, isRegularFile&#x3D;true, fil</span><br></pre></td></tr></table></figure>
+
+<p>除了上述方式，Java库中还提供了BasicFileAttributes类和PosixFileAttributes类进行访问文件属性。</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">BasicFileAttributes fileAttr =Files.readAttributes(currentDir,BasicFileAttributes.class);</span><br><span class="line"><span class="comment">// 或者</span></span><br><span class="line">PosixFileAttributes fileAttr =Files.readAttributes(currentDir,PosixFileAttributes.class);</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+
+<h3 id="6-遍历一个文件夹"><a href="#6-遍历一个文件夹" class="headerlink" title="6 遍历一个文件夹"></a>6 遍历一个文件夹</h3><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">Path dir &#x3D; Paths.get(&quot;D:\\Java&quot;);</span><br><span class="line">&#x2F;&#x2F; Files.newDirectoryStream(dir,&#x2F;* 第二参数可传入Glob匹配模式，用于匹配文件类型非常有用 *&#x2F; )</span><br><span class="line">try(DirectoryStream&lt;Path&gt; stream &#x3D; Files.newDirectoryStream(dir))&#123;</span><br><span class="line">for(Path e : stream)&#123;</span><br><span class="line">	System.out.println(e.getFileName());</span><br><span class="line">&#125;</span><br><span class="line">&#125;catch(IOException e)&#123;</span><br><span class="line">	</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>结果：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line">apache-maven-3.5.0</span><br><span class="line">Eclipse</span><br><span class="line">intellij idea</span><br><span class="line">Jar</span><br><span class="line">JDK</span><br><span class="line">MarvenRespository</span><br><span class="line">MyEclipse 2017 CI</span><br><span class="line">Nodejs</span><br><span class="line">RedisDesktopManager</span><br><span class="line">solr-7.2.1</span><br></pre></td></tr></table></figure>
+
+<p>上面是遍历单个目录，它不会遍历整个目录。遍历整个目录需要使用：Files.walkFileTree().Files.walkFileTree()方法具有递归遍历目录的功能。</p>
+<h3 id="7-遍历整个文件目录："><a href="#7-遍历整个文件目录：" class="headerlink" title="7 遍历整个文件目录："></a>7 遍历整个文件目录：</h3><p>walkFileTree接受一个Path和FileVisitor作为参数。Path对象是需要遍历的目录，FileVistor则会在每次遍历中被调用。</p>
+<p>FileVisitor需要调用方自行实现，然后作为参数传入walkFileTree().FileVisitor的每个方法会在遍历过程中被调用多次。如果不需要处理每个方法，那么可以继承它的默认实现类SimpleFileVisitor，它将所有的接口做了空实现。</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">WorkFileTree</span> </span>&#123;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">main</span><span class="params">(String[] args)</span> <span class="keyword">throws</span> IOException</span>&#123;</span><br><span class="line">        Path startingDir = Paths.get(<span class="string">&quot;D:\\apache-tomcat-9.0.0.M17&quot;</span>);</span><br><span class="line">        List&lt;Path&gt; result = <span class="keyword">new</span> LinkedList&lt;Path&gt;();</span><br><span class="line">        Files.walkFileTree(startingDir, <span class="keyword">new</span> FindJavaVisitor(result));</span><br><span class="line">        System.out.println(<span class="string">&quot;result.size()=&quot;</span> + result.size());</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">private</span> <span class="keyword">static</span> <span class="class"><span class="keyword">class</span> <span class="title">FindJavaVisitor</span> <span class="keyword">extends</span> <span class="title">SimpleFileVisitor</span>&lt;<span class="title">Path</span>&gt;</span>&#123;</span><br><span class="line">        <span class="keyword">private</span> List&lt;Path&gt; result;</span><br><span class="line">        <span class="function"><span class="keyword">public</span> <span class="title">FindJavaVisitor</span><span class="params">(List&lt;Path&gt; result)</span></span>&#123;</span><br><span class="line">            <span class="keyword">this</span>.result = result;</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="meta">@Override</span></span><br><span class="line">        <span class="function"><span class="keyword">public</span> FileVisitResult <span class="title">visitFile</span><span class="params">(Path file, BasicFileAttributes attrs)</span></span>&#123;</span><br><span class="line">            <span class="keyword">if</span>(file.toString().endsWith(<span class="string">&quot;.java&quot;</span>))&#123;</span><br><span class="line">                result.add(file.getFileName());</span><br><span class="line">            &#125;</span><br><span class="line">            <span class="keyword">return</span> FileVisitResult.CONTINUE;</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>上面这个例子输出了我的D:\apache-tomcat-9.0.0.M17也就是我的Tomcat安装目录下以.java结尾文件的数量。</p>
+<p><strong>结果：</strong></p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">result.size()=<span class="number">4</span></span><br></pre></td></tr></table></figure>
+
+<p>Files类真的很强大，除了我讲的这些操作之外还有其他很多操作比如：读取和设置文件权限、更新文件所有者等等操作。</p>
+<p>我这里就介绍这么多了，如果想要详细了解的可以自行查阅官方文档或者相关书籍。</p>
+
+    </div>
+
+    
+    
+    
+        <div class="reward-container">
+  <div>文章对你有帮助?打赏一下作者吧</div>
+  <button onclick="var qr = document.getElementById('qr'); qr.style.display = (qr.style.display === 'none') ? 'block' : 'none';">
+    打赏
+  </button>
+  <div id="qr" style="display: none;">
+      
+      <div style="display: inline-block;">
+        <img src="https://pic.downk.cc/item/5d064208451253d178a15b27.png" alt="Raven 微信支付">
+        <p>微信支付</p>
+      </div>
+      
+      <div style="display: inline-block;">
+        <img src="https://pic.downk.cc/item/5d0641c7451253d178a15376.png" alt="Raven 支付宝">
+        <p>支付宝</p>
+      </div>
+
+  </div>
+</div>
+
+        
+
+<div>
+<ul class="post-copyright">
+  <li class="post-copyright-author">
+    <strong>本文作者： </strong>Raven
+  </li>
+  <li class="post-copyright-link">
+    <strong>本文链接：</strong>
+    <a href="https://www.ravenxrz.ink/archives/c932cb39.html" title="Java Path和Files类使用介绍">https://www.ravenxrz.ink/archives/c932cb39.html</a>
+  </li>
+  <li class="post-copyright-license">
+    <strong>版权声明： </strong>本博客所有文章除特别声明外，均采用 <span class="exturl" data-url="aHR0cHM6Ly9jcmVhdGl2ZWNvbW1vbnMub3JnL2xpY2Vuc2VzL2J5LW5jLXNhLzQuMC8="><i class="fa fa-fw fa-creative-commons"></i>BY-NC-SA</span> 许可协议。转载请注明出处！
+  </li>
+</ul>
+</div>
+
+
+      <footer class="post-footer">
+          
+          <div class="post-tags">
+              <a href="/tags/java/" rel="tag"><i class="fa fa-tag"></i> java</a>
+              <a href="/tags/Path%E5%92%8CFiles/" rel="tag"><i class="fa fa-tag"></i> Path和Files</a>
+          </div>
+
+        
+
+
+        
+    <div class="post-nav">
+      <div class="post-nav-item">
+    <a href="/archives/a068fc76.html" rel="prev" title="JAVA IO流总结">
+      <i class="fa fa-chevron-left"></i> JAVA IO流总结
+    </a></div>
+      <div class="post-nav-item">
+    <a href="/archives/e7c30e88.html" rel="next" title="Ubuntu18修改网卡接口名">
+      Ubuntu18修改网卡接口名 <i class="fa fa-chevron-right"></i>
+    </a></div>
+    </div>
+      </footer>
+    
+  </article>
+  
+  
+  
+
+
+
+          </div>
+          
+    <div class="comments" id="gitalk-container"></div>
+
+<script>
+  window.addEventListener('tabs:register', () => {
+    let { activeClass } = CONFIG.comments;
+    if (CONFIG.comments.storage) {
+      activeClass = localStorage.getItem('comments_active') || activeClass;
+    }
+    if (activeClass) {
+      let activeTab = document.querySelector(`a[href="#comment-${activeClass}"]`);
+      if (activeTab) {
+        activeTab.click();
+      }
+    }
+  });
+  if (CONFIG.comments.storage) {
+    window.addEventListener('tabs:click', event => {
+      if (!event.target.matches('.tabs-comment .tab-content .tab-pane')) return;
+      let commentClass = event.target.classList[1];
+      localStorage.setItem('comments_active', commentClass);
+    });
+  }
+</script>
+
+        </div>
+          
+  
+  <div class="toggle sidebar-toggle">
+    <span class="toggle-line toggle-line-first"></span>
+    <span class="toggle-line toggle-line-middle"></span>
+    <span class="toggle-line toggle-line-last"></span>
+  </div>
+
+  <aside class="sidebar">
+    <div class="sidebar-inner">
+
+      <ul class="sidebar-nav motion-element">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          站点概览
+        </li>
+      </ul>
+
+      <!--noindex-->
+      <div class="post-toc-wrap sidebar-panel">
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E4%B8%80-%E6%96%87%E4%BB%B6I-O%E5%9F%BA%E7%9F%B3%EF%BC%9APath"><span class="nav-text">一 文件I&#x2F;O基石：Path</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#1-%E5%88%9B%E5%BB%BA%E4%B8%80%E4%B8%AAPath"><span class="nav-text">1 创建一个Path</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#2-File%E5%92%8CPath%E4%B9%8B%E9%97%B4%E7%9A%84%E8%BD%AC%E6%8D%A2%EF%BC%8CFile%E5%92%8CURI%E4%B9%8B%E9%97%B4%E7%9A%84%E8%BD%AC%E6%8D%A2"><span class="nav-text">2 File和Path之间的转换，File和URI之间的转换</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#3-%E8%8E%B7%E5%8F%96Path%E7%9A%84%E7%9B%B8%E5%85%B3%E4%BF%A1%E6%81%AF"><span class="nav-text">3 获取Path的相关信息</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#4-%E7%A7%BB%E9%99%A4%E5%86%97%E4%BD%99%E9%A1%B9"><span class="nav-text">4 移除冗余项</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E4%BA%8C-%E6%8B%A5%E6%8A%B1Files%E7%B1%BB"><span class="nav-text">二 拥抱Files类</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#1-%E6%A3%80%E6%9F%A5%E7%BB%99%E5%AE%9A%E7%9A%84Path%E5%9C%A8%E6%96%87%E4%BB%B6%E7%B3%BB%E7%BB%9F%E4%B8%AD%E6%98%AF%E5%90%A6%E5%AD%98%E5%9C%A8"><span class="nav-text">1 检查给定的Path在文件系统中是否存在</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#2-%E5%88%9B%E5%BB%BA%E6%96%87%E4%BB%B6-%E6%96%87%E4%BB%B6%E5%A4%B9"><span class="nav-text">2 创建文件&#x2F;文件夹</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#3-%E5%88%A0%E9%99%A4%E6%96%87%E4%BB%B6%E6%88%96%E7%9B%AE%E5%BD%95"><span class="nav-text">3 删除文件或目录</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#4-%E6%8A%8A%E4%B8%80%E4%B8%AA%E6%96%87%E4%BB%B6%E4%BB%8E%E4%B8%80%E4%B8%AA%E5%9C%B0%E5%9D%80%E5%A4%8D%E5%88%B6%E5%88%B0%E5%8F%A6%E4%B8%80%E4%B8%AA%E4%BD%8D%E7%BD%AE"><span class="nav-text">4 把一个文件从一个地址复制到另一个位置</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#5-%E8%8E%B7%E5%8F%96%E6%96%87%E4%BB%B6%E5%B1%9E%E6%80%A7"><span class="nav-text">5 获取文件属性</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#6-%E9%81%8D%E5%8E%86%E4%B8%80%E4%B8%AA%E6%96%87%E4%BB%B6%E5%A4%B9"><span class="nav-text">6 遍历一个文件夹</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#7-%E9%81%8D%E5%8E%86%E6%95%B4%E4%B8%AA%E6%96%87%E4%BB%B6%E7%9B%AE%E5%BD%95%EF%BC%9A"><span class="nav-text">7 遍历整个文件目录：</span></a></li></ol></li></ol></div>
+      </div>
+      <!--/noindex-->
+
+      <div class="site-overview-wrap sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+    <img class="site-author-image" itemprop="image" alt="Raven"
+      src="https://pic.downk.cc/item/5e907515504f4bcb04b6f798.jpg">
+  <p class="site-author-name" itemprop="name">Raven</p>
+  <div class="site-description" itemprop="description">分享技术，记录生活</div>
+</div>
+<div class="site-state-wrap motion-element">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+          <a href="/archives/">
+        
+          <span class="site-state-item-count">120</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+            <a href="/categories/">
+          
+        <span class="site-state-item-count">17</span>
+        <span class="site-state-item-name">分类</span></a>
+      </div>
+      <div class="site-state-item site-state-tags">
+            <a href="/tags/">
+          
+        <span class="site-state-item-count">114</span>
+        <span class="site-state-item-name">标签</span></a>
+      </div>
+  </nav>
+</div>
+  <div class="links-of-author motion-element">
+      <span class="links-of-author-item">
+        <span class="exturl" data-url="aHR0cHM6Ly9naXRodWIuY29tL3JhdmVueHJ6" title="GitHub → https:&#x2F;&#x2F;github.com&#x2F;ravenxrz"><i class="fa fa-fw fa-fab fa-github"></i>GitHub</span>
+      </span>
+      <span class="links-of-author-item">
+        <span class="exturl" data-url="bWFpbHRvOnpoYWduLnhpbmdydWlAZm94bWFpbC5jb20=" title="E-Mail → mailto:zhagn.xingrui@foxmail.com"><i class="fa fa-fw fa-fa fa-envelope"></i>E-Mail</span>
+      </span>
+  </div>
+  <div class="cc-license motion-element" itemprop="license">
+    <span class="exturl cc-opacity" data-url="aHR0cHM6Ly9jcmVhdGl2ZWNvbW1vbnMub3JnL2xpY2Vuc2VzL2J5LW5jLXNhLzQuMC8="><img src="/images/cc-by-nc-sa.svg" alt="Creative Commons"></span>
+  </div>
+
+
+  <div class="links-of-blogroll motion-element">
+    <div class="links-of-blogroll-title">
+      <i class="fa fa-fw fa-fa fa-link"></i>
+      Links
+    </div>
+    <ul class="links-of-blogroll-list">
+        <li class="links-of-blogroll-item">
+          <a href="/resources" title="&#x2F;resources">我的资源</a>
+        </li>
+    </ul>
+  </div>
+
+      </div>
+
+    </div>
+  </aside>
+  <div id="sidebar-dimmer"></div>
+
+
+      </div>
+    </main>
+
+    <footer class="footer">
+      <div class="footer-inner">
+        
+
+        
+
+<div class="copyright">
+  
+  &copy; 2017 – 
+  <span itemprop="copyrightYear">2020</span>
+  <span class="with-love">
+    <i class="fa fa-fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">Raven</span>
+</div>
+  <div class="powered-by">由 <span class="exturl theme-link" data-url="aHR0cHM6Ly9oZXhvLmlv">Hexo</span> & <span class="exturl theme-link" data-url="aHR0cHM6Ly9taXN0LnRoZW1lLW5leHQub3Jn">NexT.Mist</span> 强力驱动
+  </div>
+
+        
+<div class="busuanzi-count">
+  <script async src="https://busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+    <span class="post-meta-item" id="busuanzi_container_site_uv" style="display: none;">
+      <span class="post-meta-item-icon">
+        <i class="fa fa-fa fa-user"></i>
+      </span>
+      <span class="site-uv" title="总访客量">
+        <span id="busuanzi_value_site_uv"></span>
+      </span>
+    </span>
+    <span class="post-meta-divider">|</span>
+    <span class="post-meta-item" id="busuanzi_container_site_pv" style="display: none;">
+      <span class="post-meta-item-icon">
+        <i class="fa fa-fa fa-eye"></i>
+      </span>
+      <span class="site-pv" title="总访问量">
+        <span id="busuanzi_value_site_pv"></span>
+      </span>
+    </span>
+</div>
+
+
+
+
+
+
+
+
+      </div>
+    </footer>
+  </div>
+
+  
+  <script src="//cdn.jsdelivr.net/npm/animejs@3.1.0/lib/anime.min.js"></script>
+  <script src="//cdn.jsdelivr.net/npm/medium-zoom@1/dist/medium-zoom.min.js"></script>
+  <script src="//cdn.jsdelivr.net/npm/lozad@1/dist/lozad.min.js"></script>
+  <script src="//cdn.jsdelivr.net/npm/pangu@4/dist/browser/pangu.min.js"></script>
+
+<script src="/js/utils.js"></script>
+
+
+<script src="/js/schemes/muse.js"></script>
+
+
+<script src="/js/next-boot.js"></script>
+
+
+
+
+  
+  <script>
+    (function(){
+      var bp = document.createElement('script');
+      var curProtocol = window.location.protocol.split(':')[0];
+      bp.src = (curProtocol === 'https') ? 'https://zz.bdstatic.com/linksubmit/push.js' : 'http://push.zhanzhang.baidu.com/push.js';
+      var s = document.getElementsByTagName("script")[0];
+      s.parentNode.insertBefore(bp, s);
+    })();
+  </script>
+
+
+
+
+  
+<script src="/js/local-search.js"></script>
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+  
+      
+
+<script>
+  if (typeof MathJax === 'undefined') {
+    window.MathJax = {
+      loader: {
+        source: {
+          '[tex]/amsCd': '[tex]/amscd',
+          '[tex]/AMScd': '[tex]/amscd'
+        }
+      },
+      tex: {
+        inlineMath: {'[+]': [['$', '$']]},
+        tags: 'ams'
+      },
+      options: {
+        renderActions: {
+          findScript: [10, doc => {
+            document.querySelectorAll('script[type^="math/tex"]').forEach(node => {
+              const display = !!node.type.match(/; *mode=display/);
+              const math = new doc.options.MathItem(node.textContent, doc.inputJax[0], display);
+              const text = document.createTextNode('');
+              node.parentNode.replaceChild(text, node);
+              math.start = {node: text, delim: '', n: 0};
+              math.end = {node: text, delim: '', n: 0};
+              doc.math.push(math);
+            });
+          }, '', false],
+          insertedScript: [200, () => {
+            document.querySelectorAll('mjx-container').forEach(node => {
+              let target = node.parentNode;
+              if (target.nodeName.toLowerCase() === 'li') {
+                target.parentNode.classList.add('has-jax');
+              }
+            });
+          }, '', false]
+        }
+      }
+    };
+    (function () {
+      var script = document.createElement('script');
+      script.src = '//cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js';
+      script.defer = true;
+      document.head.appendChild(script);
+    })();
+  } else {
+    MathJax.startup.document.state(0);
+    MathJax.texReset();
+    MathJax.typeset();
+  }
+</script>
+
+    
+
+  
+  <script src="//cdn.jsdelivr.net/npm/quicklink@1/dist/quicklink.umd.js"></script>
+  <script>
+      window.addEventListener('load', () => {
+      quicklink({
+        timeout : 3000,
+        priority: true,
+        ignores : [uri => uri.includes('#'),uri => uri === 'https://www.ravenxrz.ink/archives/c932cb39.html',]
+      });
+      });
+  </script>
+
+<link rel="stylesheet" href="//cdn.jsdelivr.net/npm/gitalk@1/dist/gitalk.min.css">
+
+<script>
+NexT.utils.loadComments(document.querySelector('#gitalk-container'), () => {
+  NexT.utils.getScript('//cdn.jsdelivr.net/npm/gitalk@1/dist/gitalk.min.js', () => {
+    var gitalk = new Gitalk({
+      clientID    : 'b2fd373d2ca2e03e591e',
+      clientSecret: 'de4ab066908c1fbd32d3a45e091b3538761d685b',
+      repo        : 'BlogComment',
+      owner       : 'ravenxrz',
+      admin       : ['ravenxrz'],
+      id          : '14c26b0850eced972f342e98963f68e2',
+        language: '',
+      distractionFreeMode: true
+    });
+    gitalk.render('gitalk-container');
+  }, window.Gitalk);
+});
+</script>
+
+</body>
+</html>

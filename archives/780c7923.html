@@ -1,0 +1,861 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 5.1.1">
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+  <meta http-equiv="Cache-Control" content="no-transform">
+  <meta http-equiv="Cache-Control" content="no-siteapp">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+<link rel="stylesheet" href="//cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@5/css/all.min.css">
+  <link rel="stylesheet" href="//cdn.jsdelivr.net/npm/pace-js@1/themes/blue/pace-theme-minimal.css">
+  <script src="//cdn.jsdelivr.net/npm/pace-js@1/pace.min.js"></script>
+
+<script id="hexo-configurations">
+    var NexT = window.NexT || {};
+    var CONFIG = {"hostname":"www.ravenxrz.ink","root":"/","scheme":"Mist","version":"7.8.0","exturl":true,"sidebar":{"position":"left","display":"always","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":true,"show_result":true,"style":"flat"},"back2top":{"enable":true,"sidebar":false,"scrollpercent":true},"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":true,"lazyload":true,"pangu":true,"comments":{"style":"tabs","active":"gitalk","storage":true,"lazyload":true,"nav":null,"activeClass":"gitalk"},"algolia":{"hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":true,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},"motion":{"enable":false,"async":true,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}}};
+  </script>
+
+  <meta name="description" content="最近学了SQL基础，做点题练练手， 转载自： -经典SQL练习题(MySQL版)">
+<meta property="og:type" content="article">
+<meta property="og:title" content="SQL练习题">
+<meta property="og:url" content="https://www.ravenxrz.ink/archives/780c7923.html">
+<meta property="og:site_name" content="Raven&#39;s Blog">
+<meta property="og:description" content="最近学了SQL基础，做点题练练手， 转载自： -经典SQL练习题(MySQL版)">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="https://i.loli.net/2020/03/17/ru3wo47ezKvGdaO.png">
+<meta property="article:published_time" content="2020-03-16T13:26:30.000Z">
+<meta property="article:modified_time" content="2020-09-06T02:45:08.039Z">
+<meta property="article:author" content="Raven">
+<meta property="article:tag" content="SQL">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://i.loli.net/2020/03/17/ru3wo47ezKvGdaO.png">
+
+<link rel="canonical" href="https://www.ravenxrz.ink/archives/780c7923.html">
+
+
+<script id="page-configurations">
+  // https://hexo.io/docs/variables.html
+  CONFIG.page = {
+    sidebar: "",
+    isHome : false,
+    isPost : true,
+    lang   : 'zh-CN'
+  };
+</script>
+
+  <title>SQL练习题 | Raven's Blog</title>
+  
+
+
+
+
+
+
+  <noscript>
+  <style>
+  .use-motion .brand,
+  .use-motion .menu-item,
+  .sidebar-inner,
+  .use-motion .post-block,
+  .use-motion .pagination,
+  .use-motion .comments,
+  .use-motion .post-header,
+  .use-motion .post-body,
+  .use-motion .collection-header { opacity: initial; }
+
+  .use-motion .site-title,
+  .use-motion .site-subtitle {
+    opacity: initial;
+    top: initial;
+  }
+
+  .use-motion .logo-line-before i { left: initial; }
+  .use-motion .logo-line-after i { right: initial; }
+  </style>
+</noscript>
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage">
+  <div class="container">
+    <div class="headband"></div>
+
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切换导航栏">
+      <span class="toggle-line toggle-line-first"></span>
+      <span class="toggle-line toggle-line-middle"></span>
+      <span class="toggle-line toggle-line-last"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <span class="logo-line-before"><i></i></span>
+      <h1 class="site-title">Raven's Blog</h1>
+      <span class="logo-line-after"><i></i></span>
+    </a>
+      <p class="site-subtitle" itemprop="description">zhang.xingrui@foxmail.com</p>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger">
+        <i class="fa fa-search fa-fw fa-lg"></i>
+    </div>
+  </div>
+</div>
+
+
+
+
+<nav class="site-nav">
+  <ul id="menu" class="menu">
+        <li class="menu-item menu-item-home">
+
+    <a href="/" rel="section"><i class="fa fa-fw fa-fa fa-home"></i>首页</a>
+
+  </li>
+        <li class="menu-item menu-item-archives">
+
+    <a href="/archives/" rel="section"><i class="fa fa-fw fa-fa fa-archive"></i>归档<span class="badge">120</span></a>
+
+  </li>
+        <li class="menu-item menu-item-categories">
+
+    <a href="/categories/" rel="section"><i class="fa fa-fw fa-fa fa-th"></i>分类<span class="badge">17</span></a>
+
+  </li>
+        <li class="menu-item menu-item-tags">
+
+    <a href="/tags/" rel="section"><i class="fa fa-fw fa-fa fa-tags"></i>标签<span class="badge">114</span></a>
+
+  </li>
+        <li class="menu-item menu-item-about">
+
+    <a href="/about/" rel="section"><i class="fa fa-fw fa-fa fa-user"></i>关于</a>
+
+  </li>
+      <li class="menu-item menu-item-search">
+        <a role="button" class="popup-trigger"><i class="fa fa-search fa-fw"></i>搜索
+        </a>
+      </li>
+  </ul>
+</nav>
+
+
+
+  <div class="search-pop-overlay">
+    <div class="popup search-popup">
+        <div class="search-header">
+  <span class="search-icon">
+    <i class="fa fa-search"></i>
+  </span>
+  <div class="search-input-container">
+    <input autocomplete="off" autocapitalize="off"
+           placeholder="搜索..." spellcheck="false"
+           type="search" class="search-input">
+  </div>
+  <span class="popup-btn-close">
+    <i class="fa fa-times-circle"></i>
+  </span>
+</div>
+<div id="search-result">
+  <div id="no-result">
+    <i class="fa fa-spinner fa-pulse fa-5x fa-fw"></i>
+  </div>
+</div>
+
+    </div>
+  </div>
+
+</div>
+    </header>
+
+    
+  <div class="back-to-top">
+    <i class="fa fa-arrow-up"></i>
+    <span>0%</span>
+  </div>
+
+  <span class="exturl github-corner" data-url="aHR0cHM6Ly9naXRodWIuY29tL3JhdmVueHJ6" title="Follow me on GitHub" aria-label="Follow me on GitHub"><svg width="80" height="80" viewBox="0 0 250 250" aria-hidden="true"><path d="M0,0 L115,115 L130,115 L142,142 L250,250 L250,0 Z"></path><path d="M128.3,109.0 C113.8,99.7 119.0,89.6 119.0,89.6 C122.0,82.7 120.5,78.6 120.5,78.6 C119.2,72.0 123.4,76.3 123.4,76.3 C127.3,80.9 125.5,87.3 125.5,87.3 C122.9,97.6 130.6,101.9 134.4,103.2" fill="currentColor" style="transform-origin: 130px 106px;" class="octo-arm"></path><path d="M115.0,115.0 C114.9,115.1 118.7,116.5 119.8,115.4 L133.7,101.6 C136.9,99.2 139.9,98.4 142.2,98.6 C133.8,88.0 127.5,74.4 143.8,58.0 C148.5,53.4 154.0,51.2 159.7,51.0 C160.3,49.4 163.2,43.6 171.4,40.1 C171.4,40.1 176.1,42.5 178.8,56.2 C183.1,58.6 187.2,61.8 190.9,65.4 C194.5,69.0 197.7,73.2 200.1,77.6 C213.8,80.2 216.3,84.9 216.3,84.9 C212.7,93.1 206.9,96.0 205.4,96.6 C205.1,102.4 203.0,107.8 198.3,112.5 C181.9,128.9 168.3,122.5 157.7,114.1 C157.9,116.9 156.7,120.9 152.7,124.9 L141.0,136.5 C139.8,137.7 141.6,141.9 141.8,141.8 Z" fill="currentColor" class="octo-body"></path></svg></span>
+
+
+    <main class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          
+
+          <div class="content post posts-expand">
+            
+
+    
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="https://www.ravenxrz.ink/archives/780c7923.html">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="https://pic.downk.cc/item/5e907515504f4bcb04b6f798.jpg">
+      <meta itemprop="name" content="Raven">
+      <meta itemprop="description" content="分享技术，记录生活">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Raven's Blog">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          SQL练习题
+        </h1>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+
+              <time title="创建时间：2020-03-16 21:26:30" itemprop="dateCreated datePublished" datetime="2020-03-16T21:26:30+08:00">2020-03-16</time>
+            </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-calendar-check-o"></i>
+                </span>
+                <span class="post-meta-item-text">更新于</span>
+                <time title="修改时间：2020-09-06 10:45:08" itemprop="dateModified" datetime="2020-09-06T10:45:08+08:00">2020-09-06</time>
+              </span>
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              <span class="post-meta-item-text">分类于</span>
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/%E7%BC%96%E7%A8%8B%E8%AF%AD%E8%A8%80/" itemprop="url" rel="index"><span itemprop="name">编程语言</span></a>
+                </span>
+            </span>
+
+          
+            <span class="post-meta-item" title="阅读次数" id="busuanzi_container_page_pv" style="display: none;">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-fa fa-eye"></i>
+              </span>
+              <span class="post-meta-item-text">阅读次数：</span>
+              <span id="busuanzi_value_page_pv"></span>
+            </span>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+        <p>最近学了SQL基础，做点题练练手，</p>
+<p>转载自：</p>
+<p>-<a target="_blank" rel="noopener" href="https://blog.csdn.net/paul0127/article/details/82529216">经典SQL练习题(MySQL版)</a></p>
+<a id="more"></a>
+
+<p>网上有一篇关于SQL的经典文章，<a target="_blank" rel="noopener" href="https://blog.csdn.net/flycat296/article/details/63681089">超经典SQL练习题，做完这些你的SQL就过关了</a>，引用和分析它的人很多，于是今天复习SQL的时候找来练了练手。原作者用的是SQL Server 2008，我在这里用的是MySQL 8.0.11（二者语法差别不大），文本编辑器用的是Atom 1.28.2（不知道大家用什么，反正用Atom写SQL确实丝质顺滑）。</p>
+<p>笔者个人推荐DataGrip，可能是对jetbrain家的产品产生了依赖，还是觉得非常好用。</p>
+<p>题目顺序和原文一致，但是我没有把所有题目都解一遍，因为很多题目是重复的。在每道题题目下我除了放SQL语句外，还把MySQL的运行输出结果放了上来，展示效果更直观一些。另外，因为数据量非常小，所以就没考虑SQL语句的性能优化，只求顺利完成题目，并尽可能写得简单些。</p>
+<p>开始之前，先从<a target="_blank" rel="noopener" href="https://www.cnblogs.com/diffrent/p/8854995.html">SQL常见的一些面试题(太有用啦)</a>搬运几道我认为很不错的经典题目过来，这些题目的解法体现出来的方法和思路可以适用于本文的绝大部分题目，是必备的基础。</p>
+<p><strong>1. 用一条SQL 语句 查询出每门课都大于80 分的学生姓名</strong></p>
+<p>name   course grade<br> 张三    语文       81<br> 张三     数学       75<br> 李四     语文       76<br> 李四     数学       90<br> 王五     语文       81<br> 王五     数学       100<br> 王五     英语       90</p>
+<figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">select</span> <span class="keyword">name</span> <span class="keyword">from</span> <span class="keyword">table</span> <span class="keyword">group</span> <span class="keyword">by</span> <span class="keyword">name</span> <span class="keyword">having</span> <span class="keyword">min</span>(grade) &gt; <span class="number">80</span></span><br></pre></td></tr></table></figure>
+
+<p><strong>2. 现有学生表如下:</strong><br> 自动编号   学号   姓名 课程编号 课程名称 分数<br> 1        2005001 张三 0001     数学    69<br> 2        2005002 李四 0001      数学    89<br> 3        2005001 张三 0001      数学    69<br> <strong>删除除了自动编号不同, 其他都相同的学生冗余信息</strong></p>
+<figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">delete</span> tablename <span class="keyword">where</span> 自动编号 <span class="keyword">not</span> <span class="keyword">in</span> (</span><br><span class="line">    <span class="keyword">select</span> <span class="keyword">min</span>( 自动编号) </span><br><span class="line">    <span class="keyword">from</span> tablename </span><br><span class="line">    <span class="keyword">group</span> <span class="keyword">by</span> 学号, 姓名, 课程编号, 课程名称, 分数</span><br><span class="line">)</span><br></pre></td></tr></table></figure>
+
+<p><strong>3. 一个叫 team 的表，里面只有一个字段name, 一共有4 条纪录，分别是a,b,c,d, 对应四个球对，现在四个球对进行比赛，用一条sql 语句显示所有可能的比赛组合</strong></p>
+<figure class="highlight css"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="selector-tag">select</span> <span class="selector-tag">a</span><span class="selector-class">.name</span>, <span class="selector-tag">b</span><span class="selector-class">.name</span></span><br><span class="line"><span class="selector-tag">from</span> <span class="selector-tag">team</span> <span class="selector-tag">a</span>, <span class="selector-tag">team</span> <span class="selector-tag">b</span> </span><br><span class="line"><span class="selector-tag">where</span> <span class="selector-tag">a</span><span class="selector-class">.name</span> &lt; <span class="selector-tag">b</span><span class="selector-class">.name</span></span><br></pre></td></tr></table></figure>
+
+<p><strong>4. 请用SQL 语句实现：从TestDB 数据表中查询出所有月份的发生额都比101 科目相应月份的发生额高的科目。</strong><br> 请注意：TestDB 中有很多科目，都有1~12月份的发生额。<br> AccID ：科目代码，Occmonth ：发生额月份，DebitOccur ：发生额。<br> 数据库名：JcyAudit ，数据集：Select * from TestDB</p>
+<figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">select</span> a.*</span><br><span class="line"><span class="keyword">from</span> TestDB a, </span><br><span class="line">    (<span class="keyword">select</span> Occmonth, <span class="keyword">max</span>(DebitOccur) <span class="keyword">as</span> Debit101ccur </span><br><span class="line">    <span class="keyword">from</span> TestDB </span><br><span class="line">    <span class="keyword">where</span> AccID=<span class="string">&#x27;101&#x27;</span> </span><br><span class="line">    <span class="keyword">group</span> <span class="keyword">by</span> Occmonth) b</span><br><span class="line"><span class="keyword">where</span> a.Occmonth = b.Occmonth <span class="keyword">and</span> a.DebitOccur &gt; b.Debit101ccur</span><br></pre></td></tr></table></figure>
+
+<p><strong>5. 怎么把这样一个数据表</strong><br> year   month amount<br> 1991   1     1.1<br> 1991   2     1.2<br> 1991   3     1.3<br> 1991   4     1.4<br> 1992   1     2.1<br> 1992   2     2.2<br> 1992   3     2.3<br> 1992   4     2.4<br> <strong>查成这样一个结果？</strong><br> year m1   m2   m3   m4<br> 1991 1.1 1.2 1.3 1.4<br> 1992 2.1 2.2 2.3 2.4</p>
+<figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">select</span> <span class="keyword">year</span>, </span><br><span class="line">    (<span class="keyword">select</span> amount <span class="keyword">from</span> <span class="keyword">table</span> m <span class="keyword">where</span> <span class="keyword">month</span>=<span class="number">1</span> <span class="keyword">and</span> m.year=table.year) <span class="keyword">as</span> m1,</span><br><span class="line">    (<span class="keyword">select</span> amount <span class="keyword">from</span> <span class="keyword">table</span> m <span class="keyword">where</span> <span class="keyword">month</span>=<span class="number">2</span> <span class="keyword">and</span> m.year=table.year) <span class="keyword">as</span> m2,</span><br><span class="line">    (<span class="keyword">select</span> amount <span class="keyword">from</span> <span class="keyword">table</span> m <span class="keyword">where</span> <span class="keyword">month</span>=<span class="number">3</span> <span class="keyword">and</span> m.year=table.year) <span class="keyword">as</span> m3,</span><br><span class="line">    (<span class="keyword">select</span> amount <span class="keyword">from</span> <span class="keyword">table</span> m <span class="keyword">where</span> <span class="keyword">month</span>=<span class="number">4</span> <span class="keyword">and</span> m.year=table.year) <span class="keyword">as</span> m4</span><br><span class="line"><span class="keyword">from</span> <span class="keyword">table</span> <span class="keyword">group</span> <span class="keyword">by</span> <span class="keyword">year</span></span><br></pre></td></tr></table></figure>
+
+<p><strong>6. 有表A，结构如下：</strong><br> p_ID p_Num s_id<br> 1 10 01<br> 1 12 02<br> 2 8 01<br> 3 11 01<br> 3 8 03<br> 其中：p_ID为产品ID，p_Num为产品库存量，s_id为仓库ID。<br> <strong>请用SQL语句实现将上表中的数据合并，合并后的数据为：</strong><br> p_ID s1_id s2_id s3_id<br> 1 10 12 0<br> 2 8 0 0<br> 3 11 0 8<br> 其中：s1_id为仓库1的库存量，s2_id为仓库2的库存量，s3_id为仓库3的库存量。如果该产品在某仓库中无库存量，那么就是0代替。</p>
+<figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">select</span> p_id,</span><br><span class="line">    <span class="keyword">sum</span>(<span class="keyword">case</span> <span class="keyword">when</span> s_id=<span class="number">1</span> <span class="keyword">then</span> p_num <span class="keyword">else</span> <span class="number">0</span> <span class="keyword">end</span>) <span class="keyword">as</span> s1_id,</span><br><span class="line">    <span class="keyword">sum</span>(<span class="keyword">case</span> <span class="keyword">when</span> s_id=<span class="number">2</span> <span class="keyword">then</span> p_num <span class="keyword">else</span> <span class="number">0</span> <span class="keyword">end</span>) <span class="keyword">as</span> s2_id,</span><br><span class="line">    <span class="keyword">sum</span>(<span class="keyword">case</span> <span class="keyword">when</span> s_id=<span class="number">3</span> <span class="keyword">then</span> p_num <span class="keyword">else</span> <span class="number">0</span> <span class="keyword">end</span>) <span class="keyword">as</span> s3_id</span><br><span class="line"><span class="keyword">from</span> myPro <span class="keyword">group</span> <span class="keyword">by</span> p_id</span><br></pre></td></tr></table></figure>
+
+<hr>
+<p>下面进入正题。首先创建数据表：</p>
+<p><strong>学生表 Student</strong></p>
+<figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">create</span> <span class="keyword">table</span> Student(<span class="keyword">Sid</span> <span class="built_in">varchar</span>(<span class="number">6</span>), Sname <span class="built_in">varchar</span>(<span class="number">10</span>), Sage datetime, Ssex <span class="built_in">varchar</span>(<span class="number">10</span>));</span><br><span class="line"><span class="keyword">insert</span> <span class="keyword">into</span> Student <span class="keyword">values</span>(<span class="string">&#x27;01&#x27;</span> , <span class="string">&#x27;赵雷&#x27;</span> , <span class="string">&#x27;1990-01-01&#x27;</span> , <span class="string">&#x27;男&#x27;</span>);</span><br><span class="line"><span class="keyword">insert</span> <span class="keyword">into</span> Student <span class="keyword">values</span>(<span class="string">&#x27;02&#x27;</span> , <span class="string">&#x27;钱电&#x27;</span> , <span class="string">&#x27;1990-12-21&#x27;</span> , <span class="string">&#x27;男&#x27;</span>);</span><br><span class="line"><span class="keyword">insert</span> <span class="keyword">into</span> Student <span class="keyword">values</span>(<span class="string">&#x27;03&#x27;</span> , <span class="string">&#x27;孙风&#x27;</span> , <span class="string">&#x27;1990-05-20&#x27;</span> , <span class="string">&#x27;男&#x27;</span>);</span><br><span class="line"><span class="keyword">insert</span> <span class="keyword">into</span> Student <span class="keyword">values</span>(<span class="string">&#x27;04&#x27;</span> , <span class="string">&#x27;李云&#x27;</span> , <span class="string">&#x27;1990-08-06&#x27;</span> , <span class="string">&#x27;男&#x27;</span>);</span><br><span class="line"><span class="keyword">insert</span> <span class="keyword">into</span> Student <span class="keyword">values</span>(<span class="string">&#x27;05&#x27;</span> , <span class="string">&#x27;周梅&#x27;</span> , <span class="string">&#x27;1991-12-01&#x27;</span> , <span class="string">&#x27;女&#x27;</span>);</span><br><span class="line"><span class="keyword">insert</span> <span class="keyword">into</span> Student <span class="keyword">values</span>(<span class="string">&#x27;06&#x27;</span> , <span class="string">&#x27;吴兰&#x27;</span> , <span class="string">&#x27;1992-03-01&#x27;</span> , <span class="string">&#x27;女&#x27;</span>);</span><br><span class="line"><span class="keyword">insert</span> <span class="keyword">into</span> Student <span class="keyword">values</span>(<span class="string">&#x27;07&#x27;</span> , <span class="string">&#x27;郑竹&#x27;</span> , <span class="string">&#x27;1989-07-01&#x27;</span> , <span class="string">&#x27;女&#x27;</span>);</span><br><span class="line"><span class="keyword">insert</span> <span class="keyword">into</span> Student <span class="keyword">values</span>(<span class="string">&#x27;08&#x27;</span> , <span class="string">&#x27;王菊&#x27;</span> , <span class="string">&#x27;1990-01-20&#x27;</span> , <span class="string">&#x27;女&#x27;</span>)</span><br></pre></td></tr></table></figure>
+
+<p><strong>成绩表 SC</strong></p>
+<figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">create</span> <span class="keyword">table</span> SC(<span class="keyword">Sid</span> <span class="built_in">varchar</span>(<span class="number">10</span>), Cid <span class="built_in">varchar</span>(<span class="number">10</span>), score <span class="built_in">decimal</span>(<span class="number">18</span>,<span class="number">1</span>));</span><br><span class="line"><span class="keyword">insert</span> <span class="keyword">into</span> SC <span class="keyword">values</span>(<span class="string">&#x27;01&#x27;</span> , <span class="string">&#x27;01&#x27;</span> , <span class="number">80</span>);</span><br><span class="line"><span class="keyword">insert</span> <span class="keyword">into</span> SC <span class="keyword">values</span>(<span class="string">&#x27;01&#x27;</span> , <span class="string">&#x27;02&#x27;</span> , <span class="number">90</span>);</span><br><span class="line"><span class="keyword">insert</span> <span class="keyword">into</span> SC <span class="keyword">values</span>(<span class="string">&#x27;01&#x27;</span> , <span class="string">&#x27;03&#x27;</span> , <span class="number">99</span>);</span><br><span class="line"><span class="keyword">insert</span> <span class="keyword">into</span> SC <span class="keyword">values</span>(<span class="string">&#x27;02&#x27;</span> , <span class="string">&#x27;01&#x27;</span> , <span class="number">70</span>);</span><br><span class="line"><span class="keyword">insert</span> <span class="keyword">into</span> SC <span class="keyword">values</span>(<span class="string">&#x27;02&#x27;</span> , <span class="string">&#x27;02&#x27;</span> , <span class="number">60</span>);</span><br><span class="line"><span class="keyword">insert</span> <span class="keyword">into</span> SC <span class="keyword">values</span>(<span class="string">&#x27;02&#x27;</span> , <span class="string">&#x27;03&#x27;</span> , <span class="number">80</span>);</span><br><span class="line"><span class="keyword">insert</span> <span class="keyword">into</span> SC <span class="keyword">values</span>(<span class="string">&#x27;03&#x27;</span> , <span class="string">&#x27;01&#x27;</span> , <span class="number">80</span>);</span><br><span class="line"><span class="keyword">insert</span> <span class="keyword">into</span> SC <span class="keyword">values</span>(<span class="string">&#x27;03&#x27;</span> , <span class="string">&#x27;02&#x27;</span> , <span class="number">80</span>);</span><br><span class="line"><span class="keyword">insert</span> <span class="keyword">into</span> SC <span class="keyword">values</span>(<span class="string">&#x27;03&#x27;</span> , <span class="string">&#x27;03&#x27;</span> , <span class="number">80</span>);</span><br><span class="line"><span class="keyword">insert</span> <span class="keyword">into</span> SC <span class="keyword">values</span>(<span class="string">&#x27;04&#x27;</span> , <span class="string">&#x27;01&#x27;</span> , <span class="number">50</span>);</span><br><span class="line"><span class="keyword">insert</span> <span class="keyword">into</span> SC <span class="keyword">values</span>(<span class="string">&#x27;04&#x27;</span> , <span class="string">&#x27;02&#x27;</span> , <span class="number">30</span>);</span><br><span class="line"><span class="keyword">insert</span> <span class="keyword">into</span> SC <span class="keyword">values</span>(<span class="string">&#x27;04&#x27;</span> , <span class="string">&#x27;03&#x27;</span> , <span class="number">20</span>);</span><br><span class="line"><span class="keyword">insert</span> <span class="keyword">into</span> SC <span class="keyword">values</span>(<span class="string">&#x27;05&#x27;</span> , <span class="string">&#x27;01&#x27;</span> , <span class="number">76</span>);</span><br><span class="line"><span class="keyword">insert</span> <span class="keyword">into</span> SC <span class="keyword">values</span>(<span class="string">&#x27;05&#x27;</span> , <span class="string">&#x27;02&#x27;</span> , <span class="number">87</span>);</span><br><span class="line"><span class="keyword">insert</span> <span class="keyword">into</span> SC <span class="keyword">values</span>(<span class="string">&#x27;06&#x27;</span> , <span class="string">&#x27;01&#x27;</span> , <span class="number">31</span>);</span><br><span class="line"><span class="keyword">insert</span> <span class="keyword">into</span> SC <span class="keyword">values</span>(<span class="string">&#x27;06&#x27;</span> , <span class="string">&#x27;03&#x27;</span> , <span class="number">34</span>);</span><br><span class="line"><span class="keyword">insert</span> <span class="keyword">into</span> SC <span class="keyword">values</span>(<span class="string">&#x27;07&#x27;</span> , <span class="string">&#x27;02&#x27;</span> , <span class="number">89</span>);</span><br><span class="line"><span class="keyword">insert</span> <span class="keyword">into</span> SC <span class="keyword">values</span>(<span class="string">&#x27;07&#x27;</span> , <span class="string">&#x27;03&#x27;</span> , <span class="number">98</span>)</span><br></pre></td></tr></table></figure>
+
+<p><strong>课程表 Course</strong></p>
+<figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">create</span> <span class="keyword">table</span> Course(Cid <span class="built_in">varchar</span>(<span class="number">10</span>),Cname <span class="built_in">varchar</span>(<span class="number">10</span>),Tid <span class="built_in">varchar</span>(<span class="number">10</span>));</span><br><span class="line"><span class="keyword">insert</span> <span class="keyword">into</span> Course <span class="keyword">values</span>(<span class="string">&#x27;01&#x27;</span> , <span class="string">&#x27;语文&#x27;</span> , <span class="string">&#x27;02&#x27;</span>);</span><br><span class="line"><span class="keyword">insert</span> <span class="keyword">into</span> Course <span class="keyword">values</span>(<span class="string">&#x27;02&#x27;</span> , <span class="string">&#x27;数学&#x27;</span> , <span class="string">&#x27;01&#x27;</span>);</span><br><span class="line"><span class="keyword">insert</span> <span class="keyword">into</span> Course <span class="keyword">values</span>(<span class="string">&#x27;03&#x27;</span> , <span class="string">&#x27;英语&#x27;</span> , <span class="string">&#x27;03&#x27;</span>)</span><br></pre></td></tr></table></figure>
+
+<p><strong>教师表 Teacher</strong></p>
+<figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">create</span> <span class="keyword">table</span> Teacher(Tid <span class="built_in">varchar</span>(<span class="number">10</span>),Tname <span class="built_in">varchar</span>(<span class="number">10</span>));</span><br><span class="line"><span class="keyword">insert</span> <span class="keyword">into</span> Teacher <span class="keyword">values</span>(<span class="string">&#x27;01&#x27;</span> , <span class="string">&#x27;张三&#x27;</span>);</span><br><span class="line"><span class="keyword">insert</span> <span class="keyword">into</span> Teacher <span class="keyword">values</span>(<span class="string">&#x27;02&#x27;</span> , <span class="string">&#x27;李四&#x27;</span>);</span><br><span class="line"><span class="keyword">insert</span> <span class="keyword">into</span> Teacher <span class="keyword">values</span>(<span class="string">&#x27;03&#x27;</span> , <span class="string">&#x27;王五&#x27;</span>)</span><br></pre></td></tr></table></figure>
+
+<p>四张表之间的关联很简单：</p>
+<p><img src="https://i.loli.net/2020/03/17/ru3wo47ezKvGdaO.png" alt="image-20200317113350723"></p>
+<p>表格关联</p>
+<p>（以下题目的顺序和原文相对应）</p>
+<p><strong>1. 查询” 01 “课程比” 02 “课程成绩高的学生的信息及课程分数</strong></p>
+<figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">select</span> s.*, a.score <span class="keyword">as</span> score_01, b.score <span class="keyword">as</span> score_02</span><br><span class="line"><span class="keyword">from</span> student s,</span><br><span class="line">     (<span class="keyword">select</span> <span class="keyword">sid</span>, score <span class="keyword">from</span> sc <span class="keyword">where</span> cid=<span class="number">01</span>) a,</span><br><span class="line">     (<span class="keyword">select</span> <span class="keyword">sid</span>, score <span class="keyword">from</span> sc <span class="keyword">where</span> cid=<span class="number">02</span>) b</span><br><span class="line"><span class="keyword">where</span> a.sid = b.sid <span class="keyword">and</span> a.score &gt; b.score <span class="keyword">and</span> s.sid = a.sid</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight ruby"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">+------+--------+---------------------+------+----------+----------+</span><br><span class="line"><span class="params">| Sid  |</span> Sname  <span class="params">| Sage                |</span> Ssex <span class="params">| score_01 |</span> score_02 <span class="params">|</span></span><br><span class="line"><span class="params">+------+--------+---------------------+------+----------+----------+</span></span><br><span class="line"><span class="params">|</span> <span class="number">02</span>   <span class="params">| 钱电   |</span> <span class="number">1990</span>-<span class="number">12</span>-<span class="number">21</span> <span class="number">00</span><span class="symbol">:</span><span class="number">00</span><span class="symbol">:</span><span class="number">00</span> <span class="params">| 男   |</span>     <span class="number">70.0</span> <span class="params">|     60.0 |</span></span><br><span class="line"><span class="params">| 04   |</span> 李云   <span class="params">| 1990-08-06 00:00:00 |</span> 男   <span class="params">|     50.0 |</span>     <span class="number">30.0</span> <span class="params">|</span></span><br><span class="line"><span class="params">+------+--------+---------------------+------+----------+----------+</span></span><br><span class="line"><span class="params">2 rows <span class="keyword">in</span> set (0.00 sec)</span></span><br></pre></td></tr></table></figure>
+
+<p><strong>2. 查询平均成绩大于等于 60 分的同学的学生编号和学生姓名和平均成绩</strong></p>
+<figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">select</span> s.sid, sname, <span class="keyword">avg</span>(score) <span class="keyword">as</span> avg_score</span><br><span class="line"><span class="keyword">from</span> student <span class="keyword">as</span> s, sc</span><br><span class="line"><span class="keyword">where</span> s.sid = sc.sid</span><br><span class="line"><span class="keyword">group</span> <span class="keyword">by</span> s.sid</span><br><span class="line"><span class="keyword">having</span> avg_score &gt; <span class="number">60</span></span><br></pre></td></tr></table></figure>
+
+<figure class="highlight ruby"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line">+------+--------+-----------+</span><br><span class="line"><span class="params">| sid  |</span> sname  <span class="params">| avg_score |</span></span><br><span class="line">+------+--------+-----------+</span><br><span class="line"><span class="params">| 01   |</span> 赵雷   <span class="params">|  89.66667 |</span></span><br><span class="line"><span class="params">| 02   |</span> 钱电   <span class="params">|  70.00000 |</span></span><br><span class="line"><span class="params">| 03   |</span> 孙风   <span class="params">|  80.00000 |</span></span><br><span class="line"><span class="params">| 05   |</span> 周梅   <span class="params">|  81.50000 |</span></span><br><span class="line"><span class="params">| 07   |</span> 郑竹   <span class="params">|  93.50000 |</span></span><br><span class="line">+------+--------+-----------+</span><br><span class="line"><span class="number">5</span> rows <span class="keyword">in</span> set (<span class="number">0</span>.<span class="number">00</span> sec)</span><br></pre></td></tr></table></figure>
+
+<p><strong>3. 查询在 SC 表存在成绩的学生信息</strong></p>
+<figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">select</span> * <span class="keyword">from</span> student <span class="keyword">where</span> <span class="keyword">sid</span> <span class="keyword">in</span> (<span class="keyword">select</span> <span class="keyword">sid</span> <span class="keyword">from</span> sc <span class="keyword">where</span> score <span class="keyword">is</span> <span class="keyword">not</span> <span class="literal">null</span>)</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight ruby"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line">+------+--------+---------------------+------+</span><br><span class="line"><span class="params">| Sid  |</span> Sname  <span class="params">| Sage                |</span> Ssex <span class="params">|</span></span><br><span class="line"><span class="params">+------+--------+---------------------+------+</span></span><br><span class="line"><span class="params">|</span> <span class="number">01</span>   <span class="params">| 赵雷   |</span> <span class="number">1990</span>-<span class="number">01</span>-<span class="number">01</span> <span class="number">00</span><span class="symbol">:</span><span class="number">00</span><span class="symbol">:</span><span class="number">00</span> <span class="params">| 男   |</span></span><br><span class="line"><span class="params">| 02   |</span> 钱电   <span class="params">| 1990-12-21 00:00:00 |</span> 男   <span class="params">|</span></span><br><span class="line"><span class="params">|</span> <span class="number">03</span>   <span class="params">| 孙风   |</span> <span class="number">1990</span>-<span class="number">05</span>-<span class="number">20</span> <span class="number">00</span><span class="symbol">:</span><span class="number">00</span><span class="symbol">:</span><span class="number">00</span> <span class="params">| 男   |</span></span><br><span class="line"><span class="params">| 04   |</span> 李云   <span class="params">| 1990-08-06 00:00:00 |</span> 男   <span class="params">|</span></span><br><span class="line"><span class="params">|</span> <span class="number">05</span>   <span class="params">| 周梅   |</span> <span class="number">1991</span>-<span class="number">12</span>-<span class="number">01</span> <span class="number">00</span><span class="symbol">:</span><span class="number">00</span><span class="symbol">:</span><span class="number">00</span> <span class="params">| 女   |</span></span><br><span class="line"><span class="params">| 06   |</span> 吴兰   <span class="params">| 1992-03-01 00:00:00 |</span> 女   <span class="params">|</span></span><br><span class="line"><span class="params">|</span> <span class="number">07</span>   <span class="params">| 郑竹   |</span> <span class="number">1989</span>-<span class="number">07</span>-<span class="number">01</span> <span class="number">00</span><span class="symbol">:</span><span class="number">00</span><span class="symbol">:</span><span class="number">00</span> <span class="params">| 女   |</span></span><br><span class="line">+------+--------+---------------------+------+</span><br><span class="line"><span class="number">7</span> rows <span class="keyword">in</span> set (<span class="number">0</span>.<span class="number">00</span> sec)</span><br></pre></td></tr></table></figure>
+
+<p><strong>4. 查询所有同学的学生编号、学生姓名、选课总数、所有课程的总成绩(没成绩的显示为 null )</strong></p>
+<p>这道题得用到left join或者right join，不能用where连接，因为题目说了要求有显示为null的，where是inner join，不会出现null，在这道题里会查不出第08号学生。</p>
+<figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">select</span> s.sid, s.sname, <span class="keyword">count</span>(cid) <span class="keyword">as</span> 选课总数, <span class="keyword">sum</span>(score) <span class="keyword">as</span> 总成绩</span><br><span class="line"><span class="keyword">from</span> student <span class="keyword">as</span> s <span class="keyword">left</span> <span class="keyword">join</span> sc</span><br><span class="line"><span class="keyword">on</span> s.sid = sc.sid</span><br><span class="line"><span class="keyword">group</span> <span class="keyword">by</span> s.sid</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight ruby"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line">+------+--------+--------------+-----------+</span><br><span class="line"><span class="params">| sid  |</span> sname  <span class="params">| 选课总数     |</span> 总成绩    <span class="params">|</span></span><br><span class="line"><span class="params">+------+--------+--------------+-----------+</span></span><br><span class="line"><span class="params">|</span> <span class="number">01</span>   <span class="params">| 赵雷   |</span>            <span class="number">3</span> <span class="params">|     269.0 |</span></span><br><span class="line"><span class="params">| 02   |</span> 钱电   <span class="params">|            3 |</span>     <span class="number">210.0</span> <span class="params">|</span></span><br><span class="line"><span class="params">|</span> <span class="number">03</span>   <span class="params">| 孙风   |</span>            <span class="number">3</span> <span class="params">|     240.0 |</span></span><br><span class="line"><span class="params">| 04   |</span> 李云   <span class="params">|            3 |</span>     <span class="number">100.0</span> <span class="params">|</span></span><br><span class="line"><span class="params">|</span> <span class="number">05</span>   <span class="params">| 周梅   |</span>            <span class="number">2</span> <span class="params">|     163.0 |</span></span><br><span class="line"><span class="params">| 06   |</span> 吴兰   <span class="params">|            2 |</span>      <span class="number">65.0</span> <span class="params">|</span></span><br><span class="line"><span class="params">|</span> <span class="number">07</span>   <span class="params">| 郑竹   |</span>            <span class="number">2</span> <span class="params">|     187.0 |</span></span><br><span class="line"><span class="params">| 08   |</span> 王菊   <span class="params">|            0 |</span>      NULL <span class="params">|</span></span><br><span class="line"><span class="params">+------+--------+--------------+-----------+</span></span><br><span class="line"><span class="params">8 rows <span class="keyword">in</span> set (0.00 sec)</span></span><br></pre></td></tr></table></figure>
+
+<p><strong>4.1 查有成绩的学生信息</strong></p>
+<figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">select</span> s.sid, s.sname, <span class="keyword">count</span>(*) <span class="keyword">as</span> 选课总数, <span class="keyword">sum</span>(score) <span class="keyword">as</span> 总成绩,</span><br><span class="line">    <span class="keyword">sum</span>(<span class="keyword">case</span> <span class="keyword">when</span> cid = <span class="number">01</span> <span class="keyword">then</span> score <span class="keyword">else</span> <span class="literal">null</span> <span class="keyword">end</span>) <span class="keyword">as</span> score_01,</span><br><span class="line">    <span class="keyword">sum</span>(<span class="keyword">case</span> <span class="keyword">when</span> cid = <span class="number">02</span> <span class="keyword">then</span> score <span class="keyword">else</span> <span class="literal">null</span> <span class="keyword">end</span>) <span class="keyword">as</span> score_02,</span><br><span class="line">    <span class="keyword">sum</span>(<span class="keyword">case</span> <span class="keyword">when</span> cid = <span class="number">03</span> <span class="keyword">then</span> score <span class="keyword">else</span> <span class="literal">null</span> <span class="keyword">end</span>) <span class="keyword">as</span> score_03</span><br><span class="line"><span class="keyword">from</span> student <span class="keyword">as</span> s, sc</span><br><span class="line"><span class="keyword">where</span> s.sid = sc.sid</span><br><span class="line"><span class="keyword">group</span> <span class="keyword">by</span> s.sid</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight ruby"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line">+------+--------+--------------+-----------+----------+----------+----------+</span><br><span class="line"><span class="params">| sid  |</span> sname  <span class="params">| 选课总数     |</span> 总成绩    <span class="params">| score_01 |</span> score_02 <span class="params">| score_03 |</span></span><br><span class="line">+------+--------+--------------+-----------+----------+----------+----------+</span><br><span class="line"><span class="params">| 01   |</span> 赵雷   <span class="params">|            3 |</span>     <span class="number">269.0</span> <span class="params">|     80.0 |</span>     <span class="number">90.0</span> <span class="params">|     99.0 |</span></span><br><span class="line"><span class="params">| 02   |</span> 钱电   <span class="params">|            3 |</span>     <span class="number">210.0</span> <span class="params">|     70.0 |</span>     <span class="number">60.0</span> <span class="params">|     80.0 |</span></span><br><span class="line"><span class="params">| 03   |</span> 孙风   <span class="params">|            3 |</span>     <span class="number">240.0</span> <span class="params">|     80.0 |</span>     <span class="number">80.0</span> <span class="params">|     80.0 |</span></span><br><span class="line"><span class="params">| 04   |</span> 李云   <span class="params">|            3 |</span>     <span class="number">100.0</span> <span class="params">|     50.0 |</span>     <span class="number">30.0</span> <span class="params">|     20.0 |</span></span><br><span class="line"><span class="params">| 05   |</span> 周梅   <span class="params">|            2 |</span>     <span class="number">163.0</span> <span class="params">|     76.0 |</span>     <span class="number">87.0</span> <span class="params">|     NULL |</span></span><br><span class="line"><span class="params">| 06   |</span> 吴兰   <span class="params">|            2 |</span>      <span class="number">65.0</span> <span class="params">|     31.0 |</span>     NULL <span class="params">|     34.0 |</span></span><br><span class="line"><span class="params">| 07   |</span> 郑竹   <span class="params">|            2 |</span>     <span class="number">187.0</span> <span class="params">|     NULL |</span>     <span class="number">89.0</span> <span class="params">|     98.0 |</span></span><br><span class="line">+------+--------+--------------+-----------+----------+----------+----------+</span><br><span class="line"><span class="number">7</span> rows <span class="keyword">in</span> set (<span class="number">0</span>.<span class="number">00</span> sec)</span><br></pre></td></tr></table></figure>
+
+<p><strong>5. 查询「李」姓老师的数量</strong></p>
+<figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">select</span> <span class="keyword">count</span>(tname) <span class="keyword">from</span> teacher <span class="keyword">where</span> tname <span class="keyword">like</span> <span class="string">&#x27;李%&#x27;</span></span><br></pre></td></tr></table></figure>
+
+<figure class="highlight ruby"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">+--------------+</span><br><span class="line"><span class="params">| count(tname) |</span></span><br><span class="line">+--------------+</span><br><span class="line"><span class="params">|            1 |</span></span><br><span class="line">+--------------+</span><br><span class="line"><span class="number">1</span> row <span class="keyword">in</span> set (<span class="number">0</span>.<span class="number">00</span> sec)</span><br></pre></td></tr></table></figure>
+
+<p><strong>6. 查询学过「张三」老师授课的同学的信息</strong></p>
+<figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">select</span> * <span class="keyword">from</span> student <span class="keyword">where</span> <span class="keyword">sid</span> <span class="keyword">in</span> (</span><br><span class="line">    <span class="keyword">select</span> <span class="keyword">sid</span> <span class="keyword">from</span> sc, course, teacher</span><br><span class="line">    <span class="keyword">where</span> sc.cid = course.cid</span><br><span class="line">     <span class="keyword">and</span> course.tid = teacher.tid</span><br><span class="line">     <span class="keyword">and</span> tname = <span class="string">&#x27;张三&#x27;</span></span><br><span class="line">)</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight ruby"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line">+------+--------+---------------------+------+</span><br><span class="line"><span class="params">| Sid  |</span> Sname  <span class="params">| Sage                |</span> Ssex <span class="params">|</span></span><br><span class="line"><span class="params">+------+--------+---------------------+------+</span></span><br><span class="line"><span class="params">|</span> <span class="number">01</span>   <span class="params">| 赵雷   |</span> <span class="number">1990</span>-<span class="number">01</span>-<span class="number">01</span> <span class="number">00</span><span class="symbol">:</span><span class="number">00</span><span class="symbol">:</span><span class="number">00</span> <span class="params">| 男   |</span></span><br><span class="line"><span class="params">| 02   |</span> 钱电   <span class="params">| 1990-12-21 00:00:00 |</span> 男   <span class="params">|</span></span><br><span class="line"><span class="params">|</span> <span class="number">03</span>   <span class="params">| 孙风   |</span> <span class="number">1990</span>-<span class="number">05</span>-<span class="number">20</span> <span class="number">00</span><span class="symbol">:</span><span class="number">00</span><span class="symbol">:</span><span class="number">00</span> <span class="params">| 男   |</span></span><br><span class="line"><span class="params">| 04   |</span> 李云   <span class="params">| 1990-08-06 00:00:00 |</span> 男   <span class="params">|</span></span><br><span class="line"><span class="params">|</span> <span class="number">05</span>   <span class="params">| 周梅   |</span> <span class="number">1991</span>-<span class="number">12</span>-<span class="number">01</span> <span class="number">00</span><span class="symbol">:</span><span class="number">00</span><span class="symbol">:</span><span class="number">00</span> <span class="params">| 女   |</span></span><br><span class="line"><span class="params">| 07   |</span> 郑竹   <span class="params">| 1989-07-01 00:00:00 |</span> 女   <span class="params">|</span></span><br><span class="line"><span class="params">+------+--------+---------------------+------+</span></span><br><span class="line"><span class="params">6 rows <span class="keyword">in</span> set (0.00 sec)</span></span><br></pre></td></tr></table></figure>
+
+<p>原作者的写法里面用到了等号 =，虽然得到同样的结果，但是这样写不太好，因为不确定张三老师是不是只教授一门课（只不过现在的数据量太小了而已），in 适用于一个或多个返回结果的情况，适应性比等号更广。</p>
+<figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">select</span> * <span class="keyword">from</span> Student</span><br><span class="line"><span class="keyword">where</span> <span class="keyword">sid</span> <span class="keyword">in</span>(<span class="keyword">select</span> <span class="keyword">distinct</span> <span class="keyword">Sid</span> <span class="keyword">from</span> SC</span><br><span class="line"><span class="keyword">where</span> cid=(<span class="keyword">select</span> Cid <span class="keyword">from</span> Course</span><br><span class="line"><span class="keyword">where</span> Tid=(<span class="keyword">select</span> Tid <span class="keyword">from</span> Teacher <span class="keyword">where</span> Tname=<span class="string">&#x27;张三&#x27;</span>)))</span><br></pre></td></tr></table></figure>
+
+<p><strong>7. 查询没有学全所有课程的同学的信息</strong></p>
+<figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">select</span> * <span class="keyword">from</span> student <span class="keyword">where</span> <span class="keyword">sid</span> <span class="keyword">in</span> (<span class="keyword">select</span> <span class="keyword">sid</span> <span class="keyword">from</span> sc <span class="keyword">group</span> <span class="keyword">by</span> <span class="keyword">sid</span> <span class="keyword">having</span> <span class="keyword">count</span>(cid) &lt; <span class="number">3</span>)</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight ruby"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">+------+--------+---------------------+------+</span><br><span class="line"><span class="params">| Sid  |</span> Sname  <span class="params">| Sage                |</span> Ssex <span class="params">|</span></span><br><span class="line"><span class="params">+------+--------+---------------------+------+</span></span><br><span class="line"><span class="params">|</span> <span class="number">05</span>   <span class="params">| 周梅   |</span> <span class="number">1991</span>-<span class="number">12</span>-<span class="number">01</span> <span class="number">00</span><span class="symbol">:</span><span class="number">00</span><span class="symbol">:</span><span class="number">00</span> <span class="params">| 女   |</span></span><br><span class="line"><span class="params">| 06   |</span> 吴兰   <span class="params">| 1992-03-01 00:00:00 |</span> 女   <span class="params">|</span></span><br><span class="line"><span class="params">|</span> <span class="number">07</span>   <span class="params">| 郑竹   |</span> <span class="number">1989</span>-<span class="number">07</span>-<span class="number">01</span> <span class="number">00</span><span class="symbol">:</span><span class="number">00</span><span class="symbol">:</span><span class="number">00</span> <span class="params">| 女   |</span></span><br><span class="line">+------+--------+---------------------+------+</span><br><span class="line"><span class="number">3</span> rows <span class="keyword">in</span> set (<span class="number">0</span>.<span class="number">00</span> sec)</span><br></pre></td></tr></table></figure>
+
+<p><strong>9. 查询和” 01 “号的同学学习的课程完全相同的其他同学的信息</strong><br> 这道题号称是所有题目里最难的一道，我虽然做了出来，但是写法很麻烦，不必要。原作者写的很简洁：</p>
+<figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">select</span> * <span class="keyword">from</span> Student</span><br><span class="line"><span class="keyword">where</span> <span class="keyword">Sid</span> <span class="keyword">in</span>(</span><br><span class="line">    <span class="keyword">select</span> <span class="keyword">Sid</span> <span class="keyword">from</span> SC</span><br><span class="line">    <span class="keyword">where</span> Cid <span class="keyword">in</span> (<span class="keyword">select</span> Cid <span class="keyword">from</span> SC <span class="keyword">where</span> <span class="keyword">Sid</span> = <span class="string">&#x27;01&#x27;</span>) <span class="keyword">and</span> <span class="keyword">Sid</span> &lt;&gt;<span class="string">&#x27;01&#x27;</span></span><br><span class="line">    <span class="keyword">group</span> <span class="keyword">by</span> <span class="keyword">Sid</span></span><br><span class="line">    <span class="keyword">having</span> <span class="keyword">COUNT</span>(Cid)&gt;=<span class="number">3</span></span><br><span class="line">)</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight ruby"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">+------+--------+---------------------+------+</span><br><span class="line"><span class="params">| Sid  |</span> Sname  <span class="params">| Sage                |</span> Ssex <span class="params">|</span></span><br><span class="line"><span class="params">+------+--------+---------------------+------+</span></span><br><span class="line"><span class="params">|</span> <span class="number">02</span>   <span class="params">| 钱电   |</span> <span class="number">1990</span>-<span class="number">12</span>-<span class="number">21</span> <span class="number">00</span><span class="symbol">:</span><span class="number">00</span><span class="symbol">:</span><span class="number">00</span> <span class="params">| 男   |</span></span><br><span class="line"><span class="params">| 03   |</span> 孙风   <span class="params">| 1990-05-20 00:00:00 |</span> 男   <span class="params">|</span></span><br><span class="line"><span class="params">|</span> <span class="number">04</span>   <span class="params">| 李云   |</span> <span class="number">1990</span>-08-<span class="number">06</span> <span class="number">00</span><span class="symbol">:</span><span class="number">00</span><span class="symbol">:</span><span class="number">00</span> <span class="params">| 男   |</span></span><br><span class="line">+------+--------+---------------------+------+</span><br><span class="line"><span class="number">3</span> rows <span class="keyword">in</span> set (<span class="number">0</span>.<span class="number">00</span> sec)</span><br></pre></td></tr></table></figure>
+
+<p>我写的就太麻烦啦。。</p>
+<figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">select</span> * <span class="keyword">from</span> student <span class="keyword">where</span> <span class="keyword">sid</span> <span class="keyword">in</span> (</span><br><span class="line">    <span class="keyword">select</span> B.sid</span><br><span class="line">    <span class="keyword">from</span></span><br><span class="line">        (<span class="keyword">select</span> <span class="keyword">sid</span>,</span><br><span class="line">            <span class="keyword">sum</span>(<span class="keyword">case</span> <span class="keyword">when</span> cid=<span class="number">01</span> <span class="keyword">then</span> <span class="number">1</span> <span class="keyword">else</span> <span class="number">0</span> <span class="keyword">end</span>) <span class="keyword">as</span> course_01,</span><br><span class="line">            <span class="keyword">sum</span>(<span class="keyword">case</span> <span class="keyword">when</span> cid=<span class="number">02</span> <span class="keyword">then</span> <span class="number">1</span> <span class="keyword">else</span> <span class="number">0</span> <span class="keyword">end</span>) <span class="keyword">as</span> course_02,</span><br><span class="line">            <span class="keyword">sum</span>(<span class="keyword">case</span> <span class="keyword">when</span> cid=<span class="number">03</span> <span class="keyword">then</span> <span class="number">1</span> <span class="keyword">else</span> <span class="number">0</span> <span class="keyword">end</span>) <span class="keyword">as</span> course_03</span><br><span class="line">        <span class="keyword">from</span> sc <span class="keyword">where</span> <span class="keyword">sid</span> = <span class="number">01</span> <span class="keyword">group</span> <span class="keyword">by</span> <span class="keyword">sid</span>) <span class="keyword">as</span> A,</span><br><span class="line">        (<span class="keyword">select</span> <span class="keyword">sid</span>,</span><br><span class="line">            <span class="keyword">sum</span>(<span class="keyword">case</span> <span class="keyword">when</span> cid=<span class="number">01</span> <span class="keyword">then</span> <span class="number">1</span> <span class="keyword">else</span> <span class="number">0</span> <span class="keyword">end</span>) <span class="keyword">as</span> course_01,</span><br><span class="line">            <span class="keyword">sum</span>(<span class="keyword">case</span> <span class="keyword">when</span> cid=<span class="number">02</span> <span class="keyword">then</span> <span class="number">1</span> <span class="keyword">else</span> <span class="number">0</span> <span class="keyword">end</span>) <span class="keyword">as</span> course_02,</span><br><span class="line">            <span class="keyword">sum</span>(<span class="keyword">case</span> <span class="keyword">when</span> cid=<span class="number">03</span> <span class="keyword">then</span> <span class="number">1</span> <span class="keyword">else</span> <span class="number">0</span> <span class="keyword">end</span>) <span class="keyword">as</span> course_03</span><br><span class="line">        <span class="keyword">from</span> sc <span class="keyword">where</span> <span class="keyword">sid</span> != <span class="number">01</span> <span class="keyword">group</span> <span class="keyword">by</span> <span class="keyword">sid</span>) <span class="keyword">as</span> B</span><br><span class="line">    <span class="keyword">where</span> A.course_01=B.course_01 <span class="keyword">and</span> A.course_02=B.course_02 <span class="keyword">and</span> A.course_03=B.course_03</span><br><span class="line">)</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight ruby"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">+------+--------+---------------------+------+</span><br><span class="line"><span class="params">| Sid  |</span> Sname  <span class="params">| Sage                |</span> Ssex <span class="params">|</span></span><br><span class="line"><span class="params">+------+--------+---------------------+------+</span></span><br><span class="line"><span class="params">|</span> <span class="number">02</span>   <span class="params">| 钱电   |</span> <span class="number">1990</span>-<span class="number">12</span>-<span class="number">21</span> <span class="number">00</span><span class="symbol">:</span><span class="number">00</span><span class="symbol">:</span><span class="number">00</span> <span class="params">| 男   |</span></span><br><span class="line"><span class="params">| 03   |</span> 孙风   <span class="params">| 1990-05-20 00:00:00 |</span> 男   <span class="params">|</span></span><br><span class="line"><span class="params">|</span> <span class="number">04</span>   <span class="params">| 李云   |</span> <span class="number">1990</span>-08-<span class="number">06</span> <span class="number">00</span><span class="symbol">:</span><span class="number">00</span><span class="symbol">:</span><span class="number">00</span> <span class="params">| 男   |</span></span><br><span class="line">+------+--------+---------------------+------+</span><br><span class="line"><span class="number">3</span> rows <span class="keyword">in</span> set (<span class="number">0</span>.<span class="number">00</span> sec)</span><br></pre></td></tr></table></figure>
+
+<p><strong>8. 查询至少有一门课与学号为” 01 “的同学所学相同的同学的信息</strong></p>
+<p>和第9题基本一致，还是原作者写的好一些</p>
+<figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">select</span> * <span class="keyword">from</span> Student <span class="keyword">where</span> <span class="keyword">Sid</span> <span class="keyword">in</span>(</span><br><span class="line">    <span class="keyword">select</span> <span class="keyword">distinct</span> <span class="keyword">Sid</span> <span class="keyword">from</span> SC <span class="keyword">where</span> Cid <span class="keyword">in</span>(</span><br><span class="line">        <span class="keyword">select</span> Cid <span class="keyword">from</span> SC <span class="keyword">where</span> <span class="keyword">Sid</span>=<span class="string">&#x27;01&#x27;</span></span><br><span class="line">    )</span><br><span class="line">)</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight ruby"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line">+------+--------+---------------------+------+</span><br><span class="line"><span class="params">| Sid  |</span> Sname  <span class="params">| Sage                |</span> Ssex <span class="params">|</span></span><br><span class="line"><span class="params">+------+--------+---------------------+------+</span></span><br><span class="line"><span class="params">|</span> <span class="number">01</span>   <span class="params">| 赵雷   |</span> <span class="number">1990</span>-<span class="number">01</span>-<span class="number">01</span> <span class="number">00</span><span class="symbol">:</span><span class="number">00</span><span class="symbol">:</span><span class="number">00</span> <span class="params">| 男   |</span></span><br><span class="line"><span class="params">| 02   |</span> 钱电   <span class="params">| 1990-12-21 00:00:00 |</span> 男   <span class="params">|</span></span><br><span class="line"><span class="params">|</span> <span class="number">03</span>   <span class="params">| 孙风   |</span> <span class="number">1990</span>-<span class="number">05</span>-<span class="number">20</span> <span class="number">00</span><span class="symbol">:</span><span class="number">00</span><span class="symbol">:</span><span class="number">00</span> <span class="params">| 男   |</span></span><br><span class="line"><span class="params">| 04   |</span> 李云   <span class="params">| 1990-08-06 00:00:00 |</span> 男   <span class="params">|</span></span><br><span class="line"><span class="params">|</span> <span class="number">05</span>   <span class="params">| 周梅   |</span> <span class="number">1991</span>-<span class="number">12</span>-<span class="number">01</span> <span class="number">00</span><span class="symbol">:</span><span class="number">00</span><span class="symbol">:</span><span class="number">00</span> <span class="params">| 女   |</span></span><br><span class="line"><span class="params">| 06   |</span> 吴兰   <span class="params">| 1992-03-01 00:00:00 |</span> 女   <span class="params">|</span></span><br><span class="line"><span class="params">|</span> <span class="number">07</span>   <span class="params">| 郑竹   |</span> <span class="number">1989</span>-<span class="number">07</span>-<span class="number">01</span> <span class="number">00</span><span class="symbol">:</span><span class="number">00</span><span class="symbol">:</span><span class="number">00</span> <span class="params">| 女   |</span></span><br><span class="line">+------+--------+---------------------+------+</span><br><span class="line"><span class="number">7</span> rows <span class="keyword">in</span> set (<span class="number">0</span>.<span class="number">00</span> sec)</span><br></pre></td></tr></table></figure>
+
+<p><strong>10. 查询没学过”张三”老师讲授的任一门课程的学生姓名</strong></p>
+<p>一般涉及到”任意”的都会用到not in这样的取反的结构：</p>
+<figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">select</span> sname <span class="keyword">from</span> student</span><br><span class="line"><span class="keyword">where</span> sname <span class="keyword">not</span> <span class="keyword">in</span> (</span><br><span class="line">    <span class="keyword">select</span> s.sname</span><br><span class="line">    <span class="keyword">from</span> student <span class="keyword">as</span> s, course <span class="keyword">as</span> c, teacher <span class="keyword">as</span> t, sc</span><br><span class="line">    <span class="keyword">where</span> s.sid = sc.sid</span><br><span class="line">        <span class="keyword">and</span> sc.cid = c.cid</span><br><span class="line">        <span class="keyword">and</span> c.tid = t.tid</span><br><span class="line">        <span class="keyword">and</span> t.tname = <span class="string">&#x27;张三&#x27;</span></span><br><span class="line">)</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight ruby"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">+--------+</span><br><span class="line"><span class="params">| sname  |</span></span><br><span class="line">+--------+</span><br><span class="line"><span class="params">| 吴兰   |</span></span><br><span class="line"><span class="params">| 王菊   |</span></span><br><span class="line">+--------+</span><br><span class="line"><span class="number">2</span> rows <span class="keyword">in</span> set (<span class="number">0</span>.<span class="number">00</span> sec)</span><br></pre></td></tr></table></figure>
+
+<p><strong>11. 查询两门及其以上不及格课程的同学的学号，姓名及其平均成绩</strong></p>
+<figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">SELECT</span> student.Sid,student.Sname,<span class="keyword">AVG</span>(sc.score) <span class="keyword">FROM</span> student,sc <span class="keyword">WHERE</span> student.Sid = sc.Sid <span class="keyword">AND</span></span><br><span class="line">student.Sid <span class="keyword">in</span></span><br><span class="line"><span class="comment">-- 获取 满足两门及其以上不及格的同学的学号，姓名</span></span><br><span class="line">(<span class="keyword">SELECT</span> P1Stu.Sid</span><br><span class="line"><span class="keyword">FROM</span> student P1Stu,sc P1sc</span><br><span class="line"><span class="keyword">WHERE</span> P1Stu.Sid = P1sc.Sid <span class="keyword">AND</span> P1sc.score &lt;=<span class="number">60</span></span><br><span class="line"><span class="keyword">GROUP</span> <span class="keyword">BY</span> <span class="keyword">Sid</span> <span class="keyword">HAVING</span> <span class="keyword">count</span>(score) &gt;= <span class="number">2</span>)</span><br><span class="line"><span class="keyword">GROUP</span> <span class="keyword">BY</span> sc.Sid;</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight ruby"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">+------+--------+------------+</span><br><span class="line"><span class="params">| sid  |</span> sname  <span class="params">| avg(score) |</span></span><br><span class="line">+------+--------+------------+</span><br><span class="line"><span class="params">| 04   |</span> 李云   <span class="params">|   33.33333 |</span></span><br><span class="line"><span class="params">| 06   |</span> 吴兰   <span class="params">|   32.50000 |</span></span><br><span class="line">+------+--------+------------+</span><br><span class="line"><span class="number">2</span> rows <span class="keyword">in</span> set (<span class="number">0</span>.<span class="number">00</span> sec)</span><br></pre></td></tr></table></figure>
+
+<p><strong>12. 检索” 01 “课程分数小于 60，按分数降序排列的学生信息</strong></p>
+<figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">select</span> s.* ,score</span><br><span class="line"><span class="keyword">from</span> student <span class="keyword">as</span> s, sc</span><br><span class="line"><span class="keyword">where</span> cid = <span class="number">01</span></span><br><span class="line">  <span class="keyword">and</span> score &lt; <span class="number">60</span></span><br><span class="line">  <span class="keyword">and</span> s.sid=sc.sid</span><br><span class="line"><span class="keyword">order</span> <span class="keyword">by</span> score <span class="keyword">desc</span></span><br></pre></td></tr></table></figure>
+
+<figure class="highlight ruby"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">+------+--------+---------------------+------+-------+</span><br><span class="line"><span class="params">| Sid  |</span> Sname  <span class="params">| Sage                |</span> Ssex <span class="params">| score |</span></span><br><span class="line">+------+--------+---------------------+------+-------+</span><br><span class="line"><span class="params">| 04   |</span> 李云   <span class="params">| 1990-08-06 00:00:00 |</span> 男   <span class="params">|  50.0 |</span></span><br><span class="line"><span class="params">| 06   |</span> 吴兰   <span class="params">| 1992-03-01 00:00:00 |</span> 女   <span class="params">|  31.0 |</span></span><br><span class="line">+------+--------+---------------------+------+-------+</span><br><span class="line"><span class="number">2</span> rows <span class="keyword">in</span> set (<span class="number">0</span>.<span class="number">00</span> sec)</span><br></pre></td></tr></table></figure>
+
+<p><strong>13. 按平均成绩从高到低显示所有学生的所有课程的成绩以及平均成绩</strong></p>
+<figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">select</span> <span class="keyword">sid</span>,</span><br><span class="line">    <span class="keyword">sum</span>(<span class="keyword">case</span> <span class="keyword">when</span> cid=<span class="number">01</span> <span class="keyword">then</span> score <span class="keyword">else</span> <span class="literal">null</span> <span class="keyword">end</span>) <span class="keyword">as</span> score_01,</span><br><span class="line">    <span class="keyword">sum</span>(<span class="keyword">case</span> <span class="keyword">when</span> cid=<span class="number">02</span> <span class="keyword">then</span> score <span class="keyword">else</span> <span class="literal">null</span> <span class="keyword">end</span>) <span class="keyword">as</span> score_02,</span><br><span class="line">    <span class="keyword">sum</span>(<span class="keyword">case</span> <span class="keyword">when</span> cid=<span class="number">03</span> <span class="keyword">then</span> score <span class="keyword">else</span> <span class="literal">null</span> <span class="keyword">end</span>) <span class="keyword">as</span> score_03,</span><br><span class="line">    <span class="keyword">avg</span>(score)</span><br><span class="line"><span class="keyword">from</span> sc <span class="keyword">group</span> <span class="keyword">by</span> <span class="keyword">sid</span></span><br><span class="line"><span class="keyword">order</span> <span class="keyword">by</span> <span class="keyword">avg</span>(score) <span class="keyword">desc</span></span><br></pre></td></tr></table></figure>
+
+<figure class="highlight ruby"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line">+------+----------+----------+----------+------------+</span><br><span class="line"><span class="params">| sid  |</span> score_01 <span class="params">| score_02 |</span> score_03 <span class="params">| avg(score) |</span></span><br><span class="line">+------+----------+----------+----------+------------+</span><br><span class="line"><span class="params">| 07   |</span>     NULL <span class="params">|     89.0 |</span>     <span class="number">98.0</span> <span class="params">|   93.50000 |</span></span><br><span class="line"><span class="params">| 01   |</span>     <span class="number">80.0</span> <span class="params">|     90.0 |</span>     <span class="number">99.0</span> <span class="params">|   89.66667 |</span></span><br><span class="line"><span class="params">| 05   |</span>     <span class="number">76.0</span> <span class="params">|     87.0 |</span>     NULL <span class="params">|   81.50000 |</span></span><br><span class="line"><span class="params">| 03   |</span>     <span class="number">80.0</span> <span class="params">|     80.0 |</span>     <span class="number">80.0</span> <span class="params">|   80.00000 |</span></span><br><span class="line"><span class="params">| 02   |</span>     <span class="number">70.0</span> <span class="params">|     60.0 |</span>     <span class="number">80.0</span> <span class="params">|   70.00000 |</span></span><br><span class="line"><span class="params">| 04   |</span>     <span class="number">50.0</span> <span class="params">|     30.0 |</span>     <span class="number">20.0</span> <span class="params">|   33.33333 |</span></span><br><span class="line"><span class="params">| 06   |</span>     <span class="number">31.0</span> <span class="params">|     NULL |</span>     <span class="number">34.0</span> <span class="params">|   32.50000 |</span></span><br><span class="line">+------+----------+----------+----------+------------+</span><br><span class="line"><span class="number">7</span> rows <span class="keyword">in</span> set (<span class="number">0</span>.<span class="number">00</span> sec)</span><br></pre></td></tr></table></figure>
+
+<p><strong>14. 查询各科成绩最高分、最低分和平均分，以如下形式显示：课程 ID，课程 name，最高分，最低分，平均分，及格率，中等率，优良率，优秀率(及格为&gt;=60，中等为：70-80，优良为：80-90，优秀为：&gt;=90）。<br> 要求输出课程号和选修人数，查询结果按人数降序排列，若人数相同，按课程号升序排列</strong></p>
+<p>这道题熟练掌握case和sum的用法就没什么问题</p>
+<figure class="highlight swift"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line">select <span class="built_in">c</span>.cid <span class="keyword">as</span> 课程号, <span class="built_in">c</span>.cname <span class="keyword">as</span> 课程名称, <span class="built_in">count</span>(*) <span class="keyword">as</span> 选修人数,</span><br><span class="line">    <span class="built_in">max</span>(score) <span class="keyword">as</span> 最高分, <span class="built_in">min</span>(score) <span class="keyword">as</span> 最低分, avg(score) <span class="keyword">as</span> 平均分,</span><br><span class="line">    sum(<span class="keyword">case</span> when score &gt;= <span class="number">60</span> then <span class="number">1</span> <span class="keyword">else</span> <span class="number">0</span> end)/<span class="built_in">count</span>(*) <span class="keyword">as</span> 及格率,</span><br><span class="line">    sum(<span class="keyword">case</span> when score &gt;= <span class="number">70</span> and score &lt; <span class="number">80</span> then <span class="number">1</span> <span class="keyword">else</span> <span class="number">0</span> end)/<span class="built_in">count</span>(*) <span class="keyword">as</span> 中等率,</span><br><span class="line">    sum(<span class="keyword">case</span> when score &gt;= <span class="number">80</span> and score &lt; <span class="number">90</span> then <span class="number">1</span> <span class="keyword">else</span> <span class="number">0</span> end)/<span class="built_in">count</span>(*) <span class="keyword">as</span> 优良率,</span><br><span class="line">    sum(<span class="keyword">case</span> when score &gt;= <span class="number">90</span> then <span class="number">1</span> <span class="keyword">else</span> <span class="number">0</span> end)/<span class="built_in">count</span>(*) <span class="keyword">as</span> 优秀率</span><br><span class="line">from sc, course <span class="built_in">c</span></span><br><span class="line"><span class="keyword">where</span> <span class="built_in">c</span>.cid = sc.cid</span><br><span class="line">group by <span class="built_in">c</span>.cid</span><br><span class="line">order by <span class="built_in">count</span>(*) desc, <span class="built_in">c</span>.cid asc</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight ruby"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">+-----------+--------------+--------------+-----------+-----------+-----------+-----------+-----------+-----------+-----------+</span><br><span class="line"><span class="params">| 课程号    |</span> 课程名称      <span class="params">| 选修人数      |</span> 最高分     <span class="params">| 最低分    |</span> 平均分     <span class="params">| 及格率    |</span> 中等率    <span class="params">| 优良率     |</span> 优秀率     <span class="params">|</span></span><br><span class="line"><span class="params">+-----------+--------------+--------------+-----------+-----------+-----------+-----------+-----------+-----------+-----------+</span></span><br><span class="line"><span class="params">|</span> <span class="number">01</span>        <span class="params">| 语文         |</span>            <span class="number">6</span> <span class="params">|      80.0 |</span>      <span class="number">31.0</span> <span class="params">|  64.50000 |</span>    <span class="number">0</span>.<span class="number">6667</span> <span class="params">|    0.3333 |</span>    <span class="number">0</span>.<span class="number">3333</span> <span class="params">|    0.0000 |</span></span><br><span class="line"><span class="params">| 02        |</span> 数学         <span class="params">|            6 |</span>      <span class="number">90.0</span> <span class="params">|      30.0 |</span>  <span class="number">72.66667</span> <span class="params">|    0.8333 |</span>    <span class="number">0</span>.<span class="number">0000</span> <span class="params">|    0.5000 |</span>    <span class="number">0</span>.<span class="number">1667</span> <span class="params">|</span></span><br><span class="line"><span class="params">|</span> <span class="number">03</span>        <span class="params">| 英语         |</span>            <span class="number">6</span> <span class="params">|      99.0 |</span>      <span class="number">20.0</span> <span class="params">|  68.50000 |</span>    <span class="number">0</span>.<span class="number">6667</span> <span class="params">|    0.0000 |</span>    <span class="number">0</span>.<span class="number">3333</span> <span class="params">|    0.3333 |</span></span><br><span class="line">+-----------+--------------+--------------+-----------+-----------+-----------+-----------+-----------+-----------+-----------+</span><br><span class="line"><span class="number">3</span> rows <span class="keyword">in</span> set (<span class="number">0</span>.<span class="number">00</span> sec)</span><br></pre></td></tr></table></figure>
+
+<p>原作者的写法本质上和我是相同的，但是用了很多left join看起来有些冗余</p>
+<figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">select</span> <span class="keyword">distinct</span> A.Cid,Cname,最高分,最低分,平均分,及格率,中等率,优良率,优秀率 <span class="keyword">from</span> SC A</span><br><span class="line"><span class="keyword">left</span> <span class="keyword">join</span> Course <span class="keyword">on</span> A.Cid=Course.Cid</span><br><span class="line"><span class="keyword">left</span> <span class="keyword">join</span> (<span class="keyword">select</span> Cid,<span class="keyword">MAX</span>(score)最高分,<span class="keyword">MIN</span>(score)最低分,<span class="keyword">AVG</span>(score)平均分 <span class="keyword">from</span> SC <span class="keyword">group</span> <span class="keyword">by</span> Cid)B <span class="keyword">on</span> A.Cid=B.Cid</span><br><span class="line"><span class="keyword">left</span> <span class="keyword">join</span> (<span class="keyword">select</span> Cid,(<span class="keyword">convert</span>(<span class="built_in">decimal</span>(<span class="number">5</span>,<span class="number">2</span>),(<span class="keyword">sum</span>(<span class="keyword">case</span> <span class="keyword">when</span> score&gt;=<span class="number">60</span> <span class="keyword">then</span> <span class="number">1</span> <span class="keyword">else</span> <span class="number">0</span> <span class="keyword">end</span>)*<span class="number">1.00</span>)/<span class="keyword">COUNT</span>(*))*<span class="number">100</span>)及格率 <span class="keyword">from</span> SC <span class="keyword">group</span> <span class="keyword">by</span> Cid)C <span class="keyword">on</span> A.Cid=C.Cid</span><br><span class="line"><span class="keyword">left</span> <span class="keyword">join</span> (<span class="keyword">select</span> Cid,(<span class="keyword">convert</span>(<span class="built_in">decimal</span>(<span class="number">5</span>,<span class="number">2</span>),(<span class="keyword">sum</span>(<span class="keyword">case</span> <span class="keyword">when</span> score &gt;=<span class="number">70</span> <span class="keyword">and</span> score&lt;<span class="number">80</span> <span class="keyword">then</span> <span class="number">1</span> <span class="keyword">else</span> <span class="number">0</span> <span class="keyword">end</span>)*<span class="number">1.00</span>)/<span class="keyword">COUNT</span>(*))*<span class="number">100</span>)中等率 <span class="keyword">from</span> SC <span class="keyword">group</span> <span class="keyword">by</span> Cid)D <span class="keyword">on</span> A.Cid=D.Cid</span><br><span class="line"><span class="keyword">left</span> <span class="keyword">join</span> (<span class="keyword">select</span> Cid,(<span class="keyword">convert</span>(<span class="built_in">decimal</span>(<span class="number">5</span>,<span class="number">2</span>),(<span class="keyword">sum</span>(<span class="keyword">case</span> <span class="keyword">when</span> score &gt;=<span class="number">80</span> <span class="keyword">and</span> score&lt;<span class="number">90</span> <span class="keyword">then</span> <span class="number">1</span> <span class="keyword">else</span> <span class="number">0</span> <span class="keyword">end</span>)*<span class="number">1.00</span>)/<span class="keyword">COUNT</span>(*))*<span class="number">100</span>)优良率 <span class="keyword">from</span> SC <span class="keyword">group</span> <span class="keyword">by</span> Cid)E <span class="keyword">on</span> A.Cid=E.Cid</span><br><span class="line"><span class="keyword">left</span> <span class="keyword">join</span> (<span class="keyword">select</span> Cid,(<span class="keyword">convert</span>(<span class="built_in">decimal</span>(<span class="number">5</span>,<span class="number">2</span>),(<span class="keyword">sum</span>(<span class="keyword">case</span> <span class="keyword">when</span> score &gt;=<span class="number">90</span> <span class="keyword">then</span> <span class="number">1</span> <span class="keyword">else</span> <span class="number">0</span> <span class="keyword">end</span>)*<span class="number">1.00</span>)/<span class="keyword">COUNT</span>(*))*<span class="number">100</span>)优秀率</span><br><span class="line"><span class="keyword">from</span> SC <span class="keyword">group</span> <span class="keyword">by</span> Cid)F <span class="keyword">on</span> A.Cid=F.Cid</span><br></pre></td></tr></table></figure>
+
+<p><strong>15. 按平均成绩进行排序，显示总排名和各科排名，Score 重复时保留名次空缺</strong></p>
+<p>原题目是按各科成绩进行排序，并显示排名， Score 重复时保留名次空缺。但是我没看明白什么意思，各科成绩如何排序？语文分数和数学分数有可比性吗？作者的写法是<code>select *,RANK()over(order by score desc)排名 from SC</code>，把所有的成绩都放到一块儿排序了，这没有意义，不可比。于是我修改了一下题目。</p>
+<figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">select</span> s.*, rank_01, rank_02, rank_03, rank_total</span><br><span class="line"><span class="keyword">from</span> student s</span><br><span class="line"><span class="keyword">left</span> <span class="keyword">join</span> (<span class="keyword">select</span> <span class="keyword">sid</span>, <span class="keyword">rank</span>() <span class="keyword">over</span>(<span class="keyword">partition</span> <span class="keyword">by</span> cid <span class="keyword">order</span> <span class="keyword">by</span> score <span class="keyword">desc</span>) <span class="keyword">as</span> rank_01 <span class="keyword">from</span> sc <span class="keyword">where</span> cid=<span class="number">01</span>) A <span class="keyword">on</span> s.sid=A.sid</span><br><span class="line"><span class="keyword">left</span> <span class="keyword">join</span> (<span class="keyword">select</span> <span class="keyword">sid</span>, <span class="keyword">rank</span>() <span class="keyword">over</span>(<span class="keyword">partition</span> <span class="keyword">by</span> cid <span class="keyword">order</span> <span class="keyword">by</span> score <span class="keyword">desc</span>) <span class="keyword">as</span> rank_02 <span class="keyword">from</span> sc <span class="keyword">where</span> cid=<span class="number">02</span>) B <span class="keyword">on</span> s.sid=B.sid</span><br><span class="line"><span class="keyword">left</span> <span class="keyword">join</span> (<span class="keyword">select</span> <span class="keyword">sid</span>, <span class="keyword">rank</span>() <span class="keyword">over</span>(<span class="keyword">partition</span> <span class="keyword">by</span> cid <span class="keyword">order</span> <span class="keyword">by</span> score <span class="keyword">desc</span>) <span class="keyword">as</span> rank_03 <span class="keyword">from</span> sc <span class="keyword">where</span> cid=<span class="number">03</span>) C <span class="keyword">on</span> s.sid=C.sid</span><br><span class="line"><span class="keyword">left</span> <span class="keyword">join</span> (<span class="keyword">select</span> <span class="keyword">sid</span>, <span class="keyword">rank</span>() <span class="keyword">over</span>(<span class="keyword">order</span> <span class="keyword">by</span> <span class="keyword">avg</span>(score) <span class="keyword">desc</span>) <span class="keyword">as</span> rank_total <span class="keyword">from</span> sc <span class="keyword">group</span> <span class="keyword">by</span> <span class="keyword">sid</span>) D <span class="keyword">on</span> s.sid=D.sid</span><br><span class="line"><span class="keyword">order</span> <span class="keyword">by</span> rank_total <span class="keyword">asc</span></span><br></pre></td></tr></table></figure>
+
+<figure class="highlight ruby"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line">+------+--------+---------------------+------+---------+---------+---------+------------+</span><br><span class="line"><span class="params">| Sid  |</span> Sname  <span class="params">| Sage                |</span> Ssex <span class="params">| rank_01 |</span> rank_02 <span class="params">| rank_03 |</span> rank_total <span class="params">|</span></span><br><span class="line"><span class="params">+------+--------+---------------------+------+---------+---------+---------+------------+</span></span><br><span class="line"><span class="params">|</span> 08   <span class="params">| 王菊   |</span> <span class="number">1990</span>-<span class="number">01</span>-<span class="number">20</span> <span class="number">00</span><span class="symbol">:</span><span class="number">00</span><span class="symbol">:</span><span class="number">00</span> <span class="params">| 女   |</span>    NULL <span class="params">|    NULL |</span>    NULL <span class="params">|       NULL |</span></span><br><span class="line"><span class="params">| 07   |</span> 郑竹   <span class="params">| 1989-07-01 00:00:00 |</span> 女   <span class="params">|    NULL |</span>       <span class="number">2</span> <span class="params">|       2 |</span>          <span class="number">1</span> <span class="params">|</span></span><br><span class="line"><span class="params">|</span> <span class="number">01</span>   <span class="params">| 赵雷   |</span> <span class="number">1990</span>-<span class="number">01</span>-<span class="number">01</span> <span class="number">00</span><span class="symbol">:</span><span class="number">00</span><span class="symbol">:</span><span class="number">00</span> <span class="params">| 男   |</span>       <span class="number">1</span> <span class="params">|       1 |</span>       <span class="number">1</span> <span class="params">|          2 |</span></span><br><span class="line"><span class="params">| 05   |</span> 周梅   <span class="params">| 1991-12-01 00:00:00 |</span> 女   <span class="params">|       3 |</span>       <span class="number">3</span> <span class="params">|    NULL |</span>          <span class="number">3</span> <span class="params">|</span></span><br><span class="line"><span class="params">|</span> <span class="number">03</span>   <span class="params">| 孙风   |</span> <span class="number">1990</span>-<span class="number">05</span>-<span class="number">20</span> <span class="number">00</span><span class="symbol">:</span><span class="number">00</span><span class="symbol">:</span><span class="number">00</span> <span class="params">| 男   |</span>       <span class="number">1</span> <span class="params">|       4 |</span>       <span class="number">3</span> <span class="params">|          4 |</span></span><br><span class="line"><span class="params">| 02   |</span> 钱电   <span class="params">| 1990-12-21 00:00:00 |</span> 男   <span class="params">|       4 |</span>       <span class="number">5</span> <span class="params">|       3 |</span>          <span class="number">5</span> <span class="params">|</span></span><br><span class="line"><span class="params">|</span> <span class="number">04</span>   <span class="params">| 李云   |</span> <span class="number">1990</span>-08-<span class="number">06</span> <span class="number">00</span><span class="symbol">:</span><span class="number">00</span><span class="symbol">:</span><span class="number">00</span> <span class="params">| 男   |</span>       <span class="number">5</span> <span class="params">|       6 |</span>       <span class="number">6</span> <span class="params">|          6 |</span></span><br><span class="line"><span class="params">| 06   |</span> 吴兰   <span class="params">| 1992-03-01 00:00:00 |</span> 女   <span class="params">|       6 |</span>    NULL <span class="params">|       5 |</span>          <span class="number">7</span> <span class="params">|</span></span><br><span class="line"><span class="params">+------+--------+---------------------+------+---------+---------+---------+------------+</span></span><br><span class="line"><span class="params">8 rows <span class="keyword">in</span> set (0.00 sec)</span></span><br></pre></td></tr></table></figure>
+
+<p><strong>15.1 按平均成绩进行排序，显示总排名和各科排名，Score 重复时合并名次</strong></p>
+<p>同样修改了一下题目。15题和15.1题的指向很明确了，就是rank()和dense_rank()的区别，也就是两个并列第一名之后的那个人是第三名(rank)还是第二名(dense_rank)的区别。</p>
+<figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">select</span> s.*, rank_01, rank_02, rank_03, rank_total</span><br><span class="line"><span class="keyword">from</span> student s</span><br><span class="line"><span class="keyword">left</span> <span class="keyword">join</span> (<span class="keyword">select</span> <span class="keyword">sid</span>, <span class="keyword">dense_rank</span>() <span class="keyword">over</span>(<span class="keyword">partition</span> <span class="keyword">by</span> cid <span class="keyword">order</span> <span class="keyword">by</span> score <span class="keyword">desc</span>) <span class="keyword">as</span> rank_01 <span class="keyword">from</span> sc <span class="keyword">where</span> cid=<span class="number">01</span>) A <span class="keyword">on</span> s.sid=A.sid</span><br><span class="line"><span class="keyword">left</span> <span class="keyword">join</span> (<span class="keyword">select</span> <span class="keyword">sid</span>, <span class="keyword">dense_rank</span>() <span class="keyword">over</span>(<span class="keyword">partition</span> <span class="keyword">by</span> cid <span class="keyword">order</span> <span class="keyword">by</span> score <span class="keyword">desc</span>) <span class="keyword">as</span> rank_02 <span class="keyword">from</span> sc <span class="keyword">where</span> cid=<span class="number">02</span>) B <span class="keyword">on</span> s.sid=B.sid</span><br><span class="line"><span class="keyword">left</span> <span class="keyword">join</span> (<span class="keyword">select</span> <span class="keyword">sid</span>, <span class="keyword">dense_rank</span>() <span class="keyword">over</span>(<span class="keyword">partition</span> <span class="keyword">by</span> cid <span class="keyword">order</span> <span class="keyword">by</span> score <span class="keyword">desc</span>) <span class="keyword">as</span> rank_03 <span class="keyword">from</span> sc <span class="keyword">where</span> cid=<span class="number">03</span>) C <span class="keyword">on</span> s.sid=C.sid</span><br><span class="line"><span class="keyword">left</span> <span class="keyword">join</span> (<span class="keyword">select</span> <span class="keyword">sid</span>, <span class="keyword">dense_rank</span>() <span class="keyword">over</span>(<span class="keyword">order</span> <span class="keyword">by</span> <span class="keyword">avg</span>(score) <span class="keyword">desc</span>) <span class="keyword">as</span> rank_total <span class="keyword">from</span> sc <span class="keyword">group</span> <span class="keyword">by</span> <span class="keyword">sid</span>) D <span class="keyword">on</span> s.sid=D.sid</span><br><span class="line"><span class="keyword">order</span> <span class="keyword">by</span> rank_total <span class="keyword">asc</span></span><br></pre></td></tr></table></figure>
+
+<figure class="highlight ruby"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line">+------+--------+---------------------+------+---------+---------+---------+------------+</span><br><span class="line"><span class="params">| Sid  |</span> Sname  <span class="params">| Sage                |</span> Ssex <span class="params">| rank_01 |</span> rank_02 <span class="params">| rank_03 |</span> rank_total <span class="params">|</span></span><br><span class="line"><span class="params">+------+--------+---------------------+------+---------+---------+---------+------------+</span></span><br><span class="line"><span class="params">|</span> 08   <span class="params">| 王菊   |</span> <span class="number">1990</span>-<span class="number">01</span>-<span class="number">20</span> <span class="number">00</span><span class="symbol">:</span><span class="number">00</span><span class="symbol">:</span><span class="number">00</span> <span class="params">| 女   |</span>    NULL <span class="params">|    NULL |</span>    NULL <span class="params">|       NULL |</span></span><br><span class="line"><span class="params">| 07   |</span> 郑竹   <span class="params">| 1989-07-01 00:00:00 |</span> 女   <span class="params">|    NULL |</span>       <span class="number">2</span> <span class="params">|       2 |</span>          <span class="number">1</span> <span class="params">|</span></span><br><span class="line"><span class="params">|</span> <span class="number">01</span>   <span class="params">| 赵雷   |</span> <span class="number">1990</span>-<span class="number">01</span>-<span class="number">01</span> <span class="number">00</span><span class="symbol">:</span><span class="number">00</span><span class="symbol">:</span><span class="number">00</span> <span class="params">| 男   |</span>       <span class="number">1</span> <span class="params">|       1 |</span>       <span class="number">1</span> <span class="params">|          2 |</span></span><br><span class="line"><span class="params">| 05   |</span> 周梅   <span class="params">| 1991-12-01 00:00:00 |</span> 女   <span class="params">|       2 |</span>       <span class="number">3</span> <span class="params">|    NULL |</span>          <span class="number">3</span> <span class="params">|</span></span><br><span class="line"><span class="params">|</span> <span class="number">03</span>   <span class="params">| 孙风   |</span> <span class="number">1990</span>-<span class="number">05</span>-<span class="number">20</span> <span class="number">00</span><span class="symbol">:</span><span class="number">00</span><span class="symbol">:</span><span class="number">00</span> <span class="params">| 男   |</span>       <span class="number">1</span> <span class="params">|       4 |</span>       <span class="number">3</span> <span class="params">|          4 |</span></span><br><span class="line"><span class="params">| 02   |</span> 钱电   <span class="params">| 1990-12-21 00:00:00 |</span> 男   <span class="params">|       3 |</span>       <span class="number">5</span> <span class="params">|       3 |</span>          <span class="number">5</span> <span class="params">|</span></span><br><span class="line"><span class="params">|</span> <span class="number">04</span>   <span class="params">| 李云   |</span> <span class="number">1990</span>-08-<span class="number">06</span> <span class="number">00</span><span class="symbol">:</span><span class="number">00</span><span class="symbol">:</span><span class="number">00</span> <span class="params">| 男   |</span>       <span class="number">4</span> <span class="params">|       6 |</span>       <span class="number">5</span> <span class="params">|          6 |</span></span><br><span class="line"><span class="params">| 06   |</span> 吴兰   <span class="params">| 1992-03-01 00:00:00 |</span> 女   <span class="params">|       5 |</span>    NULL <span class="params">|       4 |</span>          <span class="number">7</span> <span class="params">|</span></span><br><span class="line"><span class="params">+------+--------+---------------------+------+---------+---------+---------+------------+</span></span><br><span class="line"><span class="params">8 rows <span class="keyword">in</span> set (0.00 sec)</span></span><br></pre></td></tr></table></figure>
+
+<p><strong>17. 统计各科成绩各分数段人数：课程编号，课程名称，[100-85]，[85-70]，[70-60]，[60-0] 及所占百分比</strong></p>
+<figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">select</span> c.cid <span class="keyword">as</span> 课程编号, c.cname <span class="keyword">as</span> 课程名称, A.*</span><br><span class="line"><span class="keyword">from</span> course <span class="keyword">as</span> c,</span><br><span class="line">(<span class="keyword">select</span> cid,</span><br><span class="line">    <span class="keyword">sum</span>(<span class="keyword">case</span> <span class="keyword">when</span> score &gt;= <span class="number">85</span> <span class="keyword">then</span> <span class="number">1</span> <span class="keyword">else</span> <span class="number">0</span> <span class="keyword">end</span>)/<span class="keyword">count</span>(*) <span class="keyword">as</span> <span class="number">100</span>_85,</span><br><span class="line">    <span class="keyword">sum</span>(<span class="keyword">case</span> <span class="keyword">when</span> score &gt;= <span class="number">70</span> <span class="keyword">and</span> score &lt; <span class="number">85</span> <span class="keyword">then</span> <span class="number">1</span> <span class="keyword">else</span> <span class="number">0</span> <span class="keyword">end</span>)/<span class="keyword">count</span>(*) <span class="keyword">as</span> <span class="number">85</span>_70,</span><br><span class="line">    <span class="keyword">sum</span>(<span class="keyword">case</span> <span class="keyword">when</span> score &gt;= <span class="number">60</span> <span class="keyword">and</span> score &lt; <span class="number">70</span> <span class="keyword">then</span> <span class="number">1</span> <span class="keyword">else</span> <span class="number">0</span> <span class="keyword">end</span>)/<span class="keyword">count</span>(*) <span class="keyword">as</span> <span class="number">70</span>_60,</span><br><span class="line">    <span class="keyword">sum</span>(<span class="keyword">case</span> <span class="keyword">when</span> score &lt; <span class="number">60</span> <span class="keyword">then</span> <span class="number">1</span> <span class="keyword">else</span> <span class="number">0</span> <span class="keyword">end</span>)/<span class="keyword">count</span>(*) <span class="keyword">as</span> <span class="number">60</span>_0</span><br><span class="line"><span class="keyword">from</span> sc <span class="keyword">group</span> <span class="keyword">by</span> cid) <span class="keyword">as</span> A</span><br><span class="line"><span class="keyword">where</span> c.cid = A.cid</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight ruby"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">+--------------+--------------+------+--------+--------+--------+--------+</span><br><span class="line"><span class="params">| 课程编号     |</span> 课程名称      <span class="params">| cid  |</span> <span class="number">100_85</span> <span class="params">| 85_70  |</span> <span class="number">70_60</span>  <span class="params">| 60_0   |</span></span><br><span class="line">+--------------+--------------+------+--------+--------+--------+--------+</span><br><span class="line"><span class="params">| 01           |</span> 语文         <span class="params">| 01   |</span> <span class="number">0</span>.<span class="number">0000</span> <span class="params">| 0.6667 |</span> <span class="number">0</span>.<span class="number">0000</span> <span class="params">| 0.3333 |</span></span><br><span class="line"><span class="params">| 02           |</span> 数学         <span class="params">| 02   |</span> <span class="number">0</span>.<span class="number">5000</span> <span class="params">| 0.1667 |</span> <span class="number">0</span>.<span class="number">1667</span> <span class="params">| 0.1667 |</span></span><br><span class="line"><span class="params">| 03           |</span> 英语         <span class="params">| 03   |</span> <span class="number">0</span>.<span class="number">3333</span> <span class="params">| 0.3333 |</span> <span class="number">0</span>.<span class="number">0000</span> <span class="params">| 0.3333 |</span></span><br><span class="line">+--------------+--------------+------+--------+--------+--------+--------+</span><br><span class="line"><span class="number">3</span> rows <span class="keyword">in</span> set (<span class="number">0</span>.<span class="number">00</span> sec)</span><br></pre></td></tr></table></figure>
+
+<p><strong>18. 查询各科成绩前三名的记录</strong></p>
+<p>这是我比较喜欢的一道题目，非常经典。</p>
+<figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">select</span> * <span class="keyword">from</span> (<span class="keyword">select</span> *, <span class="keyword">rank</span>() <span class="keyword">over</span>(<span class="keyword">partition</span> <span class="keyword">by</span> cid <span class="keyword">order</span> <span class="keyword">by</span> score <span class="keyword">desc</span>) <span class="keyword">as</span> graderank <span class="keyword">from</span> sc) A </span><br><span class="line"><span class="keyword">where</span> A.graderank &lt;= <span class="number">3</span></span><br></pre></td></tr></table></figure>
+
+<figure class="highlight ruby"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line"><span class="params">| Sid  |</span> Cid  <span class="params">| score |</span> graderank <span class="params">|</span></span><br><span class="line"><span class="params">+------+------+-------+-----------+</span></span><br><span class="line"><span class="params">|</span> <span class="number">01</span>   <span class="params">| 01   |</span>  <span class="number">80.0</span> <span class="params">|         1 |</span></span><br><span class="line"><span class="params">| 03   |</span> <span class="number">01</span>   <span class="params">|  80.0 |</span>         <span class="number">1</span> <span class="params">|</span></span><br><span class="line"><span class="params">|</span> <span class="number">05</span>   <span class="params">| 01   |</span>  <span class="number">76.0</span> <span class="params">|         3 |</span></span><br><span class="line"><span class="params">| 01   |</span> <span class="number">02</span>   <span class="params">|  90.0 |</span>         <span class="number">1</span> <span class="params">|</span></span><br><span class="line"><span class="params">|</span> <span class="number">07</span>   <span class="params">| 02   |</span>  <span class="number">89.0</span> <span class="params">|         2 |</span></span><br><span class="line"><span class="params">| 05   |</span> <span class="number">02</span>   <span class="params">|  87.0 |</span>         <span class="number">3</span> <span class="params">|</span></span><br><span class="line"><span class="params">|</span> <span class="number">01</span>   <span class="params">| 03   |</span>  <span class="number">99.0</span> <span class="params">|         1 |</span></span><br><span class="line"><span class="params">| 07   |</span> <span class="number">03</span>   <span class="params">|  98.0 |</span>         <span class="number">2</span> <span class="params">|</span></span><br><span class="line"><span class="params">|</span> <span class="number">02</span>   <span class="params">| 03   |</span>  <span class="number">80.0</span> <span class="params">|         3 |</span></span><br><span class="line"><span class="params">| 03   |</span> <span class="number">03</span>   <span class="params">|  80.0 |</span>         <span class="number">3</span> <span class="params">|</span></span><br><span class="line"><span class="params">+------+------+-------+-----------+</span></span><br><span class="line"><span class="params">10 rows <span class="keyword">in</span> set (0.00 sec)</span></span><br></pre></td></tr></table></figure>
+
+<p><strong>20. 查询出只选修两门课程的学生学号和姓名</strong></p>
+<figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">select</span> s.sid, s.sname, <span class="keyword">count</span>(cid)</span><br><span class="line"><span class="keyword">from</span> student s, sc</span><br><span class="line"><span class="keyword">where</span> s.sid = sc.sid</span><br><span class="line"><span class="keyword">group</span> <span class="keyword">by</span> s.sid</span><br><span class="line"><span class="keyword">having</span> <span class="keyword">count</span>(cid)=<span class="number">2</span></span><br></pre></td></tr></table></figure>
+
+<figure class="highlight ruby"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">+------+--------+------------+</span><br><span class="line"><span class="params">| sid  |</span> sname  <span class="params">| count(cid) |</span></span><br><span class="line">+------+--------+------------+</span><br><span class="line"><span class="params">| 05   |</span> 周梅   <span class="params">|          2 |</span></span><br><span class="line"><span class="params">| 06   |</span> 吴兰   <span class="params">|          2 |</span></span><br><span class="line"><span class="params">| 07   |</span> 郑竹   <span class="params">|          2 |</span></span><br><span class="line">+------+--------+------------+</span><br><span class="line"><span class="number">3</span> rows <span class="keyword">in</span> set (<span class="number">0</span>.<span class="number">00</span> sec)</span><br></pre></td></tr></table></figure>
+
+<p><strong>22. 查询名字中含有「风」字的学生信息</strong></p>
+<figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">select</span> * <span class="keyword">from</span> student <span class="keyword">where</span> sname <span class="keyword">like</span> <span class="string">&#x27;%风%&#x27;</span></span><br></pre></td></tr></table></figure>
+
+<figure class="highlight ruby"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">+------+--------+---------------------+------+</span><br><span class="line"><span class="params">| Sid  |</span> Sname  <span class="params">| Sage                |</span> Ssex <span class="params">|</span></span><br><span class="line"><span class="params">+------+--------+---------------------+------+</span></span><br><span class="line"><span class="params">|</span> <span class="number">03</span>   <span class="params">| 孙风   |</span> <span class="number">1990</span>-<span class="number">05</span>-<span class="number">20</span> <span class="number">00</span><span class="symbol">:</span><span class="number">00</span><span class="symbol">:</span><span class="number">00</span> <span class="params">| 男   |</span></span><br><span class="line">+------+--------+---------------------+------+</span><br><span class="line"><span class="number">1</span> row <span class="keyword">in</span> set (<span class="number">0</span>.<span class="number">00</span> sec)</span><br></pre></td></tr></table></figure>
+
+<p><strong>24. 查询 1990 年出生的学生名单</strong></p>
+<figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">select</span> * <span class="keyword">from</span> student <span class="keyword">where</span> <span class="keyword">year</span>(sage) = <span class="number">1990</span></span><br></pre></td></tr></table></figure>
+
+<figure class="highlight ruby"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line">+------+--------+---------------------+------+</span><br><span class="line"><span class="params">| Sid  |</span> Sname  <span class="params">| Sage                |</span> Ssex <span class="params">|</span></span><br><span class="line"><span class="params">+------+--------+---------------------+------+</span></span><br><span class="line"><span class="params">|</span> <span class="number">01</span>   <span class="params">| 赵雷   |</span> <span class="number">1990</span>-<span class="number">01</span>-<span class="number">01</span> <span class="number">00</span><span class="symbol">:</span><span class="number">00</span><span class="symbol">:</span><span class="number">00</span> <span class="params">| 男   |</span></span><br><span class="line"><span class="params">| 02   |</span> 钱电   <span class="params">| 1990-12-21 00:00:00 |</span> 男   <span class="params">|</span></span><br><span class="line"><span class="params">|</span> <span class="number">03</span>   <span class="params">| 孙风   |</span> <span class="number">1990</span>-<span class="number">05</span>-<span class="number">20</span> <span class="number">00</span><span class="symbol">:</span><span class="number">00</span><span class="symbol">:</span><span class="number">00</span> <span class="params">| 男   |</span></span><br><span class="line"><span class="params">| 04   |</span> 李云   <span class="params">| 1990-08-06 00:00:00 |</span> 男   <span class="params">|</span></span><br><span class="line"><span class="params">|</span> 08   <span class="params">| 王菊   |</span> <span class="number">1990</span>-<span class="number">01</span>-<span class="number">20</span> <span class="number">00</span><span class="symbol">:</span><span class="number">00</span><span class="symbol">:</span><span class="number">00</span> <span class="params">| 女   |</span></span><br><span class="line">+------+--------+---------------------+------+</span><br><span class="line"><span class="number">5</span> rows <span class="keyword">in</span> set (<span class="number">0</span>.<span class="number">00</span> sec)</span><br></pre></td></tr></table></figure>
+
+<p><strong>33. 成绩不重复，查询选修「张三」老师所授课程的学生中，成绩最高的学生信息及其成绩</strong></p>
+<figure class="highlight swift"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">select s.*, <span class="built_in">max</span>(score)</span><br><span class="line">from student s, teacher t, course <span class="built_in">c</span>, sc</span><br><span class="line"><span class="keyword">where</span> s.sid = sc.sid</span><br><span class="line">    and sc.cid = <span class="built_in">c</span>.cid</span><br><span class="line">    and <span class="built_in">c</span>.tid = t.tid</span><br><span class="line">    and t.tname = &#x27;张三&#x27;</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight ruby"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">+------+--------+---------------------+------+------------+</span><br><span class="line"><span class="params">| Sid  |</span> Sname  <span class="params">| Sage                |</span> Ssex <span class="params">| max(score) |</span></span><br><span class="line">+------+--------+---------------------+------+------------+</span><br><span class="line"><span class="params">| 01   |</span> 赵雷   <span class="params">| 1990-01-01 00:00:00 |</span> 男   <span class="params">|       90.0 |</span></span><br><span class="line">+------+--------+---------------------+------+------------+</span><br><span class="line"><span class="number">1</span> row <span class="keyword">in</span> set (<span class="number">0</span>.<span class="number">00</span> sec)</span><br></pre></td></tr></table></figure>
+
+<p><strong>34. 成绩有重复的情况下，查询选修「张三」老师所授课程的学生中，成绩最高的学生信息及其成绩</strong></p>
+<figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">select</span> * <span class="keyword">from</span> (</span><br><span class="line">    <span class="keyword">select</span> *, <span class="keyword">DENSE_RANK</span>() <span class="keyword">over</span> (<span class="keyword">order</span> <span class="keyword">by</span> score <span class="keyword">desc</span>) A</span><br><span class="line">    <span class="keyword">from</span> SC</span><br><span class="line">    <span class="keyword">where</span> Cid = (<span class="keyword">select</span> Cid <span class="keyword">from</span> Course <span class="keyword">where</span> Tid=(<span class="keyword">select</span> Tid <span class="keyword">from</span> Teacher <span class="keyword">where</span> Tname=<span class="string">&#x27;张三&#x27;</span>))</span><br><span class="line">) B</span><br><span class="line"><span class="keyword">where</span> B.A=<span class="number">1</span></span><br></pre></td></tr></table></figure>
+
+<figure class="highlight ruby"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">+------+------+-------+---+</span><br><span class="line"><span class="params">| Sid  |</span> Cid  <span class="params">| score |</span> A <span class="params">|</span></span><br><span class="line"><span class="params">+------+------+-------+---+</span></span><br><span class="line"><span class="params">|</span> <span class="number">01</span>   <span class="params">| 02   |</span>  <span class="number">90.0</span> <span class="params">| 1 |</span></span><br><span class="line">+------+------+-------+---+</span><br><span class="line"><span class="number">1</span> row <span class="keyword">in</span> set (<span class="number">0</span>.<span class="number">00</span> sec)</span><br></pre></td></tr></table></figure>
+
+<p><strong>40. 查询各学生的年龄，只按年份来算</strong></p>
+<figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">select</span> sname, <span class="keyword">year</span>(<span class="keyword">now</span>())-<span class="keyword">year</span>(sage) <span class="keyword">as</span> age <span class="keyword">from</span> student</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight ruby"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line">+--------+------+</span><br><span class="line"><span class="params">| sname  |</span> age  <span class="params">|</span></span><br><span class="line"><span class="params">+--------+------+</span></span><br><span class="line"><span class="params">|</span> 赵雷   <span class="params">|   28 |</span></span><br><span class="line"><span class="params">| 钱电   |</span>   <span class="number">28</span> <span class="params">|</span></span><br><span class="line"><span class="params">|</span> 孙风   <span class="params">|   28 |</span></span><br><span class="line"><span class="params">| 李云   |</span>   <span class="number">28</span> <span class="params">|</span></span><br><span class="line"><span class="params">|</span> 周梅   <span class="params">|   27 |</span></span><br><span class="line"><span class="params">| 吴兰   |</span>   <span class="number">26</span> <span class="params">|</span></span><br><span class="line"><span class="params">|</span> 郑竹   <span class="params">|   29 |</span></span><br><span class="line"><span class="params">| 王菊   |</span>   <span class="number">28</span> <span class="params">|</span></span><br><span class="line"><span class="params">+--------+------+</span></span><br><span class="line"><span class="params">8 rows <span class="keyword">in</span> set (0.00 sec)</span></span><br></pre></td></tr></table></figure>
+
+<p><strong>41. 按照出生日期来算，当前月日 &lt; 出生年月的月日则，年龄减一</strong></p>
+<figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">select</span> sname, <span class="keyword">timestampdiff</span>(<span class="keyword">year</span>, sage, <span class="keyword">now</span>()) <span class="keyword">as</span> age <span class="keyword">from</span> student</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight ruby"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line">+--------+------+</span><br><span class="line"><span class="params">| sname  |</span> age  <span class="params">|</span></span><br><span class="line"><span class="params">+--------+------+</span></span><br><span class="line"><span class="params">|</span> 赵雷   <span class="params">|   28 |</span></span><br><span class="line"><span class="params">| 钱电   |</span>   <span class="number">27</span> <span class="params">|</span></span><br><span class="line"><span class="params">|</span> 孙风   <span class="params">|   28 |</span></span><br><span class="line"><span class="params">| 李云   |</span>   <span class="number">27</span> <span class="params">|</span></span><br><span class="line"><span class="params">|</span> 周梅   <span class="params">|   26 |</span></span><br><span class="line"><span class="params">| 吴兰   |</span>   <span class="number">26</span> <span class="params">|</span></span><br><span class="line"><span class="params">|</span> 郑竹   <span class="params">|   29 |</span></span><br><span class="line"><span class="params">| 王菊   |</span>   <span class="number">28</span> <span class="params">|</span></span><br><span class="line"><span class="params">+--------+------+</span></span><br><span class="line"><span class="params">8 rows <span class="keyword">in</span> set (0.00 sec)  </span></span><br></pre></td></tr></table></figure>
+
+<p><strong>42. 查询本周过生日的学生</strong></p>
+<figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">select</span> * <span class="keyword">from</span> student <span class="keyword">where</span> <span class="keyword">week</span>(<span class="keyword">now</span>()) = <span class="keyword">week</span>(sage)</span><br></pre></td></tr></table></figure>
+
+
+
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">Empty <span class="built_in">set</span> (0.00 sec)</span><br></pre></td></tr></table></figure>
+
+<p><strong>43. 查询下周过生日的学生</strong></p>
+<figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">select</span> * <span class="keyword">from</span> student <span class="keyword">where</span> (<span class="keyword">week</span>(<span class="keyword">now</span>())+<span class="number">1</span>) = <span class="keyword">week</span>(sage)</span><br></pre></td></tr></table></figure>
+
+
+
+<figure class="highlight ruby"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">+------+--------+---------------------+------+</span><br><span class="line"><span class="params">| Sid  |</span> Sname  <span class="params">| Sage                |</span> Ssex <span class="params">|</span></span><br><span class="line"><span class="params">+------+--------+---------------------+------+</span></span><br><span class="line"><span class="params">|</span> <span class="number">04</span>   <span class="params">| 李云   |</span> <span class="number">1990</span>-08-<span class="number">06</span> <span class="number">00</span><span class="symbol">:</span><span class="number">00</span><span class="symbol">:</span><span class="number">00</span> <span class="params">| 男   |</span></span><br><span class="line">+------+--------+---------------------+------+</span><br><span class="line"><span class="number">1</span> row <span class="keyword">in</span> set (<span class="number">0</span>.<span class="number">00</span> sec)</span><br></pre></td></tr></table></figure>
+
+<p><strong>44. 查询本月过生日的学生</strong></p>
+<figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">select</span> * <span class="keyword">from</span> student <span class="keyword">where</span> <span class="keyword">month</span>(<span class="keyword">now</span>()) = <span class="keyword">month</span>(sage)</span><br></pre></td></tr></table></figure>
+
+
+
+<figure class="highlight ruby"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">+------+--------+---------------------+------+</span><br><span class="line"><span class="params">| Sid  |</span> Sname  <span class="params">| Sage                |</span> Ssex <span class="params">|</span></span><br><span class="line"><span class="params">+------+--------+---------------------+------+</span></span><br><span class="line"><span class="params">|</span> <span class="number">07</span>   <span class="params">| 郑竹   |</span> <span class="number">1989</span>-<span class="number">07</span>-<span class="number">01</span> <span class="number">00</span><span class="symbol">:</span><span class="number">00</span><span class="symbol">:</span><span class="number">00</span> <span class="params">| 女   |</span></span><br><span class="line">+------+--------+---------------------+------+</span><br><span class="line"><span class="number">1</span> row <span class="keyword">in</span> set (<span class="number">0</span>.<span class="number">00</span> sec)</span><br></pre></td></tr></table></figure>
+
+<p><strong>45. 查询下月过生日的学生</strong></p>
+<figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">select</span> * <span class="keyword">from</span> student <span class="keyword">where</span> (<span class="keyword">month</span>(<span class="keyword">now</span>())+<span class="number">1</span>) = <span class="keyword">month</span>(sage)</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight ruby"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">+------+--------+---------------------+------+</span><br><span class="line"><span class="params">| Sid  |</span> Sname  <span class="params">| Sage                |</span> Ssex <span class="params">|</span></span><br><span class="line"><span class="params">+------+--------+---------------------+------+</span></span><br><span class="line"><span class="params">|</span> <span class="number">04</span>   <span class="params">| 李云   |</span> <span class="number">1990</span>-08-<span class="number">06</span> <span class="number">00</span><span class="symbol">:</span><span class="number">00</span><span class="symbol">:</span><span class="number">00</span> <span class="params">| 男   |</span></span><br><span class="line">+------+--------+---------------------+------+</span><br><span class="line"><span class="number">1</span> row <span class="keyword">in</span> set (<span class="number">0</span>.<span class="number">00</span> sec)</span><br></pre></td></tr></table></figure>
+    </div>
+
+    
+    
+    
+        <div class="reward-container">
+  <div>文章对你有帮助?打赏一下作者吧</div>
+  <button onclick="var qr = document.getElementById('qr'); qr.style.display = (qr.style.display === 'none') ? 'block' : 'none';">
+    打赏
+  </button>
+  <div id="qr" style="display: none;">
+      
+      <div style="display: inline-block;">
+        <img src="https://pic.downk.cc/item/5d064208451253d178a15b27.png" alt="Raven 微信支付">
+        <p>微信支付</p>
+      </div>
+      
+      <div style="display: inline-block;">
+        <img src="https://pic.downk.cc/item/5d0641c7451253d178a15376.png" alt="Raven 支付宝">
+        <p>支付宝</p>
+      </div>
+
+  </div>
+</div>
+
+        
+
+<div>
+<ul class="post-copyright">
+  <li class="post-copyright-author">
+    <strong>本文作者： </strong>Raven
+  </li>
+  <li class="post-copyright-link">
+    <strong>本文链接：</strong>
+    <a href="https://www.ravenxrz.ink/archives/780c7923.html" title="SQL练习题">https://www.ravenxrz.ink/archives/780c7923.html</a>
+  </li>
+  <li class="post-copyright-license">
+    <strong>版权声明： </strong>本博客所有文章除特别声明外，均采用 <span class="exturl" data-url="aHR0cHM6Ly9jcmVhdGl2ZWNvbW1vbnMub3JnL2xpY2Vuc2VzL2J5LW5jLXNhLzQuMC8="><i class="fa fa-fw fa-creative-commons"></i>BY-NC-SA</span> 许可协议。转载请注明出处！
+  </li>
+</ul>
+</div>
+
+
+      <footer class="post-footer">
+          
+          <div class="post-tags">
+              <a href="/tags/SQL/" rel="tag"><i class="fa fa-tag"></i> SQL</a>
+          </div>
+
+        
+
+
+        
+    <div class="post-nav">
+      <div class="post-nav-item">
+    <a href="/archives/eec6c405.html" rel="prev" title="转载-Maven学习总结">
+      <i class="fa fa-chevron-left"></i> 转载-Maven学习总结
+    </a></div>
+      <div class="post-nav-item">
+    <a href="/archives/2202022e.html" rel="next" title="可能是Windows上最好用的Cmd窗口--Cmder+MSYS2+zsh">
+      可能是Windows上最好用的Cmd窗口--Cmder+MSYS2+zsh <i class="fa fa-chevron-right"></i>
+    </a></div>
+    </div>
+      </footer>
+    
+  </article>
+  
+  
+  
+
+
+
+          </div>
+          
+    <div class="comments" id="gitalk-container"></div>
+
+<script>
+  window.addEventListener('tabs:register', () => {
+    let { activeClass } = CONFIG.comments;
+    if (CONFIG.comments.storage) {
+      activeClass = localStorage.getItem('comments_active') || activeClass;
+    }
+    if (activeClass) {
+      let activeTab = document.querySelector(`a[href="#comment-${activeClass}"]`);
+      if (activeTab) {
+        activeTab.click();
+      }
+    }
+  });
+  if (CONFIG.comments.storage) {
+    window.addEventListener('tabs:click', event => {
+      if (!event.target.matches('.tabs-comment .tab-content .tab-pane')) return;
+      let commentClass = event.target.classList[1];
+      localStorage.setItem('comments_active', commentClass);
+    });
+  }
+</script>
+
+        </div>
+          
+  
+  <div class="toggle sidebar-toggle">
+    <span class="toggle-line toggle-line-first"></span>
+    <span class="toggle-line toggle-line-middle"></span>
+    <span class="toggle-line toggle-line-last"></span>
+  </div>
+
+  <aside class="sidebar">
+    <div class="sidebar-inner">
+
+      <ul class="sidebar-nav motion-element">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          站点概览
+        </li>
+      </ul>
+
+      <!--noindex-->
+      <div class="post-toc-wrap sidebar-panel">
+      </div>
+      <!--/noindex-->
+
+      <div class="site-overview-wrap sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+    <img class="site-author-image" itemprop="image" alt="Raven"
+      src="https://pic.downk.cc/item/5e907515504f4bcb04b6f798.jpg">
+  <p class="site-author-name" itemprop="name">Raven</p>
+  <div class="site-description" itemprop="description">分享技术，记录生活</div>
+</div>
+<div class="site-state-wrap motion-element">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+          <a href="/archives/">
+        
+          <span class="site-state-item-count">120</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+            <a href="/categories/">
+          
+        <span class="site-state-item-count">17</span>
+        <span class="site-state-item-name">分类</span></a>
+      </div>
+      <div class="site-state-item site-state-tags">
+            <a href="/tags/">
+          
+        <span class="site-state-item-count">114</span>
+        <span class="site-state-item-name">标签</span></a>
+      </div>
+  </nav>
+</div>
+  <div class="links-of-author motion-element">
+      <span class="links-of-author-item">
+        <span class="exturl" data-url="aHR0cHM6Ly9naXRodWIuY29tL3JhdmVueHJ6" title="GitHub → https:&#x2F;&#x2F;github.com&#x2F;ravenxrz"><i class="fa fa-fw fa-fab fa-github"></i>GitHub</span>
+      </span>
+      <span class="links-of-author-item">
+        <span class="exturl" data-url="bWFpbHRvOnpoYWduLnhpbmdydWlAZm94bWFpbC5jb20=" title="E-Mail → mailto:zhagn.xingrui@foxmail.com"><i class="fa fa-fw fa-fa fa-envelope"></i>E-Mail</span>
+      </span>
+  </div>
+  <div class="cc-license motion-element" itemprop="license">
+    <span class="exturl cc-opacity" data-url="aHR0cHM6Ly9jcmVhdGl2ZWNvbW1vbnMub3JnL2xpY2Vuc2VzL2J5LW5jLXNhLzQuMC8="><img src="/images/cc-by-nc-sa.svg" alt="Creative Commons"></span>
+  </div>
+
+
+  <div class="links-of-blogroll motion-element">
+    <div class="links-of-blogroll-title">
+      <i class="fa fa-fw fa-fa fa-link"></i>
+      Links
+    </div>
+    <ul class="links-of-blogroll-list">
+        <li class="links-of-blogroll-item">
+          <a href="/resources" title="&#x2F;resources">我的资源</a>
+        </li>
+    </ul>
+  </div>
+
+      </div>
+
+    </div>
+  </aside>
+  <div id="sidebar-dimmer"></div>
+
+
+      </div>
+    </main>
+
+    <footer class="footer">
+      <div class="footer-inner">
+        
+
+        
+
+<div class="copyright">
+  
+  &copy; 2017 – 
+  <span itemprop="copyrightYear">2020</span>
+  <span class="with-love">
+    <i class="fa fa-fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">Raven</span>
+</div>
+  <div class="powered-by">由 <span class="exturl theme-link" data-url="aHR0cHM6Ly9oZXhvLmlv">Hexo</span> & <span class="exturl theme-link" data-url="aHR0cHM6Ly9taXN0LnRoZW1lLW5leHQub3Jn">NexT.Mist</span> 强力驱动
+  </div>
+
+        
+<div class="busuanzi-count">
+  <script async src="https://busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+    <span class="post-meta-item" id="busuanzi_container_site_uv" style="display: none;">
+      <span class="post-meta-item-icon">
+        <i class="fa fa-fa fa-user"></i>
+      </span>
+      <span class="site-uv" title="总访客量">
+        <span id="busuanzi_value_site_uv"></span>
+      </span>
+    </span>
+    <span class="post-meta-divider">|</span>
+    <span class="post-meta-item" id="busuanzi_container_site_pv" style="display: none;">
+      <span class="post-meta-item-icon">
+        <i class="fa fa-fa fa-eye"></i>
+      </span>
+      <span class="site-pv" title="总访问量">
+        <span id="busuanzi_value_site_pv"></span>
+      </span>
+    </span>
+</div>
+
+
+
+
+
+
+
+
+      </div>
+    </footer>
+  </div>
+
+  
+  <script src="//cdn.jsdelivr.net/npm/animejs@3.1.0/lib/anime.min.js"></script>
+  <script src="//cdn.jsdelivr.net/npm/medium-zoom@1/dist/medium-zoom.min.js"></script>
+  <script src="//cdn.jsdelivr.net/npm/lozad@1/dist/lozad.min.js"></script>
+  <script src="//cdn.jsdelivr.net/npm/pangu@4/dist/browser/pangu.min.js"></script>
+
+<script src="/js/utils.js"></script>
+
+
+<script src="/js/schemes/muse.js"></script>
+
+
+<script src="/js/next-boot.js"></script>
+
+
+
+
+  
+  <script>
+    (function(){
+      var bp = document.createElement('script');
+      var curProtocol = window.location.protocol.split(':')[0];
+      bp.src = (curProtocol === 'https') ? 'https://zz.bdstatic.com/linksubmit/push.js' : 'http://push.zhanzhang.baidu.com/push.js';
+      var s = document.getElementsByTagName("script")[0];
+      s.parentNode.insertBefore(bp, s);
+    })();
+  </script>
+
+
+
+
+  
+<script src="/js/local-search.js"></script>
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+  
+      
+
+<script>
+  if (typeof MathJax === 'undefined') {
+    window.MathJax = {
+      loader: {
+        source: {
+          '[tex]/amsCd': '[tex]/amscd',
+          '[tex]/AMScd': '[tex]/amscd'
+        }
+      },
+      tex: {
+        inlineMath: {'[+]': [['$', '$']]},
+        tags: 'ams'
+      },
+      options: {
+        renderActions: {
+          findScript: [10, doc => {
+            document.querySelectorAll('script[type^="math/tex"]').forEach(node => {
+              const display = !!node.type.match(/; *mode=display/);
+              const math = new doc.options.MathItem(node.textContent, doc.inputJax[0], display);
+              const text = document.createTextNode('');
+              node.parentNode.replaceChild(text, node);
+              math.start = {node: text, delim: '', n: 0};
+              math.end = {node: text, delim: '', n: 0};
+              doc.math.push(math);
+            });
+          }, '', false],
+          insertedScript: [200, () => {
+            document.querySelectorAll('mjx-container').forEach(node => {
+              let target = node.parentNode;
+              if (target.nodeName.toLowerCase() === 'li') {
+                target.parentNode.classList.add('has-jax');
+              }
+            });
+          }, '', false]
+        }
+      }
+    };
+    (function () {
+      var script = document.createElement('script');
+      script.src = '//cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js';
+      script.defer = true;
+      document.head.appendChild(script);
+    })();
+  } else {
+    MathJax.startup.document.state(0);
+    MathJax.texReset();
+    MathJax.typeset();
+  }
+</script>
+
+    
+
+  
+  <script src="//cdn.jsdelivr.net/npm/quicklink@1/dist/quicklink.umd.js"></script>
+  <script>
+      window.addEventListener('load', () => {
+      quicklink({
+        timeout : 3000,
+        priority: true,
+        ignores : [uri => uri.includes('#'),uri => uri === 'https://www.ravenxrz.ink/archives/780c7923.html',]
+      });
+      });
+  </script>
+
+<link rel="stylesheet" href="//cdn.jsdelivr.net/npm/gitalk@1/dist/gitalk.min.css">
+
+<script>
+NexT.utils.loadComments(document.querySelector('#gitalk-container'), () => {
+  NexT.utils.getScript('//cdn.jsdelivr.net/npm/gitalk@1/dist/gitalk.min.js', () => {
+    var gitalk = new Gitalk({
+      clientID    : 'b2fd373d2ca2e03e591e',
+      clientSecret: 'de4ab066908c1fbd32d3a45e091b3538761d685b',
+      repo        : 'BlogComment',
+      owner       : 'ravenxrz',
+      admin       : ['ravenxrz'],
+      id          : 'b6e8541ca4b540bc770e0ecc442d6e46',
+        language: '',
+      distractionFreeMode: true
+    });
+    gitalk.render('gitalk-container');
+  }, window.Gitalk);
+});
+</script>
+
+</body>
+</html>

@@ -1,0 +1,711 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 5.1.1">
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+  <meta http-equiv="Cache-Control" content="no-transform">
+  <meta http-equiv="Cache-Control" content="no-siteapp">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+<link rel="stylesheet" href="//cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@5/css/all.min.css">
+  <link rel="stylesheet" href="//cdn.jsdelivr.net/npm/pace-js@1/themes/blue/pace-theme-minimal.css">
+  <script src="//cdn.jsdelivr.net/npm/pace-js@1/pace.min.js"></script>
+
+<script id="hexo-configurations">
+    var NexT = window.NexT || {};
+    var CONFIG = {"hostname":"www.ravenxrz.ink","root":"/","scheme":"Mist","version":"7.8.0","exturl":true,"sidebar":{"position":"left","display":"always","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":true,"show_result":true,"style":"flat"},"back2top":{"enable":true,"sidebar":false,"scrollpercent":true},"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":true,"lazyload":true,"pangu":true,"comments":{"style":"tabs","active":"gitalk","storage":true,"lazyload":true,"nav":null,"activeClass":"gitalk"},"algolia":{"hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":true,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},"motion":{"enable":false,"async":true,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}}};
+  </script>
+
+  <meta name="description" content="1.1 PSO算法的基础理论人们在决策过程中常常会综合两种重要的信息：第一种是他们自己的经验，第二种是其他人的经验。 同样的道理，群鸟在觅食过程中，每只鸟的初始状态都是出于随机位置，且飞翔的方向也是随机的。但是随着时间的推移这些初始处于随机位置的鸟类通过群内相互学习、信息共享和个体不断积累觅食的经验，自发组织积聚成一个群落。每只鸟能够记住自己找到的最好的位置，称之为局部最优。此外，还能够记住群鸟中">
+<meta property="og:type" content="article">
+<meta property="og:title" content="粒子群算法（PSO)及MATLAB实现">
+<meta property="og:url" content="https://www.ravenxrz.ink/archives/302ae4cb.html">
+<meta property="og:site_name" content="Raven&#39;s Blog">
+<meta property="og:description" content="1.1 PSO算法的基础理论人们在决策过程中常常会综合两种重要的信息：第一种是他们自己的经验，第二种是其他人的经验。 同样的道理，群鸟在觅食过程中，每只鸟的初始状态都是出于随机位置，且飞翔的方向也是随机的。但是随着时间的推移这些初始处于随机位置的鸟类通过群内相互学习、信息共享和个体不断积累觅食的经验，自发组织积聚成一个群落。每只鸟能够记住自己找到的最好的位置，称之为局部最优。此外，还能够记住群鸟中">
+<meta property="og:locale" content="zh_CN">
+<meta property="article:published_time" content="2017-08-25T05:59:09.000Z">
+<meta property="article:modified_time" content="2020-09-06T02:45:08.065Z">
+<meta property="article:author" content="Raven">
+<meta property="article:tag" content="算法">
+<meta name="twitter:card" content="summary">
+
+<link rel="canonical" href="https://www.ravenxrz.ink/archives/302ae4cb.html">
+
+
+<script id="page-configurations">
+  // https://hexo.io/docs/variables.html
+  CONFIG.page = {
+    sidebar: "",
+    isHome : false,
+    isPost : true,
+    lang   : 'zh-CN'
+  };
+</script>
+
+  <title>粒子群算法（PSO)及MATLAB实现 | Raven's Blog</title>
+  
+
+
+
+
+
+
+  <noscript>
+  <style>
+  .use-motion .brand,
+  .use-motion .menu-item,
+  .sidebar-inner,
+  .use-motion .post-block,
+  .use-motion .pagination,
+  .use-motion .comments,
+  .use-motion .post-header,
+  .use-motion .post-body,
+  .use-motion .collection-header { opacity: initial; }
+
+  .use-motion .site-title,
+  .use-motion .site-subtitle {
+    opacity: initial;
+    top: initial;
+  }
+
+  .use-motion .logo-line-before i { left: initial; }
+  .use-motion .logo-line-after i { right: initial; }
+  </style>
+</noscript>
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage">
+  <div class="container">
+    <div class="headband"></div>
+
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切换导航栏">
+      <span class="toggle-line toggle-line-first"></span>
+      <span class="toggle-line toggle-line-middle"></span>
+      <span class="toggle-line toggle-line-last"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <span class="logo-line-before"><i></i></span>
+      <h1 class="site-title">Raven's Blog</h1>
+      <span class="logo-line-after"><i></i></span>
+    </a>
+      <p class="site-subtitle" itemprop="description">zhang.xingrui@foxmail.com</p>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger">
+        <i class="fa fa-search fa-fw fa-lg"></i>
+    </div>
+  </div>
+</div>
+
+
+
+
+<nav class="site-nav">
+  <ul id="menu" class="menu">
+        <li class="menu-item menu-item-home">
+
+    <a href="/" rel="section"><i class="fa fa-fw fa-fa fa-home"></i>首页</a>
+
+  </li>
+        <li class="menu-item menu-item-archives">
+
+    <a href="/archives/" rel="section"><i class="fa fa-fw fa-fa fa-archive"></i>归档<span class="badge">120</span></a>
+
+  </li>
+        <li class="menu-item menu-item-categories">
+
+    <a href="/categories/" rel="section"><i class="fa fa-fw fa-fa fa-th"></i>分类<span class="badge">17</span></a>
+
+  </li>
+        <li class="menu-item menu-item-tags">
+
+    <a href="/tags/" rel="section"><i class="fa fa-fw fa-fa fa-tags"></i>标签<span class="badge">114</span></a>
+
+  </li>
+        <li class="menu-item menu-item-about">
+
+    <a href="/about/" rel="section"><i class="fa fa-fw fa-fa fa-user"></i>关于</a>
+
+  </li>
+      <li class="menu-item menu-item-search">
+        <a role="button" class="popup-trigger"><i class="fa fa-search fa-fw"></i>搜索
+        </a>
+      </li>
+  </ul>
+</nav>
+
+
+
+  <div class="search-pop-overlay">
+    <div class="popup search-popup">
+        <div class="search-header">
+  <span class="search-icon">
+    <i class="fa fa-search"></i>
+  </span>
+  <div class="search-input-container">
+    <input autocomplete="off" autocapitalize="off"
+           placeholder="搜索..." spellcheck="false"
+           type="search" class="search-input">
+  </div>
+  <span class="popup-btn-close">
+    <i class="fa fa-times-circle"></i>
+  </span>
+</div>
+<div id="search-result">
+  <div id="no-result">
+    <i class="fa fa-spinner fa-pulse fa-5x fa-fw"></i>
+  </div>
+</div>
+
+    </div>
+  </div>
+
+</div>
+    </header>
+
+    
+  <div class="back-to-top">
+    <i class="fa fa-arrow-up"></i>
+    <span>0%</span>
+  </div>
+
+  <span class="exturl github-corner" data-url="aHR0cHM6Ly9naXRodWIuY29tL3JhdmVueHJ6" title="Follow me on GitHub" aria-label="Follow me on GitHub"><svg width="80" height="80" viewBox="0 0 250 250" aria-hidden="true"><path d="M0,0 L115,115 L130,115 L142,142 L250,250 L250,0 Z"></path><path d="M128.3,109.0 C113.8,99.7 119.0,89.6 119.0,89.6 C122.0,82.7 120.5,78.6 120.5,78.6 C119.2,72.0 123.4,76.3 123.4,76.3 C127.3,80.9 125.5,87.3 125.5,87.3 C122.9,97.6 130.6,101.9 134.4,103.2" fill="currentColor" style="transform-origin: 130px 106px;" class="octo-arm"></path><path d="M115.0,115.0 C114.9,115.1 118.7,116.5 119.8,115.4 L133.7,101.6 C136.9,99.2 139.9,98.4 142.2,98.6 C133.8,88.0 127.5,74.4 143.8,58.0 C148.5,53.4 154.0,51.2 159.7,51.0 C160.3,49.4 163.2,43.6 171.4,40.1 C171.4,40.1 176.1,42.5 178.8,56.2 C183.1,58.6 187.2,61.8 190.9,65.4 C194.5,69.0 197.7,73.2 200.1,77.6 C213.8,80.2 216.3,84.9 216.3,84.9 C212.7,93.1 206.9,96.0 205.4,96.6 C205.1,102.4 203.0,107.8 198.3,112.5 C181.9,128.9 168.3,122.5 157.7,114.1 C157.9,116.9 156.7,120.9 152.7,124.9 L141.0,136.5 C139.8,137.7 141.6,141.9 141.8,141.8 Z" fill="currentColor" class="octo-body"></path></svg></span>
+
+
+    <main class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          
+
+          <div class="content post posts-expand">
+            
+
+    
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="https://www.ravenxrz.ink/archives/302ae4cb.html">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="https://pic.downk.cc/item/5e907515504f4bcb04b6f798.jpg">
+      <meta itemprop="name" content="Raven">
+      <meta itemprop="description" content="分享技术，记录生活">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Raven's Blog">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          粒子群算法（PSO)及MATLAB实现
+        </h1>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+
+              <time title="创建时间：2017-08-25 13:59:09" itemprop="dateCreated datePublished" datetime="2017-08-25T13:59:09+08:00">2017-08-25</time>
+            </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-calendar-check-o"></i>
+                </span>
+                <span class="post-meta-item-text">更新于</span>
+                <time title="修改时间：2020-09-06 10:45:08" itemprop="dateModified" datetime="2020-09-06T10:45:08+08:00">2020-09-06</time>
+              </span>
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              <span class="post-meta-item-text">分类于</span>
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/%E6%95%B0%E5%AD%A6%E5%BB%BA%E6%A8%A1/" itemprop="url" rel="index"><span itemprop="name">数学建模</span></a>
+                </span>
+            </span>
+
+          
+            <span class="post-meta-item" title="阅读次数" id="busuanzi_container_page_pv" style="display: none;">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-fa fa-eye"></i>
+              </span>
+              <span class="post-meta-item-text">阅读次数：</span>
+              <span id="busuanzi_value_page_pv"></span>
+            </span>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+        <h3 id="1-1-PSO算法的基础理论"><a href="#1-1-PSO算法的基础理论" class="headerlink" title="1.1 PSO算法的基础理论"></a>1.1 PSO算法的基础理论</h3><p>人们在决策过程中常常会综合两种重要的信息：第一种是他们自己的经验，第二种是其他人的经验。</p>
+<p>同样的道理，群鸟在觅食过程中，每只鸟的初始状态都是出于随机位置，且飞翔的方向也是随机的。但是随着时间的推移这些初始处于随机位置的鸟类通过群内相互学习、信息共享和个体不断积累觅食的经验，自发组织积聚成一个群落。每只鸟能够记住自己找到的最好的位置，称之为局部最优。此外，还能够记住群鸟中所有个体索恩能够找到的最好位置，称为全局最优，整个鸟群的觅食中心都是去向全局最优移动的，这在生物学中称为“同步效应”。</p>
+<p>在群鸟觅食模型中，每个个体都可以被看成是一个例子，鸟群则被看成一个粒子群。设在一个$D$维的目标空间里，有$m$个粒子组成的群里，其中第$i$个粒子的位置表示为$X_i$，即第$i$个粒子在$D$维搜索空间的位置是$Xi$。换言之，每个粒子的位置就是一个潜在解，将$Xi$带入目标函数就可以计算出其适应值，根据适应值的大小衡量其优劣，粒子个体经历过的最好位置记为$Pi$，整个群体所有粒子经历过的最好位置记为$Pg$。粒子$i$的速度记为$Vi$。</p>
+<a id="more"></a>
+
+<p>粒子群算法采用下列公式对粒子所在的位置不断更新（单位时间为1）：</p>
+<p>$$<br>vi = w \times vi + c1 \times r1 \times (pi-xi)+c2 \times r2 \times (pg-xi)<br>$$</p>
+<p>$$<br>xi = xi+a \times vi<br>$$</p>
+<ul>
+<li>$w$ 为非负数，称为惯性因子</li>
+<li>$c1$和$c2$称为加速常数。$c1$是根据个体自身的经验进行判断的常数；$c2$根据群体的经验</li>
+<li>$r1$和$r2$为$[0，1]$范围内变换的随机数</li>
+<li>$a$ 称为约束因子，目的是控制速度的权重</li>
+<li>$vi$ 即粒子$i$的飞翔速度$Vi$被一个最大速度$Vmax$所限制。如果当前时刻粒子在某纬度的速度$Vi$更新后超过该纬度的最大飞翔速度$Vmax$，则当前时刻该纬度被限制为$Vmax$。</li>
+</ul>
+<p>迭代终止条件根据具体问题设定，一般为达到预定迭代次数或者粒子群目前为止搜索到最有位置满足目标函数的最小容许误差。</p>
+<h3 id="1-2-PSO算法的约束优化"><a href="#1-2-PSO算法的约束优化" class="headerlink" title="1.2 PSO算法的约束优化"></a>1.2 PSO算法的约束优化</h3><p>原则上$PSO$适应于非约束的优化问题。近年来，一些学者将其推广到约束优化问题，其关键在于如何处理好约束。基于$PSO$算法约束优化工作主要分为两类。</p>
+<ol>
+<li>罚函数法。罚函数的目的是将约束优化问题转化为无约束优化问题</li>
+<li>将粒子群的搜索范围都限制在条件约束族中、</li>
+</ol>
+<p>但是目前有关运用$PSO$算法来处理多约束优化问题的理论还不成熟。</p>
+<h3 id="1-3-PSO的优缺点"><a href="#1-3-PSO的优缺点" class="headerlink" title="1.3 PSO的优缺点"></a>1.3 PSO的优缺点</h3><h4 id="优点"><a href="#优点" class="headerlink" title="优点"></a>优点</h4><ol>
+<li>不依赖与问题信息，采用实数求解，算法通用性强。</li>
+<li>需要调整的参数少，原理简单，容易实现，这是PSO的最大优点</li>
+<li>协同搜索，同时利用个体局部信息和群体全局信息进行指导搜索。</li>
+<li>收敛速度快</li>
+<li>更容易飞跃局部最优信息。</li>
+</ol>
+<h4 id="缺点"><a href="#缺点" class="headerlink" title="缺点"></a>缺点</h4><ol>
+<li>算法局部搜索能力较差，搜索精度不高。</li>
+<li>算法不能保证搜索到全局最优解，主要有一下两个方面：<ol>
+<li>有时粒子群在俯冲过程中会错失全局最优解。</li>
+<li>应用PSO算法处理高位复杂问题是，算法可能过早收敛。</li>
+</ol>
+</li>
+<li>反酸搜索性能对参数具有一定的依赖性</li>
+<li>PSO算法是一种概率算法</li>
+<li>欠缺的生物学背景</li>
+</ol>
+<h2 id="2-PSO算法程序设计"><a href="#2-PSO算法程序设计" class="headerlink" title="2. PSO算法程序设计"></a>2. PSO算法程序设计</h2><h3 id="2-1-程序设计流程"><a href="#2-1-程序设计流程" class="headerlink" title="2.1 程序设计流程"></a>2.1 程序设计流程</h3><ol>
+<li>初始化相关参数</li>
+<li>评价每个粒子的初始适应值</li>
+<li>将初始适应值作为当前每个粒子的最优值，并记录当前的位置作为局部最优位置。</li>
+<li>将最佳初始适应值作为当前全局最优值，并记录当前位置。</li>
+<li>依据上文提到的计算速度和位置公式进行计算。这里要注意最大速度限幅度处理。</li>
+<li>比较当前适应值与之前的适应值，如果更优则进行更新。</li>
+<li>找到当前粒子群的全局最优</li>
+<li>重复5-7步知道达到最小误差或者达到最优大迭代次数。</li>
+<li>输出</li>
+</ol>
+<h3 id="2-2-PSO算法的参数选取"><a href="#2-2-PSO算法的参数选取" class="headerlink" title="2.2 PSO算法的参数选取"></a>2.2 PSO算法的参数选取</h3><h4 id="参数1-粒子数"><a href="#参数1-粒子数" class="headerlink" title="参数1  粒子数"></a>参数1  粒子数</h4><p>粒子数一般取值$20-40$,实验表明，对于大多数$30$个粒子就够用了。粒子数量越多没搜索范围越大，越容易找到全局最优解，但是程序运行时间越长。</p>
+<h4 id="参数2-惯性因子"><a href="#参数2-惯性因子" class="headerlink" title="参数2 惯性因子"></a>参数2 惯性因子</h4><p>惯性因子$w$对于粒子群算法的收敛性起到很大作用，$w$值越大，粒子飞翔幅度越大，容易错失局部寻优能力，而全局搜索能力越强；反之，则局部能力越强，全局弱。这里需要注意一个误区：认为惯性因子越大则继承当前飞翔速度也就越大，所以应该是较小程度地离开原先的寻优轨道。错误理解的原因是，$w$越大，粒子飞翔的速度和位置更新的幅度也就越大，因此偏离原先原先寻优轨道的程度也就越大。（和中学的学习的加速度对速度理解类似？？）</p>
+<p>通常的做法是在迭代开始时讲惯性因子设置得较大，然后在迭代过程中逐步减小。$w$的取值是$[0 1]$，如果$w$取定值，那么建议取$0.6-0.75$.</p>
+<h4 id="参数3-加速常熟-c1-和-c2"><a href="#参数3-加速常熟-c1-和-c2" class="headerlink" title="参数3 加速常熟$c1$和$c2$"></a>参数3 加速常熟$c1$和$c2$</h4><p>一般情况下$c1$= $c2$=$2$.$0$。目前对于加速常数$c1$和$c2$的确切取值，学术界有较大的分歧。</p>
+<p>其中：</p>
+<ul>
+<li>$c1$ 代表自身经验</li>
+<li>$c2$ 代表群体经验</li>
+</ul>
+<h4 id="参数4-最大飞翔速度-Vmax"><a href="#参数4-最大飞翔速度-Vmax" class="headerlink" title="参数4 最大飞翔速度$Vmax$"></a>参数4 最大飞翔速度$Vmax$</h4><p>粒子群算法是通过调整每一次迭代时每一个粒子在每一维上移动一定的距离进行的，速度的改变是随机的，而不希望不收控制的粒子搜索轨道被扩展到问题空间越来越广阔的距离，并达到无穷。如果要粒子进行有效的搜索，就必须对参数$Vmax$进行限制。参数$Vmax$有利于防止搜索范围毫无意义的发散。关于$Vmax$的确定，需要有一定的先验。为了跳出局部最优，需要较大的寻优补偿，而在接近最优值时，采用更小的步长会更好。如果$Vmax$不变，通常设置为没维变化范围的$10$%$-20$%</p>
+<h3 id="2-3-PSO算法MATLAB实现例题"><a href="#2-3-PSO算法MATLAB实现例题" class="headerlink" title="2.3 PSO算法MATLAB实现例题"></a>2.3 PSO算法MATLAB实现例题</h3><figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br></pre></td><td class="code"><pre><span class="line">clc;</span><br><span class="line">clear;</span><br><span class="line">close all;</span><br><span class="line">tic;                              %程序运行计时</span><br><span class="line">E0=<span class="number">0.001</span>;                        %允许误差</span><br><span class="line">MaxNum=<span class="number">100</span>;                    %粒子最大迭代次数</span><br><span class="line">narvs=<span class="number">1</span>;                         %目标函数的自变量个数</span><br><span class="line">particlesize=<span class="number">30</span>;                    %粒子群规模</span><br><span class="line">c1=<span class="number">2</span>;                            %每个粒子的个体学习因子，也称为加速常数</span><br><span class="line">c2=<span class="number">2</span>;                            %每个粒子的社会学习因子，也称为加速常数</span><br><span class="line">w=<span class="number">0.6</span>;                           %惯性因子</span><br><span class="line">vmax=<span class="number">0.8</span>;                        %粒子的最大飞翔速度</span><br><span class="line">x=<span class="number">-5</span>+<span class="number">10</span>*rand(particlesize,narvs);     %粒子所在的位置</span><br><span class="line">v=<span class="number">2</span>*rand(particlesize,narvs);         %粒子的飞翔速度</span><br><span class="line">fitness = @(x)(<span class="number">1</span>/(<span class="number">1</span>+(<span class="number">2.1</span>*(<span class="number">1</span>-x+<span class="number">2</span>*x.^<span class="number">2</span>).*<span class="built_in">exp</span>(-x.^<span class="number">2</span>/<span class="number">2</span>))));%定义适应度函数</span><br><span class="line">f = zeros(<span class="number">1</span>,particlesize);      % 预分配</span><br><span class="line"><span class="keyword">for</span> i=<span class="number">1</span>:particlesize</span><br><span class="line">    <span class="keyword">for</span> j=<span class="number">1</span>:narvs</span><br><span class="line">        f(i)=fitness(x(i,j));</span><br><span class="line">    end</span><br><span class="line">end</span><br><span class="line">personalbest_x=x;</span><br><span class="line">personalbest_faval=f;</span><br><span class="line">[globalbest_faval,i]=min(personalbest_faval);</span><br><span class="line">globalbest_x=personalbest_x(i,:);</span><br><span class="line">k=<span class="number">1</span>;</span><br><span class="line"><span class="keyword">while</span> k&lt;=MaxNum</span><br><span class="line">    <span class="keyword">for</span> i=<span class="number">1</span>:particlesize</span><br><span class="line">        <span class="keyword">for</span> j=<span class="number">1</span>:narvs</span><br><span class="line">            f(i)=fitness(x(i,j));</span><br><span class="line">        end</span><br><span class="line">        if f(i)&lt;personalbest_faval(i) %判断当前位置是否是历史上最佳位置</span><br><span class="line">            personalbest_faval(i)=f(i);</span><br><span class="line">            personalbest_x(i,:)=x(i,:);</span><br><span class="line">        end</span><br><span class="line">    end</span><br><span class="line">    [globalbest_faval,i]=min(personalbest_faval);</span><br><span class="line">    globalbest_x=personalbest_x(i,:);</span><br><span class="line">    <span class="keyword">for</span> i=<span class="number">1</span>:particlesize %更新粒子群里每个个体的最新位置</span><br><span class="line">        v(i,:)=w*v(i,:)+c1*rand*(personalbest_x(i,:)-x(i,:))...</span><br><span class="line">            +c2*rand*(globalbest_x-x(i,:));</span><br><span class="line">        <span class="keyword">for</span> j=<span class="number">1</span>:narvs    %判断粒子的飞翔速度是否超过了最大飞翔速度</span><br><span class="line">            <span class="keyword">if</span> v(i,j)&gt;vmax</span><br><span class="line">                v(i,j)=vmax;</span><br><span class="line">            elseif v(i,j)&lt;-vmax</span><br><span class="line">                v(i,j)=-vmax;</span><br><span class="line">            end</span><br><span class="line">        end</span><br><span class="line">        x(i,:)=x(i,:)+v(i,:);</span><br><span class="line">    end</span><br><span class="line">    if abs(globalbest_faval)&lt;E0,break,end</span><br><span class="line">    k=k+<span class="number">1</span>;</span><br><span class="line">end</span><br><span class="line">Value1=<span class="number">1</span>/globalbest_faval<span class="number">-1</span>; Value1=num2str(Value1);</span><br><span class="line">% <span class="built_in">strcat</span>指令可以实现字符的组合输出</span><br><span class="line">disp(strcat(&#x27;the maximum value&#x27;,&#x27;=&#x27;,Value1));</span><br><span class="line">%输出最大值所在的横坐标位置</span><br><span class="line">Value2=globalbest_x; Value2=num2str(Value2);</span><br><span class="line">disp(strcat(&#x27;the corresponding coordinate&#x27;,&#x27;=&#x27;,Value2));</span><br><span class="line">x=<span class="number">-5</span>:<span class="number">0.01</span>:<span class="number">5</span>;</span><br><span class="line">y=<span class="number">2.1</span>*(<span class="number">1</span>-x+<span class="number">2</span>*x.^<span class="number">2</span>).*<span class="built_in">exp</span>(-x.^<span class="number">2</span>/<span class="number">2</span>);</span><br><span class="line">plot(x,y,&#x27;m-&#x27;,&#x27;linewidth&#x27;,3);</span><br><span class="line">hold on;</span><br><span class="line">plot(globalbest_x,1/globalbest_faval-1,&#x27;kp&#x27;,&#x27;linewidth&#x27;,4);</span><br><span class="line">legend(&#x27;目标函数&#x27;,&#x27;搜索到的最大值&#x27;);</span><br><span class="line">xlabel(<span class="string">&#x27;x&#x27;</span>);</span><br><span class="line">ylabel(<span class="string">&#x27;y&#x27;</span>);</span><br><span class="line">grid on;</span><br><span class="line">toc;</span><br></pre></td></tr></table></figure>
+
+<p>程序输出结果：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">the maximum value&#x3D;5.1985</span><br><span class="line">the corresponding coordinate&#x3D;-1.1617</span><br><span class="line">时间已过 0.250482 秒。</span><br><span class="line">&gt;&gt; </span><br></pre></td></tr></table></figure>
+
+
+
+
+
+    </div>
+
+    
+    
+    
+        <div class="reward-container">
+  <div>文章对你有帮助?打赏一下作者吧</div>
+  <button onclick="var qr = document.getElementById('qr'); qr.style.display = (qr.style.display === 'none') ? 'block' : 'none';">
+    打赏
+  </button>
+  <div id="qr" style="display: none;">
+      
+      <div style="display: inline-block;">
+        <img src="https://pic.downk.cc/item/5d064208451253d178a15b27.png" alt="Raven 微信支付">
+        <p>微信支付</p>
+      </div>
+      
+      <div style="display: inline-block;">
+        <img src="https://pic.downk.cc/item/5d0641c7451253d178a15376.png" alt="Raven 支付宝">
+        <p>支付宝</p>
+      </div>
+
+  </div>
+</div>
+
+        
+
+<div>
+<ul class="post-copyright">
+  <li class="post-copyright-author">
+    <strong>本文作者： </strong>Raven
+  </li>
+  <li class="post-copyright-link">
+    <strong>本文链接：</strong>
+    <a href="https://www.ravenxrz.ink/archives/302ae4cb.html" title="粒子群算法（PSO)及MATLAB实现">https://www.ravenxrz.ink/archives/302ae4cb.html</a>
+  </li>
+  <li class="post-copyright-license">
+    <strong>版权声明： </strong>本博客所有文章除特别声明外，均采用 <span class="exturl" data-url="aHR0cHM6Ly9jcmVhdGl2ZWNvbW1vbnMub3JnL2xpY2Vuc2VzL2J5LW5jLXNhLzQuMC8="><i class="fa fa-fw fa-creative-commons"></i>BY-NC-SA</span> 许可协议。转载请注明出处！
+  </li>
+</ul>
+</div>
+
+
+      <footer class="post-footer">
+          
+          <div class="post-tags">
+              <a href="/tags/%E7%AE%97%E6%B3%95/" rel="tag"><i class="fa fa-tag"></i> 算法</a>
+          </div>
+
+        
+
+
+        
+    <div class="post-nav">
+      <div class="post-nav-item">
+    <a href="/archives/f7aeb3e0.html" rel="prev" title="Android计步代码">
+      <i class="fa fa-chevron-left"></i> Android计步代码
+    </a></div>
+      <div class="post-nav-item">
+    <a href="/archives/3b36af0a.html" rel="next" title="蚁群算法及其MATLAB实现">
+      蚁群算法及其MATLAB实现 <i class="fa fa-chevron-right"></i>
+    </a></div>
+    </div>
+      </footer>
+    
+  </article>
+  
+  
+  
+
+
+
+          </div>
+          
+    <div class="comments" id="gitalk-container"></div>
+
+<script>
+  window.addEventListener('tabs:register', () => {
+    let { activeClass } = CONFIG.comments;
+    if (CONFIG.comments.storage) {
+      activeClass = localStorage.getItem('comments_active') || activeClass;
+    }
+    if (activeClass) {
+      let activeTab = document.querySelector(`a[href="#comment-${activeClass}"]`);
+      if (activeTab) {
+        activeTab.click();
+      }
+    }
+  });
+  if (CONFIG.comments.storage) {
+    window.addEventListener('tabs:click', event => {
+      if (!event.target.matches('.tabs-comment .tab-content .tab-pane')) return;
+      let commentClass = event.target.classList[1];
+      localStorage.setItem('comments_active', commentClass);
+    });
+  }
+</script>
+
+        </div>
+          
+  
+  <div class="toggle sidebar-toggle">
+    <span class="toggle-line toggle-line-first"></span>
+    <span class="toggle-line toggle-line-middle"></span>
+    <span class="toggle-line toggle-line-last"></span>
+  </div>
+
+  <aside class="sidebar">
+    <div class="sidebar-inner">
+
+      <ul class="sidebar-nav motion-element">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          站点概览
+        </li>
+      </ul>
+
+      <!--noindex-->
+      <div class="post-toc-wrap sidebar-panel">
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-3"><a class="nav-link" href="#1-1-PSO%E7%AE%97%E6%B3%95%E7%9A%84%E5%9F%BA%E7%A1%80%E7%90%86%E8%AE%BA"><span class="nav-text">1.1 PSO算法的基础理论</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#1-2-PSO%E7%AE%97%E6%B3%95%E7%9A%84%E7%BA%A6%E6%9D%9F%E4%BC%98%E5%8C%96"><span class="nav-text">1.2 PSO算法的约束优化</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#1-3-PSO%E7%9A%84%E4%BC%98%E7%BC%BA%E7%82%B9"><span class="nav-text">1.3 PSO的优缺点</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#%E4%BC%98%E7%82%B9"><span class="nav-text">优点</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E7%BC%BA%E7%82%B9"><span class="nav-text">缺点</span></a></li></ol></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#2-PSO%E7%AE%97%E6%B3%95%E7%A8%8B%E5%BA%8F%E8%AE%BE%E8%AE%A1"><span class="nav-text">2. PSO算法程序设计</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#2-1-%E7%A8%8B%E5%BA%8F%E8%AE%BE%E8%AE%A1%E6%B5%81%E7%A8%8B"><span class="nav-text">2.1 程序设计流程</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#2-2-PSO%E7%AE%97%E6%B3%95%E7%9A%84%E5%8F%82%E6%95%B0%E9%80%89%E5%8F%96"><span class="nav-text">2.2 PSO算法的参数选取</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#%E5%8F%82%E6%95%B01-%E7%B2%92%E5%AD%90%E6%95%B0"><span class="nav-text">参数1  粒子数</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E5%8F%82%E6%95%B02-%E6%83%AF%E6%80%A7%E5%9B%A0%E5%AD%90"><span class="nav-text">参数2 惯性因子</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E5%8F%82%E6%95%B03-%E5%8A%A0%E9%80%9F%E5%B8%B8%E7%86%9F-c1-%E5%92%8C-c2"><span class="nav-text">参数3 加速常熟$c1$和$c2$</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E5%8F%82%E6%95%B04-%E6%9C%80%E5%A4%A7%E9%A3%9E%E7%BF%94%E9%80%9F%E5%BA%A6-Vmax"><span class="nav-text">参数4 最大飞翔速度$Vmax$</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#2-3-PSO%E7%AE%97%E6%B3%95MATLAB%E5%AE%9E%E7%8E%B0%E4%BE%8B%E9%A2%98"><span class="nav-text">2.3 PSO算法MATLAB实现例题</span></a></li></ol></div>
+      </div>
+      <!--/noindex-->
+
+      <div class="site-overview-wrap sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+    <img class="site-author-image" itemprop="image" alt="Raven"
+      src="https://pic.downk.cc/item/5e907515504f4bcb04b6f798.jpg">
+  <p class="site-author-name" itemprop="name">Raven</p>
+  <div class="site-description" itemprop="description">分享技术，记录生活</div>
+</div>
+<div class="site-state-wrap motion-element">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+          <a href="/archives/">
+        
+          <span class="site-state-item-count">120</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+            <a href="/categories/">
+          
+        <span class="site-state-item-count">17</span>
+        <span class="site-state-item-name">分类</span></a>
+      </div>
+      <div class="site-state-item site-state-tags">
+            <a href="/tags/">
+          
+        <span class="site-state-item-count">114</span>
+        <span class="site-state-item-name">标签</span></a>
+      </div>
+  </nav>
+</div>
+  <div class="links-of-author motion-element">
+      <span class="links-of-author-item">
+        <span class="exturl" data-url="aHR0cHM6Ly9naXRodWIuY29tL3JhdmVueHJ6" title="GitHub → https:&#x2F;&#x2F;github.com&#x2F;ravenxrz"><i class="fa fa-fw fa-fab fa-github"></i>GitHub</span>
+      </span>
+      <span class="links-of-author-item">
+        <span class="exturl" data-url="bWFpbHRvOnpoYWduLnhpbmdydWlAZm94bWFpbC5jb20=" title="E-Mail → mailto:zhagn.xingrui@foxmail.com"><i class="fa fa-fw fa-fa fa-envelope"></i>E-Mail</span>
+      </span>
+  </div>
+  <div class="cc-license motion-element" itemprop="license">
+    <span class="exturl cc-opacity" data-url="aHR0cHM6Ly9jcmVhdGl2ZWNvbW1vbnMub3JnL2xpY2Vuc2VzL2J5LW5jLXNhLzQuMC8="><img src="/images/cc-by-nc-sa.svg" alt="Creative Commons"></span>
+  </div>
+
+
+  <div class="links-of-blogroll motion-element">
+    <div class="links-of-blogroll-title">
+      <i class="fa fa-fw fa-fa fa-link"></i>
+      Links
+    </div>
+    <ul class="links-of-blogroll-list">
+        <li class="links-of-blogroll-item">
+          <a href="/resources" title="&#x2F;resources">我的资源</a>
+        </li>
+    </ul>
+  </div>
+
+      </div>
+
+    </div>
+  </aside>
+  <div id="sidebar-dimmer"></div>
+
+
+      </div>
+    </main>
+
+    <footer class="footer">
+      <div class="footer-inner">
+        
+
+        
+
+<div class="copyright">
+  
+  &copy; 2017 – 
+  <span itemprop="copyrightYear">2020</span>
+  <span class="with-love">
+    <i class="fa fa-fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">Raven</span>
+</div>
+  <div class="powered-by">由 <span class="exturl theme-link" data-url="aHR0cHM6Ly9oZXhvLmlv">Hexo</span> & <span class="exturl theme-link" data-url="aHR0cHM6Ly9taXN0LnRoZW1lLW5leHQub3Jn">NexT.Mist</span> 强力驱动
+  </div>
+
+        
+<div class="busuanzi-count">
+  <script async src="https://busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+    <span class="post-meta-item" id="busuanzi_container_site_uv" style="display: none;">
+      <span class="post-meta-item-icon">
+        <i class="fa fa-fa fa-user"></i>
+      </span>
+      <span class="site-uv" title="总访客量">
+        <span id="busuanzi_value_site_uv"></span>
+      </span>
+    </span>
+    <span class="post-meta-divider">|</span>
+    <span class="post-meta-item" id="busuanzi_container_site_pv" style="display: none;">
+      <span class="post-meta-item-icon">
+        <i class="fa fa-fa fa-eye"></i>
+      </span>
+      <span class="site-pv" title="总访问量">
+        <span id="busuanzi_value_site_pv"></span>
+      </span>
+    </span>
+</div>
+
+
+
+
+
+
+
+
+      </div>
+    </footer>
+  </div>
+
+  
+  <script src="//cdn.jsdelivr.net/npm/animejs@3.1.0/lib/anime.min.js"></script>
+  <script src="//cdn.jsdelivr.net/npm/medium-zoom@1/dist/medium-zoom.min.js"></script>
+  <script src="//cdn.jsdelivr.net/npm/lozad@1/dist/lozad.min.js"></script>
+  <script src="//cdn.jsdelivr.net/npm/pangu@4/dist/browser/pangu.min.js"></script>
+
+<script src="/js/utils.js"></script>
+
+
+<script src="/js/schemes/muse.js"></script>
+
+
+<script src="/js/next-boot.js"></script>
+
+
+
+
+  
+  <script>
+    (function(){
+      var bp = document.createElement('script');
+      var curProtocol = window.location.protocol.split(':')[0];
+      bp.src = (curProtocol === 'https') ? 'https://zz.bdstatic.com/linksubmit/push.js' : 'http://push.zhanzhang.baidu.com/push.js';
+      var s = document.getElementsByTagName("script")[0];
+      s.parentNode.insertBefore(bp, s);
+    })();
+  </script>
+
+
+
+
+  
+<script src="/js/local-search.js"></script>
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+  
+      
+
+<script>
+  if (typeof MathJax === 'undefined') {
+    window.MathJax = {
+      loader: {
+        source: {
+          '[tex]/amsCd': '[tex]/amscd',
+          '[tex]/AMScd': '[tex]/amscd'
+        }
+      },
+      tex: {
+        inlineMath: {'[+]': [['$', '$']]},
+        tags: 'ams'
+      },
+      options: {
+        renderActions: {
+          findScript: [10, doc => {
+            document.querySelectorAll('script[type^="math/tex"]').forEach(node => {
+              const display = !!node.type.match(/; *mode=display/);
+              const math = new doc.options.MathItem(node.textContent, doc.inputJax[0], display);
+              const text = document.createTextNode('');
+              node.parentNode.replaceChild(text, node);
+              math.start = {node: text, delim: '', n: 0};
+              math.end = {node: text, delim: '', n: 0};
+              doc.math.push(math);
+            });
+          }, '', false],
+          insertedScript: [200, () => {
+            document.querySelectorAll('mjx-container').forEach(node => {
+              let target = node.parentNode;
+              if (target.nodeName.toLowerCase() === 'li') {
+                target.parentNode.classList.add('has-jax');
+              }
+            });
+          }, '', false]
+        }
+      }
+    };
+    (function () {
+      var script = document.createElement('script');
+      script.src = '//cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js';
+      script.defer = true;
+      document.head.appendChild(script);
+    })();
+  } else {
+    MathJax.startup.document.state(0);
+    MathJax.texReset();
+    MathJax.typeset();
+  }
+</script>
+
+    
+
+  
+  <script src="//cdn.jsdelivr.net/npm/quicklink@1/dist/quicklink.umd.js"></script>
+  <script>
+      window.addEventListener('load', () => {
+      quicklink({
+        timeout : 3000,
+        priority: true,
+        ignores : [uri => uri.includes('#'),uri => uri === 'https://www.ravenxrz.ink/archives/302ae4cb.html',]
+      });
+      });
+  </script>
+
+<link rel="stylesheet" href="//cdn.jsdelivr.net/npm/gitalk@1/dist/gitalk.min.css">
+
+<script>
+NexT.utils.loadComments(document.querySelector('#gitalk-container'), () => {
+  NexT.utils.getScript('//cdn.jsdelivr.net/npm/gitalk@1/dist/gitalk.min.js', () => {
+    var gitalk = new Gitalk({
+      clientID    : 'b2fd373d2ca2e03e591e',
+      clientSecret: 'de4ab066908c1fbd32d3a45e091b3538761d685b',
+      repo        : 'BlogComment',
+      owner       : 'ravenxrz',
+      admin       : ['ravenxrz'],
+      id          : 'ab7dc12d0a260b02fef11b0f295ea4d3',
+        language: '',
+      distractionFreeMode: true
+    });
+    gitalk.render('gitalk-container');
+  }, window.Gitalk);
+});
+</script>
+
+</body>
+</html>
