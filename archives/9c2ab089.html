@@ -4,7 +4,7 @@
   <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
 <meta name="theme-color" content="#222">
-<meta name="generator" content="Hexo 5.1.1">
+<meta name="generator" content="Hexo 4.2.1">
   <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
   <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png">
   <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png">
@@ -21,7 +21,7 @@
 
 <script id="hexo-configurations">
     var NexT = window.NexT || {};
-    var CONFIG = {"hostname":"www.ravenxrz.ink","root":"/","scheme":"Mist","version":"7.8.0","exturl":true,"sidebar":{"position":"left","display":"always","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":true,"show_result":true,"style":"flat"},"back2top":{"enable":true,"sidebar":false,"scrollpercent":true},"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":true,"lazyload":true,"pangu":true,"comments":{"style":"tabs","active":"gitalk","storage":true,"lazyload":true,"nav":null,"activeClass":"gitalk"},"algolia":{"hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":true,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},"motion":{"enable":false,"async":true,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}}};
+    var CONFIG = {"hostname":"www.ravenxrz.ink","root":"/","scheme":"Mist","version":"7.8.0","exturl":true,"sidebar":{"position":"left","display":"always","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":true,"show_result":true,"style":"flat"},"back2top":{"enable":true,"sidebar":false,"scrollpercent":true},"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":true,"lazyload":true,"pangu":true,"comments":{"style":"tabs","active":"gitalk","storage":true,"lazyload":true,"nav":null,"activeClass":"gitalk"},"algolia":{"hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":true,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},"motion":{"enable":false,"async":true,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},"path":"search.xml"};
   </script>
 
   <meta name="description" content="i&gt; 本文转载自：https:&#x2F;&#x2F;zhuanlan.zhihu.com&#x2F;p&#x2F;41358013 “The Design and Implementation of a Log-Structured File System“ 是 Mendel Rosenblum 和 John K. Ousterhout 在90年代初发表的一篇经典论文。且不提论文的两个作者都大名鼎鼎：Rosenblum 是 Vm">
@@ -38,7 +38,7 @@
 <meta property="og:image" content="https://pic4.zhimg.com/80/v2-a2973b1665f092f0e47ed95bd7ca5a3f_hd.jpg">
 <meta property="og:image" content="https://pic2.zhimg.com/80/v2-c08804c5f9a5c8dd876103c6bfede391_hd.jpg">
 <meta property="article:published_time" content="2019-09-23T05:58:48.000Z">
-<meta property="article:modified_time" content="2020-09-06T02:45:08.057Z">
+<meta property="article:modified_time" content="2020-09-06T07:37:36.778Z">
 <meta property="article:author" content="Raven">
 <meta property="article:tag" content="Log-structured FileSystem">
 <meta name="twitter:card" content="summary">
@@ -88,6 +88,7 @@
   </style>
 </noscript>
 
+<link rel="alternate" href="/atom.xml" title="Raven's Blog" type="application/atom+xml">
 </head>
 
 <body itemscope itemtype="http://schema.org/WebPage">
@@ -238,7 +239,7 @@
                   <i class="fa fa-calendar-check-o"></i>
                 </span>
                 <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2020-09-06 10:45:08" itemprop="dateModified" datetime="2020-09-06T10:45:08+08:00">2020-09-06</time>
+                <time title="修改时间：2020-09-06 15:37:36" itemprop="dateModified" datetime="2020-09-06T15:37:36+08:00">2020-09-06</time>
               </span>
             <span class="post-meta-item">
               <span class="post-meta-item-icon">
@@ -268,15 +269,15 @@
     <div class="post-body" itemprop="articleBody">
 
       
-        <p>i&gt; 本文转载自：<a target="_blank" rel="noopener" href="https://zhuanlan.zhihu.com/p/41358013">https://zhuanlan.zhihu.com/p/41358013</a></p>
-<p>“<a href="https://link.zhihu.com/?target=https://people.eecs.berkeley.edu/~brewer/cs262/LFS.pdf">The Design and Implementation of a Log-Structured File System</a>“ 是 Mendel Rosenblum 和 John K. Ousterhout 在90年代初发表的一篇经典论文。且不提论文的两个作者都大名鼎鼎：Rosenblum 是 Vmware 的联合创始人，Ousterhout 是 <a href="https://link.zhihu.com/?target=https://raft.github.io/raft.pdf">Raft</a>的作者之一（Ongaro 的老板）; 这篇论文在发表之后就引起了长达数年的 <a href="https://link.zhihu.com/?target=https://en.wikipedia.org/wiki/Unix_File_System">Fast File System</a> 和 LFS 之间的<a href="https://link.zhihu.com/?target=http://www.eecs.harvard.edu/~margo/cs261/paper-history/second-submission.pdf">口水战</a>。LFS 在提出后的前10多年里并没有被业界采用（猜猜为什么），但当 SSD 的价格下降并成为主流后，LFS 却焕发了第二春：LFS 被广泛运用在 SSD 的 firmware 中，而且新的文件系统，譬如基于 journal 的 <a href="https://link.zhihu.com/?target=https://en.wikipedia.org/wiki/Ext4">ext3/ext4</a>和支持 copy on write 的 <a href="https://link.zhihu.com/?target=https://en.wikipedia.org/wiki/Btrfs">btrfs</a>都吸取了LFS 的 idea；甚至我们常用的<a href="https://link.zhihu.com/?target=https://en.wikipedia.org/wiki/Log-structured_merge-tree">LSM</a>算法都能看到 LFS 的影子。</p>
+        <p>i&gt; 本文转载自：<span class="exturl" data-url="aHR0cHM6Ly96aHVhbmxhbi56aGlodS5jb20vcC80MTM1ODAxMw==" title="https://zhuanlan.zhihu.com/p/41358013">https://zhuanlan.zhihu.com/p/41358013<i class="fa fa-external-link"></i></span></p>
+<p>“<span class="exturl" data-url="aHR0cHM6Ly9saW5rLnpoaWh1LmNvbS8/dGFyZ2V0PWh0dHBzOi8vcGVvcGxlLmVlY3MuYmVya2VsZXkuZWR1L35icmV3ZXIvY3MyNjIvTEZTLnBkZg==" title="https://link.zhihu.com/?target=https://people.eecs.berkeley.edu/~brewer/cs262/LFS.pdf">The Design and Implementation of a Log-Structured File System<i class="fa fa-external-link"></i></span>“ 是 Mendel Rosenblum 和 John K. Ousterhout 在90年代初发表的一篇经典论文。且不提论文的两个作者都大名鼎鼎：Rosenblum 是 Vmware 的联合创始人，Ousterhout 是 <span class="exturl" data-url="aHR0cHM6Ly9saW5rLnpoaWh1LmNvbS8/dGFyZ2V0PWh0dHBzOi8vcmFmdC5naXRodWIuaW8vcmFmdC5wZGY=" title="https://link.zhihu.com/?target=https://raft.github.io/raft.pdf">Raft<i class="fa fa-external-link"></i></span>的作者之一（Ongaro 的老板）; 这篇论文在发表之后就引起了长达数年的 <span class="exturl" data-url="aHR0cHM6Ly9saW5rLnpoaWh1LmNvbS8/dGFyZ2V0PWh0dHBzOi8vZW4ud2lraXBlZGlhLm9yZy93aWtpL1VuaXhfRmlsZV9TeXN0ZW0=" title="https://link.zhihu.com/?target=https://en.wikipedia.org/wiki/Unix_File_System">Fast File System<i class="fa fa-external-link"></i></span> 和 LFS 之间的<span class="exturl" data-url="aHR0cHM6Ly9saW5rLnpoaWh1LmNvbS8/dGFyZ2V0PWh0dHA6Ly93d3cuZWVjcy5oYXJ2YXJkLmVkdS9+bWFyZ28vY3MyNjEvcGFwZXItaGlzdG9yeS9zZWNvbmQtc3VibWlzc2lvbi5wZGY=" title="https://link.zhihu.com/?target=http://www.eecs.harvard.edu/~margo/cs261/paper-history/second-submission.pdf">口水战<i class="fa fa-external-link"></i></span>。LFS 在提出后的前10多年里并没有被业界采用（猜猜为什么），但当 SSD 的价格下降并成为主流后，LFS 却焕发了第二春：LFS 被广泛运用在 SSD 的 firmware 中，而且新的文件系统，譬如基于 journal 的 <span class="exturl" data-url="aHR0cHM6Ly9saW5rLnpoaWh1LmNvbS8/dGFyZ2V0PWh0dHBzOi8vZW4ud2lraXBlZGlhLm9yZy93aWtpL0V4dDQ=" title="https://link.zhihu.com/?target=https://en.wikipedia.org/wiki/Ext4">ext3/ext4<i class="fa fa-external-link"></i></span>和支持 copy on write 的 <span class="exturl" data-url="aHR0cHM6Ly9saW5rLnpoaWh1LmNvbS8/dGFyZ2V0PWh0dHBzOi8vZW4ud2lraXBlZGlhLm9yZy93aWtpL0J0cmZz" title="https://link.zhihu.com/?target=https://en.wikipedia.org/wiki/Btrfs">btrfs<i class="fa fa-external-link"></i></span>都吸取了LFS 的 idea；甚至我们常用的<span class="exturl" data-url="aHR0cHM6Ly9saW5rLnpoaWh1LmNvbS8/dGFyZ2V0PWh0dHBzOi8vZW4ud2lraXBlZGlhLm9yZy93aWtpL0xvZy1zdHJ1Y3R1cmVkX21lcmdlLXRyZWU=" title="https://link.zhihu.com/?target=https://en.wikipedia.org/wiki/Log-structured_merge-tree">LSM<i class="fa fa-external-link"></i></span>算法都能看到 LFS 的影子。</p>
 <a id="more"></a>
-<h2 id="动机"><a href="#动机" class="headerlink" title="动机"></a>动机</h2><p>在90年代初，计算机的硬件性能开始了爆发式增长：CPU 的速度越来越快，RAM 也越来越大；然而，虽然硬盘的顺序读写速度也在提高，但是随机读写速度，受制于物理上的寻道时间，却难以短于10ms。另一方面，当时的文件系统不论是 <a href="https://link.zhihu.com/?target=https://en.wikipedia.org/wiki/Unix_File_System">Unix File System</a> 还是 FFS，都有大量的随机读写（在 FFS 中创建一个新文件至少需要5次随机写），因此成为整个系统的性能瓶颈。同时因为 Page cache 的存在，作者认为随机读不是 主要问题：随着越来越大的内存，大部分的读操作都能被 cache，因此 LFS 主要要解决的是减少对硬盘的随机写操作。</p>
+<h2 id="动机"><a href="#动机" class="headerlink" title="动机"></a>动机</h2><p>在90年代初，计算机的硬件性能开始了爆发式增长：CPU 的速度越来越快，RAM 也越来越大；然而，虽然硬盘的顺序读写速度也在提高，但是随机读写速度，受制于物理上的寻道时间，却难以短于10ms。另一方面，当时的文件系统不论是 <span class="exturl" data-url="aHR0cHM6Ly9saW5rLnpoaWh1LmNvbS8/dGFyZ2V0PWh0dHBzOi8vZW4ud2lraXBlZGlhLm9yZy93aWtpL1VuaXhfRmlsZV9TeXN0ZW0=" title="https://link.zhihu.com/?target=https://en.wikipedia.org/wiki/Unix_File_System">Unix File System<i class="fa fa-external-link"></i></span> 还是 FFS，都有大量的随机读写（在 FFS 中创建一个新文件至少需要5次随机写），因此成为整个系统的性能瓶颈。同时因为 Page cache 的存在，作者认为随机读不是 主要问题：随着越来越大的内存，大部分的读操作都能被 cache，因此 LFS 主要要解决的是减少对硬盘的随机写操作。</p>
 <h2 id="File-System-as-a-Log"><a href="#File-System-as-a-Log" class="headerlink" title="File System as a Log"></a>File System as a Log</h2><p>那么LFS是怎么减少随机写入呢？它基于一个很简单的 idea: 把整个磁盘看做一个 append only log,永远都是顺序写入。每当我们写入新文件时，我们总是顺序地追加在log 的最后；不同于 FFS/UFS, LFS 对文件的更改并不修改现有内容，而是把增量追加在硬盘的最后。</p>
-<p><img src="https://pic2.zhimg.com/80/v2-5a968180f6bc6c9d97617c7ce46956e9_hd.jpg" alt="img"></p>
+<p><img data-src="https://pic2.zhimg.com/80/v2-5a968180f6bc6c9d97617c7ce46956e9_hd.jpg" alt="img"></p>
 <h2 id="管理空余空间：段-Segements"><a href="#管理空余空间：段-Segements" class="headerlink" title="管理空余空间：段(Segements)"></a>管理空余空间：段(Segements)</h2><p>这样的设计有一个明显的问题：硬盘大小是有限的，当我们的 log 把硬盘写满以后，我们就不能再往硬盘里写入新的数据。但是正如图一所示，我们在操作文件系统时，我们会删除文件，或是用新的内容覆盖旧的内容；因此在 log 中会有过期数据。因此我们需要设计垃圾回收机制和空余空间管理机制。</p>
 <p>在 LFS 中，空余空间是用固定大小的段(Segment)来管理的：硬盘被分割成固定大小的段；写操作首先会被写入到内存中；当内存中缓存的数据超过段的大小后，LFS 将数据一次性写入到空闲的段中。</p>
-<p><img src="https://pic4.zhimg.com/80/v2-9c4ecd5a9b8c32469e5377c98e7c0c5f_hd.jpg" alt="img"></p>
+<p><img data-src="https://pic4.zhimg.com/80/v2-9c4ecd5a9b8c32469e5377c98e7c0c5f_hd.jpg" alt="img"></p>
 <h2 id="LFS-的读操作"><a href="#LFS-的读操作" class="headerlink" title="LFS 的读操作"></a>LFS 的读操作</h2><p>基于段的批量写入解决了随机写入问题，但是LFS 如何实现读操作呢？类似 UFS/FFS, LFS 的在段内存储文件内容时，也存储了文件的索引。具体的来说：</p>
 <ul>
 <li>在 Segment 中，文件内容存储在固定大小的 data block 中</li>
@@ -284,7 +285,7 @@
 </ul>
 <p>在下图的例子中，Segment0 里存储了文件2的两个 data block。而之后的 inode2 中存储了这两个 data block 的索引。</p>
 <p>然而不同于 UFS/FFS, LFS 的 inode 是动态分配的，因此 LFS 在每个 Segment 的尾部存储了对 inode 的索引， 称为 inode map。在 LFS 中，所有的 inode map 内容都会被缓存到内容中，从而加快读取速度。</p>
-<p>  <img src="https://pic1.zhimg.com/80/v2-e2d18cf2debe20993e1cebc73ac43bd0_hd.jpg" alt="img"></p>
+<p>  <img data-src="https://pic1.zhimg.com/80/v2-e2d18cf2debe20993e1cebc73ac43bd0_hd.jpg" alt="img"></p>
 <p>有了 inode/inode map 和 data block; 在 LFS 中读取一个inode 号为 i 的文件流程如下:</p>
 <ol>
 <li>从内存中缓存的 inode map 中找到所有的段中 inode 为 i 的地址</li>
@@ -293,16 +294,16 @@
 </ol>
 <p>因为 LFS 是 append only，所以对同一个文件的同一个 data block 可能存在多个版本（在不同段中）。但是通过比较不同段的更新时间，LFS就能判断出哪个 segment 中的 data block 是最新版本。</p>
 <h2 id="垃圾回收"><a href="#垃圾回收" class="headerlink" title="垃圾回收"></a>垃圾回收</h2><p>正如前文所说，LFS 需要设计垃圾回收机制来删除旧数据。 在 LFS 中，多个包含过期数据 block 的段（文件内容被更新或是文件被删除）会被 compact 成新的数据段，同时其中的旧数据会被删除。</p>
-<p><img src="https://pic4.zhimg.com/80/v2-82171bfc38138a3f6637ab1b7ba4785f_hd.jpg" alt="img"></p>
+<p><img data-src="https://pic4.zhimg.com/80/v2-82171bfc38138a3f6637ab1b7ba4785f_hd.jpg" alt="img"></p>
 <p>但是 LFS 是如何检查段中的过期 block 呢？LFS 在每个段的头部存储了名为 Segment Summary 的数据结构。在 Segment Summary 中存储了段中每个 data block 的地址，和这个 data block 的 inode number （文件号），以及该 block 在文件中的 offset。对于任意 block，只要对比该 block 的地址，和通过 inode map 查询这个 block 的地址是否相同，就能判断这个 block 是否过期。</p>
-<p><img src="https://pic4.zhimg.com/80/v2-a2973b1665f092f0e47ed95bd7ca5a3f_hd.jpg" alt="img"></p>
-<h2 id="故障恢复"><a href="#故障恢复" class="headerlink" title="故障恢复"></a>故障恢复</h2><p>显然任何文件系统都要能从故障中恢复数据。不同于 UFS 用 <a href="https://link.zhihu.com/?target=https://en.wikipedia.org/wiki/Fsck">fsck</a> 命令对故障进行恢复，LFS 对整个硬盘存储了 Checkpoint:</p>
+<p><img data-src="https://pic4.zhimg.com/80/v2-a2973b1665f092f0e47ed95bd7ca5a3f_hd.jpg" alt="img"></p>
+<h2 id="故障恢复"><a href="#故障恢复" class="headerlink" title="故障恢复"></a>故障恢复</h2><p>显然任何文件系统都要能从故障中恢复数据。不同于 UFS 用 <span class="exturl" data-url="aHR0cHM6Ly9saW5rLnpoaWh1LmNvbS8/dGFyZ2V0PWh0dHBzOi8vZW4ud2lraXBlZGlhLm9yZy93aWtpL0ZzY2s=" title="https://link.zhihu.com/?target=https://en.wikipedia.org/wiki/Fsck">fsck<i class="fa fa-external-link"></i></span> 命令对故障进行恢复，LFS 对整个硬盘存储了 Checkpoint:</p>
 <ul>
 <li>因为 LFS 的每个 Segment 都存储了下一个 Segment 的地址，整个文件系统就像一个链表一样被组织在一起。</li>
 <li>在 Checkpoint 中，LFS 存储了这个链表的第一个 Segment 和最后一个 Segment 的地址，因此只要读取 Checkpoint 就能恢复出整个文件系统。</li>
 <li>LFS 每 30秒更新一次 Checkpoint 中的数据。</li>
 </ul>
-<p><img src="https://pic2.zhimg.com/80/v2-c08804c5f9a5c8dd876103c6bfede391_hd.jpg" alt="img"></p>
+<p><img data-src="https://pic2.zhimg.com/80/v2-c08804c5f9a5c8dd876103c6bfede391_hd.jpg" alt="img"></p>
 <p>现在我们考虑一下系统崩溃的情况：</p>
 <p>如果LFS 在创建 Checkpoint 时崩溃，比如只更新了 Checkpoint 的头指针而没有更新尾指针。对此 LFS 的解决方案是：</p>
 <ul>
@@ -310,11 +311,11 @@
 <li>同时 LFS 利用时间戳来检测 Checkpoint 的失败：在写入 Checkpoint 时，先更新头指针和对应的时间戳，再更新 Checkpoint 中的其它内容，最后更新尾指针和相同的时间戳。如果 LFS 在读取 Checkpoint 时发现头指针和尾指针的时间戳不一致，就知道这个 Checkpoint 并没有完成。</li>
 </ul>
 <p>如果 LFS 在创建 Checkpoint 之间失败，显然系统可以恢复到上一次 Checkpoint 时的状态。然而这会丢失一部分数据。对此 LFS 效仿了数据库的 redo log：LFS 会尝试从当前的 segment 链表尾部恢复出已经成功写入但没有被 Checkpoint 的数据段。</p>
-<h2 id="总结"><a href="#总结" class="headerlink" title="总结"></a>总结</h2><p>从今天算起，LFS 已经发布了将近 30 年；然而正式由于作者对未来的正确假设，使得 LFS 的设计思想和理念却仍然深刻地影相了文件系统设计：LFS 的基于 Segment 的设计和 SSD 的物理特性不谋而合，因此被<a href="https://link.zhihu.com/?target=https://lwn.net/Articles/353411/">广泛应用在 SSD 的 firmware 中</a>；LSM 的 memory table/compaction 与 LFS 的 memeory buffer 和 GC 一脉相承；而新的文件系统例如 btrfs 也基于 LSM append only 的特点实现了 copy-on-write 或是 multi-version 的特性。  参考文献</p>
+<h2 id="总结"><a href="#总结" class="headerlink" title="总结"></a>总结</h2><p>从今天算起，LFS 已经发布了将近 30 年；然而正式由于作者对未来的正确假设，使得 LFS 的设计思想和理念却仍然深刻地影相了文件系统设计：LFS 的基于 Segment 的设计和 SSD 的物理特性不谋而合，因此被<span class="exturl" data-url="aHR0cHM6Ly9saW5rLnpoaWh1LmNvbS8/dGFyZ2V0PWh0dHBzOi8vbHduLm5ldC9BcnRpY2xlcy8zNTM0MTEv" title="https://link.zhihu.com/?target=https://lwn.net/Articles/353411/">广泛应用在 SSD 的 firmware 中<i class="fa fa-external-link"></i></span>；LSM 的 memory table/compaction 与 LFS 的 memeory buffer 和 GC 一脉相承；而新的文件系统例如 btrfs 也基于 LSM append only 的特点实现了 copy-on-write 或是 multi-version 的特性。  参考文献</p>
 <ol>
-<li><a href="https://link.zhihu.com/?target=https://people.eecs.berkeley.edu/~brewer/cs262/LFS.pdf">The Design and Implementation of a Log-Structured File System</a></li>
-<li><a href="https://link.zhihu.com/?target=https://lwn.net/Articles/353411/">Log-structured file systems: There’s one in every SSD</a></li>
-<li><a href="https://link.zhihu.com/?target=http://www.eecs.harvard.edu/~cs161/notes/lfs.pdf">CS 161: Lecture 15</a></li>
+<li><span class="exturl" data-url="aHR0cHM6Ly9saW5rLnpoaWh1LmNvbS8/dGFyZ2V0PWh0dHBzOi8vcGVvcGxlLmVlY3MuYmVya2VsZXkuZWR1L35icmV3ZXIvY3MyNjIvTEZTLnBkZg==" title="https://link.zhihu.com/?target=https://people.eecs.berkeley.edu/~brewer/cs262/LFS.pdf">The Design and Implementation of a Log-Structured File System<i class="fa fa-external-link"></i></span></li>
+<li><span class="exturl" data-url="aHR0cHM6Ly9saW5rLnpoaWh1LmNvbS8/dGFyZ2V0PWh0dHBzOi8vbHduLm5ldC9BcnRpY2xlcy8zNTM0MTEv" title="https://link.zhihu.com/?target=https://lwn.net/Articles/353411/">Log-structured file systems: There’s one in every SSD<i class="fa fa-external-link"></i></span></li>
+<li><span class="exturl" data-url="aHR0cHM6Ly9saW5rLnpoaWh1LmNvbS8/dGFyZ2V0PWh0dHA6Ly93d3cuZWVjcy5oYXJ2YXJkLmVkdS9+Y3MxNjEvbm90ZXMvbGZzLnBkZg==" title="https://link.zhihu.com/?target=http://www.eecs.harvard.edu/~cs161/notes/lfs.pdf">CS 161: Lecture 15<i class="fa fa-external-link"></i></span></li>
 </ol>
 
     </div>
@@ -438,7 +439,7 @@
 
       <!--noindex-->
       <div class="post-toc-wrap sidebar-panel">
-          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%8A%A8%E6%9C%BA"><span class="nav-text">动机</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#File-System-as-a-Log"><span class="nav-text">File System as a Log</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E7%AE%A1%E7%90%86%E7%A9%BA%E4%BD%99%E7%A9%BA%E9%97%B4%EF%BC%9A%E6%AE%B5-Segements"><span class="nav-text">管理空余空间：段(Segements)</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#LFS-%E7%9A%84%E8%AF%BB%E6%93%8D%E4%BD%9C"><span class="nav-text">LFS 的读操作</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%9E%83%E5%9C%BE%E5%9B%9E%E6%94%B6"><span class="nav-text">垃圾回收</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E6%95%85%E9%9A%9C%E6%81%A2%E5%A4%8D"><span class="nav-text">故障恢复</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E6%80%BB%E7%BB%93"><span class="nav-text">总结</span></a></li></ol></div>
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#动机"><span class="nav-text">动机</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#File-System-as-a-Log"><span class="nav-text">File System as a Log</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#管理空余空间：段-Segements"><span class="nav-text">管理空余空间：段(Segements)</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#LFS-的读操作"><span class="nav-text">LFS 的读操作</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#垃圾回收"><span class="nav-text">垃圾回收</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#故障恢复"><span class="nav-text">故障恢复</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#总结"><span class="nav-text">总结</span></a></li></ol></div>
       </div>
       <!--/noindex-->
 

@@ -4,7 +4,7 @@
   <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
 <meta name="theme-color" content="#222">
-<meta name="generator" content="Hexo 5.1.1">
+<meta name="generator" content="Hexo 4.2.1">
   <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
   <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png">
   <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png">
@@ -21,7 +21,7 @@
 
 <script id="hexo-configurations">
     var NexT = window.NexT || {};
-    var CONFIG = {"hostname":"www.ravenxrz.ink","root":"/","scheme":"Mist","version":"7.8.0","exturl":true,"sidebar":{"position":"left","display":"always","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":true,"show_result":true,"style":"flat"},"back2top":{"enable":true,"sidebar":false,"scrollpercent":true},"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":true,"lazyload":true,"pangu":true,"comments":{"style":"tabs","active":"gitalk","storage":true,"lazyload":true,"nav":null,"activeClass":"gitalk"},"algolia":{"hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":true,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},"motion":{"enable":false,"async":true,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}}};
+    var CONFIG = {"hostname":"www.ravenxrz.ink","root":"/","scheme":"Mist","version":"7.8.0","exturl":true,"sidebar":{"position":"left","display":"always","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":true,"show_result":true,"style":"flat"},"back2top":{"enable":true,"sidebar":false,"scrollpercent":true},"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":true,"lazyload":true,"pangu":true,"comments":{"style":"tabs","active":"gitalk","storage":true,"lazyload":true,"nav":null,"activeClass":"gitalk"},"algolia":{"hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":true,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},"motion":{"enable":false,"async":true,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},"path":"search.xml"};
   </script>
 
   <meta name="description" content="1.  写在最前面 折腾了整整一个五一，总算是完成了自己的博客系统。为了给想要搭建自己的博客，但是又和我一样是技术小白的人铺点路，所以准备开个博客搭建的系列教程，避免后来人像我一样走了一大堆弯路。  先贴上自己的博客网站：https:&#x2F;&#x2F;www.ravenxrz.ink">
@@ -32,7 +32,7 @@
 <meta property="og:description" content="1.  写在最前面 折腾了整整一个五一，总算是完成了自己的博客系统。为了给想要搭建自己的博客，但是又和我一样是技术小白的人铺点路，所以准备开个博客搭建的系列教程，避免后来人像我一样走了一大堆弯路。  先贴上自己的博客网站：https:&#x2F;&#x2F;www.ravenxrz.ink">
 <meta property="og:locale" content="zh_CN">
 <meta property="article:published_time" content="2019-05-04T07:58:34.000Z">
-<meta property="article:modified_time" content="2020-09-06T02:45:08.052Z">
+<meta property="article:modified_time" content="2020-09-06T07:37:36.773Z">
 <meta property="article:author" content="Raven">
 <meta property="article:tag" content="IT">
 <meta name="twitter:card" content="summary">
@@ -81,6 +81,7 @@
   </style>
 </noscript>
 
+<link rel="alternate" href="/atom.xml" title="Raven's Blog" type="application/atom+xml">
 </head>
 
 <body itemscope itemtype="http://schema.org/WebPage">
@@ -231,7 +232,7 @@
                   <i class="fa fa-calendar-check-o"></i>
                 </span>
                 <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2020-09-06 10:45:08" itemprop="dateModified" datetime="2020-09-06T10:45:08+08:00">2020-09-06</time>
+                <time title="修改时间：2020-09-06 15:37:36" itemprop="dateModified" datetime="2020-09-06T15:37:36+08:00">2020-09-06</time>
               </span>
             <span class="post-meta-item">
               <span class="post-meta-item-icon">
@@ -284,7 +285,7 @@
 
 <p>之后，将命令行给出的url复制到浏览器中，打开。（google drive，你懂需要什么的）</p>
 <p>授权后，会给出token，复制粘贴到XShell中。即可</p>
-<h3 id="2-2-备份脚本"><a href="#2-2-备份脚本" class="headerlink" title="2.2 备份脚本"></a>2.2 备份脚本</h3><p>参考了<a target="_blank" rel="noopener" href="https://www.moerats.com/archives/296/%EF%BC%8C%E6%89%80%E7%BB%99%E7%9A%84%E8%84%9A%E6%9C%AC%E3%80%82%E6%88%91%E4%BB%AC%E8%A6%81%E7%9F%A5%E9%81%93%EF%BC%8C%E5%A4%87%E4%BB%BD%E7%9A%84%E4%B8%9C%E8%A5%BF%E4%B8%BB%E8%A6%81%E6%9C%89%E4%B8%A4%E4%B8%AA%EF%BC%8C%E4%B8%80%E4%B8%AA%E6%98%AF%E6%96%87%E7%AB%A0%E7%9A%84%E6%95%B0%E6%8D%AE%E5%BA%93%EF%BC%8C%E8%BF%99%E4%B8%AA%E5%BE%88%E5%B0%8F%EF%BC%8C%E4%BD%86%E6%98%AF%E9%9C%80%E8%A6%81%E7%BB%8F%E5%B8%B8%E5%A4%87%E4%BB%BD%E3%80%82%E5%8F%A6%E4%B8%80%E4%B8%AA%E6%98%AF%E6%95%B4%E4%B8%AA%E7%BD%91%E7%AB%99%E7%9A%84%E8%AE%BE%E7%BD%AE%EF%BC%8C%E6%8F%92%E4%BB%B6%E3%80%81%E4%B8%BB%E9%A2%98%E7%AD%89%E7%AD%89%EF%BC%8C%E8%BF%99%E4%B8%AA%E5%BE%88%E5%A4%A7%EF%BC%8C%E5%8D%B4%E4%B8%8D%E9%9C%80%E8%A6%81%E7%BB%8F%E5%B8%B8%E6%94%B9%E5%8A%A8%E3%80%82%E6%89%80%E9%9C%80%E6%88%91%E5%B0%86%E8%84%9A%E6%9C%AC%E6%94%B9%E4%B8%BA%E4%BA%86%E4%B8%A4%E4%B8%AA%EF%BC%8C%E5%88%86%E5%88%AB%E8%AE%BE%E7%BD%AE%E5%AE%9A%E6%9C%9F%E5%A4%87%E4%BB%BD%E6%97%B6%E9%97%B4%E3%80%82">https://www.moerats.com/archives/296/，所给的脚本。我们要知道，备份的东西主要有两个，一个是文章的数据库，这个很小，但是需要经常备份。另一个是整个网站的设置，插件、主题等等，这个很大，却不需要经常改动。所需我将脚本改为了两个，分别设置定期备份时间。</a></p>
+<h3 id="2-2-备份脚本"><a href="#2-2-备份脚本" class="headerlink" title="2.2 备份脚本"></a>2.2 备份脚本</h3><p>参考了<span class="exturl" data-url="aHR0cHM6Ly93d3cubW9lcmF0cy5jb20vYXJjaGl2ZXMvMjk2LyVFRiVCQyU4QyVFNiU4OSU4MCVFNyVCQiU5OSVFNyU5QSU4NCVFOCU4NCU5QSVFNiU5QyVBQyVFMyU4MCU4MiVFNiU4OCU5MSVFNCVCQiVBQyVFOCVBNiU4MSVFNyU5RiVBNSVFOSU4MSU5MyVFRiVCQyU4QyVFNSVBNCU4NyVFNCVCQiVCRCVFNyU5QSU4NCVFNCVCOCU5QyVFOCVBNSVCRiVFNCVCOCVCQiVFOCVBNiU4MSVFNiU5QyU4OSVFNCVCOCVBNCVFNCVCOCVBQSVFRiVCQyU4QyVFNCVCOCU4MCVFNCVCOCVBQSVFNiU5OCVBRiVFNiU5NiU4NyVFNyVBQiVBMCVFNyU5QSU4NCVFNiU5NSVCMCVFNiU4RCVBRSVFNSVCQSU5MyVFRiVCQyU4QyVFOCVCRiU5OSVFNCVCOCVBQSVFNSVCRSU4OCVFNSVCMCU4RiVFRiVCQyU4QyVFNCVCRCU4NiVFNiU5OCVBRiVFOSU5QyU4MCVFOCVBNiU4MSVFNyVCQiU4RiVFNSVCOCVCOCVFNSVBNCU4NyVFNCVCQiVCRCVFMyU4MCU4MiVFNSU4RiVBNiVFNCVCOCU4MCVFNCVCOCVBQSVFNiU5OCVBRiVFNiU5NSVCNCVFNCVCOCVBQSVFNyVCRCU5MSVFNyVBQiU5OSVFNyU5QSU4NCVFOCVBRSVCRSVFNyVCRCVBRSVFRiVCQyU4QyVFNiU4RiU5MiVFNCVCQiVCNiVFMyU4MCU4MSVFNCVCOCVCQiVFOSVBMiU5OCVFNyVBRCU4OSVFNyVBRCU4OSVFRiVCQyU4QyVFOCVCRiU5OSVFNCVCOCVBQSVFNSVCRSU4OCVFNSVBNCVBNyVFRiVCQyU4QyVFNSU4RCVCNCVFNCVCOCU4RCVFOSU5QyU4MCVFOCVBNiU4MSVFNyVCQiU4RiVFNSVCOCVCOCVFNiU5NCVCOSVFNSU4QSVBOCVFMyU4MCU4MiVFNiU4OSU4MCVFOSU5QyU4MCVFNiU4OCU5MSVFNSVCMCU4NiVFOCU4NCU5QSVFNiU5QyVBQyVFNiU5NCVCOSVFNCVCOCVCQSVFNCVCQSU4NiVFNCVCOCVBNCVFNCVCOCVBQSVFRiVCQyU4QyVFNSU4OCU4NiVFNSU4OCVBQiVFOCVBRSVCRSVFNyVCRCVBRSVFNSVBRSU5QSVFNiU5QyU5RiVFNSVBNCU4NyVFNCVCQiVCRCVFNiU5NyVCNiVFOSU5NyVCNCVFMyU4MCU4Mg==" title="https://www.moerats.com/archives/296/%EF%BC%8C%E6%89%80%E7%BB%99%E7%9A%84%E8%84%9A%E6%9C%AC%E3%80%82%E6%88%91%E4%BB%AC%E8%A6%81%E7%9F%A5%E9%81%93%EF%BC%8C%E5%A4%87%E4%BB%BD%E7%9A%84%E4%B8%9C%E8%A5%BF%E4%B8%BB%E8%A6%81%E6%9C%89%E4%B8%A4%E4%B8%AA%EF%BC%8C%E4%B8%80%E4%B8%AA%E6%98%AF%E6%96%87%E7%AB%A0%E7%9A%84%E6%95%B0%E6%8D%AE%E5%BA%93%EF%BC%8C%E8%BF%99%E4%B8%AA%E5%BE%88%E5%B0%8F%EF%BC%8C%E4%BD%86%E6%98%AF%E9%9C%80%E8%A6%81%E7%BB%8F%E5%B8%B8%E5%A4%87%E4%BB%BD%E3%80%82%E5%8F%A6%E4%B8%80%E4%B8%AA%E6%98%AF%E6%95%B4%E4%B8%AA%E7%BD%91%E7%AB%99%E7%9A%84%E8%AE%BE%E7%BD%AE%EF%BC%8C%E6%8F%92%E4%BB%B6%E3%80%81%E4%B8%BB%E9%A2%98%E7%AD%89%E7%AD%89%EF%BC%8C%E8%BF%99%E4%B8%AA%E5%BE%88%E5%A4%A7%EF%BC%8C%E5%8D%B4%E4%B8%8D%E9%9C%80%E8%A6%81%E7%BB%8F%E5%B8%B8%E6%94%B9%E5%8A%A8%E3%80%82%E6%89%80%E9%9C%80%E6%88%91%E5%B0%86%E8%84%9A%E6%9C%AC%E6%94%B9%E4%B8%BA%E4%BA%86%E4%B8%A4%E4%B8%AA%EF%BC%8C%E5%88%86%E5%88%AB%E8%AE%BE%E7%BD%AE%E5%AE%9A%E6%9C%9F%E5%A4%87%E4%BB%BD%E6%97%B6%E9%97%B4%E3%80%82">https://www.moerats.com/archives/296/，所给的脚本。我们要知道，备份的东西主要有两个，一个是文章的数据库，这个很小，但是需要经常备份。另一个是整个网站的设置，插件、主题等等，这个很大，却不需要经常改动。所需我将脚本改为了两个，分别设置定期备份时间。<i class="fa fa-external-link"></i></span></p>
 <p>执行命令</p>
 <figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">mkdir &#x2F;home&#x2F;wwwbackups</span><br><span class="line">cd &#x2F;home&#x2F;wwwbackups</span><br></pre></td></tr></table></figure>
 
@@ -324,14 +325,14 @@
 <p><strong>注意，执行上述步骤后，所有设置都会还原，包括你的博客系统的登陆密码。</strong></p>
 </li>
 </ol>
-<p>6.再次打开<a target="_blank" rel="noopener" href="http://youip,查看是否已经恢复相关设置./">http://youip，查看是否已经恢复相关设置。</a><br>7.域名更换，打开你购买域名的控制面板，更改解析目标。</p>
+<p>6.再次打开<span class="exturl" data-url="aHR0cDovL3lvdWlwLOafpeeci+aYr+WQpuW3sue7j+aBouWkjeebuOWFs+iuvue9ri4v" title="http://youip,查看是否已经恢复相关设置./">http://youip，查看是否已经恢复相关设置。<i class="fa fa-external-link"></i></span><br>7.域名更换，打开你购买域名的控制面板，更改解析目标。</p>
 <p>额外恢复问题：</p>
 <ol>
 <li>去掉<code>index</code>后缀？参考<a href="https://www.ravenxrz.ink/archives/build-your-own-blog-tutorial-series-from-scratch-4-remove-annoying-index-php-suffixes-and-introductions-to-common-plugins-1.html">本系列教程四</a></li>
 <li><code>CommentToMail</code>插件失效？重新配置STMP密码，参考<a href="https://www.ravenxrz.ink/archives/build-your-own-blog-tutorial-series-from-scratch-4-remove-annoying-index-php-suffixes-and-introductions-to-common-plugins-1.html">本系列教程四</a>。</li>
 <li>重建博客系统备份？参考本篇教程第2小结。</li>
 </ol>
-<h3 id="参考"><a href="#参考" class="headerlink" title="参考"></a>参考</h3><p><a target="_blank" rel="noopener" href="https://www.moerats.com/archives/296/">Gdrive：Linux下谷歌网盘同步工具、自动备份VPS文件到Google Drive</a></p>
+<h3 id="参考"><a href="#参考" class="headerlink" title="参考"></a>参考</h3><p><span class="exturl" data-url="aHR0cHM6Ly93d3cubW9lcmF0cy5jb20vYXJjaGl2ZXMvMjk2Lw==" title="https://www.moerats.com/archives/296/">Gdrive：Linux下谷歌网盘同步工具、自动备份VPS文件到Google Drive<i class="fa fa-external-link"></i></span></p>
 
     </div>
 
@@ -450,7 +451,7 @@
 
       <!--noindex-->
       <div class="post-toc-wrap sidebar-panel">
-          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#1-%E5%86%99%E5%9C%A8%E6%9C%80%E5%89%8D%E9%9D%A2"><span class="nav-text">1.  写在最前面</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#2-%E5%A4%87%E4%BB%BD%E4%BD%A0%E7%9A%84%E5%8D%9A%E5%AE%A2"><span class="nav-text">2.  备份你的博客</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#2-1-%E5%AE%89%E8%A3%85gdrive"><span class="nav-text">2.1  安装gdrive</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#2-2-%E5%A4%87%E4%BB%BD%E8%84%9A%E6%9C%AC"><span class="nav-text">2.2 备份脚本</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#2-3-%E8%AE%BE%E7%BD%AE%E8%87%AA%E5%8A%A8%E5%A4%87%E4%BB%BD"><span class="nav-text">2.3 设置自动备份</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#3-%E6%81%A2%E5%A4%8D%E5%A4%87%E4%BB%BD"><span class="nav-text">3. 恢复备份</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%8F%82%E8%80%83"><span class="nav-text">参考</span></a></li></ol></li></ol></div>
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#1-写在最前面"><span class="nav-text">1.  写在最前面</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#2-备份你的博客"><span class="nav-text">2.  备份你的博客</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#2-1-安装gdrive"><span class="nav-text">2.1  安装gdrive</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#2-2-备份脚本"><span class="nav-text">2.2 备份脚本</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#2-3-设置自动备份"><span class="nav-text">2.3 设置自动备份</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#3-恢复备份"><span class="nav-text">3. 恢复备份</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#参考"><span class="nav-text">参考</span></a></li></ol></li></ol></div>
       </div>
       <!--/noindex-->
 

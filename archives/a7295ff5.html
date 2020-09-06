@@ -4,7 +4,7 @@
   <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
 <meta name="theme-color" content="#222">
-<meta name="generator" content="Hexo 5.1.1">
+<meta name="generator" content="Hexo 4.2.1">
   <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
   <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png">
   <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png">
@@ -21,7 +21,7 @@
 
 <script id="hexo-configurations">
     var NexT = window.NexT || {};
-    var CONFIG = {"hostname":"www.ravenxrz.ink","root":"/","scheme":"Mist","version":"7.8.0","exturl":true,"sidebar":{"position":"left","display":"always","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":true,"show_result":true,"style":"flat"},"back2top":{"enable":true,"sidebar":false,"scrollpercent":true},"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":true,"lazyload":true,"pangu":true,"comments":{"style":"tabs","active":"gitalk","storage":true,"lazyload":true,"nav":null,"activeClass":"gitalk"},"algolia":{"hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":true,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},"motion":{"enable":false,"async":true,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}}};
+    var CONFIG = {"hostname":"www.ravenxrz.ink","root":"/","scheme":"Mist","version":"7.8.0","exturl":true,"sidebar":{"position":"left","display":"always","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":true,"show_result":true,"style":"flat"},"back2top":{"enable":true,"sidebar":false,"scrollpercent":true},"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":true,"lazyload":true,"pangu":true,"comments":{"style":"tabs","active":"gitalk","storage":true,"lazyload":true,"nav":null,"activeClass":"gitalk"},"algolia":{"hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":true,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},"motion":{"enable":false,"async":true,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},"path":"search.xml"};
   </script>
 
   <meta name="description" content="1.前言在linux的世界里，升级、更换内核是很经常的事情，如果你在安装系统的时候给boot分区分小了，偶尔就会出现boot分区的占用率爆掉的情况。这里给出两种删除内核的方式">
@@ -36,7 +36,7 @@
 <meta property="og:image" content="https://pic.superbed.cn/item/5cfbb5cd451253d178d9d0d0.png">
 <meta property="og:image" content="https://pic2.superbed.cn/item/5cfbb5cf451253d178d9d10c.png">
 <meta property="article:published_time" content="2019-05-03T05:58:26.000Z">
-<meta property="article:modified_time" content="2020-09-06T02:45:08.049Z">
+<meta property="article:modified_time" content="2020-09-06T07:37:36.769Z">
 <meta property="article:author" content="Raven">
 <meta property="article:tag" content="内核">
 <meta name="twitter:card" content="summary">
@@ -86,6 +86,7 @@
   </style>
 </noscript>
 
+<link rel="alternate" href="/atom.xml" title="Raven's Blog" type="application/atom+xml">
 </head>
 
 <body itemscope itemtype="http://schema.org/WebPage">
@@ -236,7 +237,7 @@
                   <i class="fa fa-calendar-check-o"></i>
                 </span>
                 <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2020-09-06 10:45:08" itemprop="dateModified" datetime="2020-09-06T10:45:08+08:00">2020-09-06</time>
+                <time title="修改时间：2020-09-06 15:37:36" itemprop="dateModified" datetime="2020-09-06T15:37:36+08:00">2020-09-06</time>
               </span>
             <span class="post-meta-item">
               <span class="post-meta-item-icon">
@@ -270,20 +271,20 @@
 <a id="more"></a>
 <h2 id="2-删除内核"><a href="#2-删除内核" class="headerlink" title="2. 删除内核"></a>2. 删除内核</h2><h3 id="2-1-方式一"><a href="#2-1-方式一" class="headerlink" title="2.1 方式一"></a>2.1 方式一</h3><p><strong>step1:</strong><br>如果你使用<code>debian</code>系发行版本的<code>linux</code>的话，可以使用<code>dpkg</code>命令(<code>fedora</code>系好像是<code>rpm</code>)来查看本机装有了哪些内核，具体命令为 :</p>
 <pre><code>dpkg --get-selections|grep linux</code></pre>
-<p><img src="https://pic3.superbed.cn/item/5cfbb5c4451253d178d9d01c.png" alt="在这里插入图片描述"><br>当然了，我才清理了内核，所以现在只有一个可用的内核版本:<code>linux-4.15.0-42</code>。如果你的主机上安装过多个内核的话，这里应该会显示多个才对。</p>
+<p><img data-src="https://pic3.superbed.cn/item/5cfbb5c4451253d178d9d01c.png" alt="在这里插入图片描述"><br>当然了，我才清理了内核，所以现在只有一个可用的内核版本:<code>linux-4.15.0-42</code>。如果你的主机上安装过多个内核的话，这里应该会显示多个才对。</p>
 <p><strong>step2:</strong><br>接着查看当前自己使用的是哪个版本:</p>
 <p><code>uname -r</code></p>
-<p><img src="https://pic1.superbed.cn/item/5cfbb5c6451253d178d9d051.png" alt="在这里插入图片描述"></p>
+<p><img data-src="https://pic1.superbed.cn/item/5cfbb5c6451253d178d9d051.png" alt="在这里插入图片描述"></p>
 <p><strong>step3:</strong><br>使用 <code>sudo apt-get purge linux-xxx</code> 把所有不要的内核版本有关文件全部删了，如这里可以把所有包含4.15.0-42的文件删掉。</p>
 <p><strong>删除除当前你使用的版本的内核以外的其他内核。</strong></p>
 <p>之后在使用<code>dpkg --get-selections|grep linux</code>命令查看一下是不是已经删除了呢。</p>
 <h3 id="2-2-方式二"><a href="#2-2-方式二" class="headerlink" title="2.2 方式二"></a>2.2 方式二</h3><p>方式一适合于使用官方包管理器来升级内核版本，当我们通过源码编译来安装内核时，上述方法就不适用了，因为你使用<code>dpkg --get-selections|grep linux</code>命令来查看安装了那些内核时，自编译的内核是不会显示出来的，那么该如何删除这样的内核呢？</p>
 <p><strong>step1:</strong><br>来到/boot目录:把下面红框内的文件都给删了，注意自己不需要哪些版本哈。XD</p>
-<p><img src="https://pic.superbed.cn/item/5cfbb5cd451253d178d9d0d0.png" alt="在这里插入图片描述"></p>
+<p><img data-src="https://pic.superbed.cn/item/5cfbb5cd451253d178d9d0d0.png" alt="在这里插入图片描述"></p>
 <p>可以使用通配符来删除：</p>
 <p><code>sudo rm *4.15.0-42*</code></p>
 <p><strong>step2:</strong><br>来到<code>/lib/modules/</code>目录下，把不要的版本文件删除</p>
-<p><img src="https://pic2.superbed.cn/item/5cfbb5cf451253d178d9d10c.png" alt="在这里插入图片描述"><br>（可选），查看一下<code>/usr/src</code>有没有源码文件，必要的话把源码也删除了</p>
+<p><img data-src="https://pic2.superbed.cn/item/5cfbb5cf451253d178d9d10c.png" alt="在这里插入图片描述"><br>（可选），查看一下<code>/usr/src</code>有没有源码文件，必要的话把源码也删除了</p>
 <p><strong>step3:</strong><br>更新一下启动项: <code>sudo update-grub</code></p>
 <p>完。</p>
 
@@ -408,7 +409,7 @@
 
       <!--noindex-->
       <div class="post-toc-wrap sidebar-panel">
-          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#1-%E5%89%8D%E8%A8%80"><span class="nav-text">1.前言</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#2-%E5%88%A0%E9%99%A4%E5%86%85%E6%A0%B8"><span class="nav-text">2. 删除内核</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#2-1-%E6%96%B9%E5%BC%8F%E4%B8%80"><span class="nav-text">2.1 方式一</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#2-2-%E6%96%B9%E5%BC%8F%E4%BA%8C"><span class="nav-text">2.2 方式二</span></a></li></ol></li></ol></div>
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#1-前言"><span class="nav-text">1.前言</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#2-删除内核"><span class="nav-text">2. 删除内核</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#2-1-方式一"><span class="nav-text">2.1 方式一</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#2-2-方式二"><span class="nav-text">2.2 方式二</span></a></li></ol></li></ol></div>
       </div>
       <!--/noindex-->
 

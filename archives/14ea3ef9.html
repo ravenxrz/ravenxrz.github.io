@@ -4,7 +4,7 @@
   <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
 <meta name="theme-color" content="#222">
-<meta name="generator" content="Hexo 5.1.1">
+<meta name="generator" content="Hexo 4.2.1">
   <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
   <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png">
   <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png">
@@ -21,7 +21,7 @@
 
 <script id="hexo-configurations">
     var NexT = window.NexT || {};
-    var CONFIG = {"hostname":"www.ravenxrz.ink","root":"/","scheme":"Mist","version":"7.8.0","exturl":true,"sidebar":{"position":"left","display":"always","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":true,"show_result":true,"style":"flat"},"back2top":{"enable":true,"sidebar":false,"scrollpercent":true},"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":true,"lazyload":true,"pangu":true,"comments":{"style":"tabs","active":"gitalk","storage":true,"lazyload":true,"nav":null,"activeClass":"gitalk"},"algolia":{"hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":true,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},"motion":{"enable":false,"async":true,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}}};
+    var CONFIG = {"hostname":"www.ravenxrz.ink","root":"/","scheme":"Mist","version":"7.8.0","exturl":true,"sidebar":{"position":"left","display":"always","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":true,"show_result":true,"style":"flat"},"back2top":{"enable":true,"sidebar":false,"scrollpercent":true},"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":true,"lazyload":true,"pangu":true,"comments":{"style":"tabs","active":"gitalk","storage":true,"lazyload":true,"nav":null,"activeClass":"gitalk"},"algolia":{"hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":true,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},"motion":{"enable":false,"async":true,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},"path":"search.xml"};
   </script>
 
   <meta name="description" content="Ubuntu PPA小知识PPA,表示Personal Package Archives,也就是个人软件包集。再说白点就是非官方源。">
@@ -32,7 +32,7 @@
 <meta property="og:description" content="Ubuntu PPA小知识PPA,表示Personal Package Archives,也就是个人软件包集。再说白点就是非官方源。">
 <meta property="og:locale" content="zh_CN">
 <meta property="article:published_time" content="2019-08-07T05:58:17.000Z">
-<meta property="article:modified_time" content="2020-09-06T02:45:08.041Z">
+<meta property="article:modified_time" content="2020-09-06T07:37:36.762Z">
 <meta property="article:author" content="Raven">
 <meta property="article:tag" content="Ubuntu">
 <meta property="article:tag" content="包管理">
@@ -82,6 +82,7 @@
   </style>
 </noscript>
 
+<link rel="alternate" href="/atom.xml" title="Raven's Blog" type="application/atom+xml">
 </head>
 
 <body itemscope itemtype="http://schema.org/WebPage">
@@ -232,7 +233,7 @@
                   <i class="fa fa-calendar-check-o"></i>
                 </span>
                 <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2020-09-06 10:45:08" itemprop="dateModified" datetime="2020-09-06T10:45:08+08:00">2020-09-06</time>
+                <time title="修改时间：2020-09-06 15:37:36" itemprop="dateModified" datetime="2020-09-06T15:37:36+08:00">2020-09-06</time>
               </span>
             <span class="post-meta-item">
               <span class="post-meta-item-icon">
@@ -284,7 +285,7 @@
 
 <p>注意，这里的ppa是可以通过tab补全的，所以不需要记住全称。</p>
 <h2 id="参考："><a href="#参考：" class="headerlink" title="参考："></a>参考：</h2><ul>
-<li><a target="_blank" rel="noopener" href="https://github.com/guodongxiaren/LinuxTool/blob/master/APT.md">LinuxTool</a></li>
+<li><span class="exturl" data-url="aHR0cHM6Ly9naXRodWIuY29tL2d1b2Rvbmd4aWFyZW4vTGludXhUb29sL2Jsb2IvbWFzdGVyL0FQVC5tZA==" title="https://github.com/guodongxiaren/LinuxTool/blob/master/APT.md">LinuxTool<i class="fa fa-external-link"></i></span></li>
 </ul>
 <h2 id="3-你知道APT和APT-Get的区别吗"><a href="#3-你知道APT和APT-Get的区别吗" class="headerlink" title="3. 你知道APT和APT-Get的区别吗"></a>3. 你知道APT和APT-Get的区别吗</h2><ul>
 <li>apt其实是apt-get和apt-cache的一个子集，它提供了更方便的options给用户，方便用户统一调用。</li>
@@ -345,7 +346,7 @@
 <td align="center">Shows package details</td>
 </tr>
 </tbody></table>
-<p>以上解释摘自：<a target="_blank" rel="noopener" href="https://itsfoss.com/apt-vs-apt-get-difference/">https://itsfoss.com/apt-vs-apt-get-difference/</a></p>
+<p>以上解释摘自：<span class="exturl" data-url="aHR0cHM6Ly9pdHNmb3NzLmNvbS9hcHQtdnMtYXB0LWdldC1kaWZmZXJlbmNlLw==" title="https://itsfoss.com/apt-vs-apt-get-difference/">https://itsfoss.com/apt-vs-apt-get-difference/<i class="fa fa-external-link"></i></span></p>
 
     </div>
 
@@ -469,7 +470,7 @@
 
       <!--noindex-->
       <div class="post-toc-wrap sidebar-panel">
-          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#Ubuntu-PPA%E5%B0%8F%E7%9F%A5%E8%AF%86"><span class="nav-text">Ubuntu PPA小知识</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E4%B8%BA%E4%BB%80%E4%B9%88%E8%A6%81%E7%94%A8PPA%EF%BC%9F"><span class="nav-text">为什么要用PPA？</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#1-%E6%B7%BB%E5%8A%A0PPA"><span class="nav-text">1. 添加PPA</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#2-%E5%88%A0%E9%99%A4PPA"><span class="nav-text">2. 删除PPA</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#2-1-%E6%96%B9%E6%B3%95%E4%B8%80"><span class="nav-text">2.1 方法一</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#2-2-%E6%96%B9%E6%B3%95%E4%BA%8C"><span class="nav-text">2.2 方法二</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#2-2-%E6%96%B9%E6%B3%95%E4%B8%89"><span class="nav-text">2.2 方法三</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%8F%82%E8%80%83%EF%BC%9A"><span class="nav-text">参考：</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#3-%E4%BD%A0%E7%9F%A5%E9%81%93APT%E5%92%8CAPT-Get%E7%9A%84%E5%8C%BA%E5%88%AB%E5%90%97"><span class="nav-text">3. 你知道APT和APT-Get的区别吗</span></a></li></ol></div>
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#Ubuntu-PPA小知识"><span class="nav-text">Ubuntu PPA小知识</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#为什么要用PPA？"><span class="nav-text">为什么要用PPA？</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#1-添加PPA"><span class="nav-text">1. 添加PPA</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#2-删除PPA"><span class="nav-text">2. 删除PPA</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#2-1-方法一"><span class="nav-text">2.1 方法一</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#2-2-方法二"><span class="nav-text">2.2 方法二</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#2-2-方法三"><span class="nav-text">2.2 方法三</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#参考："><span class="nav-text">参考：</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#3-你知道APT和APT-Get的区别吗"><span class="nav-text">3. 你知道APT和APT-Get的区别吗</span></a></li></ol></div>
       </div>
       <!--/noindex-->
 

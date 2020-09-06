@@ -4,7 +4,7 @@
   <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
 <meta name="theme-color" content="#222">
-<meta name="generator" content="Hexo 5.1.1">
+<meta name="generator" content="Hexo 4.2.1">
   <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
   <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png">
   <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png">
@@ -21,7 +21,7 @@
 
 <script id="hexo-configurations">
     var NexT = window.NexT || {};
-    var CONFIG = {"hostname":"www.ravenxrz.ink","root":"/","scheme":"Mist","version":"7.8.0","exturl":true,"sidebar":{"position":"left","display":"always","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":true,"show_result":true,"style":"flat"},"back2top":{"enable":true,"sidebar":false,"scrollpercent":true},"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":true,"lazyload":true,"pangu":true,"comments":{"style":"tabs","active":"gitalk","storage":true,"lazyload":true,"nav":null,"activeClass":"gitalk"},"algolia":{"hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":true,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},"motion":{"enable":false,"async":true,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}}};
+    var CONFIG = {"hostname":"www.ravenxrz.ink","root":"/","scheme":"Mist","version":"7.8.0","exturl":true,"sidebar":{"position":"left","display":"always","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":true,"show_result":true,"style":"flat"},"back2top":{"enable":true,"sidebar":false,"scrollpercent":true},"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":true,"lazyload":true,"pangu":true,"comments":{"style":"tabs","active":"gitalk","storage":true,"lazyload":true,"nav":null,"activeClass":"gitalk"},"algolia":{"hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":true,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},"motion":{"enable":false,"async":true,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},"path":"search.xml"};
   </script>
 
   <meta name="description" content="i&gt; 本科毕设题目为《基于深度学习的图像去雾方法研究与实现》 毕设总结系列：  毕设总结零–绪论 毕设总结一–传统去雾理论 毕设总结二–论文复现工作1–暗通道去雾(DCP) 毕设总结三–论文复现工作2–MSCNN去雾 毕设总结四–最终去雾方案的确定与实现–DeBlurGanToDehaze 毕设总结五–杂项">
@@ -39,7 +39,7 @@
 <meta property="og:image" content="https://ae01.alicdn.com/kf/HTB1wuIHdgmH3KVjSZKzq6z2OXXa7.jpg">
 <meta property="og:image" content="https://ae01.alicdn.com/kf/HTB1UXoQdlCw3KVjSZR0q6zcUpXaO.jpg">
 <meta property="article:published_time" content="2019-07-19T06:58:59.000Z">
-<meta property="article:modified_time" content="2020-09-06T02:45:08.061Z">
+<meta property="article:modified_time" content="2020-09-06T07:37:36.782Z">
 <meta property="article:author" content="Raven">
 <meta property="article:tag" content="图像去雾">
 <meta name="twitter:card" content="summary">
@@ -89,6 +89,7 @@
   </style>
 </noscript>
 
+<link rel="alternate" href="/atom.xml" title="Raven's Blog" type="application/atom+xml">
 </head>
 
 <body itemscope itemtype="http://schema.org/WebPage">
@@ -239,7 +240,7 @@
                   <i class="fa fa-calendar-check-o"></i>
                 </span>
                 <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2020-09-06 10:45:08" itemprop="dateModified" datetime="2020-09-06T10:45:08+08:00">2020-09-06</time>
+                <time title="修改时间：2020-09-06 15:37:36" itemprop="dateModified" datetime="2020-09-06T15:37:36+08:00">2020-09-06</time>
               </span>
             <span class="post-meta-item">
               <span class="post-meta-item-icon">
@@ -286,12 +287,12 @@
 <p>能不能建立一种端到端的映射网络呢？给网络输入一张雾图，输出得到一张去雾图。</p>
 </blockquote>
 <p>就像总结零曾有过的一张图那样：</p>
-<img src="https://ae01.alicdn.com/kf/HTB10.78c8Kw3KVjSZTEq6AuRpXab.jpg"/>
+<img data-src="https://ae01.alicdn.com/kf/HTB10.78c8Kw3KVjSZTEq6AuRpXab.jpg"/>
 
 <p>那什么样的网络可以实现这样的效果呢？</p>
 <p>自2014年生成对抗网络（GAN）提出以来，GAN便以一种新式的训练思想逐渐火热。现在已经很多基于GAN的应用，如图像修补，图像风格转换等等。于是自然而然的，笔者采用了GAN来做上图中的去雾网络。</p>
 <h3 id="2-2-浅谈GAN"><a href="#2-2-浅谈GAN" class="headerlink" title="2.2 浅谈GAN"></a>2.2 浅谈GAN</h3><p>去雾GAN的核心思想如下图：</p>
-<p><img src="https://ae01.alicdn.com/kf/HTB1EboBdf5G3KVjSZPxq6zI3XXaH.jpg"></p>
+<p><img data-src="https://ae01.alicdn.com/kf/HTB1EboBdf5G3KVjSZPxq6zI3XXaH.jpg"></p>
 <p>它有两个重要的子网络，<strong>一个生成网络G，一个判别网络D</strong>。现在假设我们手里有三样东西：</p>
 <ul>
 <li>设计精良的生成网络G</li>
@@ -301,36 +302,36 @@
 <p>i&gt; 那么这个网络的思想可这样来表达：生成网络G吃一张雾图，吐出一张“假”无雾图，从训练数据集中找到吃掉的雾图的对应“真”无雾图，判别网络D尽自己最大的可能去区分开这“真假”雾图，另一方面，生成网络G尽自己最大的可能去生成接近“真”无雾图的“假”无雾图，用来迷惑判别网络D。两者在这种竞争关系下不断进化，最后达到一种平衡。</p>
 <p>关于GAN的文章，推荐阅读：</p>
 <ul>
-<li><p><a target="_blank" rel="noopener" href="https://zhuanlan.zhihu.com/p/24767059">GAN学习指南：从原理入门到制作生成Demo</a></p>
+<li><p><span class="exturl" data-url="aHR0cHM6Ly96aHVhbmxhbi56aGlodS5jb20vcC8yNDc2NzA1OQ==" title="https://zhuanlan.zhihu.com/p/24767059">GAN学习指南：从原理入门到制作生成Demo<i class="fa fa-external-link"></i></span></p>
 </li>
-<li><p><a target="_blank" rel="noopener" href="https://blog.csdn.net/on2way/article/details/72773771">简单理解与实验生成对抗网络GAN - 我爱智能 - CSDN博客</a></p>
+<li><p><span class="exturl" data-url="aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L29uMndheS9hcnRpY2xlL2RldGFpbHMvNzI3NzM3NzE=" title="https://blog.csdn.net/on2way/article/details/72773771">简单理解与实验生成对抗网络GAN - 我爱智能 - CSDN博客<i class="fa fa-external-link"></i></span></p>
 </li>
-<li><p><a target="_blank" rel="noopener" href="https://github.com/eriklindernoren/Keras-GAN">Keras-GAN</a></p>
+<li><p><span class="exturl" data-url="aHR0cHM6Ly9naXRodWIuY29tL2VyaWtsaW5kZXJub3Jlbi9LZXJhcy1HQU4=" title="https://github.com/eriklindernoren/Keras-GAN">Keras-GAN<i class="fa fa-external-link"></i></span></p>
 </li>
-<li><p><a target="_blank" rel="noopener" href="https://phillipi.github.io/pix2pix/">Image-to-Image Translation with Conditional Adversarial Nets的介绍与应用Demo</a></p>
+<li><p><span class="exturl" data-url="aHR0cHM6Ly9waGlsbGlwaS5naXRodWIuaW8vcGl4MnBpeC8=" title="https://phillipi.github.io/pix2pix/">Image-to-Image Translation with Conditional Adversarial Nets的介绍与应用Demo<i class="fa fa-external-link"></i></span></p>
 </li>
 <li><p>[Isola et al_2016_Image-to-Image Translation with Conditional Adversarial Networks](Isola et al_2016_Image-to-Image Translation with Conditional Adversarial Networks.pdf)</p>
 </li>
-<li><p><a target="_blank" rel="noopener" href="https://www.jianshu.com/p/57ff6f96ce4c">Patch-GAN Image-to-Image Translation with Conditional Adversarial Networks超细致解析：使用条件Gan经行图像的转换</a></p>
+<li><p><span class="exturl" data-url="aHR0cHM6Ly93d3cuamlhbnNodS5jb20vcC81N2ZmNmY5NmNlNGM=" title="https://www.jianshu.com/p/57ff6f96ce4c">Patch-GAN Image-to-Image Translation with Conditional Adversarial Networks超细致解析：使用条件Gan经行图像的转换<i class="fa fa-external-link"></i></span></p>
 </li>
-<li><p><a target="_blank" rel="noopener" href="https://cloud.tencent.com/developer/article/1067030">17种GAN变体的Keras实现请收好 | GitHub热门开源代码</a></p>
+<li><p><span class="exturl" data-url="aHR0cHM6Ly9jbG91ZC50ZW5jZW50LmNvbS9kZXZlbG9wZXIvYXJ0aWNsZS8xMDY3MDMw" title="https://cloud.tencent.com/developer/article/1067030">17种GAN变体的Keras实现请收好 | GitHub热门开源代码<i class="fa fa-external-link"></i></span></p>
 </li>
-<li><p><a target="_blank" rel="noopener" href="https://blog.sicara.com/keras-generative-adversarial-networks-image-deblurring-45e3ab6977b5?gi=f1d5c50e7800">GAN with Keras: Application to Image Deblurring – Sicara’s blog</a></p>
+<li><p><span class="exturl" data-url="aHR0cHM6Ly9ibG9nLnNpY2FyYS5jb20va2VyYXMtZ2VuZXJhdGl2ZS1hZHZlcnNhcmlhbC1uZXR3b3Jrcy1pbWFnZS1kZWJsdXJyaW5nLTQ1ZTNhYjY5NzdiNT9naT1mMWQ1YzUwZTc4MDA=" title="https://blog.sicara.com/keras-generative-adversarial-networks-image-deblurring-45e3ab6977b5?gi=f1d5c50e7800">GAN with Keras: Application to Image Deblurring – Sicara’s blog<i class="fa fa-external-link"></i></span></p>
 </li>
-<li><p><a target="_blank" rel="noopener" href="https://www.bilibili.com/video/av54339012">李宏毅GAN视频教学</a></p>
+<li><p><span class="exturl" data-url="aHR0cHM6Ly93d3cuYmlsaWJpbGkuY29tL3ZpZGVvL2F2NTQzMzkwMTI=" title="https://www.bilibili.com/video/av54339012">李宏毅GAN视频教学<i class="fa fa-external-link"></i></span></p>
 </li>
 </ul>
 <h2 id="3-去雾网络结构"><a href="#3-去雾网络结构" class="headerlink" title="3. 去雾网络结构"></a>3. 去雾网络结构</h2><p>前文我们说了GAN有两个核心的子网络，如何分别设计两个网络的结构呢？<strong>反正我是不会设计</strong>，哈哈。嘛，总之这时候我是求助了师兄，师兄丢给了我一篇DeBlur的论文，然后我做了个Transfering Learning。没想到效果相当好，于是就这样抄过来了。</p>
 <p>DeBlur的论文：《DeblurGAN: Blind Motion Deblurring Using Conditional Adversarial Networks》</p>
-<h3 id="3-1-生成网络结构"><a href="#3-1-生成网络结构" class="headerlink" title="3.1 生成网络结构"></a>3.1 生成网络结构</h3><p><img src="https://ae01.alicdn.com/kf/HTB1tOehbAxz61VjSZFrq6xeLFXad.jpg"></p>
+<h3 id="3-1-生成网络结构"><a href="#3-1-生成网络结构" class="headerlink" title="3.1 生成网络结构"></a>3.1 生成网络结构</h3><p><img data-src="https://ae01.alicdn.com/kf/HTB1tOehbAxz61VjSZFrq6xeLFXad.jpg"></p>
 <ul>
 <li>2个编码单元提取特征</li>
 <li>9个ResBlock作为特征转换器，将它从雾图特征转到无雾特征</li>
 <li>2个解码单元恢复无雾图</li>
 </ul>
 <p>你要问我为什么这样设计？不好意思，我也不知道。<em>个人觉得深度学习就是一个黑盒子，讲究的是最终效果，往往没有特别好的理论支撑。</em></p>
-<h3 id="3-2-判别网络结构"><a href="#3-2-判别网络结构" class="headerlink" title="3.2 判别网络结构"></a>3.2 判别网络结构</h3><p><img src="https://ae01.alicdn.com/kf/HTB1E7evcL1G3KVjSZFkq6yK4XXaa.jpg"></p>
-<p>判别网络参见《Image-to-Image Translation with Conditional Adversarial Networks》中的PatchGAN。<br><a target="_blank" rel="noopener" href="https://blog.csdn.net/xiaoxifei/article/details/86506955">关于PatchGAN的理解 - xiaoxifei的专栏 - CSDN博客</a></p>
+<h3 id="3-2-判别网络结构"><a href="#3-2-判别网络结构" class="headerlink" title="3.2 判别网络结构"></a>3.2 判别网络结构</h3><p><img data-src="https://ae01.alicdn.com/kf/HTB1E7evcL1G3KVjSZFkq6yK4XXaa.jpg"></p>
+<p>判别网络参见《Image-to-Image Translation with Conditional Adversarial Networks》中的PatchGAN。<br><span class="exturl" data-url="aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L3hpYW94aWZlaS9hcnRpY2xlL2RldGFpbHMvODY1MDY5NTU=" title="https://blog.csdn.net/xiaoxifei/article/details/86506955">关于PatchGAN的理解 - xiaoxifei的专栏 - CSDN博客<i class="fa fa-external-link"></i></span></p>
 <h2 id="4-损失函数设计"><a href="#4-损失函数设计" class="headerlink" title="4. 损失函数设计"></a>4. 损失函数设计</h2><p>这里损失函数由两项构成：<br>$$<br>L = L_{感知损失} +\lambda L_{对抗损失}<br>$$<br>在说感知损失(perception loss)前，先来看看简单的MSE损失，我们曾在MSCNN网络结构中提到过MSE损失函数。他比较的是生成图与标签图之间的像素级别均方差。<br>$$<br>L(t_i(x),t_i^{\delta}(x)) = \frac{1}{q}\sum_{i=1}^{q}||t_i(x)-t_i^{\delta}(x)||^2<br>$$<br>那什么感知损失？简单的说就是将生成图和标签图在通过一个网络，得到<strong>两张图的特征图</strong>，在这两张特征图上做MSE。一般来说，通过的这个网路会选择VGG网络。感知损失的计算公式如下：<br>$$<br>    L_{感知损失} = \frac{1}{CHW} \sum_{j=1}^{3}<br>    || \phi_j(I^{Label}) - \phi_j(G(I^{haze})) ||^2<br>$$</p>
 <ul>
 <li>$\phi$理解为通过网络的等效函数</li>
@@ -339,9 +340,9 @@
 <p>paper中的对抗损失采用的是WGAN-GP中的Loss，但是我通过阅读它的源码发现它只采用了wgan loss。虽然我后期想自己修改为wgan-gp loss，但是无奈，WGAN-GP后面的理论真的好多，加上时间已经不够且当时基于WGAN中的loss效果已经很好了，所以最后未能完成修改。</p>
 <p>关于WGAN 和 WAGN-GP推荐阅读：</p>
 <ul>
-<li><a target="_blank" rel="noopener" href="https://medium.com/@jonathan_hui/gan-wasserstein-gan-wgan-gp-6a1a2aa1b490">GAN — Wasserstein GAN &amp; WGAN-GP – Jonathan Hui – Medium</a></li>
-<li><a target="_blank" rel="noopener" href="https://blog.csdn.net/qq_25737169/article/details/78857788">DCGAN、WGAN、WGAN-GP、LSGAN、BEGAN原理总结及对比 - Double_V的博客 - CSDN博客</a></li>
-<li><a target="_blank" rel="noopener" href="http://www.pianshen.com/article/5135241105/">WassersteinGAN-GP</a></li>
+<li><span class="exturl" data-url="aHR0cHM6Ly9tZWRpdW0uY29tL0Bqb25hdGhhbl9odWkvZ2FuLXdhc3NlcnN0ZWluLWdhbi13Z2FuLWdwLTZhMWEyYWExYjQ5MA==" title="https://medium.com/@jonathan_hui/gan-wasserstein-gan-wgan-gp-6a1a2aa1b490">GAN — Wasserstein GAN &amp; WGAN-GP – Jonathan Hui – Medium<i class="fa fa-external-link"></i></span></li>
+<li><span class="exturl" data-url="aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L3FxXzI1NzM3MTY5L2FydGljbGUvZGV0YWlscy83ODg1Nzc4OA==" title="https://blog.csdn.net/qq_25737169/article/details/78857788">DCGAN、WGAN、WGAN-GP、LSGAN、BEGAN原理总结及对比 - Double_V的博客 - CSDN博客<i class="fa fa-external-link"></i></span></li>
+<li><span class="exturl" data-url="aHR0cDovL3d3dy5waWFuc2hlbi5jb20vYXJ0aWNsZS81MTM1MjQxMTA1Lw==" title="http://www.pianshen.com/article/5135241105/">WassersteinGAN-GP<i class="fa fa-external-link"></i></span></li>
 </ul>
 <h2 id="5-实现代码参考"><a href="#5-实现代码参考" class="headerlink" title="5. 实现代码参考"></a>5. 实现代码参考</h2><h3 id="5-1-构建生成器代码"><a href="#5-1-构建生成器代码" class="headerlink" title="5.1 构建生成器代码"></a>5.1 构建生成器代码</h3><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">generator_model</span>():</span></span><br><span class="line">    <span class="string">&quot;&quot;&quot;Build generator architecture.&quot;&quot;&quot;</span></span><br><span class="line">    <span class="comment"># Current version : ResNet block</span></span><br><span class="line">    inputs = Input(shape=image_shape)</span><br><span class="line"></span><br><span class="line">    x = ReflectionPadding2D((<span class="number">3</span>, <span class="number">3</span>))(inputs)</span><br><span class="line">    x = Conv2D(filters=ngf, kernel_size=(<span class="number">7</span>, <span class="number">7</span>), padding=<span class="string">&#x27;valid&#x27;</span>)(x)</span><br><span class="line">    x = BatchNormalization()(x)</span><br><span class="line">    x = Activation(<span class="string">&#x27;relu&#x27;</span>)(x)</span><br><span class="line"></span><br><span class="line">    n_downsampling = <span class="number">2</span></span><br><span class="line">    <span class="keyword">for</span> i <span class="keyword">in</span> range(n_downsampling):</span><br><span class="line">        mult = <span class="number">2</span> ** i</span><br><span class="line">        x = Conv2D(filters=ngf * mult * <span class="number">2</span>, kernel_size=(<span class="number">3</span>, <span class="number">3</span>), strides=<span class="number">2</span>, padding=<span class="string">&#x27;same&#x27;</span>)(x)</span><br><span class="line">        x = BatchNormalization()(x)</span><br><span class="line">        x = Activation(<span class="string">&#x27;relu&#x27;</span>)(x)</span><br><span class="line"></span><br><span class="line">    mult = <span class="number">2</span> ** n_downsampling</span><br><span class="line">    <span class="keyword">for</span> i <span class="keyword">in</span> range(n_blocks_gen):</span><br><span class="line">        x = res_block(x, ngf*mult, use_dropout=<span class="literal">True</span>)</span><br><span class="line"></span><br><span class="line">    <span class="keyword">for</span> i <span class="keyword">in</span> range(n_downsampling):</span><br><span class="line">        mult = <span class="number">2</span> ** (n_downsampling - i)</span><br><span class="line">        x = UpSampling2D()(x)</span><br><span class="line">        x = Conv2D(filters=int(ngf * mult / <span class="number">2</span>), kernel_size=(<span class="number">3</span>, <span class="number">3</span>), padding=<span class="string">&#x27;same&#x27;</span>)(x)</span><br><span class="line">        x = BatchNormalization()(x)</span><br><span class="line">        x = Activation(<span class="string">&#x27;relu&#x27;</span>)(x)</span><br><span class="line"></span><br><span class="line">    x = ReflectionPadding2D((<span class="number">3</span>, <span class="number">3</span>))(x)</span><br><span class="line">    x = Conv2D(filters=output_nc, kernel_size=(<span class="number">7</span>, <span class="number">7</span>), padding=<span class="string">&#x27;valid&#x27;</span>)(x)</span><br><span class="line">    x = Activation(<span class="string">&#x27;tanh&#x27;</span>)(x)</span><br><span class="line"></span><br><span class="line">    outputs = Add()([x, inputs])</span><br><span class="line">    <span class="comment"># outputs = Lambda(lambda z: K.clip(z, -1, 1))(x)</span></span><br><span class="line">    outputs = Lambda(<span class="keyword">lambda</span> z: z / <span class="number">2</span>)(outputs)</span><br><span class="line">    model = Model(inputs=inputs, outputs=outputs, name=<span class="string">&#x27;Generator&#x27;</span>)</span><br><span class="line">    <span class="keyword">return</span> model</span><br></pre></td></tr></table></figure>
 
@@ -360,9 +361,9 @@
 <li>Adam 优化器</li>
 </ul>
 <p>在GTX1060 的显卡上跑了8个小时。</p>
-<h2 id="6-实现效果展示"><a href="#6-实现效果展示" class="headerlink" title="6. 实现效果展示"></a>6. 实现效果展示</h2><p><img src="https://ae01.alicdn.com/kf/HTB1W27JdoGF3KVjSZFvq6z_nXXaX.jpg"></p>
-<p><img src="https://ae01.alicdn.com/kf/HTB1wuIHdgmH3KVjSZKzq6z2OXXa7.jpg"></p>
-<p><img src="https://ae01.alicdn.com/kf/HTB1UXoQdlCw3KVjSZR0q6zcUpXaO.jpg"></p>
+<h2 id="6-实现效果展示"><a href="#6-实现效果展示" class="headerlink" title="6. 实现效果展示"></a>6. 实现效果展示</h2><p><img data-src="https://ae01.alicdn.com/kf/HTB1W27JdoGF3KVjSZFvq6z_nXXaX.jpg"></p>
+<p><img data-src="https://ae01.alicdn.com/kf/HTB1wuIHdgmH3KVjSZKzq6z2OXXa7.jpg"></p>
+<p><img data-src="https://ae01.alicdn.com/kf/HTB1UXoQdlCw3KVjSZR0q6zcUpXaO.jpg"></p>
 <p>除此之外，我还做了一个Android App，电脑作为服务器，Android端上传雾图进行去雾，服务处理后回馈，Android显示。视频Demo：</p>
 <iframe id="spkj" src="//player.bilibili.com/player.html?aid=55396421&cid=96861817&page=1" scrolling="no" border="0" frameborder="no" framespacing="0" allowfullscreen="true" width=100%> </iframe>
 !!!
@@ -373,7 +374,7 @@ document.getElementById("spkj").style.height=document.getElementById("spkj").scr
 
 
 <h2 id="7-结语"><a href="#7-结语" class="headerlink" title="7. 结语"></a>7. 结语</h2><p>虽然是copy的Deblur结构，但是自己实现出来的时候还是非常高兴的。</p>
-<p>所有源代码地址:<a target="_blank" rel="noopener" href="https://github.com/raven-dehaze-work/DeblurGanToDehaze">https://github.com/raven-dehaze-work/DeblurGanToDehaze</a></p>
+<p>所有源代码地址:<span class="exturl" data-url="aHR0cHM6Ly9naXRodWIuY29tL3JhdmVuLWRlaGF6ZS13b3JrL0RlYmx1ckdhblRvRGVoYXpl" title="https://github.com/raven-dehaze-work/DeblurGanToDehaze">https://github.com/raven-dehaze-work/DeblurGanToDehaze<i class="fa fa-external-link"></i></span></p>
 
     </div>
 
@@ -496,7 +497,7 @@ document.getElementById("spkj").style.height=document.getElementById("spkj").scr
 
       <!--noindex-->
       <div class="post-toc-wrap sidebar-panel">
-          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#1-%E5%89%8D%E8%A8%80"><span class="nav-text">1. 前言</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#2-%E5%8E%BB%E9%9B%BE%E5%89%8D%E5%A4%95"><span class="nav-text">2.  去雾前夕</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#2-1-%E7%AB%AF%E5%88%B0%E7%AB%AF%E7%9A%84%E5%8E%BB%E9%9B%BE%E7%BD%91%E7%BB%9C"><span class="nav-text">2.1 端到端的去雾网络</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#2-2-%E6%B5%85%E8%B0%88GAN"><span class="nav-text">2.2 浅谈GAN</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#3-%E5%8E%BB%E9%9B%BE%E7%BD%91%E7%BB%9C%E7%BB%93%E6%9E%84"><span class="nav-text">3. 去雾网络结构</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#3-1-%E7%94%9F%E6%88%90%E7%BD%91%E7%BB%9C%E7%BB%93%E6%9E%84"><span class="nav-text">3.1 生成网络结构</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#3-2-%E5%88%A4%E5%88%AB%E7%BD%91%E7%BB%9C%E7%BB%93%E6%9E%84"><span class="nav-text">3.2 判别网络结构</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#4-%E6%8D%9F%E5%A4%B1%E5%87%BD%E6%95%B0%E8%AE%BE%E8%AE%A1"><span class="nav-text">4. 损失函数设计</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#5-%E5%AE%9E%E7%8E%B0%E4%BB%A3%E7%A0%81%E5%8F%82%E8%80%83"><span class="nav-text">5. 实现代码参考</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#5-1-%E6%9E%84%E5%BB%BA%E7%94%9F%E6%88%90%E5%99%A8%E4%BB%A3%E7%A0%81"><span class="nav-text">5.1 构建生成器代码</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#5-2-%E6%9E%84%E5%BB%BA%E5%88%A4%E5%88%AB%E5%99%A8"><span class="nav-text">5.2 构建判别器</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#5-3-%E6%9E%84%E5%BB%BA%E6%95%B4%E4%B8%AA%E7%BD%91%E7%BB%9C%E7%BB%93%E6%9E%84"><span class="nav-text">5.3 构建整个网络结构</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#5-4-%E8%AE%AD%E7%BB%83%E7%BD%91%E7%BB%9C"><span class="nav-text">5.4 训练网络</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#5-5-%E5%8F%82%E6%95%B0%E8%AE%BE%E7%BD%AE"><span class="nav-text">5.5 参数设置</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#6-%E5%AE%9E%E7%8E%B0%E6%95%88%E6%9E%9C%E5%B1%95%E7%A4%BA"><span class="nav-text">6. 实现效果展示</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#7-%E7%BB%93%E8%AF%AD"><span class="nav-text">7. 结语</span></a></li></ol></div>
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#1-前言"><span class="nav-text">1. 前言</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#2-去雾前夕"><span class="nav-text">2.  去雾前夕</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#2-1-端到端的去雾网络"><span class="nav-text">2.1 端到端的去雾网络</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#2-2-浅谈GAN"><span class="nav-text">2.2 浅谈GAN</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#3-去雾网络结构"><span class="nav-text">3. 去雾网络结构</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#3-1-生成网络结构"><span class="nav-text">3.1 生成网络结构</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#3-2-判别网络结构"><span class="nav-text">3.2 判别网络结构</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#4-损失函数设计"><span class="nav-text">4. 损失函数设计</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#5-实现代码参考"><span class="nav-text">5. 实现代码参考</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#5-1-构建生成器代码"><span class="nav-text">5.1 构建生成器代码</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#5-2-构建判别器"><span class="nav-text">5.2 构建判别器</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#5-3-构建整个网络结构"><span class="nav-text">5.3 构建整个网络结构</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#5-4-训练网络"><span class="nav-text">5.4 训练网络</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#5-5-参数设置"><span class="nav-text">5.5 参数设置</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#6-实现效果展示"><span class="nav-text">6. 实现效果展示</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#7-结语"><span class="nav-text">7. 结语</span></a></li></ol></div>
       </div>
       <!--/noindex-->
 

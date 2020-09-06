@@ -4,7 +4,7 @@
   <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
 <meta name="theme-color" content="#222">
-<meta name="generator" content="Hexo 5.1.1">
+<meta name="generator" content="Hexo 4.2.1">
   <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
   <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png">
   <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png">
@@ -21,7 +21,7 @@
 
 <script id="hexo-configurations">
     var NexT = window.NexT || {};
-    var CONFIG = {"hostname":"www.ravenxrz.ink","root":"/","scheme":"Mist","version":"7.8.0","exturl":true,"sidebar":{"position":"left","display":"always","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":true,"show_result":true,"style":"flat"},"back2top":{"enable":true,"sidebar":false,"scrollpercent":true},"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":true,"lazyload":true,"pangu":true,"comments":{"style":"tabs","active":"gitalk","storage":true,"lazyload":true,"nav":null,"activeClass":"gitalk"},"algolia":{"hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":true,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},"motion":{"enable":false,"async":true,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}}};
+    var CONFIG = {"hostname":"www.ravenxrz.ink","root":"/","scheme":"Mist","version":"7.8.0","exturl":true,"sidebar":{"position":"left","display":"always","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":true,"show_result":true,"style":"flat"},"back2top":{"enable":true,"sidebar":false,"scrollpercent":true},"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":true,"lazyload":true,"pangu":true,"comments":{"style":"tabs","active":"gitalk","storage":true,"lazyload":true,"nav":null,"activeClass":"gitalk"},"algolia":{"hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":true,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},"motion":{"enable":false,"async":true,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},"path":"search.xml"};
   </script>
 
   <meta name="description" content="本次lab, shlab. 即编写一个简单的shell。 0. 背景知识shlab相对其它lab要简单一些，但是其中牵涉出来的一些概念是相当难的。简单说一下这次lab依赖的背景知识吧。  书籍对应 异常控制流 章节   理解进程的概念，linux如何创建新进程，进程的状态转换，回收等过程。 理解linux中的signal概念，掌握如何发送、接收、处理signal事件，理解signal handle">
@@ -34,7 +34,7 @@
 <meta property="og:image" content="https://cdn.jsdelivr.net/gh/ravenxrz/PicBed/img/image-20200805133536133.png">
 <meta property="og:image" content="https://cdn.jsdelivr.net/gh/ravenxrz/PicBed/img/image-20200805133902911.png">
 <meta property="article:published_time" content="2020-08-15T11:36:25.000Z">
-<meta property="article:modified_time" content="2020-09-06T02:45:08.028Z">
+<meta property="article:modified_time" content="2020-09-06T07:37:36.751Z">
 <meta property="article:author" content="Raven">
 <meta property="article:tag" content="shlab">
 <meta name="twitter:card" content="summary">
@@ -84,6 +84,7 @@
   </style>
 </noscript>
 
+<link rel="alternate" href="/atom.xml" title="Raven's Blog" type="application/atom+xml">
 </head>
 
 <body itemscope itemtype="http://schema.org/WebPage">
@@ -234,7 +235,7 @@
                   <i class="fa fa-calendar-check-o"></i>
                 </span>
                 <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2020-09-06 10:45:08" itemprop="dateModified" datetime="2020-09-06T10:45:08+08:00">2020-09-06</time>
+                <time title="修改时间：2020-09-06 15:37:36" itemprop="dateModified" datetime="2020-09-06T15:37:36+08:00">2020-09-06</time>
               </span>
             <span class="post-meta-item">
               <span class="post-meta-item-icon">
@@ -344,9 +345,9 @@
 <li>前台进程，fork后的wait变为”伪wait”, 前后台进程统一在sigchld_handler中回收处理。那什么是”伪wait“，我们要之前前台进程的意思是什么，作用是什么，作用就是阻塞住当前的tsh，不允许输入新命令，除此之外，前后台进程都是一样的。ok，既然这样，我们只用让tsh阻塞住即可，采用什么方法则看个人实现了。</li>
 </ol>
 <p>显然，第二种统一处理更容易理解，维护。当然，writeup其实给出了一种解决方案：</p>
-<p><img src="https://cdn.jsdelivr.net/gh/ravenxrz/PicBed/img/image-20200805133536133.png" alt="image-20200805133536133"></p>
+<p><img data-src="https://cdn.jsdelivr.net/gh/ravenxrz/PicBed/img/image-20200805133536133.png" alt="image-20200805133536133"></p>
 <p>另外一个问题就是，<strong>信号的转发</strong>。</p>
-<p><img src="https://cdn.jsdelivr.net/gh/ravenxrz/PicBed/img/image-20200805133902911.png" alt="image-20200805133902911"></p>
+<p><img data-src="https://cdn.jsdelivr.net/gh/ravenxrz/PicBed/img/image-20200805133902911.png" alt="image-20200805133902911"></p>
 <p>这里要解决的是，后台进程不应该接收到Ctrl-C所引发的信号。</p>
 <p>还有一个问题就是<strong>保持和tshref的输出相同</strong>，那需要在恰当的位置，打印出相应的信息，这部分不难，但其实挺磨人的。</p>
 <p>最后就是非tsh需求的逻辑部分了，那就是<strong>如何编写 async-signal-safety 的代码</strong>。如果你是看了csapp课程或书籍的话， 那应该可以意识这里会有一些async-signal-safety问题。ppt中其实基本上给出所有我们会遇到的问题，以及一些常用的guideline。这部分需要仔细阅读，理解清楚，必然很可能出现一些莫名的bug。</p>
@@ -473,7 +474,7 @@
 
       <!--noindex-->
       <div class="post-toc-wrap sidebar-panel">
-          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#0-%E8%83%8C%E6%99%AF%E7%9F%A5%E8%AF%86"><span class="nav-text">0. 背景知识</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#1-%E9%A2%98%E7%9B%AE%E8%A6%81%E6%B1%82"><span class="nav-text">1. 题目要求</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#2-%E9%A2%98%E7%9B%AE%E5%88%86%E6%9E%90"><span class="nav-text">2. 题目分析</span></a></li></ol></div>
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#0-背景知识"><span class="nav-text">0. 背景知识</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#1-题目要求"><span class="nav-text">1. 题目要求</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#2-题目分析"><span class="nav-text">2. 题目分析</span></a></li></ol></div>
       </div>
       <!--/noindex-->
 

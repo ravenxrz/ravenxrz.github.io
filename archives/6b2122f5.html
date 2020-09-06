@@ -4,7 +4,7 @@
   <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
 <meta name="theme-color" content="#222">
-<meta name="generator" content="Hexo 5.1.1">
+<meta name="generator" content="Hexo 4.2.1">
   <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
   <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png">
   <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png">
@@ -21,7 +21,7 @@
 
 <script id="hexo-configurations">
     var NexT = window.NexT || {};
-    var CONFIG = {"hostname":"www.ravenxrz.ink","root":"/","scheme":"Mist","version":"7.8.0","exturl":true,"sidebar":{"position":"left","display":"always","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":true,"show_result":true,"style":"flat"},"back2top":{"enable":true,"sidebar":false,"scrollpercent":true},"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":true,"lazyload":true,"pangu":true,"comments":{"style":"tabs","active":"gitalk","storage":true,"lazyload":true,"nav":null,"activeClass":"gitalk"},"algolia":{"hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":true,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},"motion":{"enable":false,"async":true,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}}};
+    var CONFIG = {"hostname":"www.ravenxrz.ink","root":"/","scheme":"Mist","version":"7.8.0","exturl":true,"sidebar":{"position":"left","display":"always","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":true,"show_result":true,"style":"flat"},"back2top":{"enable":true,"sidebar":false,"scrollpercent":true},"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":true,"lazyload":true,"pangu":true,"comments":{"style":"tabs","active":"gitalk","storage":true,"lazyload":true,"nav":null,"activeClass":"gitalk"},"algolia":{"hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":true,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},"motion":{"enable":false,"async":true,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},"path":"search.xml"};
   </script>
 
   <meta name="description" content="1.前言 最近换手机，因为原来的旧手机（一加三）性能也还算行，所以就百度了一下看能不能把这台手机给用起来，发现搭建个基于aria的远程下载机比较有趣,于是乎就有了本篇文章。">
@@ -47,7 +47,7 @@
 <meta property="og:image" content="https://pic.superbed.cn/item/5cfbb59c451253d178d9ca97.png">
 <meta property="og:image" content="https://pic.superbed.cn/item/5cfbb59e451253d178d9cadb.png">
 <meta property="article:published_time" content="2018-10-12T05:58:52.000Z">
-<meta property="article:modified_time" content="2020-09-06T02:45:08.059Z">
+<meta property="article:modified_time" content="2020-09-06T07:37:36.780Z">
 <meta property="article:author" content="Raven">
 <meta property="article:tag" content="手机">
 <meta property="article:tag" content="下载机">
@@ -99,6 +99,7 @@
   </style>
 </noscript>
 
+<link rel="alternate" href="/atom.xml" title="Raven's Blog" type="application/atom+xml">
 </head>
 
 <body itemscope itemtype="http://schema.org/WebPage">
@@ -249,7 +250,7 @@
                   <i class="fa fa-calendar-check-o"></i>
                 </span>
                 <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2020-09-06 10:45:08" itemprop="dateModified" datetime="2020-09-06T10:45:08+08:00">2020-09-06</time>
+                <time title="修改时间：2020-09-06 15:37:36" itemprop="dateModified" datetime="2020-09-06T15:37:36+08:00">2020-09-06</time>
               </span>
             <span class="post-meta-item">
               <span class="post-meta-item-icon">
@@ -285,7 +286,7 @@
 <a id="more"></a>
 <p>什么是Aria？</p>
 <blockquote>
-<p>aria2 is a lightweight multi-protocol &amp; multi-source command-line download utility. It supports <a target="_blank" rel="noopener" href="https://wiki.archlinux.org/index.php/HTTP">HTTP</a>/<a target="_blank" rel="noopener" href="https://wiki.archlinux.org/index.php/HTTPS">HTTPS</a>, <a target="_blank" rel="noopener" href="https://wiki.archlinux.org/index.php/FTP">FTP</a>, <a target="_blank" rel="noopener" href="https://wiki.archlinux.org/index.php/BitTorrent">BitTorrent</a> and <a target="_blank" rel="noopener" href="https://en.wikipedia.org/wiki/Metalink">Metalink</a>. aria2 can be manipulated via built-in <a target="_blank" rel="noopener" href="https://en.wikipedia.org/wiki/JSON-RPC">JSON-RPC</a> and <a target="_blank" rel="noopener" href="https://en.wikipedia.org/wiki/XML-RPC">XML-RPC</a> interfaces. (抄自：<a target="_blank" rel="noopener" href="https://wiki.archlinux.org/index.php/aria2">https://wiki.archlinux.org/index.php/aria2</a>)</p>
+<p>aria2 is a lightweight multi-protocol &amp; multi-source command-line download utility. It supports <span class="exturl" data-url="aHR0cHM6Ly93aWtpLmFyY2hsaW51eC5vcmcvaW5kZXgucGhwL0hUVFA=" title="https://wiki.archlinux.org/index.php/HTTP">HTTP<i class="fa fa-external-link"></i></span>/<span class="exturl" data-url="aHR0cHM6Ly93aWtpLmFyY2hsaW51eC5vcmcvaW5kZXgucGhwL0hUVFBT" title="https://wiki.archlinux.org/index.php/HTTPS">HTTPS<i class="fa fa-external-link"></i></span>, <span class="exturl" data-url="aHR0cHM6Ly93aWtpLmFyY2hsaW51eC5vcmcvaW5kZXgucGhwL0ZUUA==" title="https://wiki.archlinux.org/index.php/FTP">FTP<i class="fa fa-external-link"></i></span>, <span class="exturl" data-url="aHR0cHM6Ly93aWtpLmFyY2hsaW51eC5vcmcvaW5kZXgucGhwL0JpdFRvcnJlbnQ=" title="https://wiki.archlinux.org/index.php/BitTorrent">BitTorrent<i class="fa fa-external-link"></i></span> and <span class="exturl" data-url="aHR0cHM6Ly9lbi53aWtpcGVkaWEub3JnL3dpa2kvTWV0YWxpbms=" title="https://en.wikipedia.org/wiki/Metalink">Metalink<i class="fa fa-external-link"></i></span>. aria2 can be manipulated via built-in <span class="exturl" data-url="aHR0cHM6Ly9lbi53aWtpcGVkaWEub3JnL3dpa2kvSlNPTi1SUEM=" title="https://en.wikipedia.org/wiki/JSON-RPC">JSON-RPC<i class="fa fa-external-link"></i></span> and <span class="exturl" data-url="aHR0cHM6Ly9lbi53aWtpcGVkaWEub3JnL3dpa2kvWE1MLVJQQw==" title="https://en.wikipedia.org/wiki/XML-RPC">XML-RPC<i class="fa fa-external-link"></i></span> interfaces. (抄自：<span class="exturl" data-url="aHR0cHM6Ly93aWtpLmFyY2hsaW51eC5vcmcvaW5kZXgucGhwL2FyaWEy" title="https://wiki.archlinux.org/index.php/aria2">https://wiki.archlinux.org/index.php/aria2<i class="fa fa-external-link"></i></span>)</p>
 </blockquote>
 <p>翻译一下就是:</p>
 <blockquote>
@@ -309,9 +310,9 @@
 </li>
 <li><p>Aria服务：Aria2cdroid或者Aria2Android（前者似乎在酷安市场已下架，但是在码云上有该软件的源码，有一定的Android编程知识的同学可以clone下来编译一下）</p>
 </li>
-<li><p>Aria控制器：不推荐使用酷安市场上的Aria2远程下载，该软件有个无限弹出连接主页面的bug。反之使用web控制端是个相当不错的选择。这里推荐使用：<a target="_blank" rel="noopener" href="http://euch.gotoip1.com/aria-ng/#!/status">Ariang</a></p>
+<li><p>Aria控制器：不推荐使用酷安市场上的Aria2远程下载，该软件有个无限弹出连接主页面的bug。反之使用web控制端是个相当不错的选择。这里推荐使用：<span class="exturl" data-url="aHR0cDovL2V1Y2guZ290b2lwMS5jb20vYXJpYS1uZy8jIS9zdGF0dXM=" title="http://euch.gotoip1.com/aria-ng/#!/status">Ariang<i class="fa fa-external-link"></i></span></p>
 </li>
-<li><p>有了上述的几个东西已经可以实现在局域网中下载东西了，但是要做到外网远程控制我们的下载鸡必要做内网穿透才行，这里我用的是<a target="_blank" rel="noopener" href="https://www.ngrok.cc/">Sunny-Ngork</a>。</p>
+<li><p>有了上述的几个东西已经可以实现在局域网中下载东西了，但是要做到外网远程控制我们的下载鸡必要做内网穿透才行，这里我用的是<span class="exturl" data-url="aHR0cHM6Ly93d3cubmdyb2suY2Mv" title="https://www.ngrok.cc/">Sunny-Ngork<i class="fa fa-external-link"></i></span>。</p>
 </li>
 <li><p>NeoTerm终端</p>
 </li>
@@ -320,26 +321,26 @@
 </ol>
 <p><strong>以上大多数软件均可在酷安市场找到。</strong></p>
 <h2 id="3-开始搭建"><a href="#3-开始搭建" class="headerlink" title="3.开始搭建"></a>3.开始搭建</h2><h3 id="3-1-root你的手机"><a href="#3-1-root你的手机" class="headerlink" title="3.1 root你的手机"></a>3.1 root你的手机</h3><p>这个我就不细说了，手机解锁-&gt;刷入twrp recovery-&gt; 刷入root包。</p>
-<h3 id="3-2-开启你的Aria后台服务"><a href="#3-2-开启你的Aria后台服务" class="headerlink" title="3.2 开启你的Aria后台服务"></a>3.2 开启你的Aria后台服务</h3><p><img src="https://pic3.superbed.cn/item/5cfbb583451253d178d9c758.png" alt="Screenshot_20181101-142810.png"></p>
+<h3 id="3-2-开启你的Aria后台服务"><a href="#3-2-开启你的Aria后台服务" class="headerlink" title="3.2 开启你的Aria后台服务"></a>3.2 开启你的Aria后台服务</h3><p><img data-src="https://pic3.superbed.cn/item/5cfbb583451253d178d9c758.png" alt="Screenshot_20181101-142810.png"></p>
 <p>打开Aria2（如果你下载的是Aria2Android，就打开Aria2Android）</p>
-<p><img src="https://pic.superbed.cn/item/5cfbb58b451253d178d9c7e5.png" alt="Screenshot_20181101-142828.png"></p>
+<p><img data-src="https://pic.superbed.cn/item/5cfbb58b451253d178d9c7e5.png" alt="Screenshot_20181101-142828.png"></p>
 <p>点击右上角的的三角形，开启服务。</p>
-<p><img src="https://pic2.superbed.cn/item/5cfbb58c451253d178d9c827.png" alt="Screenshot_20181101-142834.png"></p>
+<p><img data-src="https://pic2.superbed.cn/item/5cfbb58c451253d178d9c827.png" alt="Screenshot_20181101-142834.png"></p>
 <p>记住下面的东西：<br>第一行的ip:192.168.43.122<br>第二行的Secret：123456（如果你没改的就是这个，另外Aria2Android的同学也注意一下是多少）</p>
-<h3 id="3-3-打开Web控制"><a href="#3-3-打开Web控制" class="headerlink" title="3.3 打开Web控制"></a>3.3 打开Web控制</h3><p>打开网址：<a target="_blank" rel="noopener" href="http://euch.gotoip1.com/aria-ng/#!/status()">Ariang</a></p>
-<p><img src="https://pic.superbed.cn/item/5cfbb58e451253d178d9c85f.png" alt="web1.png"></p>
-<p><img src="https://pic1.superbed.cn/item/5cfbb58f451253d178d9c893.png" alt="web2.png"></p>
-<p><img src="https://pic.superbed.cn/item/5cfbb590451253d178d9c8c4.png" alt="web3.png"></p>
+<h3 id="3-3-打开Web控制"><a href="#3-3-打开Web控制" class="headerlink" title="3.3 打开Web控制"></a>3.3 打开Web控制</h3><p>打开网址：<span class="exturl" data-url="aHR0cDovL2V1Y2guZ290b2lwMS5jb20vYXJpYS1uZy8jIS9zdGF0dXMoKQ==" title="http://euch.gotoip1.com/aria-ng/#!/status()">Ariang<i class="fa fa-external-link"></i></span></p>
+<p><img data-src="https://pic.superbed.cn/item/5cfbb58e451253d178d9c85f.png" alt="web1.png"></p>
+<p><img data-src="https://pic1.superbed.cn/item/5cfbb58f451253d178d9c893.png" alt="web2.png"></p>
+<p><img data-src="https://pic.superbed.cn/item/5cfbb590451253d178d9c8c4.png" alt="web3.png"></p>
 <p>到这一步局域网中的下载机已经搭建好了，可以来试试效果。</p>
-<p><img src="https://pic1.superbed.cn/item/5cfbb592451253d178d9c901.png" alt="web4.png"></p>
+<p><img data-src="https://pic1.superbed.cn/item/5cfbb592451253d178d9c901.png" alt="web4.png"></p>
 <p>先不用在意我这里的网速。。。（如果你搭建成功，并且下载的是http的文件速度基本上是满速的）</p>
 <h3 id="3-4-内网穿透"><a href="#3-4-内网穿透" class="headerlink" title="3.4 内网穿透"></a>3.4 内网穿透</h3><p>到上一步为止都还是非常容易的，但是实用性还不算高，毕竟在局域网直接用控制端的主机来下载不就好了吗，或者每次出门前就把要下载的东西设置好。不过要是能够远程控制不是更美好吗？</p>
 <h4 id="3-4-1-配置环境"><a href="#3-4-1-配置环境" class="headerlink" title="3.4.1 配置环境"></a>3.4.1 配置环境</h4><p>打开<strong>busybox</strong>，给root权限，<strong>等加载进度条跑完</strong>，然后选择install就行了。</p>
-<h4 id="3-4-2-Sunny-Ngork配置"><a href="#3-4-2-Sunny-Ngork配置" class="headerlink" title="3.4.2 Sunny-Ngork配置"></a>3.4.2 Sunny-Ngork配置</h4><p>打开<a target="_blank" rel="noopener" href="https://www.ngrok.cc/">Sunny-Ngork</a>官网，注册一个账号进入到后台：</p>
-<p><img src="https://pic.superbed.cn/item/5cfbb594451253d178d9c93b.png" alt="web5.png"></p>
-<p><img src="https://pic.superbed.cn/item/5cfbb595451253d178d9c973.png" alt="web6.png"></p>
-<p><img src="https://pic.superbed.cn/item/5cfbb596451253d178d9c9b6.png" alt="web7.png"></p>
-<p><img src="https://pic.superbed.cn/item/5cfbb598451253d178d9c9ee.png" alt="web8.png"></p>
+<h4 id="3-4-2-Sunny-Ngork配置"><a href="#3-4-2-Sunny-Ngork配置" class="headerlink" title="3.4.2 Sunny-Ngork配置"></a>3.4.2 Sunny-Ngork配置</h4><p>打开<span class="exturl" data-url="aHR0cHM6Ly93d3cubmdyb2suY2Mv" title="https://www.ngrok.cc/">Sunny-Ngork<i class="fa fa-external-link"></i></span>官网，注册一个账号进入到后台：</p>
+<p><img data-src="https://pic.superbed.cn/item/5cfbb594451253d178d9c93b.png" alt="web5.png"></p>
+<p><img data-src="https://pic.superbed.cn/item/5cfbb595451253d178d9c973.png" alt="web6.png"></p>
+<p><img data-src="https://pic.superbed.cn/item/5cfbb596451253d178d9c9b6.png" alt="web7.png"></p>
+<p><img data-src="https://pic.superbed.cn/item/5cfbb598451253d178d9c9ee.png" alt="web8.png"></p>
 <p><strong>将下载下来的linux arm文件放到手机里，并记住放置的目录,并解压，会得到一个名字为sunny脚本</strong></p>
 <h4 id="3-4-3-运行外网穿透程序"><a href="#3-4-3-运行外网穿透程序" class="headerlink" title="3.4.3 运行外网穿透程序"></a>3.4.3 运行外网穿透程序</h4><p>打开<strong>NeoTerm</strong>终端，获取超级权限:<code>su</code>，会提示给权限。</p>
 <p>cd到上一步中你解压的脚本目录下:<code>cd xxxx</code></p>
@@ -348,29 +349,29 @@
 <p>更改sunny文件权限：<code>chmod 755 sunny</code></p>
 <p>运行:<code>sunny clientid 隧道id</code></p>
 <p>如果配置成功应该由如下界面:</p>
-<p><img src="https://pic.superbed.cn/item/5cfbb599451253d178d9ca24.png" alt="Screenshot_20181101-150632.png"></p>
-<h4 id="3-4-4-更新远端控制程序"><a href="#3-4-4-更新远端控制程序" class="headerlink" title="3.4.4 更新远端控制程序"></a>3.4.4 更新远端控制程序</h4><p><img src="https://pic.superbed.cn/item/5cfbb59b451253d178d9ca5b.png" alt="web9.png"></p>
+<p><img data-src="https://pic.superbed.cn/item/5cfbb599451253d178d9ca24.png" alt="Screenshot_20181101-150632.png"></p>
+<h4 id="3-4-4-更新远端控制程序"><a href="#3-4-4-更新远端控制程序" class="headerlink" title="3.4.4 更新远端控制程序"></a>3.4.4 更新远端控制程序</h4><p><img data-src="https://pic.superbed.cn/item/5cfbb59b451253d178d9ca5b.png" alt="web9.png"></p>
 <p>端口一定要填80端口!</p>
 <p>端口一定要填80端口!</p>
 <p>端口一定要填80端口!</p>
 <p>嗯，到这里我们就完成了远程端搭建，快去试试吧。</p>
 <h2 id="4-额外的问题"><a href="#4-额外的问题" class="headerlink" title="4.额外的问题"></a>4.额外的问题</h2><ol>
 <li><p><strong>怎么用aria怎么下载百度网盘里的资源？</strong></p>
-<p>可以用chrome的插件BaiduExporter，但是chrome商店已经下架了，好在该插件在github上有，这里贴出地址：<a target="_blank" rel="noopener" href="https://github.com/acgotaku/BaiduExporter">https://github.com/acgotaku/BaiduExporter</a></p>
+<p>可以用chrome的插件BaiduExporter，但是chrome商店已经下架了，好在该插件在github上有，这里贴出地址：<span class="exturl" data-url="aHR0cHM6Ly9naXRodWIuY29tL2FjZ290YWt1L0JhaWR1RXhwb3J0ZXI=" title="https://github.com/acgotaku/BaiduExporter">https://github.com/acgotaku/BaiduExporter<i class="fa fa-external-link"></i></span></p>
 </li>
 </ol>
-<p><img src="https://pic.superbed.cn/item/5cfbb59c451253d178d9ca97.png" alt="web10.png"></p>
+<p><img data-src="https://pic.superbed.cn/item/5cfbb59c451253d178d9ca97.png" alt="web10.png"></p>
 <p>把这个下载下来，然后打开chrome的扩展程序，拖进去。<strong>嗯，完美的没有安装成功</strong>，chrome限制了没有在商店上线的插件。</p>
 <p>正确的做法是，把crx后缀该为rar，然后解压，最后在chrome的扩展程序中<strong>加载已解压程序</strong>，就ok了。</p>
 <p>使用方法，找到资源，点击导出下载，推送到aria（可能需要设置一下，和ariang面板差不多，就不说了）</p>
-<p><img src="https://pic.superbed.cn/item/5cfbb59e451253d178d9cadb.png" alt="web11.png"></p>
+<p><img data-src="https://pic.superbed.cn/item/5cfbb59e451253d178d9cadb.png" alt="web11.png"></p>
 <ol start="2">
 <li><strong>为什么我的aria下载bt，磁力没速度，但是迅雷却跑得很快？</strong></li>
 </ol>
 <p>根据我百度的资料来看（<strong>不一定准确</strong>），迅雷之所以跑得快，是因为迅雷流氓，在后台上传你下载的文件信息。我们都知道bt下载需要去别人手中取文件块，所以人越多下载得越快，迅雷这样做就导致很容易发现其他下载者，而aria就不行了。至于为什么aria速度完全没有的情况，是因为没有配置bt-tracker：把下面这些复制到你的bt-tracker中（在ariang面板中的bt设置中有这个选项）。</p>
 <figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br></pre></td><td class="code"><pre><span class="line">udp:&#x2F;&#x2F;tracker.coppersurfer.tk:6969&#x2F;announce</span><br><span class="line"></span><br><span class="line">udp:&#x2F;&#x2F;tracker.opentrackr.org:1337&#x2F;announce</span><br><span class="line"></span><br><span class="line">udp:&#x2F;&#x2F;9.rarbg.to:2710&#x2F;announce</span><br><span class="line"></span><br><span class="line">udp:&#x2F;&#x2F;tracker.internetwarriors.net:1337&#x2F;announce</span><br><span class="line">	</span><br><span class="line">udp:&#x2F;&#x2F;exodus.desync.com:6969&#x2F;announce</span><br><span class="line"></span><br><span class="line">udp:&#x2F;&#x2F;tracker.vanitycore.co:6969&#x2F;announce</span><br><span class="line"></span><br><span class="line">udp:&#x2F;&#x2F;public.popcorn-tracker.org:6969&#x2F;announce</span><br><span class="line"></span><br><span class="line">udp:&#x2F;&#x2F;explodie.org:6969&#x2F;announce</span><br><span class="line"></span><br><span class="line">udp:&#x2F;&#x2F;tracker1.itzmx.com:8080&#x2F;announce</span><br><span class="line"></span><br><span class="line">udp:&#x2F;&#x2F;tracker.torrent.eu.org:451&#x2F;announce</span><br><span class="line"></span><br><span class="line">udp:&#x2F;&#x2F;tracker.tiny-vps.com:6969&#x2F;announce</span><br><span class="line"></span><br><span class="line">udp:&#x2F;&#x2F;tracker.port443.xyz:6969&#x2F;announce</span><br><span class="line"></span><br><span class="line">udp:&#x2F;&#x2F;thetracker.org:80&#x2F;announce</span><br><span class="line"></span><br><span class="line">udp:&#x2F;&#x2F;open.stealth.si:80&#x2F;announce</span><br><span class="line"></span><br><span class="line">udp:&#x2F;&#x2F;open.demonii.si:1337&#x2F;announce</span><br><span class="line"></span><br><span class="line">udp:&#x2F;&#x2F;ipv4.tracker.harry.lu:80&#x2F;announce</span><br><span class="line"></span><br><span class="line">udp:&#x2F;&#x2F;denis.stalker.upeer.me:6969&#x2F;announce</span><br><span class="line"></span><br><span class="line">udp:&#x2F;&#x2F;bt.xxx-tracker.com:2710&#x2F;announce</span><br><span class="line"></span><br><span class="line">udp:&#x2F;&#x2F;tracker.cypherpunks.ru:6969&#x2F;announce</span><br><span class="line"></span><br><span class="line">udp:&#x2F;&#x2F;retracker.lanta-net.ru:2710&#x2F;announce</span><br><span class="line"></span><br></pre></td></tr></table></figure>
 
-<p><strong>不过，tracker更新的很快，当你看到这篇文章的时候，应该已经过时了</strong>，所以这里贴出一个trakcer更新的仓库，需要的时候自己去看看吧:<a target="_blank" rel="noopener" href="https://github.com/ngosang/trackerslist">https://github.com/ngosang/trackerslist</a></p>
+<p><strong>不过，tracker更新的很快，当你看到这篇文章的时候，应该已经过时了</strong>，所以这里贴出一个trakcer更新的仓库，需要的时候自己去看看吧:<span class="exturl" data-url="aHR0cHM6Ly9naXRodWIuY29tL25nb3NhbmcvdHJhY2tlcnNsaXN0" title="https://github.com/ngosang/trackerslist">https://github.com/ngosang/trackerslist<i class="fa fa-external-link"></i></span></p>
 <p>每次更改设置后，<strong>记住重启aria服务</strong>。</p>
 <p>好了，愉快的去享受远程下载吧。hiahia。</p>
 
@@ -497,7 +498,7 @@
 
       <!--noindex-->
       <div class="post-toc-wrap sidebar-panel">
-          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#1-%E5%89%8D%E8%A8%80"><span class="nav-text">1.前言</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#2-%E5%87%86%E5%A4%87%E5%B7%A5%E4%BD%9C"><span class="nav-text">2. 准备工作</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#3-%E5%BC%80%E5%A7%8B%E6%90%AD%E5%BB%BA"><span class="nav-text">3.开始搭建</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#3-1-root%E4%BD%A0%E7%9A%84%E6%89%8B%E6%9C%BA"><span class="nav-text">3.1 root你的手机</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#3-2-%E5%BC%80%E5%90%AF%E4%BD%A0%E7%9A%84Aria%E5%90%8E%E5%8F%B0%E6%9C%8D%E5%8A%A1"><span class="nav-text">3.2 开启你的Aria后台服务</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#3-3-%E6%89%93%E5%BC%80Web%E6%8E%A7%E5%88%B6"><span class="nav-text">3.3 打开Web控制</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#3-4-%E5%86%85%E7%BD%91%E7%A9%BF%E9%80%8F"><span class="nav-text">3.4 内网穿透</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#3-4-1-%E9%85%8D%E7%BD%AE%E7%8E%AF%E5%A2%83"><span class="nav-text">3.4.1 配置环境</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#3-4-2-Sunny-Ngork%E9%85%8D%E7%BD%AE"><span class="nav-text">3.4.2 Sunny-Ngork配置</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#3-4-3-%E8%BF%90%E8%A1%8C%E5%A4%96%E7%BD%91%E7%A9%BF%E9%80%8F%E7%A8%8B%E5%BA%8F"><span class="nav-text">3.4.3 运行外网穿透程序</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#3-4-4-%E6%9B%B4%E6%96%B0%E8%BF%9C%E7%AB%AF%E6%8E%A7%E5%88%B6%E7%A8%8B%E5%BA%8F"><span class="nav-text">3.4.4 更新远端控制程序</span></a></li></ol></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#4-%E9%A2%9D%E5%A4%96%E7%9A%84%E9%97%AE%E9%A2%98"><span class="nav-text">4.额外的问题</span></a></li></ol></div>
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#1-前言"><span class="nav-text">1.前言</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#2-准备工作"><span class="nav-text">2. 准备工作</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#3-开始搭建"><span class="nav-text">3.开始搭建</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#3-1-root你的手机"><span class="nav-text">3.1 root你的手机</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#3-2-开启你的Aria后台服务"><span class="nav-text">3.2 开启你的Aria后台服务</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#3-3-打开Web控制"><span class="nav-text">3.3 打开Web控制</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#3-4-内网穿透"><span class="nav-text">3.4 内网穿透</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#3-4-1-配置环境"><span class="nav-text">3.4.1 配置环境</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#3-4-2-Sunny-Ngork配置"><span class="nav-text">3.4.2 Sunny-Ngork配置</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#3-4-3-运行外网穿透程序"><span class="nav-text">3.4.3 运行外网穿透程序</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#3-4-4-更新远端控制程序"><span class="nav-text">3.4.4 更新远端控制程序</span></a></li></ol></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#4-额外的问题"><span class="nav-text">4.额外的问题</span></a></li></ol></div>
       </div>
       <!--/noindex-->
 

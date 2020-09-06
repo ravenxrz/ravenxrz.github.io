@@ -4,7 +4,7 @@
   <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
 <meta name="theme-color" content="#222">
-<meta name="generator" content="Hexo 5.1.1">
+<meta name="generator" content="Hexo 4.2.1">
   <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
   <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png">
   <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png">
@@ -21,7 +21,7 @@
 
 <script id="hexo-configurations">
     var NexT = window.NexT || {};
-    var CONFIG = {"hostname":"www.ravenxrz.ink","root":"/","scheme":"Mist","version":"7.8.0","exturl":true,"sidebar":{"position":"left","display":"always","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":true,"show_result":true,"style":"flat"},"back2top":{"enable":true,"sidebar":false,"scrollpercent":true},"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":true,"lazyload":true,"pangu":true,"comments":{"style":"tabs","active":"gitalk","storage":true,"lazyload":true,"nav":null,"activeClass":"gitalk"},"algolia":{"hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":true,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},"motion":{"enable":false,"async":true,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}}};
+    var CONFIG = {"hostname":"www.ravenxrz.ink","root":"/","scheme":"Mist","version":"7.8.0","exturl":true,"sidebar":{"position":"left","display":"always","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":true,"show_result":true,"style":"flat"},"back2top":{"enable":true,"sidebar":false,"scrollpercent":true},"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":true,"lazyload":true,"pangu":true,"comments":{"style":"tabs","active":"gitalk","storage":true,"lazyload":true,"nav":null,"activeClass":"gitalk"},"algolia":{"hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":true,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},"motion":{"enable":false,"async":true,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},"path":"search.xml"};
   </script>
 
   <meta name="description" content="转载自：  Java基础知识 java I&#x2F;O流详解  Java 中 IO 流分为几种? 从流的方向划分：分为 输入流， 输出流 从流的传输单位划分： 分为 字节流（8位字节），字符流（16位的字符） 从流的角色划分： 分为 节点流，处理流 节点流是直接连接数据源的流，可以直接向数据源（特定的IO设备，如硬盘，网络，其他程序）读写数据。 处理流通过构造方法接收一个节点流，对节点流使用装饰者模式增加">
@@ -38,7 +38,7 @@
 <meta property="og:image" content="https://pic.downk.cc/item/5e604ee398271cb2b85b3d71.jpg">
 <meta property="og:image" content="https://pic.downk.cc/item/5e604ef298271cb2b85b3fed.jpg">
 <meta property="article:published_time" content="2020-03-05T00:50:06.000Z">
-<meta property="article:modified_time" content="2020-09-06T02:45:08.030Z">
+<meta property="article:modified_time" content="2020-09-06T07:37:36.753Z">
 <meta property="article:author" content="Raven">
 <meta property="article:tag" content="Java">
 <meta property="article:tag" content="IO流">
@@ -89,6 +89,7 @@
   </style>
 </noscript>
 
+<link rel="alternate" href="/atom.xml" title="Raven's Blog" type="application/atom+xml">
 </head>
 
 <body itemscope itemtype="http://schema.org/WebPage">
@@ -239,7 +240,7 @@
                   <i class="fa fa-calendar-check-o"></i>
                 </span>
                 <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2020-09-06 10:45:08" itemprop="dateModified" datetime="2020-09-06T10:45:08+08:00">2020-09-06</time>
+                <time title="修改时间：2020-09-06 15:37:36" itemprop="dateModified" datetime="2020-09-06T15:37:36+08:00">2020-09-06</time>
               </span>
             <span class="post-meta-item">
               <span class="post-meta-item-icon">
@@ -271,8 +272,8 @@
       
         <p>转载自：</p>
 <ol>
-<li><a target="_blank" rel="noopener" href="https://github.com/Snailclimb/JavaGuide/blob/master/docs/java/Java%E5%9F%BA%E7%A1%80%E7%9F%A5%E8%AF%86.md#35-java-%E4%B8%AD-io-%E6%B5%81">Java基础知识</a></li>
-<li><a target="_blank" rel="noopener" href="https://juejin.im/post/5d4ee73ae51d4561c94b0f9d">java I/O流详解</a></li>
+<li><span class="exturl" data-url="aHR0cHM6Ly9naXRodWIuY29tL1NuYWlsY2xpbWIvSmF2YUd1aWRlL2Jsb2IvbWFzdGVyL2RvY3MvamF2YS9KYXZhJUU1JTlGJUJBJUU3JUExJTgwJUU3JTlGJUE1JUU4JUFGJTg2Lm1kIzM1LWphdmEtJUU0JUI4JUFELWlvLSVFNiVCNSU4MQ==" title="https://github.com/Snailclimb/JavaGuide/blob/master/docs/java/Java%E5%9F%BA%E7%A1%80%E7%9F%A5%E8%AF%86.md#35-java-%E4%B8%AD-io-%E6%B5%81">Java基础知识<i class="fa fa-external-link"></i></span></li>
+<li><span class="exturl" data-url="aHR0cHM6Ly9qdWVqaW4uaW0vcG9zdC81ZDRlZTczYWU1MWQ0NTYxYzk0YjBmOWQ=" title="https://juejin.im/post/5d4ee73ae51d4561c94b0f9d">java I/O流详解<i class="fa fa-external-link"></i></span></li>
 </ol>
 <h3 id="Java-中-IO-流分为几种"><a href="#Java-中-IO-流分为几种" class="headerlink" title="Java 中 IO 流分为几种?"></a>Java 中 IO 流分为几种?</h3><ul>
 <li>从流的方向划分：分为 <code>输入流</code>， <code>输出流</code></li>
@@ -291,20 +292,20 @@
 <li>OutputStream/Writer: 所有输出流的基类，前者是字节输出流，后者是字符输出流。</li>
 </ul>
 <p>按操作方式分类结构图：</p>
-<p><img src="https://pic.downk.cc/item/5e604d9498271cb2b85af6ee.jpg"></p>
+<p><img data-src="https://pic.downk.cc/item/5e604d9498271cb2b85af6ee.jpg"></p>
 <p>按操作对象分类结构图：</p>
-<p><img src="https://pic.downk.cc/item/5e604db798271cb2b85b0aef.jpg"></p>
+<p><img data-src="https://pic.downk.cc/item/5e604db798271cb2b85b0aef.jpg"></p>
 <p>这里再解释一下“节点流”和“处理流”：</p>
-<h3 id="节点流–直接连接数据源的流"><a href="#节点流–直接连接数据源的流" class="headerlink" title="节点流–直接连接数据源的流"></a>节点流–直接连接数据源的流</h3><p><img src="https://ae01.alicdn.com/kf/Hed5828b4792e48b198efef07eaf06183m.jpg"></p>
-<h3 id="常见的节点流"><a href="#常见的节点流" class="headerlink" title="常见的节点流"></a>常见的节点流</h3><p><img src="https://pic.downk.cc/item/5e604eab98271cb2b85b3407.jpg"></p>
+<h3 id="节点流–直接连接数据源的流"><a href="#节点流–直接连接数据源的流" class="headerlink" title="节点流–直接连接数据源的流"></a>节点流–直接连接数据源的流</h3><p><img data-src="https://ae01.alicdn.com/kf/Hed5828b4792e48b198efef07eaf06183m.jpg"></p>
+<h3 id="常见的节点流"><a href="#常见的节点流" class="headerlink" title="常见的节点流"></a>常见的节点流</h3><p><img data-src="https://pic.downk.cc/item/5e604eab98271cb2b85b3407.jpg"></p>
 <ol>
 <li>File 文件流。对文件进行读、写操作 ：FileReader、FileWriter、FileInputStream、FileOutputStream。</li>
 <li>从/向内存数组读写数据: CharArrayReader与 CharArrayWriter、ByteArrayInputStream与ByteArrayOutputStream。</li>
 <li>从/向内存字符串读写数据 StringReader、StringWriter、StringBufferInputStream。</li>
 <li>Pipe管道流。 实现管道的输入和输出（进程间通信）: PipedReader与PipedWriter、PipedInputStream与PipedOutputStream。</li>
 </ol>
-<h3 id="处理流–连接已存在的流"><a href="#处理流–连接已存在的流" class="headerlink" title="处理流–连接已存在的流"></a>处理流–连接已存在的流</h3><p><img src="https://pic.downk.cc/item/5e604ee398271cb2b85b3d71.jpg"></p>
-<h3 id="常见的处理流"><a href="#常见的处理流" class="headerlink" title="常见的处理流"></a>常见的处理流</h3><p><img src="https://pic.downk.cc/item/5e604ef298271cb2b85b3fed.jpg"></p>
+<h3 id="处理流–连接已存在的流"><a href="#处理流–连接已存在的流" class="headerlink" title="处理流–连接已存在的流"></a>处理流–连接已存在的流</h3><p><img data-src="https://pic.downk.cc/item/5e604ee398271cb2b85b3d71.jpg"></p>
+<h3 id="常见的处理流"><a href="#常见的处理流" class="headerlink" title="常见的处理流"></a>常见的处理流</h3><p><img data-src="https://pic.downk.cc/item/5e604ef298271cb2b85b3fed.jpg"></p>
 <ol>
 <li>Buffering缓冲流：在读入或写出时，对数据进行缓存，以减少I/O的次数：BufferedReader与BufferedWriter、BufferedInputStream与BufferedOutputStream。</li>
 <li>Filtering 滤流：在数据进行读或写时进行过滤：FilterReader与FilterWriter、FilterInputStream与FilterOutputStream。</li>
@@ -341,7 +342,7 @@
 
 <h3 id="InputStreamReader-amp-OutputStreamWriter"><a href="#InputStreamReader-amp-OutputStreamWriter" class="headerlink" title="InputStreamReader &amp; OutputStreamWriter"></a>InputStreamReader &amp; OutputStreamWriter</h3><p>这两个比较特殊，它是字符流和字节流之间的桥梁，先看看官网是如何描述它们的吧：</p>
 <blockquote>
-<p>An InputStreamReader is a bridge from byte streams to character streams: It reads bytes and decodes them into characters using a specified <a target="_blank" rel="noopener" href="https://devdocs.io/openjdk~8/java/nio/charset/charset"><code>charset</code></a>. The charset that it uses may be specified by name or may be given explicitly, or the platform’s default charset may be accepted.</p>
+<p>An InputStreamReader is a bridge from byte streams to character streams: It reads bytes and decodes them into characters using a specified <a href="https://devdocs.io/openjdk~8/java/nio/charset/charset" target="_blank" rel="noopener"><code>charset</code></a>. The charset that it uses may be specified by name or may be given explicitly, or the platform’s default charset may be accepted.</p>
 <p>Each invocation of one of an InputStreamReader’s read() methods may cause one or more bytes to be read from the underlying byte-input stream. To enable the efficient conversion of bytes to characters, more bytes may be read ahead from the underlying stream than are necessary to satisfy the current read operation.</p>
 <p>For top efficiency, consider wrapping an InputStreamReader within a BufferedReader. For example:</p>
 <figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">BufferedReader in</span><br><span class="line">   = <span class="keyword">new</span> BufferedReader(<span class="keyword">new</span> InputStreamReader(System.in)); <span class="comment">// 这也是从控制台读入数据的第二种方法，第一种是使用Scanner类</span></span><br></pre></td></tr></table></figure>
@@ -482,7 +483,7 @@
 
       <!--noindex-->
       <div class="post-toc-wrap sidebar-panel">
-          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-3"><a class="nav-link" href="#Java-%E4%B8%AD-IO-%E6%B5%81%E5%88%86%E4%B8%BA%E5%87%A0%E7%A7%8D"><span class="nav-text">Java 中 IO 流分为几种?</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E8%8A%82%E7%82%B9%E6%B5%81%E2%80%93%E7%9B%B4%E6%8E%A5%E8%BF%9E%E6%8E%A5%E6%95%B0%E6%8D%AE%E6%BA%90%E7%9A%84%E6%B5%81"><span class="nav-text">节点流–直接连接数据源的流</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%B8%B8%E8%A7%81%E7%9A%84%E8%8A%82%E7%82%B9%E6%B5%81"><span class="nav-text">常见的节点流</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%A4%84%E7%90%86%E6%B5%81%E2%80%93%E8%BF%9E%E6%8E%A5%E5%B7%B2%E5%AD%98%E5%9C%A8%E7%9A%84%E6%B5%81"><span class="nav-text">处理流–连接已存在的流</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%B8%B8%E8%A7%81%E7%9A%84%E5%A4%84%E7%90%86%E6%B5%81"><span class="nav-text">常见的处理流</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#FileInputStream-amp-FileOutputStream"><span class="nav-text">FileInputStream &amp; FileOutputStream</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#DataInputStream-amp-DataOutputStream"><span class="nav-text">DataInputStream &amp; DataOutputStream</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#BufferedInputStream-amp-BufferedOutputStream"><span class="nav-text">BufferedInputStream &amp; BufferedOutputStream</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#PrintStream"><span class="nav-text">PrintStream</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#ByteArrayInputStream-amp-ByteArrayOutputStream"><span class="nav-text">ByteArrayInputStream &amp; ByteArrayOutputStream</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#InputStreamReader-amp-OutputStreamWriter"><span class="nav-text">InputStreamReader &amp; OutputStreamWriter</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#FileReader-amp-FileWriter"><span class="nav-text">FileReader &amp; FileWriter</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#BufferedReader-amp-BufferedWriter"><span class="nav-text">BufferedReader &amp; BufferedWriter</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#StringReader-amp-StringWriter"><span class="nav-text">StringReader &amp; StringWriter</span></a></li></ol></div>
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-3"><a class="nav-link" href="#Java-中-IO-流分为几种"><span class="nav-text">Java 中 IO 流分为几种?</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#节点流–直接连接数据源的流"><span class="nav-text">节点流–直接连接数据源的流</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#常见的节点流"><span class="nav-text">常见的节点流</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#处理流–连接已存在的流"><span class="nav-text">处理流–连接已存在的流</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#常见的处理流"><span class="nav-text">常见的处理流</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#FileInputStream-amp-FileOutputStream"><span class="nav-text">FileInputStream &amp; FileOutputStream</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#DataInputStream-amp-DataOutputStream"><span class="nav-text">DataInputStream &amp; DataOutputStream</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#BufferedInputStream-amp-BufferedOutputStream"><span class="nav-text">BufferedInputStream &amp; BufferedOutputStream</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#PrintStream"><span class="nav-text">PrintStream</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#ByteArrayInputStream-amp-ByteArrayOutputStream"><span class="nav-text">ByteArrayInputStream &amp; ByteArrayOutputStream</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#InputStreamReader-amp-OutputStreamWriter"><span class="nav-text">InputStreamReader &amp; OutputStreamWriter</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#FileReader-amp-FileWriter"><span class="nav-text">FileReader &amp; FileWriter</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#BufferedReader-amp-BufferedWriter"><span class="nav-text">BufferedReader &amp; BufferedWriter</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#StringReader-amp-StringWriter"><span class="nav-text">StringReader &amp; StringWriter</span></a></li></ol></div>
       </div>
       <!--/noindex-->
 

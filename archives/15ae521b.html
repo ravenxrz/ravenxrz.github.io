@@ -4,7 +4,7 @@
   <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
 <meta name="theme-color" content="#222">
-<meta name="generator" content="Hexo 5.1.1">
+<meta name="generator" content="Hexo 4.2.1">
   <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
   <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png">
   <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png">
@@ -21,7 +21,7 @@
 
 <script id="hexo-configurations">
     var NexT = window.NexT || {};
-    var CONFIG = {"hostname":"www.ravenxrz.ink","root":"/","scheme":"Mist","version":"7.8.0","exturl":true,"sidebar":{"position":"left","display":"always","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":true,"show_result":true,"style":"flat"},"back2top":{"enable":true,"sidebar":false,"scrollpercent":true},"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":true,"lazyload":true,"pangu":true,"comments":{"style":"tabs","active":"gitalk","storage":true,"lazyload":true,"nav":null,"activeClass":"gitalk"},"algolia":{"hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":true,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},"motion":{"enable":false,"async":true,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}}};
+    var CONFIG = {"hostname":"www.ravenxrz.ink","root":"/","scheme":"Mist","version":"7.8.0","exturl":true,"sidebar":{"position":"left","display":"always","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":true,"show_result":true,"style":"flat"},"back2top":{"enable":true,"sidebar":false,"scrollpercent":true},"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":true,"lazyload":true,"pangu":true,"comments":{"style":"tabs","active":"gitalk","storage":true,"lazyload":true,"nav":null,"activeClass":"gitalk"},"algolia":{"hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":true,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},"motion":{"enable":false,"async":true,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},"path":"search.xml"};
   </script>
 
   <meta name="description" content="i&gt; 本科毕设题目为《基于深度学习的图像去雾方法研究与实现》 毕设总结系列：  毕设总结零–绪论 毕设总结一–传统去雾理论 毕设总结二–论文复现工作1–暗通道去雾(DCP) 毕设总结三–论文复现工作2–MSCNN去雾 毕设总结四–最终去雾方案的确定与实现–DeBlurGanToDehaze 毕设总结五–杂项">
@@ -35,7 +35,7 @@
 <meta property="og:image" content="https://ae01.alicdn.com/kf/HTB10WIwX3FY.1VjSZFqq6ydbXXaP.jpg">
 <meta property="og:image" content="https://ae01.alicdn.com/kf/HTB1LKf7dgmH3KVjSZKzq6z2OXXas.jpg">
 <meta property="article:published_time" content="2019-07-18T05:58:55.000Z">
-<meta property="article:modified_time" content="2020-09-06T02:45:08.060Z">
+<meta property="article:modified_time" content="2020-09-06T07:37:36.781Z">
 <meta property="article:author" content="Raven">
 <meta property="article:tag" content="图像去雾">
 <meta name="twitter:card" content="summary">
@@ -85,6 +85,7 @@
   </style>
 </noscript>
 
+<link rel="alternate" href="/atom.xml" title="Raven's Blog" type="application/atom+xml">
 </head>
 
 <body itemscope itemtype="http://schema.org/WebPage">
@@ -235,7 +236,7 @@
                   <i class="fa fa-calendar-check-o"></i>
                 </span>
                 <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2020-09-06 10:45:08" itemprop="dateModified" datetime="2020-09-06T10:45:08+08:00">2020-09-06</time>
+                <time title="修改时间：2020-09-06 15:37:36" itemprop="dateModified" datetime="2020-09-06T15:37:36+08:00">2020-09-06</time>
               </span>
             <span class="post-meta-item">
               <span class="post-meta-item-icon">
@@ -284,19 +285,19 @@
 <p>1.wiki：深度学习是机器学习的分支，它试图使用包含复杂结构或者由多重非线性变换构成的多个处理层对数据进行高层抽象的算法。<br>2.李彦宏：简单的说，深度学习就是一个函数集，如此而已。<br>3.深度学习将特征提取和分类结合到一个框架中，用数据学习特征，是一种可以自动学习特征的方法。<br>4.深度学习是一种特征学习方法，把原始的数据通过非线性的复杂模型转换为更高层次、更抽象的表达。</p>
 </blockquote>
 <p>下图很直观的展示这三者之间的关系。</p>
-<p><img src="https://ae01.alicdn.com/kf/HTB1fYn8dlKw3KVjSZFOq6yrDVXaL.jpg"></p>
+<p><img data-src="https://ae01.alicdn.com/kf/HTB1fYn8dlKw3KVjSZFOq6yrDVXaL.jpg"></p>
 <p>再来谈谈近年来深度学习中的主角，卷积神经网络(CNN)。它有什么特点呢？一篇经典的文章里是这样描述它的：</p>
 <blockquote>
-<p>Convolutional Neural Networks (<strong>ConvNets</strong> or <strong>CNNs</strong>) are a category of <a target="_blank" rel="noopener" href="https://ujjwalkarn.me/2016/08/09/quick-intro-neural-networks/">Neural Networks</a> that have proven very effective in areas such as image recognition and classification. ConvNets have been successful in identifying faces, objects and traffic signs apart from powering vision in robots and self driving cars.</p>
+<p>Convolutional Neural Networks (<strong>ConvNets</strong> or <strong>CNNs</strong>) are a category of <span class="exturl" data-url="aHR0cHM6Ly91amp3YWxrYXJuLm1lLzIwMTYvMDgvMDkvcXVpY2staW50cm8tbmV1cmFsLW5ldHdvcmtzLw==" title="https://ujjwalkarn.me/2016/08/09/quick-intro-neural-networks/">Neural Networks<i class="fa fa-external-link"></i></span> that have proven very effective in areas such as image recognition and classification. ConvNets have been successful in identifying faces, objects and traffic signs apart from powering vision in robots and self driving cars.</p>
 </blockquote>
 <p>也就是说，它特别<strong>擅长图像识别处理与分类</strong>。</p>
 <p>这里推荐几篇文章学习CNN与了解CNN的进化史：</p>
 <ul>
-<li><a target="_blank" rel="noopener" href="https://ujjwalkarn.me/2016/08/11/intuitive-explanation-convnets/">An Intuitive Explanation of Convolutional Neural Networks</a></li>
-<li><a target="_blank" rel="noopener" href="http://scs.ryerson.ca/~aharley/vis/conv/flat.html">CNN可视化</a></li>
-<li><a target="_blank" rel="noopener" href="https://blog.csdn.net/g11d111/article/details/82350563">CNN概念之上采样，反卷积，Unpooling概念解释 - g11d111的博客 - CSDN博客</a></li>
-<li><a target="_blank" rel="noopener" href="https://www.bilibili.com/video/av54311437/?p=19">CNN视频教程</a></li>
-<li><a target="_blank" rel="noopener" href="https://www.cnblogs.com/skyfsm/p/8451834.html">CNN网络架构演进：从LeNet到DenseNet - Madcola - 博客园</a></li>
+<li><span class="exturl" data-url="aHR0cHM6Ly91amp3YWxrYXJuLm1lLzIwMTYvMDgvMTEvaW50dWl0aXZlLWV4cGxhbmF0aW9uLWNvbnZuZXRzLw==" title="https://ujjwalkarn.me/2016/08/11/intuitive-explanation-convnets/">An Intuitive Explanation of Convolutional Neural Networks<i class="fa fa-external-link"></i></span></li>
+<li><span class="exturl" data-url="aHR0cDovL3Njcy5yeWVyc29uLmNhL35haGFybGV5L3Zpcy9jb252L2ZsYXQuaHRtbA==" title="http://scs.ryerson.ca/~aharley/vis/conv/flat.html">CNN可视化<i class="fa fa-external-link"></i></span></li>
+<li><span class="exturl" data-url="aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L2cxMWQxMTEvYXJ0aWNsZS9kZXRhaWxzLzgyMzUwNTYz" title="https://blog.csdn.net/g11d111/article/details/82350563">CNN概念之上采样，反卷积，Unpooling概念解释 - g11d111的博客 - CSDN博客<i class="fa fa-external-link"></i></span></li>
+<li><span class="exturl" data-url="aHR0cHM6Ly93d3cuYmlsaWJpbGkuY29tL3ZpZGVvL2F2NTQzMTE0MzcvP3A9MTk=" title="https://www.bilibili.com/video/av54311437/?p=19">CNN视频教程<i class="fa fa-external-link"></i></span></li>
+<li><span class="exturl" data-url="aHR0cHM6Ly93d3cuY25ibG9ncy5jb20vc2t5ZnNtL3AvODQ1MTgzNC5odG1s" title="https://www.cnblogs.com/skyfsm/p/8451834.html">CNN网络架构演进：从LeNet到DenseNet - Madcola - 博客园<i class="fa fa-external-link"></i></span></li>
 </ul>
 <hr>
 <h2 id="3-MSCNN去雾"><a href="#3-MSCNN去雾" class="headerlink" title="3.  MSCNN去雾"></a>3.  MSCNN去雾</h2><p>上小节算是一点题外话了，但是这篇的主题是基于深度学习的去雾，那么至少要知道什么是深度学习以及深度学习中最常用的CNN吧。</p>
@@ -308,7 +309,7 @@
 <li>利用估计出来的透射图和大气光，利用大气散射模型去雾。</li>
 </ol>
 <h3 id="3-1-MSCNN中的网络结构"><a href="#3-1-MSCNN中的网络结构" class="headerlink" title="3.1  MSCNN中的网络结构"></a>3.1  MSCNN中的网络结构</h3><p>先上一章总图：</p>
-<p><img src="https://ae01.alicdn.com/kf/HTB10WIwX3FY.1VjSZFqq6ydbXXaP.jpg"></p>
+<p><img data-src="https://ae01.alicdn.com/kf/HTB10WIwX3FY.1VjSZFqq6ydbXXaP.jpg"></p>
 <p>可以看到上半部为Coarse Net，下半部分为其Fine Net。由Coarse Net估计出Coarse Transmission Map，然后将它级联到Fine Net的第一个Upsample层后，在进行精细提取。简单说一下它的参数设置：</p>
 <p>每一个长方体代表的是特征图，下面的数字代表的是卷积核的个数，下面的文字代表相应的操作和操作的size。</p>
 <p><strong>训练损失函数上</strong>，MSCNN采用了MSE函数,即：</p>
@@ -324,10 +325,10 @@
 </ul>
 <h3 id="3-2-训练数据合成"><a href="#3-2-训练数据合成" class="headerlink" title="3.2 训练数据合成"></a>3.2 训练数据合成</h3><p>作者采用了NYU数据集来构建训练集。NYU数据集提供了清晰图与对应的深度图。合成公式：<br>$$<br>\left\{<br>\begin{array}{l}<br>t(x) = e^{-\beta d(x)}\\<br>I(x) = t(x) J(x) + A(1-t(x))<br>\end{array}<br>\right.<br>$$<br>现在已知d(x)和J(x)，通过随机取$\beta$和$A$，即可得到$t(x)$ 进而 获取$I(x)$雾图。详细的合成方法可参考:</p>
 <ul>
-<li><a target="_blank" rel="noopener" href="https://www.google.com/url?q=https://arxiv.org/pdf/1712.04143.pdf&sa=D&sntz=1&usg=AFQjCNHzdt3kMDsvuJ7Ef6R4ev59OFeRYA">Benchmarking Single Image Dehazing and Beyond</a> </li>
-<li><a target="_blank" rel="noopener" href="https://sites.google.com/view/reside-dehaze-datasets/reside-v0">RESIDE</a></li>
+<li><span class="exturl" data-url="aHR0cHM6Ly93d3cuZ29vZ2xlLmNvbS91cmw/cT1odHRwczovL2FyeGl2Lm9yZy9wZGYvMTcxMi4wNDE0My5wZGYmc2E9RCZzbnR6PTEmdXNnPUFGUWpDTkh6ZHQza01Ec3Z1SjdFZjZSNGV2NTlPRmVSWUE=" title="https://www.google.com/url?q=https://arxiv.org/pdf/1712.04143.pdf&sa=D&sntz=1&usg=AFQjCNHzdt3kMDsvuJ7Ef6R4ev59OFeRYA">Benchmarking Single Image Dehazing and Beyond<i class="fa fa-external-link"></i></span> </li>
+<li><span class="exturl" data-url="aHR0cHM6Ly9zaXRlcy5nb29nbGUuY29tL3ZpZXcvcmVzaWRlLWRlaGF6ZS1kYXRhc2V0cy9yZXNpZGUtdjA=" title="https://sites.google.com/view/reside-dehaze-datasets/reside-v0">RESIDE<i class="fa fa-external-link"></i></span></li>
 </ul>
-<h3 id="3-3-整个去雾流程"><a href="#3-3-整个去雾流程" class="headerlink" title="3.3 整个去雾流程"></a>3.3 整个去雾流程</h3><p><img src="https://ae01.alicdn.com/kf/HTB1LKf7dgmH3KVjSZKzq6z2OXXas.jpg"></p>
+<h3 id="3-3-整个去雾流程"><a href="#3-3-整个去雾流程" class="headerlink" title="3.3 整个去雾流程"></a>3.3 整个去雾流程</h3><p><img data-src="https://ae01.alicdn.com/kf/HTB1LKf7dgmH3KVjSZKzq6z2OXXas.jpg"></p>
 <h2 id="4-搭建MSCNN网络结构参考代码"><a href="#4-搭建MSCNN网络结构参考代码" class="headerlink" title="4. 搭建MSCNN网络结构参考代码"></a>4. 搭建MSCNN网络结构参考代码</h2><p>代码基于Keras结构，不过MSCNN有MATLAB版本和Tensorflow版本，连接都放在了文末。</p>
 <h3 id="4-1-设置超参数和辅助参数"><a href="#4-1-设置超参数和辅助参数" class="headerlink" title="4.1 设置超参数和辅助参数"></a>4.1 设置超参数和辅助参数</h3><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br></pre></td><td class="code"><pre><span class="line">self.model_dir_path = <span class="string">&#x27;./model_save&#x27;</span></span><br><span class="line">self.trans_img_dir = <span class="string">&#x27;./dehazed_result/image/trans&#x27;</span></span><br><span class="line">self.trans_npy_dir = <span class="string">&#x27;./dehazed_result/npy/trans&#x27;</span></span><br><span class="line"><span class="keyword">if</span> <span class="keyword">not</span> os.path.exists(self.model_dir_path):</span><br><span class="line">    os.mkdir(self.model_dir_path)</span><br><span class="line"><span class="keyword">if</span> <span class="keyword">not</span> os.path.exists(self.trans_img_dir):</span><br><span class="line">    os.mkdir(self.trans_img_dir)</span><br><span class="line"><span class="keyword">if</span> <span class="keyword">not</span> os.path.exists(self.trans_npy_dir):</span><br><span class="line">    os.mkdir(self.trans_npy_dir)</span><br><span class="line">self.coarse_model_name = <span class="string">&#x27;coarse_net.h5&#x27;</span></span><br><span class="line">self.fine_model_name = <span class="string">&#x27;fine_net.h5&#x27;</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># 设置超参数</span></span><br><span class="line">self.batch_size = batch_size</span><br><span class="line">self.epochs = epochs</span><br><span class="line"></span><br><span class="line"><span class="comment"># 输入图片信息</span></span><br><span class="line">self.img_height = <span class="number">240</span></span><br><span class="line">self.img_width = <span class="number">320</span></span><br><span class="line">self.channel = <span class="number">3</span></span><br></pre></td></tr></table></figure>
 
@@ -344,13 +345,13 @@
 
 <h3 id="4-6-其他"><a href="#4-6-其他" class="headerlink" title="4.6 其他"></a>4.6 其他</h3><p>代码中还有很多需要注意的地方，如接力学习，训练数据对的统一化处理，显存不足时，不应当将所有图片一次性加入到内存中，而应该采用generator的方式来训练，train过程多少epoch或batch需要sample一次等等。这些代码都可以参考文末的总代码，这里不可能一一道尽。</p>
 <h2 id="参考"><a href="#参考" class="headerlink" title="参考"></a>参考</h2><ol>
-<li><a target="_blank" rel="noopener" href="https://link.springer.com/chapter/10.1007/978-3-319-46475-6_10">Single Image Dehazing via Multi-scale Convolutional Neural Networks</a></li>
+<li><span class="exturl" data-url="aHR0cHM6Ly9saW5rLnNwcmluZ2VyLmNvbS9jaGFwdGVyLzEwLjEwMDcvOTc4LTMtMzE5LTQ2NDc1LTZfMTA=" title="https://link.springer.com/chapter/10.1007/978-3-319-46475-6_10">Single Image Dehazing via Multi-scale Convolutional Neural Networks<i class="fa fa-external-link"></i></span></li>
 </ol>
 <p>所有源代码地址:</p>
 <ol>
-<li><a target="_blank" rel="noopener" href="https://github.com/raven-dehaze-work/MSCNN_Keras">https://github.com/raven-dehaze-work/MSCNN_Keras</a></li>
-<li><a target="_blank" rel="noopener" href="https://github.com/raven-dehaze-work/MSCNN_MATLAB">https://github.com/raven-dehaze-work/MSCNN_MATLAB</a></li>
-<li><a target="_blank" rel="noopener" href="https://github.com/dishank-b/MSCNN-Dehazing-Tensorflow">https://github.com/dishank-b/MSCNN-Dehazing-Tensorflow</a></li>
+<li><span class="exturl" data-url="aHR0cHM6Ly9naXRodWIuY29tL3JhdmVuLWRlaGF6ZS13b3JrL01TQ05OX0tlcmFz" title="https://github.com/raven-dehaze-work/MSCNN_Keras">https://github.com/raven-dehaze-work/MSCNN_Keras<i class="fa fa-external-link"></i></span></li>
+<li><span class="exturl" data-url="aHR0cHM6Ly9naXRodWIuY29tL3JhdmVuLWRlaGF6ZS13b3JrL01TQ05OX01BVExBQg==" title="https://github.com/raven-dehaze-work/MSCNN_MATLAB">https://github.com/raven-dehaze-work/MSCNN_MATLAB<i class="fa fa-external-link"></i></span></li>
+<li><span class="exturl" data-url="aHR0cHM6Ly9naXRodWIuY29tL2Rpc2hhbmstYi9NU0NOTi1EZWhhemluZy1UZW5zb3JmbG93" title="https://github.com/dishank-b/MSCNN-Dehazing-Tensorflow">https://github.com/dishank-b/MSCNN-Dehazing-Tensorflow<i class="fa fa-external-link"></i></span></li>
 </ol>
 
     </div>
@@ -474,7 +475,7 @@
 
       <!--noindex-->
       <div class="post-toc-wrap sidebar-panel">
-          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#1-%E5%89%8D%E8%A8%80"><span class="nav-text">1. 前言</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#2-%E4%B8%80%E7%82%B9%E9%A2%98%E5%A4%96%E8%AF%9D%E2%80%93%E6%B5%85%E8%B0%88%E6%B7%B1%E5%BA%A6%E5%AD%A6%E4%B9%A0"><span class="nav-text">2. 一点题外话–浅谈深度学习</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#3-MSCNN%E5%8E%BB%E9%9B%BE"><span class="nav-text">3.  MSCNN去雾</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#3-1-MSCNN%E4%B8%AD%E7%9A%84%E7%BD%91%E7%BB%9C%E7%BB%93%E6%9E%84"><span class="nav-text">3.1  MSCNN中的网络结构</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#3-2-%E8%AE%AD%E7%BB%83%E6%95%B0%E6%8D%AE%E5%90%88%E6%88%90"><span class="nav-text">3.2 训练数据合成</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#3-3-%E6%95%B4%E4%B8%AA%E5%8E%BB%E9%9B%BE%E6%B5%81%E7%A8%8B"><span class="nav-text">3.3 整个去雾流程</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#4-%E6%90%AD%E5%BB%BAMSCNN%E7%BD%91%E7%BB%9C%E7%BB%93%E6%9E%84%E5%8F%82%E8%80%83%E4%BB%A3%E7%A0%81"><span class="nav-text">4. 搭建MSCNN网络结构参考代码</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#4-1-%E8%AE%BE%E7%BD%AE%E8%B6%85%E5%8F%82%E6%95%B0%E5%92%8C%E8%BE%85%E5%8A%A9%E5%8F%82%E6%95%B0"><span class="nav-text">4.1 设置超参数和辅助参数</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#4-2-%E5%BB%BA%E7%AB%8BcoraseNet"><span class="nav-text">4.2 建立coraseNet</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#4-3-%E5%BB%BA%E7%AB%8BFineNet"><span class="nav-text">4.3 建立FineNet</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#4-4-%E8%AE%BE%E7%BD%AE%E8%AE%AD%E7%BB%83%E7%9A%84%E5%8F%82%E6%95%B0"><span class="nav-text">4.4  设置训练的参数</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#4-5-%E5%85%A8%E4%BB%A3%E7%A0%81"><span class="nav-text">4.5  全代码</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#4-6-%E5%85%B6%E4%BB%96"><span class="nav-text">4.6 其他</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%8F%82%E8%80%83"><span class="nav-text">参考</span></a></li></ol></div>
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#1-前言"><span class="nav-text">1. 前言</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#2-一点题外话–浅谈深度学习"><span class="nav-text">2. 一点题外话–浅谈深度学习</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#3-MSCNN去雾"><span class="nav-text">3.  MSCNN去雾</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#3-1-MSCNN中的网络结构"><span class="nav-text">3.1  MSCNN中的网络结构</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#3-2-训练数据合成"><span class="nav-text">3.2 训练数据合成</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#3-3-整个去雾流程"><span class="nav-text">3.3 整个去雾流程</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#4-搭建MSCNN网络结构参考代码"><span class="nav-text">4. 搭建MSCNN网络结构参考代码</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#4-1-设置超参数和辅助参数"><span class="nav-text">4.1 设置超参数和辅助参数</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#4-2-建立coraseNet"><span class="nav-text">4.2 建立coraseNet</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#4-3-建立FineNet"><span class="nav-text">4.3 建立FineNet</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#4-4-设置训练的参数"><span class="nav-text">4.4  设置训练的参数</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#4-5-全代码"><span class="nav-text">4.5  全代码</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#4-6-其他"><span class="nav-text">4.6 其他</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#参考"><span class="nav-text">参考</span></a></li></ol></div>
       </div>
       <!--/noindex-->
 

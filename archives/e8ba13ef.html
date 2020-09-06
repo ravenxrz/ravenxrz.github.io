@@ -4,7 +4,7 @@
   <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
 <meta name="theme-color" content="#222">
-<meta name="generator" content="Hexo 5.1.1">
+<meta name="generator" content="Hexo 4.2.1">
   <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
   <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png">
   <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png">
@@ -21,7 +21,7 @@
 
 <script id="hexo-configurations">
     var NexT = window.NexT || {};
-    var CONFIG = {"hostname":"www.ravenxrz.ink","root":"/","scheme":"Mist","version":"7.8.0","exturl":true,"sidebar":{"position":"left","display":"always","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":true,"show_result":true,"style":"flat"},"back2top":{"enable":true,"sidebar":false,"scrollpercent":true},"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":true,"lazyload":true,"pangu":true,"comments":{"style":"tabs","active":"gitalk","storage":true,"lazyload":true,"nav":null,"activeClass":"gitalk"},"algolia":{"hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":true,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},"motion":{"enable":false,"async":true,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}}};
+    var CONFIG = {"hostname":"www.ravenxrz.ink","root":"/","scheme":"Mist","version":"7.8.0","exturl":true,"sidebar":{"position":"left","display":"always","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":true,"show_result":true,"style":"flat"},"back2top":{"enable":true,"sidebar":false,"scrollpercent":true},"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":true,"lazyload":true,"pangu":true,"comments":{"style":"tabs","active":"gitalk","storage":true,"lazyload":true,"nav":null,"activeClass":"gitalk"},"algolia":{"hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":true,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},"motion":{"enable":false,"async":true,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},"path":"search.xml"};
   </script>
 
   <meta name="description" content="0. 前言非科班出身，特此来补计算机基础知识。 本文为转载文章，原文地址：https:&#x2F;&#x2F;www.toutiao.com&#x2F;i6723499967727534604&#x2F;">
@@ -35,7 +35,7 @@
 <meta property="og:image" content="http://p3.pstatp.com/large/pgc-image/9a17c120f66f46a084804fffaa4c3fb2">
 <meta property="og:image" content="https://ae01.alicdn.com/kf/Hfd41636ec376457893dbc77f8ffc740ao.png">
 <meta property="article:published_time" content="2019-08-19T05:59:24.000Z">
-<meta property="article:modified_time" content="2020-09-06T02:45:08.071Z">
+<meta property="article:modified_time" content="2020-09-06T07:37:36.793Z">
 <meta property="article:author" content="Raven">
 <meta property="article:tag" content="计算机组成原理">
 <meta name="twitter:card" content="summary">
@@ -85,6 +85,7 @@
   </style>
 </noscript>
 
+<link rel="alternate" href="/atom.xml" title="Raven's Blog" type="application/atom+xml">
 </head>
 
 <body itemscope itemtype="http://schema.org/WebPage">
@@ -235,7 +236,7 @@
                   <i class="fa fa-calendar-check-o"></i>
                 </span>
                 <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2020-09-06 10:45:08" itemprop="dateModified" datetime="2020-09-06T10:45:08+08:00">2020-09-06</time>
+                <time title="修改时间：2020-09-06 15:37:36" itemprop="dateModified" datetime="2020-09-06T15:37:36+08:00">2020-09-06</time>
               </span>
             <span class="post-meta-item">
               <span class="post-meta-item-icon">
@@ -266,7 +267,7 @@
 
       
         <h2 id="0-前言"><a href="#0-前言" class="headerlink" title="0. 前言"></a>0. 前言</h2><p>非科班出身，特此来补计算机基础知识。</p>
-<p>本文为转载文章，原文地址：<a target="_blank" rel="noopener" href="https://www.toutiao.com/i6723499967727534604/">https://www.toutiao.com/i6723499967727534604/</a></p>
+<p>本文为转载文章，原文地址：<span class="exturl" data-url="aHR0cHM6Ly93d3cudG91dGlhby5jb20vaTY3MjM0OTk5Njc3Mjc1MzQ2MDQv" title="https://www.toutiao.com/i6723499967727534604/">https://www.toutiao.com/i6723499967727534604/<i class="fa fa-external-link"></i></span></p>
 <a id="more"></a>
 <p><strong>本文引言：</strong></p>
 <ul>
@@ -327,7 +328,7 @@
 <li>CPU运行你的程序，在操作系统内核里运行指令的时间</li>
 </ul>
 <p><strong>程序实际花费的CPU执行时间（CPU Time），就是user time加上sys time</strong></p>
-<p><img src="http://p1.pstatp.com/large/pgc-image/e54ca1bdabad4a9e9551688980087f94"></p>
+<p><img data-src="http://p1.pstatp.com/large/pgc-image/e54ca1bdabad4a9e9551688980087f94"></p>
 <p>一般情况下，如果user+sys比real大，甚至仅user比real大的情况出现，都是因为对应的程序被多个进程或者多个线程并行执行了，也很常见。</p>
 <blockquote>
 <p>在多核或者多cpu的机器上运行，seq和wc命令会分配到两个cpu上，<em>user和sys是两个cpu时间相加的，而real只是现实时钟里走过的时间，<strong>极端情况下user+sys可以到达real的两倍</strong></em></p>
@@ -346,7 +347,7 @@
 <h3 id="2-2-CPU时间拆解"><a href="#2-2-CPU时间拆解" class="headerlink" title="2.2 CPU时间拆解"></a>2.2 CPU时间拆解</h3><p>先给出总公式：<br>$$<br>CPU执行时间=CPU时钟周期数×每个时钟周期的时间<br>$$</p>
 <h4 id="2-2-1-时钟周期时间"><a href="#2-2-1-时钟周期时间" class="headerlink" title="2.2.1 时钟周期时间"></a>2.2.1 时钟周期时间</h4><p>你在买电脑的时候，一定关注过CPU的主频</p>
 <p>如：</p>
-<p><img src="http://p3.pstatp.com/large/pgc-image/9a17c120f66f46a084804fffaa4c3fb2"></p>
+<p><img data-src="http://p3.pstatp.com/large/pgc-image/9a17c120f66f46a084804fffaa4c3fb2"></p>
 <p>这里的2.8GHz就是电脑的主频（Frequency/Clock Rate）。</p>
 <p>这个2.8GHz，我们可以先简单地理解为，CPU在1秒时间内，可以执行的简单指令的数量是2.8G条。</p>
 <p>更准确点，<strong>这个2.8GHz就代表，我们CPU的一个“钟表”能够识别出来的最小的时间间隔</strong>。</p>
@@ -395,7 +396,7 @@
 <p>如果三者皆能实现，你自然可以很快地写出一个优秀的程序，“性能”从外面来看就是好的。</p>
 <h4 id="2-2-5-额外知识补充"><a href="#2-2-5-额外知识补充" class="headerlink" title="2.2.5 额外知识补充"></a>2.2.5 额外知识补充</h4><p>1.时钟周期、机器周期、指令周期的区别？</p>
 <p>一个指令周期包含多个机器周期，一个机器周期又包含多个时钟周期。</p>
-<p><img src="https://ae01.alicdn.com/kf/Hfd41636ec376457893dbc77f8ffc740ao.png"></p>
+<p><img data-src="https://ae01.alicdn.com/kf/Hfd41636ec376457893dbc77f8ffc740ao.png"></p>
 <h2 id="3-总结"><a href="#3-总结" class="headerlink" title="3 总结"></a>3 总结</h2><p>学完本文，对“性能”这个名词，你应该有了更清晰的认识。</p>
 <p>主要对于“响应时间”这个性能指标进行抽丝剥茧，拆解成了计算机时钟周期、CPI以及指令数这三个独立的指标的乘积，并且为指明了优化计算机性能的三条康庄大道。</p>
 <p>也就是，提升计算机主频，优化CPU设计使得在单个时钟周期内能够执行更多指令，以及通过编译器来减少需要的指令数。</p>
@@ -403,8 +404,8 @@
 <h2 id="参考"><a href="#参考" class="headerlink" title="参考"></a>参考</h2><ul>
 <li>豆瓣读书 - 计算机专题</li>
 <li>深入浅出计算机组成原理</li>
-<li><a target="_blank" rel="noopener" href="https://blog.csdn.net/u012076669/article/details/84452264">如何理解时钟周期及公式CPU执行时间 = CPU时钟周期数/主频</a></li>
-<li><a target="_blank" rel="noopener" href="https://stackoverflow.com/questions/556405/what-do-real-user-and-sys-mean-in-the-output-of-time1">https://stackoverflow.com/questions/556405/what-do-real-user-and-sys-mean-in-the-output-of-time1</a></li>
+<li><span class="exturl" data-url="aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L3UwMTIwNzY2NjkvYXJ0aWNsZS9kZXRhaWxzLzg0NDUyMjY0" title="https://blog.csdn.net/u012076669/article/details/84452264">如何理解时钟周期及公式CPU执行时间 = CPU时钟周期数/主频<i class="fa fa-external-link"></i></span></li>
+<li><span class="exturl" data-url="aHR0cHM6Ly9zdGFja292ZXJmbG93LmNvbS9xdWVzdGlvbnMvNTU2NDA1L3doYXQtZG8tcmVhbC11c2VyLWFuZC1zeXMtbWVhbi1pbi10aGUtb3V0cHV0LW9mLXRpbWUx" title="https://stackoverflow.com/questions/556405/what-do-real-user-and-sys-mean-in-the-output-of-time1">https://stackoverflow.com/questions/556405/what-do-real-user-and-sys-mean-in-the-output-of-time1<i class="fa fa-external-link"></i></span></li>
 </ul>
 
     </div>
@@ -528,7 +529,7 @@
 
       <!--noindex-->
       <div class="post-toc-wrap sidebar-panel">
-          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#0-%E5%89%8D%E8%A8%80"><span class="nav-text">0. 前言</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#1-%E6%97%B6%E9%97%B4%E7%9A%84%E5%80%92%E6%95%B0-%E6%80%A7%E8%83%BD"><span class="nav-text">1 时间的倒数 - 性能</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#2-%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%9A%84%E8%AE%A1%E6%97%B6%E5%8D%95%E4%BD%8D%EF%BC%9ACPU%E6%97%B6%E9%92%9F"><span class="nav-text">2 计算机的计时单位：CPU时钟</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#2-1-%E6%97%B6%E9%97%B4%E7%9A%84%E6%B5%8B%E4%B8%8D%E5%87%86%E5%8E%9F%E7%90%86"><span class="nav-text">2.1 时间的测不准原理</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#2-1-1-%E7%BB%9F%E8%AE%A1%E6%97%B6%E9%97%B4%E6%96%B9%E6%B3%95"><span class="nav-text">2.1.1 统计时间方法</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#2-1-2-%E4%B8%8D%E4%B8%80%E5%AE%9A%E5%8F%AF%E7%9B%B4%E6%8E%A5%E6%AF%94%E8%BE%83%E5%87%BA%E6%80%A7%E8%83%BD"><span class="nav-text">2.1.2 不一定可直接比较出性能</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#2-2-CPU%E6%97%B6%E9%97%B4%E6%8B%86%E8%A7%A3"><span class="nav-text">2.2 CPU时间拆解</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#2-2-1-%E6%97%B6%E9%92%9F%E5%91%A8%E6%9C%9F%E6%97%B6%E9%97%B4"><span class="nav-text">2.2.1 时钟周期时间</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#2-2-2-CPU%E6%97%B6%E9%92%9F%E5%91%A8%E6%9C%9F%E6%95%B0"><span class="nav-text">2.2.2 CPU时钟周期数</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E4%BD%86%E6%98%AF%E4%B9%98%E6%B3%95%E9%9C%80%E8%A6%81%E7%9A%84Cycles%E5%B0%B1%E6%AF%94%E5%8A%A0%E6%B3%95%E8%A6%81%E5%A4%9A%EF%BC%8C%E8%87%AA%E7%84%B6%E4%B9%9F%E5%B0%B1%E6%85%A2%E3%80%82"><span class="nav-text">但是乘法需要的Cycles就比加法要多，自然也就慢。</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#2-2-3-%E6%9C%80%E7%BB%88%E7%BB%93%E6%9E%9C"><span class="nav-text">2.2.3 最终结果</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#2-2-4-%E6%89%93%E4%B8%AA%E6%AF%94%E6%96%B9"><span class="nav-text">2.2.4 打个比方</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#2-2-5-%E9%A2%9D%E5%A4%96%E7%9F%A5%E8%AF%86%E8%A1%A5%E5%85%85"><span class="nav-text">2.2.5 额外知识补充</span></a></li></ol></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#3-%E6%80%BB%E7%BB%93"><span class="nav-text">3 总结</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%8F%82%E8%80%83"><span class="nav-text">参考</span></a></li></ol></div>
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#0-前言"><span class="nav-text">0. 前言</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#1-时间的倒数-性能"><span class="nav-text">1 时间的倒数 - 性能</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#2-计算机的计时单位：CPU时钟"><span class="nav-text">2 计算机的计时单位：CPU时钟</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#2-1-时间的测不准原理"><span class="nav-text">2.1 时间的测不准原理</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#2-1-1-统计时间方法"><span class="nav-text">2.1.1 统计时间方法</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#2-1-2-不一定可直接比较出性能"><span class="nav-text">2.1.2 不一定可直接比较出性能</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#2-2-CPU时间拆解"><span class="nav-text">2.2 CPU时间拆解</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#2-2-1-时钟周期时间"><span class="nav-text">2.2.1 时钟周期时间</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#2-2-2-CPU时钟周期数"><span class="nav-text">2.2.2 CPU时钟周期数</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#但是乘法需要的Cycles就比加法要多，自然也就慢。"><span class="nav-text">但是乘法需要的Cycles就比加法要多，自然也就慢。</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#2-2-3-最终结果"><span class="nav-text">2.2.3 最终结果</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#2-2-4-打个比方"><span class="nav-text">2.2.4 打个比方</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#2-2-5-额外知识补充"><span class="nav-text">2.2.5 额外知识补充</span></a></li></ol></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#3-总结"><span class="nav-text">3 总结</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#参考"><span class="nav-text">参考</span></a></li></ol></div>
       </div>
       <!--/noindex-->
 

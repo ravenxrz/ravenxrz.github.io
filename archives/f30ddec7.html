@@ -4,7 +4,7 @@
   <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
 <meta name="theme-color" content="#222">
-<meta name="generator" content="Hexo 5.1.1">
+<meta name="generator" content="Hexo 4.2.1">
   <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
   <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png">
   <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png">
@@ -21,7 +21,7 @@
 
 <script id="hexo-configurations">
     var NexT = window.NexT || {};
-    var CONFIG = {"hostname":"www.ravenxrz.ink","root":"/","scheme":"Mist","version":"7.8.0","exturl":true,"sidebar":{"position":"left","display":"always","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":true,"show_result":true,"style":"flat"},"back2top":{"enable":true,"sidebar":false,"scrollpercent":true},"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":true,"lazyload":true,"pangu":true,"comments":{"style":"tabs","active":"gitalk","storage":true,"lazyload":true,"nav":null,"activeClass":"gitalk"},"algolia":{"hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":true,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},"motion":{"enable":false,"async":true,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}}};
+    var CONFIG = {"hostname":"www.ravenxrz.ink","root":"/","scheme":"Mist","version":"7.8.0","exturl":true,"sidebar":{"position":"left","display":"always","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":true,"show_result":true,"style":"flat"},"back2top":{"enable":true,"sidebar":false,"scrollpercent":true},"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":true,"lazyload":true,"pangu":true,"comments":{"style":"tabs","active":"gitalk","storage":true,"lazyload":true,"nav":null,"activeClass":"gitalk"},"algolia":{"hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":true,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},"motion":{"enable":false,"async":true,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},"path":"search.xml"};
   </script>
 
   <meta name="description" content="系列文章：  linux软riad配置详解 Linux配置iSCSI服务 Linux配置Multipath访问iSCSI服务本文架构参考自：https:&#x2F;&#x2F;blog.csdn.net&#x2F;Dream_ya&#x2F;article&#x2F;details&#x2F;88674952  1. Multipath简介普通的电脑主机都是一个硬盘挂接到一个总线上，这里是一对一的关系。而到了有光纤组成的SAN环境，由于主机和存储通过了光纤">
@@ -35,7 +35,7 @@
 <meta property="og:image" content="https://pic.downk.cc/item/5e60d5c198271cb2b8aa1e8a.jpg">
 <meta property="og:image" content="https://pic.downk.cc/item/5e60db6a98271cb2b8adae36.jpg">
 <meta property="article:published_time" content="2020-03-05T10:15:00.000Z">
-<meta property="article:modified_time" content="2020-09-06T02:45:08.036Z">
+<meta property="article:modified_time" content="2020-09-06T07:37:36.757Z">
 <meta property="article:author" content="Raven">
 <meta property="article:tag" content="Multipath">
 <meta property="article:tag" content="iSCSI">
@@ -86,6 +86,7 @@
   </style>
 </noscript>
 
+<link rel="alternate" href="/atom.xml" title="Raven's Blog" type="application/atom+xml">
 </head>
 
 <body itemscope itemtype="http://schema.org/WebPage">
@@ -236,7 +237,7 @@
                   <i class="fa fa-calendar-check-o"></i>
                 </span>
                 <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2020-09-06 10:45:08" itemprop="dateModified" datetime="2020-09-06T10:45:08+08:00">2020-09-06</time>
+                <time title="修改时间：2020-09-06 15:37:36" itemprop="dateModified" datetime="2020-09-06T15:37:36+08:00">2020-09-06</time>
               </span>
             <span class="post-meta-item">
               <span class="post-meta-item-icon">
@@ -270,7 +271,7 @@
 <ul>
 <li><a href="https://www.ravenxrz.ink/archives/b85e04d0.html">linux软riad配置详解</a></li>
 <li><a href="https://www.ravenxrz.ink/archives/47bf0456.html">Linux配置iSCSI服务</a></li>
-<li><a href="https://www.ravenxrz.ink/archives/f30ddec7.html">Linux配置Multipath访问iSCSI服务</a><br>本文架构参考自：<a target="_blank" rel="noopener" href="https://blog.csdn.net/Dream_ya/article/details/88674952">https://blog.csdn.net/Dream_ya/article/details/88674952</a></li>
+<li><a href="https://www.ravenxrz.ink/archives/f30ddec7.html">Linux配置Multipath访问iSCSI服务</a><br>本文架构参考自：<span class="exturl" data-url="aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L0RyZWFtX3lhL2FydGljbGUvZGV0YWlscy84ODY3NDk1Mg==" title="https://blog.csdn.net/Dream_ya/article/details/88674952">https://blog.csdn.net/Dream_ya/article/details/88674952<i class="fa fa-external-link"></i></span></li>
 </ul>
 <h3 id="1-Multipath简介"><a href="#1-Multipath简介" class="headerlink" title="1. Multipath简介"></a>1. Multipath简介</h3><p>普通的电脑主机都是一个硬盘挂接到一个总线上，这里是一对一的关系。而到了有光纤组成的SAN环境，由于主机和存储通过了光纤交换机连接，这样的话，就构成了多对多的关系。也就是说，主机到存储可以有多条路径可以选择。主机到存储之间的IO由多条路径可以选择。</p>
 <p><strong>实现功能</strong></p>
@@ -321,12 +322,12 @@
 <p>唯一需要注意的是，在配置portal的时候，采用默认即可，要不就将多个ip和port都create上,以及防火墙的放行。</p>
 <p>现在来说说Client端：</p>
 <p><strong>发现Server的iSCSI：</strong></p>
-<p><img src="https://pic.downk.cc/item/5e60d4f898271cb2b8a9aef1.jpg"></p>
+<p><img data-src="https://pic.downk.cc/item/5e60d4f898271cb2b8a9aef1.jpg"></p>
 <p><strong>登录：</strong></p>
 <figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">iscsiadm -m node -T iqn.2020-02.com.ravenxrz:server -l </span><br></pre></td></tr></table></figure>
 
 <p>此时执行<code>fdisk -l</code>，你会发现被添加了很多设备（具体来说是3个，因为3张网卡）：</p>
-<p><img src="https://pic.downk.cc/item/5e60d5c198271cb2b8aa1e8a.jpg"></p>
+<p><img data-src="https://pic.downk.cc/item/5e60d5c198271cb2b8aa1e8a.jpg"></p>
 <p>为了解决这个问题，就要使用到multipath了。</p>
 <h2 id="3-Multipath配置"><a href="#3-Multipath配置" class="headerlink" title="3. Multipath配置"></a>3. Multipath配置</h2><p><strong>安装multipath工具包</strong></p>
 <ul>
@@ -343,12 +344,12 @@
 <p><strong>查看multipath信息</strong></p>
 <figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">multipath -ll # 或者multipath -rr</span><br></pre></td></tr></table></figure>
 
-<p><img src="https://pic.downk.cc/item/5e60db6a98271cb2b8adae36.jpg"></p>
+<p><img data-src="https://pic.downk.cc/item/5e60db6a98271cb2b8adae36.jpg"></p>
 <p>可以看到mapthn这个设备有三条路径。</p>
 <p>mapthn这个设备在 /dev/mapper下，具体而言为 <code>/dev/mapper/mapthn</code>，现在对这个设备操作就是唯一的了。<br>同时也仅能对/dev/mapper/mapthn做mount操作，如果mount其余”两个设备”,会显示busy。这样就能保证不管是对从哪个接口获取的lun，<br>都可能够正确得进行操作。</p>
 <h3 id="参考"><a href="#参考" class="headerlink" title="参考"></a>参考</h3><ul>
-<li><a target="_blank" rel="noopener" href="https://blog.csdn.net/Dream_ya/article/details/88674952">Linux Multipath+iscsi实现多路径配置</a></li>
-<li><a target="_blank" rel="noopener" href="https://www.cnblogs.com/pipci/p/9247858.html">Ubuntu系统下的多路径软件 DM Multipath 配置</a></li>
+<li><span class="exturl" data-url="aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L0RyZWFtX3lhL2FydGljbGUvZGV0YWlscy84ODY3NDk1Mg==" title="https://blog.csdn.net/Dream_ya/article/details/88674952">Linux Multipath+iscsi实现多路径配置<i class="fa fa-external-link"></i></span></li>
+<li><span class="exturl" data-url="aHR0cHM6Ly93d3cuY25ibG9ncy5jb20vcGlwY2kvcC85MjQ3ODU4Lmh0bWw=" title="https://www.cnblogs.com/pipci/p/9247858.html">Ubuntu系统下的多路径软件 DM Multipath 配置<i class="fa fa-external-link"></i></span></li>
 </ul>
 
     </div>
@@ -473,7 +474,7 @@
 
       <!--noindex-->
       <div class="post-toc-wrap sidebar-panel">
-          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-3"><a class="nav-link" href="#1-Multipath%E7%AE%80%E4%BB%8B"><span class="nav-text">1. Multipath简介</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%AE%9E%E9%AA%8C%E5%B9%B3%E5%8F%B0"><span class="nav-text">实验平台</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#2-iscsi%E9%85%8D%E7%BD%AE%EF%BC%88%E5%AE%A2%E6%88%B7%E7%AB%AF%EF%BC%89"><span class="nav-text">2. iscsi配置（客户端）</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#3-Multipath%E9%85%8D%E7%BD%AE"><span class="nav-text">3. Multipath配置</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%8F%82%E8%80%83"><span class="nav-text">参考</span></a></li></ol></div>
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-3"><a class="nav-link" href="#1-Multipath简介"><span class="nav-text">1. Multipath简介</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#实验平台"><span class="nav-text">实验平台</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#2-iscsi配置（客户端）"><span class="nav-text">2. iscsi配置（客户端）</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#3-Multipath配置"><span class="nav-text">3. Multipath配置</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#参考"><span class="nav-text">参考</span></a></li></ol></div>
       </div>
       <!--/noindex-->
 

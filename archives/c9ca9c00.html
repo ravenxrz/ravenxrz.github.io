@@ -4,7 +4,7 @@
   <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
 <meta name="theme-color" content="#222">
-<meta name="generator" content="Hexo 5.1.1">
+<meta name="generator" content="Hexo 4.2.1">
   <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
   <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png">
   <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png">
@@ -21,7 +21,7 @@
 
 <script id="hexo-configurations">
     var NexT = window.NexT || {};
-    var CONFIG = {"hostname":"www.ravenxrz.ink","root":"/","scheme":"Mist","version":"7.8.0","exturl":true,"sidebar":{"position":"left","display":"always","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":true,"show_result":true,"style":"flat"},"back2top":{"enable":true,"sidebar":false,"scrollpercent":true},"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":true,"lazyload":true,"pangu":true,"comments":{"style":"tabs","active":"gitalk","storage":true,"lazyload":true,"nav":null,"activeClass":"gitalk"},"algolia":{"hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":true,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},"motion":{"enable":false,"async":true,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}}};
+    var CONFIG = {"hostname":"www.ravenxrz.ink","root":"/","scheme":"Mist","version":"7.8.0","exturl":true,"sidebar":{"position":"left","display":"always","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":true,"show_result":true,"style":"flat"},"back2top":{"enable":true,"sidebar":false,"scrollpercent":true},"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":true,"lazyload":true,"pangu":true,"comments":{"style":"tabs","active":"gitalk","storage":true,"lazyload":true,"nav":null,"activeClass":"gitalk"},"algolia":{"hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":true,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},"motion":{"enable":false,"async":true,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},"path":"search.xml"};
   </script>
 
   <meta name="description" content="1. 遗传算法基本原理1.1 遗传算法基础种群是生物进化的基本单位的，生物进化的实质是种群基本频率的改变。基因突变和基因重组、自然选择以及隔离是物种形成过程中的三个基本环节，通过他们的综合作用，种群产生分化，最终导致新物种的形成。">
@@ -36,7 +36,7 @@
 <meta property="og:image" content="https://pic.superbed.cn/item/5cfbad75451253d178d95496.jpg">
 <meta property="og:image" content="https://pic1.superbed.cn/item/5cfbae91451253d178d96266.jpg">
 <meta property="article:published_time" content="2017-08-25T05:59:30.000Z">
-<meta property="article:modified_time" content="2020-09-06T02:45:08.073Z">
+<meta property="article:modified_time" content="2020-09-06T07:37:36.795Z">
 <meta property="article:author" content="Raven">
 <meta property="article:tag" content="算法">
 <meta name="twitter:card" content="summary">
@@ -86,6 +86,7 @@
   </style>
 </noscript>
 
+<link rel="alternate" href="/atom.xml" title="Raven's Blog" type="application/atom+xml">
 </head>
 
 <body itemscope itemtype="http://schema.org/WebPage">
@@ -236,7 +237,7 @@
                   <i class="fa fa-calendar-check-o"></i>
                 </span>
                 <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2020-09-06 10:45:08" itemprop="dateModified" datetime="2020-09-06T10:45:08+08:00">2020-09-06</time>
+                <time title="修改时间：2020-09-06 15:37:36" itemprop="dateModified" datetime="2020-09-06T15:37:36+08:00">2020-09-06</time>
               </span>
             <span class="post-meta-item">
               <span class="post-meta-item-icon">
@@ -273,7 +274,7 @@
 <h5 id="2-解码"><a href="#2-解码" class="headerlink" title="2. 解码"></a>2. 解码</h5><p><strong>解码的目的就是将不直观的二进制数据串还原成十进制。</strong></p>
 <p>遗传算法的编码和解码在宏观上可以对应生物的基因型和表现型，在围观上可以对应DNA的转录和翻译两个过程。</p>
 <h5 id="3-交配"><a href="#3-交配" class="headerlink" title="3. 交配"></a>3. 交配</h5><p>“交配运算”是使用单点或者多点进行交叉的算子。首先用随机数产生一个或者多个叫叫配电的位置，然后两个个题在叫配电位置互换部分基因码，形成两个子个体。如下图：</p>
-<p><img src="https://pic.superbed.cn/item/5cfbad5d451253d178d9531f.jpg" alt="交配运算"></p>
+<p><img data-src="https://pic.superbed.cn/item/5cfbad5d451253d178d9531f.jpg" alt="交配运算"></p>
 <p><strong>两个基因在”/“处进行了交换</strong></p>
 <h5 id="4-突变"><a href="#4-突变" class="headerlink" title="4.突变"></a>4.突变</h5><p>“突变运算”是使用基本位进行基因突变 。例如，将染色体S=11001101第3位上的0变为1，即S = 11101101=S’.S’可以被看做是原染色S的子代染色体。</p>
 <h5 id="5-倒位"><a href="#5-倒位" class="headerlink" title="5.倒位"></a>5.倒位</h5><p>将染色体基因的一部分进行逆序排列。例如：S = 100/1100/11,倒位以后为S’ = 100/0011/11.</p>
@@ -302,7 +303,7 @@
 
 
 
-<p><img src="https://pic.superbed.cn/item/5cfbad67451253d178d953a6.jpg" alt="算法迭代"></p>
+<p><img data-src="https://pic.superbed.cn/item/5cfbad67451253d178d953a6.jpg" alt="算法迭代"></p>
 <p><strong>案例二：多约束非线性规划问题</strong></p>
 <p>$$<br>min f(x) = e^{x_1} (4x_1^2+2x_2^2+4x_1x_2+2_2+1) \\<br>s.t. \left\{<br>             \begin{array}{lr}<br>             x=\dfrac{3\pi}{2}(1+2t)\cos(\dfrac{3\pi}{2}(1+2t)), &amp;  \\<br>             y=s, &amp; 0\leq s\leq L,|t|\leq1.\\<br>             z=\dfrac{3\pi}{2}(1+2t)\sin(\dfrac{3\pi}{2}(1+2t)), &amp;<br>             \end{array}<br>\right.<br>$$</p>
 <figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br></pre></td><td class="code"><pre><span class="line">%主程序：本程序采用遗传算法接力进化，</span><br><span class="line">%将上次进化结束后得到的最终种群作为下次输入的初始种群</span><br><span class="line">clc;</span><br><span class="line">close all;</span><br><span class="line">clear all;</span><br><span class="line">%进化的代数</span><br><span class="line">T&#x3D;100;</span><br><span class="line">optionsOrigin&#x3D;gaoptimset(&#39;Generations&#39;,T&#x2F;2);</span><br><span class="line">[x,fval,reason,output,final_pop]&#x3D;ga(@ch14_2f,2,optionsOrigin);</span><br><span class="line">%进行第二次接力进化</span><br><span class="line">options1&#x3D;gaoptimset(&#39;Generations&#39;,T&#x2F;2,&#39;InitialPopulation&#39;,final_pop,...</span><br><span class="line">    &#39;PlotFcns&#39;,@gaplotbestf);</span><br><span class="line">[x,fval,reason,output,final_pop]&#x3D;ga(@ch14_2f,2,options1);</span><br><span class="line">Bestx&#x3D;x</span><br><span class="line">BestFval&#x3D;fval</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">%子函数：适应度函数同时也是目标函数,函数存储名称为ch14_2f.m</span><br><span class="line">function f&#x3D;ch14_2f(x)</span><br><span class="line">g1&#x3D;1.5+x(1)*x(2)-x(1)-x(2);</span><br><span class="line">g2&#x3D;-x(1)*x(2);</span><br><span class="line">if (g1&gt;0||g2&gt;10)</span><br><span class="line">    f&#x3D;100;</span><br><span class="line">else</span><br><span class="line">    f&#x3D;exp(x(1))*(4*x(1)^2+2*x(2)^2+4*x(1)*x(2)+2*x(2)+1);</span><br><span class="line">end</span><br><span class="line">end</span><br></pre></td></tr></table></figure>
@@ -322,8 +323,8 @@
 
 
 
-<p><img src="https://pic.superbed.cn/item/5cfbad75451253d178d95496.jpg" alt="TSP原路径"></p>
-<p><img src="https://pic1.superbed.cn/item/5cfbae91451253d178d96266.jpg" alt="求解后路径"></p>
+<p><img data-src="https://pic.superbed.cn/item/5cfbad75451253d178d95496.jpg" alt="TSP原路径"></p>
+<p><img data-src="https://pic1.superbed.cn/item/5cfbae91451253d178d96266.jpg" alt="求解后路径"></p>
 
     </div>
 
@@ -446,7 +447,7 @@
 
       <!--noindex-->
       <div class="post-toc-wrap sidebar-panel">
-          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#1-%E9%81%97%E4%BC%A0%E7%AE%97%E6%B3%95%E5%9F%BA%E6%9C%AC%E5%8E%9F%E7%90%86"><span class="nav-text">1. 遗传算法基本原理</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#1-1-%E9%81%97%E4%BC%A0%E7%AE%97%E6%B3%95%E5%9F%BA%E7%A1%80"><span class="nav-text">1.1 遗传算法基础</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#1-2-%E9%81%97%E4%BC%A0%E7%AE%97%E6%B3%95%E5%AE%9E%E7%8E%B0%E6%AD%A5%E9%AA%A4"><span class="nav-text">1.2 遗传算法实现步骤</span></a><ol class="nav-child"><li class="nav-item nav-level-5"><a class="nav-link" href="#1-%E7%BC%96%E7%A0%81"><span class="nav-text">1. 编码</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#2-%E8%A7%A3%E7%A0%81"><span class="nav-text">2. 解码</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#3-%E4%BA%A4%E9%85%8D"><span class="nav-text">3. 交配</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#4-%E7%AA%81%E5%8F%98"><span class="nav-text">4.突变</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#5-%E5%80%92%E4%BD%8D"><span class="nav-text">5.倒位</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#6-%E4%B8%AA%E4%BD%93%E9%80%82%E5%BA%94%E5%BA%A6%E8%AF%84%E4%BC%B0"><span class="nav-text">6.个体适应度评估</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#7-%E5%A4%8D%E5%88%B6"><span class="nav-text">7.复制</span></a></li></ol></li></ol></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#2-%E9%81%97%E4%BC%A0%E7%AE%97%E6%B3%95%E7%9A%84MATLAB%E7%A8%8B%E5%BA%8F%E8%AE%BE%E8%AE%A1"><span class="nav-text">2. 遗传算法的MATLAB程序设计</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#2-1-%E7%A8%8B%E5%BA%8F%E8%AE%BE%E8%AE%A1%E6%B5%81%E7%A8%8B%E5%8F%8A%E5%8F%82%E6%95%B0%E9%80%89%E5%8F%96"><span class="nav-text">2.1 程序设计流程及参数选取</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#1-%E4%BC%AA%E4%BB%A3%E7%A0%81"><span class="nav-text">1.伪代码</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#2-%E9%81%97%E4%BC%A0%E7%AE%97%E6%B3%95%E7%9A%84%E5%8F%82%E6%95%B0%E8%AE%BE%E8%AE%A1%E5%8E%9F%E5%88%99"><span class="nav-text">2.遗传算法的参数设计原则</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#3-%E9%81%97%E4%BC%A0%E7%AE%97%E6%B3%95%E9%80%82%E5%BA%94%E5%BA%A6%E5%87%BD%E6%95%B0%E8%AE%BE%E8%AE%A1"><span class="nav-text">3.遗传算法适应度函数设计</span></a></li></ol></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#3-%E9%81%97%E4%BC%A0%E7%AE%97%E6%B3%95%E5%BA%94%E7%94%A8%E6%A1%88%E4%BE%8B"><span class="nav-text">3. 遗传算法应用案例</span></a></li></ol></div>
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#1-遗传算法基本原理"><span class="nav-text">1. 遗传算法基本原理</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#1-1-遗传算法基础"><span class="nav-text">1.1 遗传算法基础</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#1-2-遗传算法实现步骤"><span class="nav-text">1.2 遗传算法实现步骤</span></a><ol class="nav-child"><li class="nav-item nav-level-5"><a class="nav-link" href="#1-编码"><span class="nav-text">1. 编码</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#2-解码"><span class="nav-text">2. 解码</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#3-交配"><span class="nav-text">3. 交配</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#4-突变"><span class="nav-text">4.突变</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#5-倒位"><span class="nav-text">5.倒位</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#6-个体适应度评估"><span class="nav-text">6.个体适应度评估</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#7-复制"><span class="nav-text">7.复制</span></a></li></ol></li></ol></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#2-遗传算法的MATLAB程序设计"><span class="nav-text">2. 遗传算法的MATLAB程序设计</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#2-1-程序设计流程及参数选取"><span class="nav-text">2.1 程序设计流程及参数选取</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#1-伪代码"><span class="nav-text">1.伪代码</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#2-遗传算法的参数设计原则"><span class="nav-text">2.遗传算法的参数设计原则</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#3-遗传算法适应度函数设计"><span class="nav-text">3.遗传算法适应度函数设计</span></a></li></ol></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#3-遗传算法应用案例"><span class="nav-text">3. 遗传算法应用案例</span></a></li></ol></div>
       </div>
       <!--/noindex-->
 

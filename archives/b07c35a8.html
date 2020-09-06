@@ -4,7 +4,7 @@
   <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
 <meta name="theme-color" content="#222">
-<meta name="generator" content="Hexo 5.1.1">
+<meta name="generator" content="Hexo 4.2.1">
   <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
   <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png">
   <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png">
@@ -21,7 +21,7 @@
 
 <script id="hexo-configurations">
     var NexT = window.NexT || {};
-    var CONFIG = {"hostname":"www.ravenxrz.ink","root":"/","scheme":"Mist","version":"7.8.0","exturl":true,"sidebar":{"position":"left","display":"always","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":true,"show_result":true,"style":"flat"},"back2top":{"enable":true,"sidebar":false,"scrollpercent":true},"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":true,"lazyload":true,"pangu":true,"comments":{"style":"tabs","active":"gitalk","storage":true,"lazyload":true,"nav":null,"activeClass":"gitalk"},"algolia":{"hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":true,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},"motion":{"enable":false,"async":true,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}}};
+    var CONFIG = {"hostname":"www.ravenxrz.ink","root":"/","scheme":"Mist","version":"7.8.0","exturl":true,"sidebar":{"position":"left","display":"always","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":true,"show_result":true,"style":"flat"},"back2top":{"enable":true,"sidebar":false,"scrollpercent":true},"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":true,"lazyload":true,"pangu":true,"comments":{"style":"tabs","active":"gitalk","storage":true,"lazyload":true,"nav":null,"activeClass":"gitalk"},"algolia":{"hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":true,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},"motion":{"enable":false,"async":true,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},"path":"search.xml"};
   </script>
 
   <meta name="description" content="这个模式，韩老师讲得非常不好。所以本文整理自各种博文。 1.为什么使用？当需要对一个对象结构类（这个结构由一些不相关的类组成）进行操作扩展，而又不想改变这个对象结构类时，可以考虑使用访问者模式。 举个案例，假设现在我们有一个描述商品的对象结构（想象成购物篮），当前装入了书和水果。那么现在这个结构看起来像这个样子：">
@@ -36,7 +36,7 @@
 <meta property="og:image" content="https://pic.downk.cc/item/5e8e9f47504f4bcb04f6f0c4.png">
 <meta property="og:image" content="https://pic.downk.cc/item/5e8e9f58504f4bcb04f70557.png">
 <meta property="article:published_time" content="2020-04-09T04:10:29.000Z">
-<meta property="article:modified_time" content="2020-09-06T02:45:08.068Z">
+<meta property="article:modified_time" content="2020-09-06T07:37:36.790Z">
 <meta property="article:author" content="Raven">
 <meta property="article:tag" content="访问者模式">
 <meta name="twitter:card" content="summary">
@@ -86,6 +86,7 @@
   </style>
 </noscript>
 
+<link rel="alternate" href="/atom.xml" title="Raven's Blog" type="application/atom+xml">
 </head>
 
 <body itemscope itemtype="http://schema.org/WebPage">
@@ -236,7 +237,7 @@
                   <i class="fa fa-calendar-check-o"></i>
                 </span>
                 <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2020-09-06 10:45:08" itemprop="dateModified" datetime="2020-09-06T10:45:08+08:00">2020-09-06</time>
+                <time title="修改时间：2020-09-06 15:37:36" itemprop="dateModified" datetime="2020-09-06T15:37:36+08:00">2020-09-06</time>
               </span>
             <span class="post-meta-item">
               <span class="post-meta-item-icon">
@@ -273,9 +274,9 @@
 
 
 
-<p><img src="https://pic.downk.cc/item/5e8e9f00504f4bcb04f69a73.png"></p>
+<p><img data-src="https://pic.downk.cc/item/5e8e9f00504f4bcb04f69a73.png"></p>
 <p>现在超市由于促销活动，对大于500页的书，打8折活动；水果每买一斤，单位价格下降1%。于是很自然地想到在Book类和Fruit分别添加getPrice方法和buy3Get1()方法，然后实现具体的操作。如下：</p>
-<p><img src="https://pic.downk.cc/item/5e8ea13d504f4bcb04f8d145.jpg"></p>
+<p><img data-src="https://pic.downk.cc/item/5e8ea13d504f4bcb04f8d145.jpg"></p>
 <p>这里我只分别对Book和Fruit做了一个操作扩展，考虑如果我们要对Book和Fruit做多个扩展呢？每个扩展我们都要打开实际的Book类或Fruit类来修改吗？这<strong>显然违反了ocp原则，不便于扩展和维护</strong>。</p>
 <p><strong>虽然Book和Fruit都是商品, 但是它们在打折行为上是相互独立的</strong>，这种情况我们该如何去扩展呢？下面就来介绍如何使用访问者模式解决这个问题。</p>
 <h2 id="2-介绍是什么？"><a href="#2-介绍是什么？" class="headerlink" title="2.介绍是什么？"></a>2.介绍是什么？</h2><p>第2部分如果没看懂，没关系，粗略过一下，看完实例再看一遍第2部分应该就懂了。</p>
@@ -285,7 +286,7 @@
 <li>Visitor类：visitor类定义visit方法，这个方法将被所有对象结构中的元素调用。</li>
 <li>被访问类，即对象结构中的元素，提供一个accpet方法，接受一个Visitor类。</li>
 </ol>
-<h3 id="2-2-类图"><a href="#2-2-类图" class="headerlink" title="2.2 类图"></a>2.2 类图</h3><p><img src="https://pic.downk.cc/item/5e8e9f47504f4bcb04f6f0c4.png"></p>
+<h3 id="2-2-类图"><a href="#2-2-类图" class="headerlink" title="2.2 类图"></a>2.2 类图</h3><p><img data-src="https://pic.downk.cc/item/5e8e9f47504f4bcb04f6f0c4.png"></p>
 <p>职责介绍：</p>
 <ul>
 <li>Client：Client类是访问者设计模式使用者。 它有权访问对象结构对象，并可以指示它们接受访问者者以执行适当的处理。</li>
@@ -296,7 +297,7 @@
 </ul>
 <p>OK，大概你已经有点晕了，来看实例吧。</p>
 <h2 id="3-如何使用？"><a href="#3-如何使用？" class="headerlink" title="3.如何使用？"></a>3.如何使用？</h2><p>我们先给出利用访问者模式解决“为什么要使用”中的不易扩展的问题的类图：</p>
-<p><img src="https://pic.downk.cc/item/5e8e9f58504f4bcb04f70557.png"></p>
+<p><img data-src="https://pic.downk.cc/item/5e8e9f58504f4bcb04f70557.png"></p>
 <p>Book和Fruit都是商品，所以抽象出一个父类或接口，作为Visitable（被访问者），声明一个accept。</p>
 <p>这里就以接口的方式作为讲解：</p>
 <p>被访问者接口：</p>
@@ -344,9 +345,9 @@
 <li>客户端创建访问者对象，并通过调用<code>accept（）</code>将其传递给Element对象。</li>
 </ul>
 <h2 id="参考："><a href="#参考：" class="headerlink" title="参考："></a>参考：</h2><ul>
-<li><a target="_blank" rel="noopener" href="https://en.wikipedia.org/wiki/Visitor_pattern">Visitor pattern</a></li>
-<li><a target="_blank" rel="noopener" href="https://sourcemaking.com/design_patterns/visitor">Visitor Design Pattern</a></li>
-<li><a target="_blank" rel="noopener" href="https://www.geeksforgeeks.org/visitor-design-pattern">Visitor Design Pattern From Geek</a></li>
+<li><span class="exturl" data-url="aHR0cHM6Ly9lbi53aWtpcGVkaWEub3JnL3dpa2kvVmlzaXRvcl9wYXR0ZXJu" title="https://en.wikipedia.org/wiki/Visitor_pattern">Visitor pattern<i class="fa fa-external-link"></i></span></li>
+<li><span class="exturl" data-url="aHR0cHM6Ly9zb3VyY2VtYWtpbmcuY29tL2Rlc2lnbl9wYXR0ZXJucy92aXNpdG9y" title="https://sourcemaking.com/design_patterns/visitor">Visitor Design Pattern<i class="fa fa-external-link"></i></span></li>
+<li><span class="exturl" data-url="aHR0cHM6Ly93d3cuZ2Vla3Nmb3JnZWVrcy5vcmcvdmlzaXRvci1kZXNpZ24tcGF0dGVybg==" title="https://www.geeksforgeeks.org/visitor-design-pattern">Visitor Design Pattern From Geek<i class="fa fa-external-link"></i></span></li>
 </ul>
 
     </div>
@@ -470,7 +471,7 @@
 
       <!--noindex-->
       <div class="post-toc-wrap sidebar-panel">
-          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#1-%E4%B8%BA%E4%BB%80%E4%B9%88%E4%BD%BF%E7%94%A8%EF%BC%9F"><span class="nav-text">1.为什么使用？</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#2-%E4%BB%8B%E7%BB%8D%E6%98%AF%E4%BB%80%E4%B9%88%EF%BC%9F"><span class="nav-text">2.介绍是什么？</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#2-1-%E5%9F%BA%E6%9C%AC%E4%BB%8B%E7%BB%8D"><span class="nav-text">2.1 基本介绍</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#2-2-%E7%B1%BB%E5%9B%BE"><span class="nav-text">2.2 类图</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#3-%E5%A6%82%E4%BD%95%E4%BD%BF%E7%94%A8%EF%BC%9F"><span class="nav-text">3.如何使用？</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#4-%E4%BC%98%E7%BC%BA%E7%82%B9"><span class="nav-text">4.优缺点</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#4-1-%E4%BC%98%E7%82%B9"><span class="nav-text">4.1 优点</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#4-2-%E7%BC%BA%E7%82%B9"><span class="nav-text">4.2 缺点</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#5-%E4%BD%BF%E7%94%A8%E7%9A%84%E6%B3%A8%E6%84%8F%E4%BA%8B%E9%A1%B9"><span class="nav-text">5.使用的注意事项</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%8F%82%E8%80%83%EF%BC%9A"><span class="nav-text">参考：</span></a></li></ol></div>
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#1-为什么使用？"><span class="nav-text">1.为什么使用？</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#2-介绍是什么？"><span class="nav-text">2.介绍是什么？</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#2-1-基本介绍"><span class="nav-text">2.1 基本介绍</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#2-2-类图"><span class="nav-text">2.2 类图</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#3-如何使用？"><span class="nav-text">3.如何使用？</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#4-优缺点"><span class="nav-text">4.优缺点</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#4-1-优点"><span class="nav-text">4.1 优点</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#4-2-缺点"><span class="nav-text">4.2 缺点</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#5-使用的注意事项"><span class="nav-text">5.使用的注意事项</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#参考："><span class="nav-text">参考：</span></a></li></ol></div>
       </div>
       <!--/noindex-->
 

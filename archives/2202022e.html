@@ -4,7 +4,7 @@
   <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
 <meta name="theme-color" content="#222">
-<meta name="generator" content="Hexo 5.1.1">
+<meta name="generator" content="Hexo 4.2.1">
   <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
   <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png">
   <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png">
@@ -21,7 +21,7 @@
 
 <script id="hexo-configurations">
     var NexT = window.NexT || {};
-    var CONFIG = {"hostname":"www.ravenxrz.ink","root":"/","scheme":"Mist","version":"7.8.0","exturl":true,"sidebar":{"position":"left","display":"always","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":true,"show_result":true,"style":"flat"},"back2top":{"enable":true,"sidebar":false,"scrollpercent":true},"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":true,"lazyload":true,"pangu":true,"comments":{"style":"tabs","active":"gitalk","storage":true,"lazyload":true,"nav":null,"activeClass":"gitalk"},"algolia":{"hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":true,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},"motion":{"enable":false,"async":true,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}}};
+    var CONFIG = {"hostname":"www.ravenxrz.ink","root":"/","scheme":"Mist","version":"7.8.0","exturl":true,"sidebar":{"position":"left","display":"always","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":true,"show_result":true,"style":"flat"},"back2top":{"enable":true,"sidebar":false,"scrollpercent":true},"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":true,"lazyload":true,"pangu":true,"comments":{"style":"tabs","active":"gitalk","storage":true,"lazyload":true,"nav":null,"activeClass":"gitalk"},"algolia":{"hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":true,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},"motion":{"enable":false,"async":true,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},"path":"search.xml"};
   </script>
 
   <meta name="description" content="本文整理自大佬-“荒野无灯”的微信公众号文章。加了些自己在配置上遇到过的坑。 原文：https:&#x2F;&#x2F;mp.weixin.qq.com&#x2F;s&#x2F;O6LHgX8KKmfVWj9LupeLBw">
@@ -36,7 +36,7 @@
 <meta property="og:image" content="https://pic.downk.cc/item/5e6f8d02e83c3a1e3a9b1db8.jpg">
 <meta property="og:image" content="https://pic.downk.cc/item/5e6f8ceee83c3a1e3a9b1529.jpg">
 <meta property="article:published_time" content="2020-03-16T13:38:47.000Z">
-<meta property="article:modified_time" content="2020-09-06T02:45:08.055Z">
+<meta property="article:modified_time" content="2020-09-06T07:37:36.776Z">
 <meta property="article:author" content="Raven">
 <meta property="article:tag" content="cmder">
 <meta property="article:tag" content="on-my-zsh">
@@ -88,6 +88,7 @@
   </style>
 </noscript>
 
+<link rel="alternate" href="/atom.xml" title="Raven's Blog" type="application/atom+xml">
 </head>
 
 <body itemscope itemtype="http://schema.org/WebPage">
@@ -238,7 +239,7 @@
                   <i class="fa fa-calendar-check-o"></i>
                 </span>
                 <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2020-09-06 10:45:08" itemprop="dateModified" datetime="2020-09-06T10:45:08+08:00">2020-09-06</time>
+                <time title="修改时间：2020-09-06 15:37:36" itemprop="dateModified" datetime="2020-09-06T15:37:36+08:00">2020-09-06</time>
               </span>
             <span class="post-meta-item">
               <span class="post-meta-item-icon">
@@ -269,16 +270,16 @@
 
       
         <p>本文整理自大佬-“荒野无灯”的微信公众号文章。加了些自己在配置上遇到过的坑。</p>
-<p>原文：<a target="_blank" rel="noopener" href="https://mp.weixin.qq.com/s/O6LHgX8KKmfVWj9LupeLBw">https://mp.weixin.qq.com/s/O6LHgX8KKmfVWj9LupeLBw</a></p>
+<p>原文：<span class="exturl" data-url="aHR0cHM6Ly9tcC53ZWl4aW4ucXEuY29tL3MvTzZMSGdYOEtLbWZWV2o5THVwZUxCdw==" title="https://mp.weixin.qq.com/s/O6LHgX8KKmfVWj9LupeLBw">https://mp.weixin.qq.com/s/O6LHgX8KKmfVWj9LupeLBw<i class="fa fa-external-link"></i></span></p>
 <a id="more"></a>
 
 <h2 id="0-前言"><a href="#0-前言" class="headerlink" title="0. 前言"></a>0. 前言</h2><p>我想大部分都不喜欢Windows下的Cmd，这篇文章就是让Windows上cmd提升一个阶级，虽然达不到linux般的效果，但是大部分功能都是可以有的。如果你是arch的爱好者，看完本篇后你也可以在windows上使用pacman包管理了。</p>
 <h2 id="1-材料准备"><a href="#1-材料准备" class="headerlink" title="1. 材料准备"></a>1. 材料准备</h2><ul>
-<li><p><a target="_blank" rel="noopener" href="https://cmder.net/">Cmder </a>,下载mini或full都可以，后者加了个git包，如果你的系统已经集成了git，那就min就好。下完后，记得配置Cmder的bin目录到环境变量下。</p>
+<li><p><span class="exturl" data-url="aHR0cHM6Ly9jbWRlci5uZXQv" title="https://cmder.net/">Cmder <i class="fa fa-external-link"></i></span>,下载mini或full都可以，后者加了个git包，如果你的系统已经集成了git，那就min就好。下完后，记得配置Cmder的bin目录到环境变量下。</p>
 </li>
-<li><p><a target="_blank" rel="noopener" href="https://www.msys2.org/">MSYS2 </a></p>
+<li><p><span class="exturl" data-url="aHR0cHM6Ly93d3cubXN5czIub3JnLw==" title="https://www.msys2.org/">MSYS2 <i class="fa fa-external-link"></i></span></p>
 </li>
-<li><p><a target="_blank" rel="noopener" href="https://f.nanodm.net/Windows/shell/zsh/antibody.exe">antibody</a>, zsh的插件管理器。</p>
+<li><p><span class="exturl" data-url="aHR0cHM6Ly9mLm5hbm9kbS5uZXQvV2luZG93cy9zaGVsbC96c2gvYW50aWJvZHkuZXhl" title="https://f.nanodm.net/Windows/shell/zsh/antibody.exe">antibody<i class="fa fa-external-link"></i></span>, zsh的插件管理器。</p>
 </li>
 </ul>
 <h2 id="2-详细配置"><a href="#2-详细配置" class="headerlink" title="2. 详细配置"></a>2. 详细配置</h2><p>antibody暂时不用安装，将cmder和msys2安装即可。</p>
@@ -299,12 +300,12 @@
 
 <p><strong>OK，这里可能会有个坑，如果你使用了mactype这款软件，那么上面这条命令是执行不成功</strong>，修复方案：</p>
 <p>打开MacType对应的配置文件，我的是IOS.ini。如图：</p>
-<p><img src="https://pic.downk.cc/item/5e6f8ccce83c3a1e3a9b046b.png"><br>在[UnloadDll]条目下增加就可以了。</p>
+<p><img data-src="https://pic.downk.cc/item/5e6f8ccce83c3a1e3a9b046b.png"><br>在[UnloadDll]条目下增加就可以了。</p>
 <figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">gpg.exe</span><br><span class="line">pacman.exe</span><br><span class="line">ConEmuC.exe</span><br><span class="line">ConEmuC64.exe</span><br></pre></td></tr></table></figure>
 
 <p>另一个可能的是SSL的问题，上openssl上下载完全版安装即可。</p>
 <h3 id="2-2-将msys2继承到cmder中"><a href="#2-2-将msys2继承到cmder中" class="headerlink" title="2.2 将msys2继承到cmder中"></a>2.2 将msys2继承到cmder中</h3><p>点击Cmder窗口标题栏左边的图标,进入Settings 然后点击: Startup -&gt; Tasks -&gt; +  增加一个Task配置:</p>
-<p><img src="https://pic.downk.cc/item/5e6f8ceee83c3a1e3a9b1529.jpg"></p>
+<p><img data-src="https://pic.downk.cc/item/5e6f8ceee83c3a1e3a9b1529.jpg"></p>
 <p>3： zsh:MinGW64</p>
 <p>5: 家目录: 我的就是</p>
 <figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">/dir C:\Users\Raven</span><br></pre></td></tr></table></figure>
@@ -316,7 +317,7 @@
 <figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">set MSYSTEM=MINGW64 告诉 msys2 我们要启动的是mingw64,  不是mingw32, 也不是默认的msys2</span><br><span class="line">set MSYSCON=conemu64.exe 告诉msys2 我们的终端是 ConEmu ,  而不是msys2默认的 mintty.exe</span><br><span class="line">set MSYS2_PATH_TYPE=inherit 表示,我们在mingw64下面的时候, PATH环境变量的值继承自windows系统的环境变量.</span><br><span class="line">set CHERE_INVOKING=1 这是一个神奇的选项! 这个一定要设置. 不然我们设置的默认启动目录 参数对msys2 mingw64会不生效. (关于这一点,我刚开始也是折腾了好久, 直到后来看到了zyzyz的文章)</span><br></pre></td></tr></table></figure>
 
 <p>设置msys2 mingw64 (task {zsh::MinGW64})为默认的shell:</p>
-<p><img src="https://pic.downk.cc/item/5e6f8d02e83c3a1e3a9b1db8.jpg"></p>
+<p><img data-src="https://pic.downk.cc/item/5e6f8d02e83c3a1e3a9b1db8.jpg"></p>
 <h3 id="2-3-融合home目录"><a href="#2-3-融合home目录" class="headerlink" title="2.3 融合home目录"></a>2.3 融合home目录</h3><p>到目前为之，你已经将msys2整合到cmder中了，但是有个问题就是cmder现在家目录和的windows家目录是不同的，如你可以执行:</p>
 <figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">cd ~</span><br><span class="line">pwd</span><br></pre></td></tr></table></figure>
 
@@ -325,7 +326,7 @@
 <figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">pacman -S zsh</span><br></pre></td></tr></table></figure>
 
 <p>好，现在我们正式来做这个任务：</p>
-<p><img src="https://pic.downk.cc/item/5e6f8ceee83c3a1e3a9b1529.jpg"><br>修改第6出的命令为：</p>
+<p><img data-src="https://pic.downk.cc/item/5e6f8ceee83c3a1e3a9b1529.jpg"><br>修改第6出的命令为：</p>
 <figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">set MSYSTEM=MINGW64 &amp; set MSYSCON=conemu64.exe &amp; set MSYS2_PATH_TYPE=inherit &amp; set CHERE_INVOKING=1  &amp; set &quot;HOME=C:\Users\Raven&quot; &amp; &quot;%ConEmuDir%\..\..\..\msys64\usr\bin\zsh.exe&quot; --login -i -new_console:n</span><br></pre></td></tr></table></figure>
 
 <p>修改 <code>set &quot;HOME=C:\Users\Raven&quot;</code>为你的家目录即可。</p>
@@ -472,7 +473,7 @@
 
       <!--noindex-->
       <div class="post-toc-wrap sidebar-panel">
-          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#0-%E5%89%8D%E8%A8%80"><span class="nav-text">0. 前言</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#1-%E6%9D%90%E6%96%99%E5%87%86%E5%A4%87"><span class="nav-text">1. 材料准备</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#2-%E8%AF%A6%E7%BB%86%E9%85%8D%E7%BD%AE"><span class="nav-text">2. 详细配置</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#2-1-%E9%85%8D%E7%BD%AEmsys2"><span class="nav-text">2.1 配置msys2</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#2-2-%E5%B0%86msys2%E7%BB%A7%E6%89%BF%E5%88%B0cmder%E4%B8%AD"><span class="nav-text">2.2 将msys2继承到cmder中</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#2-3-%E8%9E%8D%E5%90%88home%E7%9B%AE%E5%BD%95"><span class="nav-text">2.3 融合home目录</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#2-4-%E5%AE%89%E8%A3%85-antibody"><span class="nav-text">2.4 安装 antibody</span></a></li></ol></li></ol></div>
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#0-前言"><span class="nav-text">0. 前言</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#1-材料准备"><span class="nav-text">1. 材料准备</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#2-详细配置"><span class="nav-text">2. 详细配置</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#2-1-配置msys2"><span class="nav-text">2.1 配置msys2</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#2-2-将msys2继承到cmder中"><span class="nav-text">2.2 将msys2继承到cmder中</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#2-3-融合home目录"><span class="nav-text">2.3 融合home目录</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#2-4-安装-antibody"><span class="nav-text">2.4 安装 antibody</span></a></li></ol></li></ol></div>
       </div>
       <!--/noindex-->
 

@@ -4,7 +4,7 @@
   <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
 <meta name="theme-color" content="#222">
-<meta name="generator" content="Hexo 5.1.1">
+<meta name="generator" content="Hexo 4.2.1">
   <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
   <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png">
   <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png">
@@ -21,7 +21,7 @@
 
 <script id="hexo-configurations">
     var NexT = window.NexT || {};
-    var CONFIG = {"hostname":"www.ravenxrz.ink","root":"/","scheme":"Mist","version":"7.8.0","exturl":true,"sidebar":{"position":"left","display":"always","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":true,"show_result":true,"style":"flat"},"back2top":{"enable":true,"sidebar":false,"scrollpercent":true},"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":true,"lazyload":true,"pangu":true,"comments":{"style":"tabs","active":"gitalk","storage":true,"lazyload":true,"nav":null,"activeClass":"gitalk"},"algolia":{"hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":true,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},"motion":{"enable":false,"async":true,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}}};
+    var CONFIG = {"hostname":"www.ravenxrz.ink","root":"/","scheme":"Mist","version":"7.8.0","exturl":true,"sidebar":{"position":"left","display":"always","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":true,"show_result":true,"style":"flat"},"back2top":{"enable":true,"sidebar":false,"scrollpercent":true},"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":true,"lazyload":true,"pangu":true,"comments":{"style":"tabs","active":"gitalk","storage":true,"lazyload":true,"nav":null,"activeClass":"gitalk"},"algolia":{"hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":true,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},"motion":{"enable":false,"async":true,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},"path":"search.xml"};
   </script>
 
   <meta name="description" content="相信不少同学在学习java 1.8新特性时，都对java函数接口和方法引用有些困惑。在查询资料加上一些自己的理解后整理出本文，希望能够帮过理清这其中的“奥秘”。">
@@ -33,7 +33,7 @@
 <meta property="og:locale" content="zh_CN">
 <meta property="og:image" content="https://cdn.jsdelivr.net/gh/ravenxrz/PicBed/img/types-of-method-references.jpg">
 <meta property="article:published_time" content="2020-04-10T05:27:38.000Z">
-<meta property="article:modified_time" content="2020-09-06T02:45:08.044Z">
+<meta property="article:modified_time" content="2020-09-06T07:37:36.765Z">
 <meta property="article:author" content="Raven">
 <meta property="article:tag" content="java">
 <meta property="article:tag" content="函数接口">
@@ -85,6 +85,7 @@
   </style>
 </noscript>
 
+<link rel="alternate" href="/atom.xml" title="Raven's Blog" type="application/atom+xml">
 </head>
 
 <body itemscope itemtype="http://schema.org/WebPage">
@@ -235,7 +236,7 @@
                   <i class="fa fa-calendar-check-o"></i>
                 </span>
                 <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2020-09-06 10:45:08" itemprop="dateModified" datetime="2020-09-06T10:45:08+08:00">2020-09-06</time>
+                <time title="修改时间：2020-09-06 15:37:36" itemprop="dateModified" datetime="2020-09-06T15:37:36+08:00">2020-09-06</time>
               </span>
             <span class="post-meta-item">
               <span class="post-meta-item-icon">
@@ -370,7 +371,7 @@
 <li>Reference to an instance method. 实例方法引用</li>
 <li>Reference to a constructor. 构造器引用</li>
 </ol>
-<p><img src="https://cdn.jsdelivr.net/gh/ravenxrz/PicBed/img/types-of-method-references.jpg" alt="Types of Java Method References"></p>
+<p><img data-src="https://cdn.jsdelivr.net/gh/ravenxrz/PicBed/img/types-of-method-references.jpg" alt="Types of Java Method References"></p>
 <p>别被三种方式吓到了，看到<strong>总结</strong>后，你会发现其实很好区别。</p>
 <h3 id="3-2-静态方法引用"><a href="#3-2-静态方法引用" class="headerlink" title="3.2 静态方法引用"></a>3.2 静态方法引用</h3><p>语法：</p>
 <figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">ContainingClass::staticMethodName  </span><br></pre></td></tr></table></figure>
@@ -431,7 +432,7 @@
 <li><p>第二点：<strong>接口方法的第一个参数恰巧是调用引用方法的对象（其引用方法所在类或其父类的实例）</strong></p>
 </li>
 </ul>
-<p>具体可参考：<a target="_blank" rel="noopener" href="https://blog.csdn.net/weixin_41126303/article/details/81187002">点这里</a></p>
+<p>具体可参考：<span class="exturl" data-url="aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L3dlaXhpbl80MTEyNjMwMy9hcnRpY2xlL2RldGFpbHMvODExODcwMDI=" title="https://blog.csdn.net/weixin_41126303/article/details/81187002">点这里<i class="fa fa-external-link"></i></span></p>
 <p><strong>实际开发中，不推荐这种方式！</strong></p>
 <h3 id="3-4-构造方法"><a href="#3-4-构造方法" class="headerlink" title="3.4 构造方法"></a>3.4 构造方法</h3><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// 这里对应的是Student的默认构造函数</span></span><br><span class="line">Supplier&lt;Student&gt; supplier = Student::<span class="keyword">new</span>; </span><br><span class="line"><span class="comment">// 下面看一个非默认构造函数</span></span><br><span class="line"><span class="class"><span class="keyword">interface</span> <span class="title">MyFunction</span>&lt;<span class="title">T</span>,<span class="title">U</span>,<span class="title">R</span>&gt;</span>&#123;</span><br><span class="line">    <span class="function">R <span class="title">apply</span><span class="params">(T t,U u)</span></span>;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">Student</span></span>&#123;</span><br><span class="line">    <span class="keyword">private</span> <span class="keyword">int</span> id;</span><br><span class="line">    <span class="keyword">private</span> String name;</span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="title">Student</span><span class="params">(<span class="keyword">int</span> id, String name)</span> </span>&#123;</span><br><span class="line">        <span class="keyword">this</span>.id = id;</span><br><span class="line">        <span class="keyword">this</span>.name = name;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"><span class="comment">// 此时对应的是Student(int id, String name)构造函数</span></span><br><span class="line"> MyFunction&lt;Integer,String,Student&gt; myFunction = Student::<span class="keyword">new</span>;</span><br><span class="line"></span><br><span class="line"><span class="comment">// 使用：</span></span><br><span class="line">MyFunction&lt;Integer,String,Student&gt; myFunction = Student::<span class="keyword">new</span>;</span><br><span class="line">Student stu = myFunction.apply(<span class="number">1</span>,<span class="string">&quot;raven&quot;</span>);</span><br><span class="line">System.out.println(stu);</span><br></pre></td></tr></table></figure>
 
@@ -445,7 +446,7 @@
 <li>构造器，参数一一对应</li>
 </ol>
 <p>再引用知乎某大佬的理解方式：</p>
-<p>原文链接:<a target="_blank" rel="noopener" href="https://zhuanlan.zhihu.com/p/69985120">https://zhuanlan.zhihu.com/p/69985120</a> </p>
+<p>原文链接:<span class="exturl" data-url="aHR0cHM6Ly96aHVhbmxhbi56aGlodS5jb20vcC82OTk4NTEyMA==" title="https://zhuanlan.zhihu.com/p/69985120">https://zhuanlan.zhihu.com/p/69985120<i class="fa fa-external-link"></i></span> </p>
 <p><strong>在评论中找下面的话，原文不要看。</strong></p>
 <blockquote>
 <p>lambda 内部使用 MethodHandle，所以其实方法引用的处理规则跟 MethodHandle 是一模一样的。</p>
@@ -461,15 +462,15 @@
 </ol>
 </blockquote>
 <h2 id="参考："><a href="#参考：" class="headerlink" title="参考："></a>参考：</h2><ul>
-<li><p><a target="_blank" rel="noopener" href="https://blog.csdn.net/weixin_41126303/article/details/81187002">https://blog.csdn.net/weixin_41126303/article/details/81187002</a></p>
+<li><p><span class="exturl" data-url="aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L3dlaXhpbl80MTEyNjMwMy9hcnRpY2xlL2RldGFpbHMvODExODcwMDI=" title="https://blog.csdn.net/weixin_41126303/article/details/81187002">https://blog.csdn.net/weixin_41126303/article/details/81187002<i class="fa fa-external-link"></i></span></p>
 </li>
-<li><p><a target="_blank" rel="noopener" href="http://zyzhang.github.io/blog/2013/06/15/java8-preview-method-reference/">http://zyzhang.github.io/blog/2013/06/15/java8-preview-method-reference/</a></p>
+<li><p><span class="exturl" data-url="aHR0cDovL3p5emhhbmcuZ2l0aHViLmlvL2Jsb2cvMjAxMy8wNi8xNS9qYXZhOC1wcmV2aWV3LW1ldGhvZC1yZWZlcmVuY2Uv" title="http://zyzhang.github.io/blog/2013/06/15/java8-preview-method-reference/">http://zyzhang.github.io/blog/2013/06/15/java8-preview-method-reference/<i class="fa fa-external-link"></i></span></p>
 </li>
-<li><p><a target="_blank" rel="noopener" href="http://moandjiezana.com/blog/2014/understanding-method-references/">http://moandjiezana.com/blog/2014/understanding-method-references/</a></p>
+<li><p><span class="exturl" data-url="aHR0cDovL21vYW5kamllemFuYS5jb20vYmxvZy8yMDE0L3VuZGVyc3RhbmRpbmctbWV0aG9kLXJlZmVyZW5jZXMv" title="http://moandjiezana.com/blog/2014/understanding-method-references/">http://moandjiezana.com/blog/2014/understanding-method-references/<i class="fa fa-external-link"></i></span></p>
 </li>
-<li><p><a target="_blank" rel="noopener" href="https://docs.oracle.com/javase/tutorial/java/javaOO/methodreferences.html">https://docs.oracle.com/javase/tutorial/java/javaOO/methodreferences.html</a></p>
+<li><p><span class="exturl" data-url="aHR0cHM6Ly9kb2NzLm9yYWNsZS5jb20vamF2YXNlL3R1dG9yaWFsL2phdmEvamF2YU9PL21ldGhvZHJlZmVyZW5jZXMuaHRtbA==" title="https://docs.oracle.com/javase/tutorial/java/javaOO/methodreferences.html">https://docs.oracle.com/javase/tutorial/java/javaOO/methodreferences.html<i class="fa fa-external-link"></i></span></p>
 </li>
-<li><p><a target="_blank" rel="noopener" href="https://www.baeldung.com/java-method-references">https://www.baeldung.com/java-method-references</a></p>
+<li><p><span class="exturl" data-url="aHR0cHM6Ly93d3cuYmFlbGR1bmcuY29tL2phdmEtbWV0aG9kLXJlZmVyZW5jZXM=" title="https://www.baeldung.com/java-method-references">https://www.baeldung.com/java-method-references<i class="fa fa-external-link"></i></span></p>
 </li>
 </ul>
 
@@ -596,7 +597,7 @@
 
       <!--noindex-->
       <div class="post-toc-wrap sidebar-panel">
-          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#1-%E8%BF%BD%E8%BF%BD%E5%8E%86%E5%8F%B2"><span class="nav-text">1. 追追历史</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#2-%E5%87%BD%E6%95%B0%E6%8E%A5%E5%8F%A3"><span class="nav-text">2. 函数接口</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#2-1-JDK%E4%B8%AD%E7%9A%84%E5%87%BD%E6%95%B0%E6%8E%A5%E5%8F%A3%E5%8C%85"><span class="nav-text">2.1 JDK中的函数接口包</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#2-1-1-Consumer"><span class="nav-text">2.1.1 Consumer</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#2-1-2-Supplier"><span class="nav-text">2.1.2 Supplier</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#2-1-3-Predicate"><span class="nav-text">2.1.3 Predicate</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#2-1-4-Function"><span class="nav-text">2.1.4 Function</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E9%A2%9D%E5%A4%96%E7%9A%84%E5%91%BD%E5%90%8D%E8%A7%84%E5%88%99%EF%BC%9A"><span class="nav-text">额外的命名规则：</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#2-2-%E5%8F%A6%E4%B8%80%E4%BA%9B%E5%87%BD%E6%95%B0%E6%8E%A5%E5%8F%A3"><span class="nav-text">2.2 另一些函数接口</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#3-%E6%96%B9%E6%B3%95%E5%BC%95%E7%94%A8"><span class="nav-text">3. 方法引用</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#3-1-%E4%B8%BA%E4%BB%80%E4%B9%88%E8%A6%81%E7%94%A8%E6%96%B9%E6%B3%95%E5%BC%95%E7%94%A8"><span class="nav-text">3.1 为什么要用方法引用</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#3-2-%E9%9D%99%E6%80%81%E6%96%B9%E6%B3%95%E5%BC%95%E7%94%A8"><span class="nav-text">3.2 静态方法引用</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#3-3-%E5%AE%9E%E4%BE%8B%E6%96%B9%E6%B3%95%E5%BC%95%E7%94%A8"><span class="nav-text">3.3 实例方法引用</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#3-3-1-%E7%89%B9%E5%AE%9A%E5%AE%9E%E4%BE%8B%E7%9A%84%E6%96%B9%E6%B3%95%E5%BC%95%E7%94%A8"><span class="nav-text">3.3.1 特定实例的方法引用</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#3-3-2-%E5%BC%95%E7%94%A8%E7%89%B9%E5%AE%9A%E7%B1%BB%E5%9E%8B%E7%9A%84%E4%BB%BB%E6%84%8F%E5%AF%B9%E8%B1%A1%E7%9A%84%E5%AE%9E%E4%BE%8B%E6%96%B9%E6%B3%95"><span class="nav-text">3.3.2 引用特定类型的任意对象的实例方法</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#3-4-%E6%9E%84%E9%80%A0%E6%96%B9%E6%B3%95"><span class="nav-text">3.4 构造方法</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#3-5-%E6%96%B9%E6%B3%95%E5%BC%95%E7%94%A8%E6%80%BB%E7%BB%93"><span class="nav-text">3.5 方法引用总结</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%8F%82%E8%80%83%EF%BC%9A"><span class="nav-text">参考：</span></a></li></ol></div>
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#1-追追历史"><span class="nav-text">1. 追追历史</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#2-函数接口"><span class="nav-text">2. 函数接口</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#2-1-JDK中的函数接口包"><span class="nav-text">2.1 JDK中的函数接口包</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#2-1-1-Consumer"><span class="nav-text">2.1.1 Consumer</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#2-1-2-Supplier"><span class="nav-text">2.1.2 Supplier</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#2-1-3-Predicate"><span class="nav-text">2.1.3 Predicate</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#2-1-4-Function"><span class="nav-text">2.1.4 Function</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#额外的命名规则："><span class="nav-text">额外的命名规则：</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#2-2-另一些函数接口"><span class="nav-text">2.2 另一些函数接口</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#3-方法引用"><span class="nav-text">3. 方法引用</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#3-1-为什么要用方法引用"><span class="nav-text">3.1 为什么要用方法引用</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#3-2-静态方法引用"><span class="nav-text">3.2 静态方法引用</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#3-3-实例方法引用"><span class="nav-text">3.3 实例方法引用</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#3-3-1-特定实例的方法引用"><span class="nav-text">3.3.1 特定实例的方法引用</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#3-3-2-引用特定类型的任意对象的实例方法"><span class="nav-text">3.3.2 引用特定类型的任意对象的实例方法</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#3-4-构造方法"><span class="nav-text">3.4 构造方法</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#3-5-方法引用总结"><span class="nav-text">3.5 方法引用总结</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#参考："><span class="nav-text">参考：</span></a></li></ol></div>
       </div>
       <!--/noindex-->
 

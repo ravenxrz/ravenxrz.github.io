@@ -4,7 +4,7 @@
   <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
 <meta name="theme-color" content="#222">
-<meta name="generator" content="Hexo 5.1.1">
+<meta name="generator" content="Hexo 4.2.1">
   <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
   <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png">
   <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png">
@@ -21,7 +21,7 @@
 
 <script id="hexo-configurations">
     var NexT = window.NexT || {};
-    var CONFIG = {"hostname":"www.ravenxrz.ink","root":"/","scheme":"Mist","version":"7.8.0","exturl":true,"sidebar":{"position":"left","display":"always","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":true,"show_result":true,"style":"flat"},"back2top":{"enable":true,"sidebar":false,"scrollpercent":true},"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":true,"lazyload":true,"pangu":true,"comments":{"style":"tabs","active":"gitalk","storage":true,"lazyload":true,"nav":null,"activeClass":"gitalk"},"algolia":{"hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":true,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},"motion":{"enable":false,"async":true,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}}};
+    var CONFIG = {"hostname":"www.ravenxrz.ink","root":"/","scheme":"Mist","version":"7.8.0","exturl":true,"sidebar":{"position":"left","display":"always","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":true,"show_result":true,"style":"flat"},"back2top":{"enable":true,"sidebar":false,"scrollpercent":true},"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":true,"lazyload":true,"pangu":true,"comments":{"style":"tabs","active":"gitalk","storage":true,"lazyload":true,"nav":null,"activeClass":"gitalk"},"algolia":{"hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":true,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},"motion":{"enable":false,"async":true,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},"path":"search.xml"};
   </script>
 
   <meta name="description" content="准备把csapp详细看一遍，所有lab都做一遍，加深理解。 本篇是datalab的个人解法，所以很可能不是最优解。 原课程地址：http:&#x2F;&#x2F;www.cs.cmu.edu&#x2F;afs&#x2F;cs&#x2F;academic&#x2F;class&#x2F;15213-f15&#x2F;www&#x2F;schedule.html ok，现在就来一道道题说明。 0. 说明datalab着重于让学生理解 数字（integer，float point)在bit">
@@ -34,7 +34,7 @@
 <meta property="og:image" content="https://cdn.jsdelivr.net/gh/ravenxrz/PicBed/img/image-20200619232328439.png">
 <meta property="og:image" content="https://cdn.jsdelivr.net/gh/ravenxrz/PicBed/img/image-20200619232535359.png">
 <meta property="article:published_time" content="2020-06-19T13:58:03.000Z">
-<meta property="article:modified_time" content="2020-09-06T02:45:08.027Z">
+<meta property="article:modified_time" content="2020-09-06T07:37:36.750Z">
 <meta property="article:author" content="Raven">
 <meta property="article:tag" content="Datalab">
 <meta name="twitter:card" content="summary">
@@ -84,6 +84,7 @@
   </style>
 </noscript>
 
+<link rel="alternate" href="/atom.xml" title="Raven's Blog" type="application/atom+xml">
 </head>
 
 <body itemscope itemtype="http://schema.org/WebPage">
@@ -234,7 +235,7 @@
                   <i class="fa fa-calendar-check-o"></i>
                 </span>
                 <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2020-09-06 10:45:08" itemprop="dateModified" datetime="2020-09-06T10:45:08+08:00">2020-09-06</time>
+                <time title="修改时间：2020-09-06 15:37:36" itemprop="dateModified" datetime="2020-09-06T15:37:36+08:00">2020-09-06</time>
               </span>
             <span class="post-meta-item">
               <span class="post-meta-item-icon">
@@ -266,7 +267,7 @@
       
         <p>准备把csapp详细看一遍，所有lab都做一遍，加深理解。</p>
 <p>本篇是datalab的个人解法，<strong>所以很可能不是最优解</strong>。</p>
-<p>原课程地址：<a target="_blank" rel="noopener" href="http://www.cs.cmu.edu/afs/cs/academic/class/15213-f15/www/schedule.html">http://www.cs.cmu.edu/afs/cs/academic/class/15213-f15/www/schedule.html</a></p>
+<p>原课程地址：<span class="exturl" data-url="aHR0cDovL3d3dy5jcy5jbXUuZWR1L2Fmcy9jcy9hY2FkZW1pYy9jbGFzcy8xNTIxMy1mMTUvd3d3L3NjaGVkdWxlLmh0bWw=" title="http://www.cs.cmu.edu/afs/cs/academic/class/15213-f15/www/schedule.html">http://www.cs.cmu.edu/afs/cs/academic/class/15213-f15/www/schedule.html<i class="fa fa-external-link"></i></span></p>
 <p>ok，现在就来一道道题说明。</p>
 <h2 id="0-说明"><a href="#0-说明" class="headerlink" title="0. 说明"></a>0. 说明</h2><p>datalab着重于让学生理解 数字（integer，float point)在bit level上的表示与操作。通过限制学生的操作集（如仅能使用 ~, |, +等此操作），让学生在bit level上思考问题。</p>
 <a id="more"></a>
@@ -504,10 +505,10 @@
 <p>到这里x一定是正数了。</p>
 <p>现在就可以统一处理正负数了。问题是我们仍然无法通过if loop计算需要多少位bit来表示一个数。</p>
 <p>为了更好的说明下面的算法，这里先贴一张图，以5bit数字进行说明：</p>
-<p><img src="https://cdn.jsdelivr.net/gh/ravenxrz/PicBed/img/image-20200619232328439.png" alt="image-20200619232328439"></p>
+<p><img data-src="https://cdn.jsdelivr.net/gh/ravenxrz/PicBed/img/image-20200619232328439.png" alt="image-20200619232328439"></p>
 <p>现在的关键是如何得到这个 <strong>剩余3bit信息：</strong></p>
 <p>如果可以将当扫描位后的所有位置为1，我们就可以<strong>将问题转化为统计 当前数字的二进制表示 有多少个1了。</strong>（为什么要这么想，因为有<strong>bitcount算法</strong>啊）</p>
-<p><img src="https://cdn.jsdelivr.net/gh/ravenxrz/PicBed/img/image-20200619232535359.png" alt="image-20200619232535359"></p>
+<p><img data-src="https://cdn.jsdelivr.net/gh/ravenxrz/PicBed/img/image-20200619232535359.png" alt="image-20200619232535359"></p>
 <p>关键代码2：</p>
 <p>对于32位的数据，可以有：</p>
 <figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// 把最高位1后的所有位全部填充为 1</span></span><br><span class="line">x = x | x &gt;&gt; <span class="number">1</span>;</span><br><span class="line">x = x | x &gt;&gt; <span class="number">2</span>;</span><br><span class="line">x = x | x &gt;&gt; <span class="number">4</span>;</span><br><span class="line">x = x | x &gt;&gt; <span class="number">8</span>;</span><br><span class="line">x = x | x &gt;&gt; <span class="number">16</span>;</span><br></pre></td></tr></table></figure>
@@ -690,7 +691,7 @@
 
       <!--noindex-->
       <div class="post-toc-wrap sidebar-panel">
-          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#0-%E8%AF%B4%E6%98%8E"><span class="nav-text">0. 说明</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#1-bitXor"><span class="nav-text">1. bitXor</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#2-tmin"><span class="nav-text">2. tmin</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#3-isTmax"><span class="nav-text">3. isTmax</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#4-allOddBits"><span class="nav-text">4. allOddBits</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#5-negate"><span class="nav-text">5. negate</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#6-isAsciiDigit"><span class="nav-text">6. isAsciiDigit</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#7-conditional"><span class="nav-text">7. conditional</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#8-isLessOrEqual"><span class="nav-text">8. isLessOrEqual</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#9-logicalNeg"><span class="nav-text">9. logicalNeg</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#10-howManyBits"><span class="nav-text">10. howManyBits</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#11-float-twice"><span class="nav-text">11. float_twice</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#12-float-i2f"><span class="nav-text">12. float_i2f</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#13-float-f2i"><span class="nav-text">13. float_f2i</span></a></li></ol></div>
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#0-说明"><span class="nav-text">0. 说明</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#1-bitXor"><span class="nav-text">1. bitXor</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#2-tmin"><span class="nav-text">2. tmin</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#3-isTmax"><span class="nav-text">3. isTmax</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#4-allOddBits"><span class="nav-text">4. allOddBits</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#5-negate"><span class="nav-text">5. negate</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#6-isAsciiDigit"><span class="nav-text">6. isAsciiDigit</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#7-conditional"><span class="nav-text">7. conditional</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#8-isLessOrEqual"><span class="nav-text">8. isLessOrEqual</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#9-logicalNeg"><span class="nav-text">9. logicalNeg</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#10-howManyBits"><span class="nav-text">10. howManyBits</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#11-float-twice"><span class="nav-text">11. float_twice</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#12-float-i2f"><span class="nav-text">12. float_i2f</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#13-float-f2i"><span class="nav-text">13. float_f2i</span></a></li></ol></div>
       </div>
       <!--/noindex-->
 

@@ -4,7 +4,7 @@
   <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
 <meta name="theme-color" content="#222">
-<meta name="generator" content="Hexo 5.1.1">
+<meta name="generator" content="Hexo 4.2.1">
   <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
   <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png">
   <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png">
@@ -21,7 +21,7 @@
 
 <script id="hexo-configurations">
     var NexT = window.NexT || {};
-    var CONFIG = {"hostname":"www.ravenxrz.ink","root":"/","scheme":"Mist","version":"7.8.0","exturl":true,"sidebar":{"position":"left","display":"always","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":true,"show_result":true,"style":"flat"},"back2top":{"enable":true,"sidebar":false,"scrollpercent":true},"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":true,"lazyload":true,"pangu":true,"comments":{"style":"tabs","active":"gitalk","storage":true,"lazyload":true,"nav":null,"activeClass":"gitalk"},"algolia":{"hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":true,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},"motion":{"enable":false,"async":true,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}}};
+    var CONFIG = {"hostname":"www.ravenxrz.ink","root":"/","scheme":"Mist","version":"7.8.0","exturl":true,"sidebar":{"position":"left","display":"always","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":true,"show_result":true,"style":"flat"},"back2top":{"enable":true,"sidebar":false,"scrollpercent":true},"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":true,"lazyload":true,"pangu":true,"comments":{"style":"tabs","active":"gitalk","storage":true,"lazyload":true,"nav":null,"activeClass":"gitalk"},"algolia":{"hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":true,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},"motion":{"enable":false,"async":true,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},"path":"search.xml"};
   </script>
 
   <meta name="description" content="系列文章：  linux软riad配置详解 Linux配置iSCSI服务 Linux配置Multipath访问iSCSI服务  在《linux软riad配置详解》中讲解了如何在Linux中配置软raid，本文中我们将讲解如何让这个raid5可被客户端通过ISCSI服务访问。 实验平台： Server端： Manjaro 内核4.9.214 Client端： Ubuntu18 内核 5.3.40 当">
@@ -36,7 +36,7 @@
 <meta property="og:image" content="https://pic.downk.cc/item/5e60cc1d98271cb2b8a35c7b.jpg">
 <meta property="og:image" content="https://pic.downk.cc/item/5e60cd2898271cb2b8a41232.jpg">
 <meta property="article:published_time" content="2020-03-05T09:05:45.000Z">
-<meta property="article:modified_time" content="2020-09-06T02:45:08.036Z">
+<meta property="article:modified_time" content="2020-09-06T07:37:36.757Z">
 <meta property="article:author" content="Raven">
 <meta property="article:tag" content="iSCSI">
 <meta name="twitter:card" content="summary">
@@ -86,6 +86,7 @@
   </style>
 </noscript>
 
+<link rel="alternate" href="/atom.xml" title="Raven's Blog" type="application/atom+xml">
 </head>
 
 <body itemscope itemtype="http://schema.org/WebPage">
@@ -236,7 +237,7 @@
                   <i class="fa fa-calendar-check-o"></i>
                 </span>
                 <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2020-09-06 10:45:08" itemprop="dateModified" datetime="2020-09-06T10:45:08+08:00">2020-09-06</time>
+                <time title="修改时间：2020-09-06 15:37:36" itemprop="dateModified" datetime="2020-09-06T15:37:36+08:00">2020-09-06</time>
               </span>
             <span class="post-meta-item">
               <span class="post-meta-item-icon">
@@ -378,9 +379,9 @@
 <p>如果默认可通过多个网卡访问的话，可以不修改（后文配置Multipath访问时，就可以采用默认的配置），否则：</p>
 <figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"># 删除默认0.0.0.0 3260端口 </span><br><span class="line">cd iscsi&#x2F;iqn.2020-03.com.ravenxrz:server&#x2F;tpg1&#x2F;portals&#x2F;</span><br><span class="line">delete 0.0.0.0 3260</span><br><span class="line"># 配置你想用于被访问的网卡的ip，可通过ip addr命令查看，如下图</span><br><span class="line">create 192.168.18.130 3260</span><br></pre></td></tr></table></figure>
 
-<p><img src="https://pic.downk.cc/item/5e60ca5198271cb2b8a214fc.jpg"></p>
+<p><img data-src="https://pic.downk.cc/item/5e60ca5198271cb2b8a214fc.jpg"></p>
 <p>最后，贴出<strong>完整配置</strong>：</p>
-<p><img src="https://pic.downk.cc/item/5e60cf6298271cb2b8a5942d.png"></p>
+<p><img data-src="https://pic.downk.cc/item/5e60cf6298271cb2b8a5942d.png"></p>
 <p>退出，重启服务，更新配置</p>
 <figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">exit</span><br><span class="line"><span class="meta">#</span><span class="bash"> 这里应该回到了普通termial</span></span><br><span class="line">systemctl restart targetd</span><br></pre></td></tr></table></figure>
 
@@ -395,7 +396,7 @@
 </ul>
 <p><strong>修改initiatorname</strong>，这一步很重要，就是把Server中配置的acl名字复制下来，然后修改这个文件：</p>
 <p>vim /etc/iscsi/initiatorname.iscsi</p>
-<p><img src="https://pic.downk.cc/item/5e60cc1d98271cb2b8a35c7b.jpg"></p>
+<p><img data-src="https://pic.downk.cc/item/5e60cc1d98271cb2b8a35c7b.jpg"></p>
 <p>修改后重启iscsid服务:</p>
 <figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">sudo systemctl restart iscsid</span><br></pre></td></tr></table></figure>
 
@@ -408,10 +409,10 @@
 
 
 
-<p><em>如果是widnows端登录的话，将会非常简单，这里不作介绍，可参考这篇文章的末尾介绍。</em> <a target="_blank" rel="noopener" href="https://www.jianshu.com/p/648b8be1499f">https://www.jianshu.com/p/648b8be1499f</a></p>
+<p><em>如果是widnows端登录的话，将会非常简单，这里不作介绍，可参考这篇文章的末尾介绍。</em> <span class="exturl" data-url="aHR0cHM6Ly93d3cuamlhbnNodS5jb20vcC82NDhiOGJlMTQ5OWY=" title="https://www.jianshu.com/p/648b8be1499f">https://www.jianshu.com/p/648b8be1499f<i class="fa fa-external-link"></i></span></p>
 <h2 id="3-验证及使用"><a href="#3-验证及使用" class="headerlink" title="3. 验证及使用"></a>3. 验证及使用</h2><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">fdisk -l</span><br></pre></td></tr></table></figure>
 
-<p><img src="https://pic.downk.cc/item/5e60cd2898271cb2b8a41232.jpg"></p>
+<p><img data-src="https://pic.downk.cc/item/5e60cd2898271cb2b8a41232.jpg"></p>
 <p>接下来可以分区，格式化，make文件系统，挂载等，就像和本地磁盘一样。</p>
 <h2 id="4-退出及清除"><a href="#4-退出及清除" class="headerlink" title="4. 退出及清除"></a>4. 退出及清除</h2><p><strong>Client端退出</strong></p>
 <p>取消挂在，然后退出：</p>
@@ -420,11 +421,11 @@
 <p><strong>Server清除所有配置</strong></p>
 <p>清楚配置和配置过程就是一个逆过程，分别删除portals、acls、luns、iSCSI Targets和后端存储即可。</p>
 <h2 id="5-参考"><a href="#5-参考" class="headerlink" title="5. 参考"></a>5. 参考</h2><ul>
-<li><p><a target="_blank" rel="noopener" href="https://www.cnblogs.com/iouwenbo/p/10229055.html"><a target="_blank" rel="noopener" href="https://www.cnblogs.com/iouwenbo/p/10229055.html">iSCSI配置与卸载</a></a></p>
+<li><p><a href="https://www.cnblogs.com/iouwenbo/p/10229055.html" target="_blank" rel="noopener"><span class="exturl" data-url="aHR0cHM6Ly93d3cuY25ibG9ncy5jb20vaW91d2VuYm8vcC8xMDIyOTA1NS5odG1s" title="https://www.cnblogs.com/iouwenbo/p/10229055.html">iSCSI配置与卸载<i class="fa fa-external-link"></i></span></a></p>
 </li>
-<li><p><a target="_blank" rel="noopener" href="https://www.jianshu.com/p/648b8be1499f">使用 iSCSI 服务部署网络存储</a></p>
+<li><p><span class="exturl" data-url="aHR0cHM6Ly93d3cuamlhbnNodS5jb20vcC82NDhiOGJlMTQ5OWY=" title="https://www.jianshu.com/p/648b8be1499f">使用 iSCSI 服务部署网络存储<i class="fa fa-external-link"></i></span></p>
 </li>
-<li><p><a target="_blank" rel="noopener" href="https://www.jianshu.com/p/78bedd69bd9d">Linux就该这么学 | 第17章 部署 iSCSI 网络存储</a></p>
+<li><p><span class="exturl" data-url="aHR0cHM6Ly93d3cuamlhbnNodS5jb20vcC83OGJlZGQ2OWJkOWQ=" title="https://www.jianshu.com/p/78bedd69bd9d">Linux就该这么学 | 第17章 部署 iSCSI 网络存储<i class="fa fa-external-link"></i></span></p>
 </li>
 </ul>
 
@@ -549,7 +550,7 @@
 
       <!--noindex-->
       <div class="post-toc-wrap sidebar-panel">
-          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#0-%E5%9F%BA%E7%A1%80%E7%9F%A5%E8%AF%86"><span class="nav-text">0. 基础知识</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%B8%B8%E7%94%A8%E7%9A%84%E5%9F%BA%E6%9C%AC%E6%A6%82%E5%BF%B5"><span class="nav-text">常用的基本概念</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#1-Server%E9%85%8D%E7%BD%AE"><span class="nav-text">1. Server配置</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#2-Client%E7%AB%AF%E9%85%8D%E7%BD%AE"><span class="nav-text">2. Client端配置</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#3-%E9%AA%8C%E8%AF%81%E5%8F%8A%E4%BD%BF%E7%94%A8"><span class="nav-text">3. 验证及使用</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#4-%E9%80%80%E5%87%BA%E5%8F%8A%E6%B8%85%E9%99%A4"><span class="nav-text">4. 退出及清除</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#5-%E5%8F%82%E8%80%83"><span class="nav-text">5. 参考</span></a></li></ol></div>
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#0-基础知识"><span class="nav-text">0. 基础知识</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#常用的基本概念"><span class="nav-text">常用的基本概念</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#1-Server配置"><span class="nav-text">1. Server配置</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#2-Client端配置"><span class="nav-text">2. Client端配置</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#3-验证及使用"><span class="nav-text">3. 验证及使用</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#4-退出及清除"><span class="nav-text">4. 退出及清除</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#5-参考"><span class="nav-text">5. 参考</span></a></li></ol></div>
       </div>
       <!--/noindex-->
 

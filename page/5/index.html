@@ -4,7 +4,7 @@
   <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
 <meta name="theme-color" content="#222">
-<meta name="generator" content="Hexo 5.1.1">
+<meta name="generator" content="Hexo 4.2.1">
   <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
   <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png">
   <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png">
@@ -21,7 +21,7 @@
 
 <script id="hexo-configurations">
     var NexT = window.NexT || {};
-    var CONFIG = {"hostname":"www.ravenxrz.ink","root":"/","scheme":"Mist","version":"7.8.0","exturl":true,"sidebar":{"position":"left","display":"always","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":true,"show_result":true,"style":"flat"},"back2top":{"enable":true,"sidebar":false,"scrollpercent":true},"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":true,"lazyload":true,"pangu":true,"comments":{"style":"tabs","active":"gitalk","storage":true,"lazyload":true,"nav":null,"activeClass":"gitalk"},"algolia":{"hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":true,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},"motion":{"enable":false,"async":true,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}}};
+    var CONFIG = {"hostname":"www.ravenxrz.ink","root":"/","scheme":"Mist","version":"7.8.0","exturl":true,"sidebar":{"position":"left","display":"always","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":true,"show_result":true,"style":"flat"},"back2top":{"enable":true,"sidebar":false,"scrollpercent":true},"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":true,"lazyload":true,"pangu":true,"comments":{"style":"tabs","active":"gitalk","storage":true,"lazyload":true,"nav":null,"activeClass":"gitalk"},"algolia":{"hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":true,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},"motion":{"enable":false,"async":true,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},"path":"search.xml"};
   </script>
 
   <meta name="description" content="分享技术，记录生活">
@@ -79,6 +79,7 @@
   </style>
 </noscript>
 
+<link rel="alternate" href="/atom.xml" title="Raven's Blog" type="application/atom+xml">
 </head>
 
 <body itemscope itemtype="http://schema.org/WebPage">
@@ -229,7 +230,7 @@
                   <i class="fa fa-calendar-check-o"></i>
                 </span>
                 <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2020-09-06 10:45:08" itemprop="dateModified" datetime="2020-09-06T10:45:08+08:00">2020-09-06</time>
+                <time title="修改时间：2020-09-06 15:37:36" itemprop="dateModified" datetime="2020-09-06T15:37:36+08:00">2020-09-06</time>
               </span>
             <span class="post-meta-item">
               <span class="post-meta-item-icon">
@@ -260,11 +261,11 @@
 <figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">sudo blkid</span><br></pre></td></tr></table></figure>
 
 <p>记录当前swap分区的uuid。</p>
-<p><img src="https://pic.downk.cc/item/5e4a018648b86553ee02a551.jpg"></p>
+<p><img data-src="https://pic.downk.cc/item/5e4a018648b86553ee02a551.jpg"></p>
 <ol start="2">
 <li>替换/etc/fstab文件中的swap分区uuid即可。</li>
 </ol>
-<p><img src="https://pic.downk.cc/item/5e4a015448b86553ee029a40.jpg"></p>
+<p><img data-src="https://pic.downk.cc/item/5e4a015448b86553ee029a40.jpg"></p>
 
       
     </div>
@@ -315,7 +316,7 @@
                   <i class="fa fa-calendar-check-o"></i>
                 </span>
                 <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2020-09-06 10:45:08" itemprop="dateModified" datetime="2020-09-06T10:45:08+08:00">2020-09-06</time>
+                <time title="修改时间：2020-09-06 15:37:36" itemprop="dateModified" datetime="2020-09-06T15:37:36+08:00">2020-09-06</time>
               </span>
             <span class="post-meta-item">
               <span class="post-meta-item-icon">
@@ -343,7 +344,7 @@
 </blockquote>
 <p>作为一个半vimer：不想用纯vim+各种插件，但实现很喜欢vim的各种键位带来的便捷性。所以很久以前就是使用IDE+vim插件在使用。IDE当然是使用jetbrain家的了。今天就来介绍一下jb家可用的vim插件ideavim以及如何自定义配置ideavim。</p>
 <p>hexo 显示尖括号有问题，导向github:</p>
-<p><a target="_blank" rel="noopener" href="https://github.com/ravenxrz/ravenxrz.github.io/blob/master/source/_posts/ideavim%E9%85%8D%E7%BD%AE%E8%AF%B4%E6%98%8E.md">https://github.com/ravenxrz/ravenxrz.github.io/blob/master/source/_posts/ideavim%E9%85%8D%E7%BD%AE%E8%AF%B4%E6%98%8E.md</a></p>
+<p><span class="exturl" data-url="aHR0cHM6Ly9naXRodWIuY29tL3JhdmVueHJ6L3JhdmVueHJ6LmdpdGh1Yi5pby9ibG9iL21hc3Rlci9zb3VyY2UvX3Bvc3RzL2lkZWF2aW0lRTklODUlOEQlRTclQkQlQUUlRTglQUYlQjQlRTYlOTglOEUubWQ=" title="https://github.com/ravenxrz/ravenxrz.github.io/blob/master/source/_posts/ideavim%E9%85%8D%E7%BD%AE%E8%AF%B4%E6%98%8E.md">https://github.com/ravenxrz/ravenxrz.github.io/blob/master/source/_posts/ideavim%E9%85%8D%E7%BD%AE%E8%AF%B4%E6%98%8E.md<i class="fa fa-external-link"></i></span></p>
           <!--noindex-->
             <div class="post-button">
               <a class="btn" href="/archives/9cf25d6b.html#more" rel="contents">
@@ -401,7 +402,7 @@
                   <i class="fa fa-calendar-check-o"></i>
                 </span>
                 <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2020-09-06 10:45:08" itemprop="dateModified" datetime="2020-09-06T10:45:08+08:00">2020-09-06</time>
+                <time title="修改时间：2020-09-06 15:37:36" itemprop="dateModified" datetime="2020-09-06T15:37:36+08:00">2020-09-06</time>
               </span>
             <span class="post-meta-item">
               <span class="post-meta-item-icon">
@@ -426,7 +427,7 @@
       
           <p>给旧笔记本换了个高分屏，显示效果比以前好多了，但是部分应用却莫名有些模糊。如Understand代码分析软件。google一波，找到了解决办法。如下：</p>
 <p>打开Windows设置-&gt;显示-&gt;缩放与布局-&gt;高级缩放设置，<strong>手动输入你的缩放比</strong>。我是1080p的屏幕，所以设置的是125%的缩放比。然后注销重启即可。</p>
-<p><img src="https://pic.downk.cc/item/5e188db37f9a96fec1642ba7.jpg"></p>
+<p><img data-src="https://pic.downk.cc/item/5e188db37f9a96fec1642ba7.jpg"></p>
 
       
     </div>
@@ -477,7 +478,7 @@
                   <i class="fa fa-calendar-check-o"></i>
                 </span>
                 <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2020-09-06 10:45:08" itemprop="dateModified" datetime="2020-09-06T10:45:08+08:00">2020-09-06</time>
+                <time title="修改时间：2020-09-06 15:37:36" itemprop="dateModified" datetime="2020-09-06T15:37:36+08:00">2020-09-06</time>
               </span>
             <span class="post-meta-item">
               <span class="post-meta-item-icon">
@@ -503,10 +504,10 @@
           <p>今天给大家介绍如何在TexStudio中启用Language Tools插件。</p>
 <p>前提,以下所有软件请都升级到最新版本。</p>
 <ul>
-<li><a target="_blank" rel="noopener" href="http://texstudio.sourceforge.net/">TexStudio</a></li>
-<li><a target="_blank" rel="noopener" href="https://blog.csdn.net/yinqingwang/article/details/54583541">Language Tools</a>,下载后缀为.zip的文件。</li>
-<li><a target="_blank" rel="noopener" href="https://extensions.libreoffice.org/extensions/english-dictionaries">English dictionary</a>，后缀为oxt, 此文件下载后放置于你安装texstudio路径下的dictionaries路径下，如我的是<code>D:\texstudio\dictionaries</code>。</li>
-<li><a target="_blank" rel="noopener" href="https://www.oracle.com/technetwork/java/javase/downloads/index.html">Jdk</a>,jdk安装LTS的版本就好，不一定需要最新。</li>
+<li><span class="exturl" data-url="aHR0cDovL3RleHN0dWRpby5zb3VyY2Vmb3JnZS5uZXQv" title="http://texstudio.sourceforge.net/">TexStudio<i class="fa fa-external-link"></i></span></li>
+<li><span class="exturl" data-url="aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L3lpbnFpbmd3YW5nL2FydGljbGUvZGV0YWlscy81NDU4MzU0MQ==" title="https://blog.csdn.net/yinqingwang/article/details/54583541">Language Tools<i class="fa fa-external-link"></i></span>,下载后缀为.zip的文件。</li>
+<li><span class="exturl" data-url="aHR0cHM6Ly9leHRlbnNpb25zLmxpYnJlb2ZmaWNlLm9yZy9leHRlbnNpb25zL2VuZ2xpc2gtZGljdGlvbmFyaWVz" title="https://extensions.libreoffice.org/extensions/english-dictionaries">English dictionary<i class="fa fa-external-link"></i></span>，后缀为oxt, 此文件下载后放置于你安装texstudio路径下的dictionaries路径下，如我的是<code>D:\texstudio\dictionaries</code>。</li>
+<li><span class="exturl" data-url="aHR0cHM6Ly93d3cub3JhY2xlLmNvbS90ZWNobmV0d29yay9qYXZhL2phdmFzZS9kb3dubG9hZHMvaW5kZXguaHRtbA==" title="https://www.oracle.com/technetwork/java/javase/downloads/index.html">Jdk<i class="fa fa-external-link"></i></span>,jdk安装LTS的版本就好，不一定需要最新。</li>
 </ul>
           <!--noindex-->
             <div class="post-button">
@@ -565,7 +566,7 @@
                   <i class="fa fa-calendar-check-o"></i>
                 </span>
                 <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2020-09-06 10:45:08" itemprop="dateModified" datetime="2020-09-06T10:45:08+08:00">2020-09-06</time>
+                <time title="修改时间：2020-09-06 15:37:36" itemprop="dateModified" datetime="2020-09-06T15:37:36+08:00">2020-09-06</time>
               </span>
             <span class="post-meta-item">
               <span class="post-meta-item-icon">
@@ -647,7 +648,7 @@
                   <i class="fa fa-calendar-check-o"></i>
                 </span>
                 <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2020-09-06 10:45:08" itemprop="dateModified" datetime="2020-09-06T10:45:08+08:00">2020-09-06</time>
+                <time title="修改时间：2020-09-06 15:37:36" itemprop="dateModified" datetime="2020-09-06T15:37:36+08:00">2020-09-06</time>
               </span>
             <span class="post-meta-item">
               <span class="post-meta-item-icon">
@@ -729,7 +730,7 @@
                   <i class="fa fa-calendar-check-o"></i>
                 </span>
                 <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2020-09-06 10:45:08" itemprop="dateModified" datetime="2020-09-06T10:45:08+08:00">2020-09-06</time>
+                <time title="修改时间：2020-09-06 15:37:36" itemprop="dateModified" datetime="2020-09-06T15:37:36+08:00">2020-09-06</time>
               </span>
             <span class="post-meta-item">
               <span class="post-meta-item-icon">
@@ -810,7 +811,7 @@
                   <i class="fa fa-calendar-check-o"></i>
                 </span>
                 <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2020-09-06 10:45:08" itemprop="dateModified" datetime="2020-09-06T10:45:08+08:00">2020-09-06</time>
+                <time title="修改时间：2020-09-06 15:37:36" itemprop="dateModified" datetime="2020-09-06T15:37:36+08:00">2020-09-06</time>
               </span>
             <span class="post-meta-item">
               <span class="post-meta-item-icon">
@@ -833,7 +834,7 @@
     <div class="post-body" itemprop="articleBody">
 
       
-          <p>转载自：<a target="_blank" rel="noopener" href="http://blog.jcix.top/2019-02-18/pm-nvm/#NVMPM_SCM">http://blog.jcix.top/2019-02-18/pm-nvm/#NVMPM_SCM</a></p>
+          <p>转载自：<span class="exturl" data-url="aHR0cDovL2Jsb2cuamNpeC50b3AvMjAxOS0wMi0xOC9wbS1udm0vI05WTVBNX1NDTQ==" title="http://blog.jcix.top/2019-02-18/pm-nvm/#NVMPM_SCM">http://blog.jcix.top/2019-02-18/pm-nvm/#NVMPM_SCM<i class="fa fa-external-link"></i></span></p>
 <p>近几年，不论在学术界还是工业界，NVM 都是比较前沿的技术。其实 NVM 一词并不新，是因为 PM(或称 SCM)这个与 NVM 有关的概念的出现，使得 NVM 这词又 “火” 了一把。在近年的相关文献中，NVM 也经常被和 PM(SCM)混用，让人搞不清。本文捋一捋它们之间的关系。</p>
           <!--noindex-->
             <div class="post-button">
@@ -892,7 +893,7 @@
                   <i class="fa fa-calendar-check-o"></i>
                 </span>
                 <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2020-09-06 10:45:08" itemprop="dateModified" datetime="2020-09-06T10:45:08+08:00">2020-09-06</time>
+                <time title="修改时间：2020-09-06 15:37:36" itemprop="dateModified" datetime="2020-09-06T15:37:36+08:00">2020-09-06</time>
               </span>
             <span class="post-meta-item">
               <span class="post-meta-item-icon">
@@ -985,7 +986,7 @@
                   <i class="fa fa-calendar-check-o"></i>
                 </span>
                 <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2020-09-06 10:45:08" itemprop="dateModified" datetime="2020-09-06T10:45:08+08:00">2020-09-06</time>
+                <time title="修改时间：2020-09-06 15:37:36" itemprop="dateModified" datetime="2020-09-06T15:37:36+08:00">2020-09-06</time>
               </span>
             <span class="post-meta-item">
               <span class="post-meta-item-icon">
@@ -1008,7 +1009,7 @@
     <div class="post-body" itemprop="articleBody">
 
       
-          <p>i&gt; 翻译自:<a target="_blank" rel="noopener" href="https://www.internalpointers.com/post/understanding-meaning-lvalues-and-rvalues-c">https://www.internalpointers.com/post/understanding-meaning-lvalues-and-rvalues-c</a></p>
+          <p>i&gt; 翻译自:<span class="exturl" data-url="aHR0cHM6Ly93d3cuaW50ZXJuYWxwb2ludGVycy5jb20vcG9zdC91bmRlcnN0YW5kaW5nLW1lYW5pbmctbHZhbHVlcy1hbmQtcnZhbHVlcy1j" title="https://www.internalpointers.com/post/understanding-meaning-lvalues-and-rvalues-c">https://www.internalpointers.com/post/understanding-meaning-lvalues-and-rvalues-c<i class="fa fa-external-link"></i></span></p>
 <p>我一直苦于理解C++中的左值和右值。现在我感觉是时候分享出我对它们的理解了，因为它们在C++语言发展中扮演者越来越重要的角色。</p>
 <p>一旦你理解了lvalues和rvalues的含义，你就可以更深入地研究高级c++特性，比如move语义和右值引用。</p>
           <!--noindex-->

@@ -4,7 +4,7 @@
   <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
 <meta name="theme-color" content="#222">
-<meta name="generator" content="Hexo 5.1.1">
+<meta name="generator" content="Hexo 4.2.1">
   <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
   <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png">
   <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png">
@@ -21,7 +21,7 @@
 
 <script id="hexo-configurations">
     var NexT = window.NexT || {};
-    var CONFIG = {"hostname":"www.ravenxrz.ink","root":"/","scheme":"Mist","version":"7.8.0","exturl":true,"sidebar":{"position":"left","display":"always","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":true,"show_result":true,"style":"flat"},"back2top":{"enable":true,"sidebar":false,"scrollpercent":true},"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":true,"lazyload":true,"pangu":true,"comments":{"style":"tabs","active":"gitalk","storage":true,"lazyload":true,"nav":null,"activeClass":"gitalk"},"algolia":{"hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":true,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},"motion":{"enable":false,"async":true,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}}};
+    var CONFIG = {"hostname":"www.ravenxrz.ink","root":"/","scheme":"Mist","version":"7.8.0","exturl":true,"sidebar":{"position":"left","display":"always","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":true,"show_result":true,"style":"flat"},"back2top":{"enable":true,"sidebar":false,"scrollpercent":true},"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":true,"lazyload":true,"pangu":true,"comments":{"style":"tabs","active":"gitalk","storage":true,"lazyload":true,"nav":null,"activeClass":"gitalk"},"algolia":{"hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":true,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},"motion":{"enable":false,"async":true,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},"path":"search.xml"};
   </script>
 
   <meta name="description" content="1. 配置首先通过ssh连接路由器，然后执行 1opkg update  接着在软件包管理中搜索aria2:  安装以上三个包。刷新页面，就可以在服务下发现关于aria2的UI：  然后就是看自己的需求进行配置了。 一般来说，主要需要修改：  文件下载目录 服务器连接数&amp;线程数 如果要用bt下载的话，需要更新tracker。tracker可以从这里拿：https:&#x2F;&#x2F;github.com&#x2F;">
@@ -36,7 +36,7 @@
 <meta property="og:image" content="https://cdn.jsdelivr.net/gh/ravenxrz/PicBed/img/image-20200502221558331.png">
 <meta property="og:image" content="https://cdn.jsdelivr.net/gh/ravenxrz/PicBed/img/image-20200502220639345.png">
 <meta property="article:published_time" content="2020-05-02T14:04:30.000Z">
-<meta property="article:modified_time" content="2020-09-06T02:45:08.062Z">
+<meta property="article:modified_time" content="2020-09-06T07:37:36.783Z">
 <meta property="article:author" content="Raven">
 <meta property="article:tag" content="aria2">
 <meta name="twitter:card" content="summary">
@@ -86,6 +86,7 @@
   </style>
 </noscript>
 
+<link rel="alternate" href="/atom.xml" title="Raven's Blog" type="application/atom+xml">
 </head>
 
 <body itemscope itemtype="http://schema.org/WebPage">
@@ -236,7 +237,7 @@
                   <i class="fa fa-calendar-check-o"></i>
                 </span>
                 <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2020-09-06 10:45:08" itemprop="dateModified" datetime="2020-09-06T10:45:08+08:00">2020-09-06</time>
+                <time title="修改时间：2020-09-06 15:37:36" itemprop="dateModified" datetime="2020-09-06T15:37:36+08:00">2020-09-06</time>
               </span>
             <span class="post-meta-item">
               <span class="post-meta-item-icon">
@@ -270,24 +271,24 @@
 <figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">opkg update</span><br></pre></td></tr></table></figure>
 
 <p>接着在软件包管理中搜索aria2:</p>
-<p><img src="https://cdn.jsdelivr.net/gh/ravenxrz/PicBed/img/image-20200502221329438.png" alt="image-20200502221329438"></p>
+<p><img data-src="https://cdn.jsdelivr.net/gh/ravenxrz/PicBed/img/image-20200502221329438.png" alt="image-20200502221329438"></p>
 <p>安装以上三个包。刷新页面，就可以在服务下发现关于aria2的UI：</p>
-<p><img src="https://cdn.jsdelivr.net/gh/ravenxrz/PicBed/img/image-20200502221414909.png" alt="image-20200502221414909"></p>
+<p><img data-src="https://cdn.jsdelivr.net/gh/ravenxrz/PicBed/img/image-20200502221414909.png" alt="image-20200502221414909"></p>
 <p>然后就是看自己的需求进行配置了。</p>
 <p>一般来说，主要需要修改：</p>
 <ul>
 <li>文件下载目录</li>
 <li>服务器连接数&amp;线程数</li>
-<li>如果要用bt下载的话，需要更新tracker。tracker可以从这里拿：<a target="_blank" rel="noopener" href="https://github.com/ngosang/trackerslist">https://github.com/ngosang/trackerslist</a></li>
+<li>如果要用bt下载的话，需要更新tracker。tracker可以从这里拿：<span class="exturl" data-url="aHR0cHM6Ly9naXRodWIuY29tL25nb3NhbmcvdHJhY2tlcnNsaXN0" title="https://github.com/ngosang/trackerslist">https://github.com/ngosang/trackerslist<i class="fa fa-external-link"></i></span></li>
 </ul>
 <p>aria2开启后，点击：</p>
-<p><img src="https://cdn.jsdelivr.net/gh/ravenxrz/PicBed/img/image-20200502221558331.png" alt="image-20200502221558331"></p>
+<p><img data-src="https://cdn.jsdelivr.net/gh/ravenxrz/PicBed/img/image-20200502221558331.png" alt="image-20200502221558331"></p>
 <p>进入后台管理界面，然后就可以愉快的下载文件了。</p>
 <p>在路由器上使用aria下载文件时，遇到了这样的问题：</p>
 <h2 id="2-问题"><a href="#2-问题" class="headerlink" title="2. 问题"></a>2. 问题</h2><p>[SocketCore.cc:1015] errorCode=1 SSL/TLS handshake failure: unable to get local issuer certificate</p>
 <p>其实就是因为没有证书，所以无法下载https文件。</p>
 <p>下载安装<code>ca-certificates</code>即可。</p>
-<p><img src="https://cdn.jsdelivr.net/gh/ravenxrz/PicBed/img/image-20200502220639345.png" alt="image-20200502220639345"></p>
+<p><img data-src="https://cdn.jsdelivr.net/gh/ravenxrz/PicBed/img/image-20200502220639345.png" alt="image-20200502220639345"></p>
 
     </div>
 
@@ -410,7 +411,7 @@
 
       <!--noindex-->
       <div class="post-toc-wrap sidebar-panel">
-          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#1-%E9%85%8D%E7%BD%AE"><span class="nav-text">1. 配置</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#2-%E9%97%AE%E9%A2%98"><span class="nav-text">2. 问题</span></a></li></ol></div>
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#1-配置"><span class="nav-text">1. 配置</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#2-问题"><span class="nav-text">2. 问题</span></a></li></ol></div>
       </div>
       <!--/noindex-->
 

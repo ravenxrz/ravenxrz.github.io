@@ -4,7 +4,7 @@
   <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
 <meta name="theme-color" content="#222">
-<meta name="generator" content="Hexo 5.1.1">
+<meta name="generator" content="Hexo 4.2.1">
   <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
   <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png">
   <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png">
@@ -21,7 +21,7 @@
 
 <script id="hexo-configurations">
     var NexT = window.NexT || {};
-    var CONFIG = {"hostname":"www.ravenxrz.ink","root":"/","scheme":"Mist","version":"7.8.0","exturl":true,"sidebar":{"position":"left","display":"always","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":true,"show_result":true,"style":"flat"},"back2top":{"enable":true,"sidebar":false,"scrollpercent":true},"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":true,"lazyload":true,"pangu":true,"comments":{"style":"tabs","active":"gitalk","storage":true,"lazyload":true,"nav":null,"activeClass":"gitalk"},"algolia":{"hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":true,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},"motion":{"enable":false,"async":true,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}}};
+    var CONFIG = {"hostname":"www.ravenxrz.ink","root":"/","scheme":"Mist","version":"7.8.0","exturl":true,"sidebar":{"position":"left","display":"always","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":true,"show_result":true,"style":"flat"},"back2top":{"enable":true,"sidebar":false,"scrollpercent":true},"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":true,"lazyload":true,"pangu":true,"comments":{"style":"tabs","active":"gitalk","storage":true,"lazyload":true,"nav":null,"activeClass":"gitalk"},"algolia":{"hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":true,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},"motion":{"enable":false,"async":true,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},"path":"search.xml"};
   </script>
 
   <meta name="description" content="先看demo：   功能：  分析短信，得到注册信息 一键导出注册信息为txt文本文件 点击任意item跳转到相关的百度搜索 觉得内嵌的浏览器难用，支持一键切换到系统安装的浏览器">
@@ -35,7 +35,7 @@
 <meta property="og:image" content="https://ae01.alicdn.com/kf/He33bee112f0f47fdbf3067366a74f9bf6.jpg">
 <meta property="og:image" content="https://ae01.alicdn.com/kf/H1c8467db520248369e39e1a28f80376bH.jpg">
 <meta property="article:published_time" content="2019-08-10T05:58:13.000Z">
-<meta property="article:modified_time" content="2020-09-06T02:45:08.038Z">
+<meta property="article:modified_time" content="2020-09-06T07:37:36.759Z">
 <meta property="article:author" content="Raven">
 <meta property="article:tag" content="短信">
 <meta name="twitter:card" content="summary">
@@ -85,6 +85,7 @@
   </style>
 </noscript>
 
+<link rel="alternate" href="/atom.xml" title="Raven's Blog" type="application/atom+xml">
 </head>
 
 <body itemscope itemtype="http://schema.org/WebPage">
@@ -235,7 +236,7 @@
                   <i class="fa fa-calendar-check-o"></i>
                 </span>
                 <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2020-09-06 10:45:08" itemprop="dateModified" datetime="2020-09-06T10:45:08+08:00">2020-09-06</time>
+                <time title="修改时间：2020-09-06 15:37:36" itemprop="dateModified" datetime="2020-09-06T15:37:36+08:00">2020-09-06</time>
               </span>
             <span class="post-meta-item">
               <span class="post-meta-item-icon">
@@ -266,7 +267,7 @@
 
       
         <p>先看demo：</p>
-<img src="https://puui.qpic.cn/fans_admin/0/3_1409075683_1565409156141/0" width="40%">
+<img data-src="https://puui.qpic.cn/fans_admin/0/3_1409075683_1565409156141/0" width="40%">
 
 <p>功能：</p>
 <ol>
@@ -288,7 +289,7 @@
 <p>step3： 过滤出包含“验证码”关键字的短信；</p>
 <p>step4： 使用正则表达式，抓出注册公司名。</p>
 <p>APP的界面也设计得很简单，只有一个ListView（用不着RecyclerView吧）：</p>
-<img src="https://ae01.alicdn.com/kf/He33bee112f0f47fdbf3067366a74f9bf6.jpg"  width=40%>
+<img data-src="https://ae01.alicdn.com/kf/He33bee112f0f47fdbf3067366a74f9bf6.jpg"  width=40%>
 
 <h3 id="2-2-问题"><a href="#2-2-问题" class="headerlink" title="2.2 问题"></a>2.2 问题</h3><p>首先说说app已经做过的部分的问题：</p>
 <ol>
@@ -305,11 +306,11 @@
 </ol>
 <p>好，再来说说我花了很多时间的未做的部分：</p>
 <p>首先这个APP我在是准备识别双卡的。因为我的手机就是双卡的，我想知道<strong>卡一和卡二分别注册了哪些网站</strong>，这一定程度上受了“华为手机助手”的诱导。我在“背景”中说过，我首先是用python分析的，从手机中将信息导入到电脑上，华为手机助手给我生成了一个csv文件。csv的header如下：</p>
-<p><img src="https://ae01.alicdn.com/kf/H1c8467db520248369e39e1a28f80376bH.jpg"></p>
+<p><img data-src="https://ae01.alicdn.com/kf/H1c8467db520248369e39e1a28f80376bH.jpg"></p>
 <p>SIMCardID分了双卡的。所以我觉得既然可以识别双卡，那就<strong>做成双卡识别</strong>咯。谷歌了很久，查Android Api也查看了很久。首先是读取短信的cursor所用projection字段中没有相关字段信息，其次大多的博客也是探讨“如何用副卡来发送短信”的话题。如何识别“短信是属于那张卡的”之类的问题却少之又少。花了2,3个小时在查资料上，却无果。<strong>我又去看了那个csv文件，发现它的识别居然是有错的！</strong>之后我又想到，既然我用过云备份短信，那从云中恢复短信时它怎么知道每个短信是属于哪张卡的？万一我换过卡？又或者我将卡槽中的两张卡交换了位置呢？所以很显然这有问题。于是我又去查了自己手机中好几年前的短信（因为我这几年都换过手机了，所以肯定有从云备份中恢复的短信），发现只要是旧信息，都是<strong>默认归属于主卡</strong>的。</p>
 <h3 id="2-3-不完美的解决方案"><a href="#2-3-不完美的解决方案" class="headerlink" title="2.3 不完美的解决方案"></a>2.3 不完美的解决方案</h3><p>文字略显多了，总之这个功能无法做到精确。但是也不是说不可以做，cursor的projection字段有一个serveice_center，这个是用来查短信中心的，我看了下，如果短信属于主卡，是有短信中心的信息的，而对于卡2，短信中心号码默认为0。当然了，因为要考虑我在2.2节中说过的问题，所以这只是一种“不完美的解决方案”。</p>
-<p>开源地址：<br><a target="_blank" rel="noopener" href="https://github.com/ravenxrz/SMSK">https://github.com/ravenxrz/SMSK</a></p>
-<p>APK下载地址：<br><a target="_blank" rel="noopener" href="https://github.com/ravenxrz/SMSK/releases/download/v0.2/smsk.apk">https://github.com/ravenxrz/SMSK/releases/download/v0.2/smsk.apk</a></p>
+<p>开源地址：<br><span class="exturl" data-url="aHR0cHM6Ly9naXRodWIuY29tL3JhdmVueHJ6L1NNU0s=" title="https://github.com/ravenxrz/SMSK">https://github.com/ravenxrz/SMSK<i class="fa fa-external-link"></i></span></p>
+<p>APK下载地址：<br><span class="exturl" data-url="aHR0cHM6Ly9naXRodWIuY29tL3JhdmVueHJ6L1NNU0svcmVsZWFzZXMvZG93bmxvYWQvdjAuMi9zbXNrLmFwaw==" title="https://github.com/ravenxrz/SMSK/releases/download/v0.2/smsk.apk">https://github.com/ravenxrz/SMSK/releases/download/v0.2/smsk.apk<i class="fa fa-external-link"></i></span></p>
 
     </div>
 
@@ -432,7 +433,7 @@
 
       <!--noindex-->
       <div class="post-toc-wrap sidebar-panel">
-          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#1-%E8%83%8C%E6%99%AF"><span class="nav-text">1. 背景</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#2-%E6%AD%A3%E6%96%87"><span class="nav-text">2. 正文</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#2-1-%E5%88%B6%E4%BD%9C%E6%B5%81%E7%A8%8B"><span class="nav-text">2.1 制作流程</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#2-2-%E9%97%AE%E9%A2%98"><span class="nav-text">2.2 问题</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#2-3-%E4%B8%8D%E5%AE%8C%E7%BE%8E%E7%9A%84%E8%A7%A3%E5%86%B3%E6%96%B9%E6%A1%88"><span class="nav-text">2.3 不完美的解决方案</span></a></li></ol></li></ol></div>
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#1-背景"><span class="nav-text">1. 背景</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#2-正文"><span class="nav-text">2. 正文</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#2-1-制作流程"><span class="nav-text">2.1 制作流程</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#2-2-问题"><span class="nav-text">2.2 问题</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#2-3-不完美的解决方案"><span class="nav-text">2.3 不完美的解决方案</span></a></li></ol></li></ol></div>
       </div>
       <!--/noindex-->
 

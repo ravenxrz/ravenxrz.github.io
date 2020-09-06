@@ -4,7 +4,7 @@
   <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
 <meta name="theme-color" content="#222">
-<meta name="generator" content="Hexo 5.1.1">
+<meta name="generator" content="Hexo 4.2.1">
   <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
   <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png">
   <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png">
@@ -21,7 +21,7 @@
 
 <script id="hexo-configurations">
     var NexT = window.NexT || {};
-    var CONFIG = {"hostname":"www.ravenxrz.ink","root":"/","scheme":"Mist","version":"7.8.0","exturl":true,"sidebar":{"position":"left","display":"always","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":true,"show_result":true,"style":"flat"},"back2top":{"enable":true,"sidebar":false,"scrollpercent":true},"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":true,"lazyload":true,"pangu":true,"comments":{"style":"tabs","active":"gitalk","storage":true,"lazyload":true,"nav":null,"activeClass":"gitalk"},"algolia":{"hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":true,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},"motion":{"enable":false,"async":true,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}}};
+    var CONFIG = {"hostname":"www.ravenxrz.ink","root":"/","scheme":"Mist","version":"7.8.0","exturl":true,"sidebar":{"position":"left","display":"always","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":true,"show_result":true,"style":"flat"},"back2top":{"enable":true,"sidebar":false,"scrollpercent":true},"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":true,"lazyload":true,"pangu":true,"comments":{"style":"tabs","active":"gitalk","storage":true,"lazyload":true,"nav":null,"activeClass":"gitalk"},"algolia":{"hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":true,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},"motion":{"enable":false,"async":true,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},"path":"search.xml"};
   </script>
 
   <meta name="description" content="i&gt; 本科毕设题目为《基于深度学习的图像去雾方法研究与实现》 毕设总结系列：  毕设总结零–绪论 毕设总结一–传统去雾理论 毕设总结二–论文复现工作1–暗通道去雾(DCP) 毕设总结三–论文复现工作2–MSCNN去雾 毕设总结四–最终去雾方案的确定与实现–DeBlurGanToDehaze 毕设总结五–杂项">
@@ -44,7 +44,7 @@
 <meta property="og:image" content="https://ae01.alicdn.com/kf/HTB1uBdYdf1H3KVjSZFHq6zKppXaG.jpg">
 <meta property="og:image" content="https://ae01.alicdn.com/kf/HTB1Uth2doCF3KVjSZJnq6znHFXag.jpg">
 <meta property="article:published_time" content="2019-07-17T04:03:00.000Z">
-<meta property="article:modified_time" content="2020-09-06T02:45:08.061Z">
+<meta property="article:modified_time" content="2020-09-06T07:37:36.783Z">
 <meta property="article:author" content="Raven">
 <meta property="article:tag" content="图像去雾">
 <meta name="twitter:card" content="summary">
@@ -94,6 +94,7 @@
   </style>
 </noscript>
 
+<link rel="alternate" href="/atom.xml" title="Raven's Blog" type="application/atom+xml">
 </head>
 
 <body itemscope itemtype="http://schema.org/WebPage">
@@ -244,7 +245,7 @@
                   <i class="fa fa-calendar-check-o"></i>
                 </span>
                 <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2020-09-06 10:45:08" itemprop="dateModified" datetime="2020-09-06T10:45:08+08:00">2020-09-06</time>
+                <time title="修改时间：2020-09-06 15:37:36" itemprop="dateModified" datetime="2020-09-06T15:37:36+08:00">2020-09-06</time>
               </span>
             <span class="post-meta-item">
               <span class="post-meta-item-icon">
@@ -294,51 +295,51 @@
 <li>目的就是做<strong>图像去雾</strong>。</li>
 </ul>
 <p>也就是：</p>
-<p><img src="https://ae01.alicdn.com/kf/HTB10.78c8Kw3KVjSZTEq6AuRpXab.jpg"></p>
+<p><img data-src="https://ae01.alicdn.com/kf/HTB10.78c8Kw3KVjSZTEq6AuRpXab.jpg"></p>
 <p>嗯，既然目标明确，那就撸起袖子开始干吧。</p>
 <h2 id="2-任务时间线"><a href="#2-任务时间线" class="headerlink" title="2. 任务时间线"></a>2. 任务时间线</h2><p>其实我也记不清所有的时间线了，但是还是知道个大概。</p>
 <p>个人基础：在深度学习领域上，个人最开始只懂点Python，所以就从这里出发讲讲学习的过程吧。</p>
 <h3 id="2-1-深度学习起航-2月"><a href="#2-1-深度学习起航-2月" class="headerlink" title="2.1 深度学习起航-2月"></a>2.1 深度学习起航-2月</h3><p>1月份的大部分时间都集中在了<strong>毕业实习</strong>上,直到<strong>1/26日</strong>左右，从师兄那儿借了本《Tensorflow：实战Google深度学习框架》，就是下面这本书：</p>
-<p><img src="https://ae01.alicdn.com/kf/HTB1IH..c8Kw3KVjSZTEq6AuRpXa7.jpg"></p>
+<p><img data-src="https://ae01.alicdn.com/kf/HTB1IH..c8Kw3KVjSZTEq6AuRpXa7.jpg"></p>
 <p>开始搭建深度学习TensorFlow开发环境。这分为了<strong>Win10</strong>上搭建和<strong>Ubuntu</strong>上搭建。</p>
 <p>i&gt; 起初我是在Win10上搭建的，但后期怀疑Linux上能跑得更快，故后期又在Ubuntu搭建了深度学习环境。当然后期发现，<strong>Ubuntu上的GPU确实是比Win上高</strong>。搭建环境推荐博文：</p>
-<p>[post url=”<a target="_blank" rel="noopener" href="https://www.cnblogs.com/guoyaohua/p/9265268.html&quot;">https://www.cnblogs.com/guoyaohua/p/9265268.html&quot;</a> title=”Win10 Anaconda下TensorFlow-GPU环境搭建详细教程（包含CUDA+cuDNN安装过程）”/]</p>
-<p>[post url=”<a target="_blank" rel="noopener" href="https://blog.csdn.net/weixin_41863685/article/details/80303963&quot;">https://blog.csdn.net/weixin_41863685/article/details/80303963&quot;</a> title=”Ubuntu18.04深度学习GPU环境配置” /]</p>
+<p>[post url=”<span class="exturl" data-url="aHR0cHM6Ly93d3cuY25ibG9ncy5jb20vZ3VveWFvaHVhL3AvOTI2NTI2OC5odG1sJnF1b3Q7" title="https://www.cnblogs.com/guoyaohua/p/9265268.html&quot;">https://www.cnblogs.com/guoyaohua/p/9265268.html&quot;<i class="fa fa-external-link"></i></span> title=”Win10 Anaconda下TensorFlow-GPU环境搭建详细教程（包含CUDA+cuDNN安装过程）”/]</p>
+<p>[post url=”<span class="exturl" data-url="aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L3dlaXhpbl80MTg2MzY4NS9hcnRpY2xlL2RldGFpbHMvODAzMDM5NjMmcXVvdDs=" title="https://blog.csdn.net/weixin_41863685/article/details/80303963&quot;">https://blog.csdn.net/weixin_41863685/article/details/80303963&quot;<i class="fa fa-external-link"></i></span> title=”Ubuntu18.04深度学习GPU环境配置” /]</p>
 <p>之后在开学以前都是在学习《Tensorflow：实战Google深度学习框架》这本书，<strong>懒懒散散地到开学时大约还剩两章没看。</strong></p>
 <p><strong>这段时间总结：</strong></p>
 <p>√&gt;  1. 学会如何搭建TensorFlow的开发环境。2.学会深度学习中的部分理论，包括梯度下降回馈，卷积神经网络的相关理论，观看李宏毅老师的深度学习视频等等。</p>
 <p>推荐几个学习CNN，深度学习的链接：</p>
 <ul>
-<li><a target="_blank" rel="noopener" href="https://playground.tensorflow.org/">感知机可视化</a></li>
-<li><a target="_blank" rel="noopener" href="http://scs.ryerson.ca/~aharley/vis/conv/flat.html">CNN可视化</a>，以MNIST手写体识别为例，可视化整个CNN过程，可用于辅助理解卷积操作、卷积核、池化层等等。</li>
-<li><a target="_blank" rel="noopener" href="https://ujjwalkarn.me/2016/08/11/intuitive-explanation-convnets/">An Intuitive Explanation of Convolutional Neural Networks</a> <strong>推荐</strong></li>
-<li><a target="_blank" rel="noopener" href="https://www.bilibili.com/video/av54344731">深度学习理论知识(李宏毅)</a>，李宏毅老师的视频很多，涉及到的东西很宽，适合想全面入手深度学习的同学。</li>
-<li><a target="_blank" rel="noopener" href="https://www.bilibili.com/video/av16001891?from=search&seid=14694185683153094899">Tensorflow 搭建自己的神经网络 (莫烦 Python 教程)</a></li>
+<li><span class="exturl" data-url="aHR0cHM6Ly9wbGF5Z3JvdW5kLnRlbnNvcmZsb3cub3JnLw==" title="https://playground.tensorflow.org/">感知机可视化<i class="fa fa-external-link"></i></span></li>
+<li><span class="exturl" data-url="aHR0cDovL3Njcy5yeWVyc29uLmNhL35haGFybGV5L3Zpcy9jb252L2ZsYXQuaHRtbA==" title="http://scs.ryerson.ca/~aharley/vis/conv/flat.html">CNN可视化<i class="fa fa-external-link"></i></span>，以MNIST手写体识别为例，可视化整个CNN过程，可用于辅助理解卷积操作、卷积核、池化层等等。</li>
+<li><span class="exturl" data-url="aHR0cHM6Ly91amp3YWxrYXJuLm1lLzIwMTYvMDgvMTEvaW50dWl0aXZlLWV4cGxhbmF0aW9uLWNvbnZuZXRzLw==" title="https://ujjwalkarn.me/2016/08/11/intuitive-explanation-convnets/">An Intuitive Explanation of Convolutional Neural Networks<i class="fa fa-external-link"></i></span> <strong>推荐</strong></li>
+<li><span class="exturl" data-url="aHR0cHM6Ly93d3cuYmlsaWJpbGkuY29tL3ZpZGVvL2F2NTQzNDQ3MzE=" title="https://www.bilibili.com/video/av54344731">深度学习理论知识(李宏毅)<i class="fa fa-external-link"></i></span>，李宏毅老师的视频很多，涉及到的东西很宽，适合想全面入手深度学习的同学。</li>
+<li><span class="exturl" data-url="aHR0cHM6Ly93d3cuYmlsaWJpbGkuY29tL3ZpZGVvL2F2MTYwMDE4OTE/ZnJvbT1zZWFyY2gmc2VpZD0xNDY5NDE4NTY4MzE1MzA5NDg5OQ==" title="https://www.bilibili.com/video/av16001891?from=search&seid=14694185683153094899">Tensorflow 搭建自己的神经网络 (莫烦 Python 教程)<i class="fa fa-external-link"></i></span></li>
 </ul>
 <h3 id="2-2-聚焦论文-3月"><a href="#2-2-聚焦论文-3月" class="headerlink" title="2.2 聚焦论文-3月"></a>2.2 聚焦论文-3月</h3><p>2月底开学了，在师兄的敦促下，发现自己的进度似乎过慢，毕竟这个时候也只是懂点CNN原理，tf的部分操作罢了。毕设的重点<strong>“图像去雾”</strong>完全没接触，于是在一边完成《实战Google深度学习框架》这本书的同时，开始刚近年的论文了。</p>
 <p>3月初读完了那本书，大部分代码照着敲了一遍，然后整个月基本上是在读论文中渡过的，其实最开始读论文我是非常拒绝的(去你M的英文)，不过没办法，必须读下去啊。<strong>最开始读取的是一篇英文短期刊，发现里面的网络结构实在看不懂，什么跳跃连接，金字塔结构，书上根本没提到过，去雾的理论在一篇短期刊文章中也没办法读懂。</strong></p>
 <p>读的第一篇文章:</p>
-<p><img src="https://ae01.alicdn.com/kf/HTB1rJFTdlaE3KVjSZLeq6xsSFXaz.jpg"></p>
+<p><img data-src="https://ae01.alicdn.com/kf/HTB1rJFTdlaE3KVjSZLeq6xsSFXaz.jpg"></p>
 <p>后来学聪明了，不从英文期刊中读，<strong>改到去读国内硕士毕业论文</strong>，这样的文章一是中文对我更友好，二是介绍更全面;弊端就是太长，读起来有些累，不过初入门多读点总是好的。</p>
 <p>随着文章越读越多，是时候<strong>找个文献管理器</strong>了，曾经做数模时就用过的一个文献管理器再次排上用场–<strong>zotero</strong>。不知道给多少人安利过这款软件了，反正就是特别好用啦，不过是在加上一定的插件和坚果云备份的场景下。如果你有一个<strong>ipad</strong>的话，可以使用<strong>papership</strong>这款软件，通过<strong>坚果云和zotero的文献库同步</strong>，这样ipad上也可以读文献。</p>
 <p>我读论文的习惯有两个：1.使用pdf批注工具。2.使用markdown进一步提炼内容，并添加到zotero文献库对象项中。如：</p>
-<p><img src="https://ae01.alicdn.com/kf/HTB1YrF0dlGE3KVjSZFhq6AkaFXa2.jpg"></p>
+<p><img data-src="https://ae01.alicdn.com/kf/HTB1YrF0dlGE3KVjSZFhq6AkaFXa2.jpg"></p>
 <p>纪念一下毕设期间读过的论文，还是蛮有成就感的。</p>
-<p><img src="https://ae01.alicdn.com/kf/HTB1W4JQdoGF3KVjSZFoq6zmpFXaY.jpg"></p>
+<p><img data-src="https://ae01.alicdn.com/kf/HTB1W4JQdoGF3KVjSZFoq6zmpFXaY.jpg"></p>
 <p>文献是理解理论的重要依据，但是文献的弊端就是<strong>“将一个很简单的东西用各种术语复杂化”</strong>，所以更多的理解途径是带着对文献的迷惑去百度去谷歌，在别人的博文上找到答案。随着读的博文增多，如何去管理读过的博文呢？我又用了<strong>两个工具</strong>（其实是三个，其中一个废弃掉了）。</p>
 <ul>
 <li><p><em>印象笔记+印象笔记剪切插件（已废弃）</em></p>
 </li>
 <li><p>Diigo：Chrome插件，在网页上做笔记（类似于pdf做笔记），并转存到在线库中。这个插件其实是也不是重点，效果可见下图：</p>
-<p><img src="https://ae01.alicdn.com/kf/HTB1_clRdhiH3KVjSZPfq6xBiVXah.jpg"></p>
+<p><img data-src="https://ae01.alicdn.com/kf/HTB1_clRdhiH3KVjSZPfq6xBiVXah.jpg"></p>
 </li>
 </ul>
-<p><img src="https://ae01.alicdn.com/kf/HTB18PJ.daSs3KVjSZPi763siVXae.png"></p>
+<p><img data-src="https://ae01.alicdn.com/kf/HTB18PJ.daSs3KVjSZPi763siVXae.png"></p>
 <p>第一张图是在一个网站上做了高亮的操作，然后通过点击插件图标选择Library，可进入到曾经有过标注的库。当然这只是其中一个功能，pdf标注，截图等等，这个插件都是可以实现的。</p>
 <ul>
 <li><p><strong>OneNote+OneNote剪贴插件</strong>，强烈推荐。我是从印象笔记转到OneNote的，以前一直听有人说OneNote赛高来着，去百度了一波印象笔记和OneNote的区别，感觉也就那这样，但是又一次闲得蛋疼的去安装了OneNote并且系统的学习了一下后，个人觉得印象笔记弱爆了。那么OneNote如何去辅助我们读博文呢。</p>
-<p><img src="https://ae01.alicdn.com/kf/HTB1PgdSdfWG3KVjSZFPq6xaiXXao.jpg"></p>
-<p><img src="https://ae01.alicdn.com/kf/HTB15QJRdf1H3KVjSZFBq6zSMXXa1.jpg"></p>
+<p><img data-src="https://ae01.alicdn.com/kf/HTB1PgdSdfWG3KVjSZFPq6xaiXXao.jpg"></p>
+<p><img data-src="https://ae01.alicdn.com/kf/HTB15QJRdf1H3KVjSZFBq6zSMXXa1.jpg"></p>
 </li>
 </ul>
 <p>这里还看不出和印象笔记的区别，但是OneNote有太多好用的功能，最喜欢的是“<strong>停靠窗口“和”链接笔记“</strong>了。本节总结中我会给出OneNote的学习视频。</p>
@@ -347,12 +348,12 @@
 <p>√&gt; 1. 完成实战框架这本书。2. 读了很多去雾领域的相关论文。3. 掌握了几个用于辅助学习的软件工具。</p>
 <p>推荐工具和链接：</p>
 <ul>
-<li><p><a target="_blank" rel="noopener" href="https://www.zotero.org/">Zetero</a>,我安装过的插件列表，如何安装使用请自行百度了：</p>
-<p><img src="https://ae01.alicdn.com/kf/HTB13Lh6da5s3KVjSZFNq6AD3FXa6.jpg"></p>
+<li><p><span class="exturl" data-url="aHR0cHM6Ly93d3cuem90ZXJvLm9yZy8=" title="https://www.zotero.org/">Zetero<i class="fa fa-external-link"></i></span>,我安装过的插件列表，如何安装使用请自行百度了：</p>
+<p><img data-src="https://ae01.alicdn.com/kf/HTB13Lh6da5s3KVjSZFNq6AD3FXa6.jpg"></p>
 </li>
-<li><p><a target="_blank" rel="noopener" href="https://www.bilibili.com/video/av4805650?from=search&seid=10442147840652969199">十课精通onenote 2016—onenote教程，靠谱学院，星月制作</a></p>
+<li><p><span class="exturl" data-url="aHR0cHM6Ly93d3cuYmlsaWJpbGkuY29tL3ZpZGVvL2F2NDgwNTY1MD9mcm9tPXNlYXJjaCZzZWlkPTEwNDQyMTQ3ODQwNjUyOTY5MTk5" title="https://www.bilibili.com/video/av4805650?from=search&seid=10442147840652969199">十课精通onenote 2016—onenote教程，靠谱学院，星月制作<i class="fa fa-external-link"></i></span></p>
 </li>
-<li><p><a target="_blank" rel="noopener" href="https://kopernio.com/">kopernio–文献寻找插件</a></p>
+<li><p><span class="exturl" data-url="aHR0cHM6Ly9rb3Blcm5pby5jb20v" title="https://kopernio.com/">kopernio–文献寻找插件<i class="fa fa-external-link"></i></span></p>
 </li>
 </ul>
 <h3 id="2-3-论文复现-4月"><a href="#2-3-论文复现-4月" class="headerlink" title="2.3 论文复现-4月"></a>2.3 论文复现-4月</h3><p>3月读了较多论文，代码实现倒还没有多少，所以这个月主要是做代码实现的工作。再此之前，只学习过TensorFlow，不过感觉tf做起来还是有点繁琐，所以我在寻找有没有什么替代方案，实现起来简单高校的。于是就学习了<strong>Keras</strong>。Keras封装得更为高层，以函数式编程来实现神经网络相当方便。于是从简单的MLP到CNN，MNIST全部熟悉了一遍。然后又学习了<strong>自编码器、（条件）生成对抗网络</strong>的相关理论及Keras实现。至此，Keras基本上是掌握了。</p>
@@ -376,8 +377,8 @@
 <p>√&gt;  1.学习了Keras，更容易实现网络。2.学习合成雾图原理，并作了自己的实现。下载网上提供的RESIZE的雾图数据集。3. 复现了DCP,MSCNN和GAN去雾。4. 完成毕设前两章。</p>
 <p>推荐链接：</p>
 <ol>
-<li><p><a target="_blank" rel="noopener" href="https://github.com/lutzroeder/netron">Netron-Kears网络结构可视化工具</a>,这个工具还是很有用的，经常用来看网络结构是否出错，复现时看是否和别人的网络结构一致。效果如下图：</p>
-<p><img src="https://ae01.alicdn.com/kf/HTB1uBdYdf1H3KVjSZFHq6zKppXaG.jpg"></p>
+<li><p><span class="exturl" data-url="aHR0cHM6Ly9naXRodWIuY29tL2x1dHpyb2VkZXIvbmV0cm9u" title="https://github.com/lutzroeder/netron">Netron-Kears网络结构可视化工具<i class="fa fa-external-link"></i></span>,这个工具还是很有用的，经常用来看网络结构是否出错，复现时看是否和别人的网络结构一致。效果如下图：</p>
+<p><img data-src="https://ae01.alicdn.com/kf/HTB1uBdYdf1H3KVjSZFHq6zKppXaG.jpg"></p>
 </li>
 </ol>
 <h3 id="2-4-实现毕设中网络结构-5月"><a href="#2-4-实现毕设中网络结构-5月" class="headerlink" title="2.4 实现毕设中网络结构-5月"></a>2.4 实现毕设中网络结构-5月</h3><p>虽说完成了几个去雾网络结构，但是到底该如何去做自己的网络结构来去雾却是一点头绪都没有。因为要我去修改网络结构，我可以说是没有任何理论支撑，给我一张网络图去实现，那没问题。所以这个时候就求助师兄了，后来师兄给了一篇<strong>DeBlurGan</strong>的paper，这篇文章算是我的救星，虽然不是Dehaze的论文，但是把它迁移过来试试看。花了差不多大半天的时间，完成了迁移，没想到train起来效果相当好，跑完一个epoch就可以得到清晰的图像。最后跑完50个epoch大约花了8个小时。</p>
@@ -389,8 +390,8 @@
 <p>6月17日，拿到了结果，only B+。 其实觉得自己应该还是能得A的，虽然5个月来中间也蛮浪的，但是也还算努力吧。嘛，反正过了就行。重要的是收获了很多嘛。</p>
 <h2 id="3-结尾"><a href="#3-结尾" class="headerlink" title="3. 结尾"></a>3. 结尾</h2><p>从1月到6月，5月时间，体验了一把“课题”的感受，为未来的日子打打基础，收获了很多。也要感谢师兄5个月来的各种帮助。</p>
 <p>最后，毕业快乐。</p>
-<p>所有去雾代码的开源地址：<a target="_blank" rel="noopener" href="https://github.com/raven-dehaze-work">https://github.com/raven-dehaze-work</a></p>
-<p><img src="https://ae01.alicdn.com/kf/HTB1Uth2doCF3KVjSZJnq6znHFXag.jpg"></p>
+<p>所有去雾代码的开源地址：<span class="exturl" data-url="aHR0cHM6Ly9naXRodWIuY29tL3JhdmVuLWRlaGF6ZS13b3Jr" title="https://github.com/raven-dehaze-work">https://github.com/raven-dehaze-work<i class="fa fa-external-link"></i></span></p>
+<p><img data-src="https://ae01.alicdn.com/kf/HTB1Uth2doCF3KVjSZJnq6znHFXag.jpg"></p>
 
     </div>
 
@@ -513,7 +514,7 @@
 
       <!--noindex-->
       <div class="post-toc-wrap sidebar-panel">
-          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#1-%E5%89%8D%E8%A8%80"><span class="nav-text">1. 前言</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#2-%E4%BB%BB%E5%8A%A1%E6%97%B6%E9%97%B4%E7%BA%BF"><span class="nav-text">2. 任务时间线</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#2-1-%E6%B7%B1%E5%BA%A6%E5%AD%A6%E4%B9%A0%E8%B5%B7%E8%88%AA-2%E6%9C%88"><span class="nav-text">2.1 深度学习起航-2月</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#2-2-%E8%81%9A%E7%84%A6%E8%AE%BA%E6%96%87-3%E6%9C%88"><span class="nav-text">2.2 聚焦论文-3月</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#2-3-%E8%AE%BA%E6%96%87%E5%A4%8D%E7%8E%B0-4%E6%9C%88"><span class="nav-text">2.3 论文复现-4月</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#2-4-%E5%AE%9E%E7%8E%B0%E6%AF%95%E8%AE%BE%E4%B8%AD%E7%BD%91%E7%BB%9C%E7%BB%93%E6%9E%84-5%E6%9C%88"><span class="nav-text">2.4 实现毕设中网络结构-5月</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#2-5-%E7%BB%88%E7%AB%A0-%E7%AD%94%E8%BE%A9-6%E6%9C%88"><span class="nav-text">2.5 终章-答辩-6月</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#3-%E7%BB%93%E5%B0%BE"><span class="nav-text">3. 结尾</span></a></li></ol></div>
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#1-前言"><span class="nav-text">1. 前言</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#2-任务时间线"><span class="nav-text">2. 任务时间线</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#2-1-深度学习起航-2月"><span class="nav-text">2.1 深度学习起航-2月</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#2-2-聚焦论文-3月"><span class="nav-text">2.2 聚焦论文-3月</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#2-3-论文复现-4月"><span class="nav-text">2.3 论文复现-4月</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#2-4-实现毕设中网络结构-5月"><span class="nav-text">2.4 实现毕设中网络结构-5月</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#2-5-终章-答辩-6月"><span class="nav-text">2.5 终章-答辩-6月</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#3-结尾"><span class="nav-text">3. 结尾</span></a></li></ol></div>
       </div>
       <!--/noindex-->
 

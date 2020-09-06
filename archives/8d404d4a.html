@@ -4,7 +4,7 @@
   <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
 <meta name="theme-color" content="#222">
-<meta name="generator" content="Hexo 5.1.1">
+<meta name="generator" content="Hexo 4.2.1">
   <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
   <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png">
   <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png">
@@ -21,7 +21,7 @@
 
 <script id="hexo-configurations">
     var NexT = window.NexT || {};
-    var CONFIG = {"hostname":"www.ravenxrz.ink","root":"/","scheme":"Mist","version":"7.8.0","exturl":true,"sidebar":{"position":"left","display":"always","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":true,"show_result":true,"style":"flat"},"back2top":{"enable":true,"sidebar":false,"scrollpercent":true},"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":true,"lazyload":true,"pangu":true,"comments":{"style":"tabs","active":"gitalk","storage":true,"lazyload":true,"nav":null,"activeClass":"gitalk"},"algolia":{"hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":true,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},"motion":{"enable":false,"async":true,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}}};
+    var CONFIG = {"hostname":"www.ravenxrz.ink","root":"/","scheme":"Mist","version":"7.8.0","exturl":true,"sidebar":{"position":"left","display":"always","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":true,"show_result":true,"style":"flat"},"back2top":{"enable":true,"sidebar":false,"scrollpercent":true},"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":true,"lazyload":true,"pangu":true,"comments":{"style":"tabs","active":"gitalk","storage":true,"lazyload":true,"nav":null,"activeClass":"gitalk"},"algolia":{"hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":true,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},"motion":{"enable":false,"async":true,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},"path":"search.xml"};
   </script>
 
   <meta name="description" content="Linux文件系统基础知识Linux文件系统基础知识 本文整理自《鸟哥的Linux私房菜-基础学习篇》 我们都知道，在Linux下，文件除了文件本身的数据外，还有非常多的其他属性（如文件的权限，所属者，时间参数等等）。Linux文件系统是如何实现它们的呢？">
@@ -38,7 +38,7 @@
 <meta property="og:image" content="https://ae01.alicdn.com/kf/H5ff1bd2454f74431b10c7379cc782de4w.jpg">
 <meta property="og:image" content="https://ae01.alicdn.com/kf/H43da9f0121f1400da38ff9c885f11054y.jpg">
 <meta property="article:published_time" content="2019-08-02T05:58:11.000Z">
-<meta property="article:modified_time" content="2020-09-06T02:45:08.035Z">
+<meta property="article:modified_time" content="2020-09-06T07:37:36.756Z">
 <meta property="article:author" content="Raven">
 <meta property="article:tag" content="文件系统">
 <meta name="twitter:card" content="summary">
@@ -88,6 +88,7 @@
   </style>
 </noscript>
 
+<link rel="alternate" href="/atom.xml" title="Raven's Blog" type="application/atom+xml">
 </head>
 
 <body itemscope itemtype="http://schema.org/WebPage">
@@ -238,7 +239,7 @@
                   <i class="fa fa-calendar-check-o"></i>
                 </span>
                 <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2020-09-06 10:45:08" itemprop="dateModified" datetime="2020-09-06T10:45:08+08:00">2020-09-06</time>
+                <time title="修改时间：2020-09-06 15:37:36" itemprop="dateModified" datetime="2020-09-06T15:37:36+08:00">2020-09-06</time>
               </span>
             <span class="post-meta-item">
               <span class="post-meta-item-icon">
@@ -281,15 +282,15 @@
 <li>block：实际记录文件的内容，若<strong>文件太大时，会占用多个 block</strong> 。 </li>
 </ul>
 <p>我们将inode和block的存储方式用图来说明一下：</p>
-<p><img src="https://ae01.alicdn.com/kf/H4825a8de043640cd9ce3822519fac15fu.jpg"></p>
+<p><img data-src="https://ae01.alicdn.com/kf/H4825a8de043640cd9ce3822519fac15fu.jpg"></p>
 <p>上图的灰色区块表示的是inode区块，蓝青色（是这个色？？？）区块表示的是block区块。4号inode区块将存储文件的属性及权限信息，同时还包含了实际存储文件内容的block编号。通过读取inode，我们可以一次性将所有block编号得到，操作系统就能够据此来排列磁盘的读取顺序，可以一口气将四个 block 内容读出来 ！</p>
 <p>i&gt; tips: inode+block的这种存储方式被称为索引式文件系统。</p>
 <p>为说明inode+block的这种方式的优势，我们拿FAT为例进行对比。它的存储方式如下图：</p>
-<p><img src="https://ae01.alicdn.com/kf/H0b2edc6c293d4c03b19f4d46da34796c2.jpg"></p>
+<p><img data-src="https://ae01.alicdn.com/kf/H0b2edc6c293d4c03b19f4d46da34796c2.jpg"></p>
 <p>FAT是无法将这个文件的所有block一开始就读取出来的，它更像是一个链表，只要读到一块才能知道下一块在哪里。这样的致命缺点是，当数据在磁盘上分布得过于分散时，磁盘将多转几圈才能完整的读取到这个文件的内容。</p>
 <p>i&gt; tips: 要解决FAT由于数据分布过散而导致的性能降低问题，我们常常会使用“磁盘重组“技术，通过重组将同一个文件所属的 blocks 汇整在一起，这样数据的读取会比较容易啊！ </p>
 <h2 id="2-Linux-的-EXT2-文件系统（inode）"><a href="#2-Linux-的-EXT2-文件系统（inode）" class="headerlink" title="2. Linux 的 EXT2 文件系统（inode）"></a>2. Linux 的 EXT2 文件系统（inode）</h2><p>如同前一小节所说的，inode 的内容在记录文件的权限与相关属性，至于 block 区块则是在记录文件的实际内容。 而且<strong>文件系统一开始就将 inode 与 block 规划好了，除非重新格式化（或者利用 resize2fs 等指令变更文件系统大小），否则 inode 与 block 固定后就不再变动</strong>。但是如果仔细考虑一下，如果我的文件系统高达数百GB时， 那么将所有的 inode 与 block 通通放置在一起将是很不智的决定，因为 inode 与block 的数量太庞大，不容易管理 。所以<strong>Ext2采用了多个区块群组 （block group ）</strong>来进行管理。如下图：</p>
-<p><img src="https://ae01.alicdn.com/kf/H4bcc6986edde488e9f4d687613bdaad31.jpg"></p>
+<p><img data-src="https://ae01.alicdn.com/kf/H4bcc6986edde488e9f4d687613bdaad31.jpg"></p>
 <p>每个区块群组都有独立的inode/block/superblock 系统。 </p>
 <ul>
 <li>文件系统的最开始Boot Sector（开机山区）其实和我们存储数据没多大关系，但是这个开机扇区可以安装开机管理程序，这样我们就可以将不同的开机管理程序安装到个别的文件系统了。这样不用覆盖整个磁盘唯一的MBR，才能制作<strong>多重开机环境</strong>啊。</li>
@@ -335,7 +336,7 @@
 </ul>
 <p>细心的读者应该有注意到inode大小仅有128字节，这么点大小却要存放相当多的内容。我们来简单的举个例子说明一下：假设存放一个block需要4字节的大小，现有一个400M的文件，并假定文件系统格式化时指定的block大小为4k，那我们需要十万笔block编号才能存储这样文件！</p>
 <p>好在Ext2的设计者们早就想到了解决办法，很聪明的将 inode 记录 block 号码的区域定义为12个直接，一个间接, 一个双间接与一个三间接记录区 。结构可见下图：</p>
-<p><img src="https://ae01.alicdn.com/kf/H34a635582d244422afc1bbcd7c1619edS.jpg"></p>
+<p><img data-src="https://ae01.alicdn.com/kf/H34a635582d244422afc1bbcd7c1619edS.jpg"></p>
 <p>图最左边为 inode 本身 （128 Bytes），里面有 12 个直接指向 block 号码的对照，这 12 笔记录就能够直接取得 block 号码啦！ 至于所谓的间接就是再拿一个 block 来当作记录 block 号码的记录区，如果文件太大时， 就会使用间接的 block 来记录号码。如上图当中间接只是拿一个 block 来记录额外的号码而已。 同理，如果文件持续长大，那么就会利用所谓的双间接，第一个 block 仅再指出下一个记录号码的 block 在哪里， 实际记录的在第二个 block 当中。依此类推，三间接就是利用第三层 block 来记录号码啦！ </p>
 <p>i&gt; 这像不像多级页表呢？</p>
 <p>好了，看到这里，我们就可以解释为什么不同block的大小会导致最大单一文件限制以及最大文件系统限制了</p>
@@ -361,12 +362,12 @@
 <h3 id="2-5-block-bitmap-（区块对照表）"><a href="#2-5-block-bitmap-（区块对照表）" class="headerlink" title="2.5 block bitmap （区块对照表）"></a>2.5 block bitmap （区块对照表）</h3><p>如果你想要新增文件时总会用到 block 吧！那你要使用哪个 block 来记录呢？当然是选择“空的 block ”来记录新文件的数据啰。 那你怎么知道哪个 block 是空的？这就得要通过 block bitmap 的辅助了。<strong>从 block bitmap 当中可以知道哪些 block 是空的</strong>，因此我们的系统就能够很快速的找到可使用的空间来处置文件啰。<br>同样的，如果你删除某些文件时，那么那些文件原本占用的 block 号码就得要释放出来， 此时在 block bitmap 当中相对应到该 block 号码的标志就得要修改成为“未使用中”啰！这就是 bitmap 的功能。 </p>
 <h3 id="2-6-inode-bitmap-（inode-对照表）"><a href="#2-6-inode-bitmap-（inode-对照表）" class="headerlink" title="2. 6  inode bitmap （inode 对照表）"></a>2. 6  inode bitmap （inode 对照表）</h3><p>同block bitmap相似，inode bitmap 则是记录使用与未使用的 inode 号码啰！ </p>
 <h2 id="3-inode-block与目录树的关系"><a href="#3-inode-block与目录树的关系" class="headerlink" title="3. inode+block与目录树的关系"></a>3. inode+block与目录树的关系</h2><h3 id="3-1-目录"><a href="#3-1-目录" class="headerlink" title="3.1 目录"></a>3.1 目录</h3><p>要知道目录树，首先得知道什么是目录。目录本质上也是一种文件（要知道linux一切皆文件，虽然网卡先生表示不服），当我们在 Linux 下的文件系统创建一个目录时，文件系统会分配一个 inode 与至少一块 block 给该目录。其中，inode 记录该目录的相关权限与属性，并可记录分配到的那块 block 号码； 而 block 则是记录在这个目录下的文件名与该文件名占用的 inode 号码数据。 目录存储信息结构可见下图：</p>
-<p><img src="https://ae01.alicdn.com/kf/H5ff1bd2454f74431b10c7379cc782de4w.jpg"></p>
+<p><img data-src="https://ae01.alicdn.com/kf/H5ff1bd2454f74431b10c7379cc782de4w.jpg"></p>
 <p>i&gt; 查看inode信息，可使用 <code>ls -i</code>命令</p>
 <h3 id="3-2-文件"><a href="#3-2-文件" class="headerlink" title="3.2 文件"></a>3.2 文件</h3><p>当我们在 Linux 下的 ext2 创建一个一般文件时， ext2 会分配一个 inode 与相对于该文件大小的 block 数量给该文件。 </p>
 <h3 id="3-3-目录树读取"><a href="#3-3-目录树读取" class="headerlink" title="3.3 目录树读取"></a>3.3 目录树读取</h3><p>通过对目录的说明，你应该知道了文件本身并不存储文件名，文件名仅存放在目录之中，于是当我们通过文件名去访问一个文件时，就必然会经过目录，通过目录的文件名与文件inode的映射关系知道该文件的inode，再进行下一步的操作。现在我们以一个例子来对目录树读取进行说明。</p>
 <p>执行<code>lll -di / /etc /etc/passwd </code>命名，系统会做哪些操作呢？</p>
-<p><img src="https://ae01.alicdn.com/kf/H43da9f0121f1400da38ff9c885f11054y.jpg"></p>
+<p><img data-src="https://ae01.alicdn.com/kf/H43da9f0121f1400da38ff9c885f11054y.jpg"></p>
 <p>1./ 的 inode： </p>
 <p>通过挂载点的信息找到 inode 号码为 128 的根目录 inode，且 inode 规范的权限让我们可以读取该 block 的内容（有与 x） ；</p>
 <p>2./ 的 block： </p>
@@ -516,7 +517,7 @@
 
       <!--noindex-->
       <div class="post-toc-wrap sidebar-panel">
-          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#Linux%E6%96%87%E4%BB%B6%E7%B3%BB%E7%BB%9F%E5%9F%BA%E7%A1%80%E7%9F%A5%E8%AF%86"><span class="nav-text">Linux文件系统基础知识</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#1-Linux%E6%96%87%E4%BB%B6%E7%B3%BB%E7%BB%9F%E7%89%B9%E6%80%A7"><span class="nav-text">1. Linux文件系统特性</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#2-Linux-%E7%9A%84-EXT2-%E6%96%87%E4%BB%B6%E7%B3%BB%E7%BB%9F%EF%BC%88inode%EF%BC%89"><span class="nav-text">2. Linux 的 EXT2 文件系统（inode）</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#2-1-data-block-%EF%BC%88%E6%95%B0%E6%8D%AE%E5%8C%BA%E5%9D%97%EF%BC%89"><span class="nav-text">2.1 data block （数据区块）</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#2-2-inode-table%EF%BC%88inode%E8%A1%A8%EF%BC%89"><span class="nav-text">2.2 inode table（inode表）</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#2-3-Superblock-%EF%BC%88%E8%B6%85%E7%BA%A7%E5%8C%BA%E5%9D%97%EF%BC%89"><span class="nav-text">2.3 Superblock （超级区块）</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#2-4-Filesystem-Description-%EF%BC%88%E6%96%87%E4%BB%B6%E7%B3%BB%E7%BB%9F%E6%8F%8F%E8%BF%B0%E8%AF%B4%E6%98%8E%EF%BC%89"><span class="nav-text">2.4 Filesystem Description （文件系统描述说明）</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#2-5-block-bitmap-%EF%BC%88%E5%8C%BA%E5%9D%97%E5%AF%B9%E7%85%A7%E8%A1%A8%EF%BC%89"><span class="nav-text">2.5 block bitmap （区块对照表）</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#2-6-inode-bitmap-%EF%BC%88inode-%E5%AF%B9%E7%85%A7%E8%A1%A8%EF%BC%89"><span class="nav-text">2. 6  inode bitmap （inode 对照表）</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#3-inode-block%E4%B8%8E%E7%9B%AE%E5%BD%95%E6%A0%91%E7%9A%84%E5%85%B3%E7%B3%BB"><span class="nav-text">3. inode+block与目录树的关系</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#3-1-%E7%9B%AE%E5%BD%95"><span class="nav-text">3.1 目录</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#3-2-%E6%96%87%E4%BB%B6"><span class="nav-text">3.2 文件</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#3-3-%E7%9B%AE%E5%BD%95%E6%A0%91%E8%AF%BB%E5%8F%96"><span class="nav-text">3.3 目录树读取</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#4-%E6%97%A5%E5%BF%97%E5%BC%8F%E6%96%87%E4%BB%B6%E7%B3%BB%E7%BB%9F"><span class="nav-text">4. 日志式文件系统</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#4-1-%E5%86%99%E5%85%A5%E6%95%B0%E6%8D%AE%E6%97%B6%E7%9A%84%E6%93%8D%E4%BD%9C"><span class="nav-text">4.1 写入数据时的操作</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#4-2-%E6%95%B0%E6%8D%AE%E4%B8%8D%E4%B8%80%E8%87%B4%E7%8A%B6%E6%80%81"><span class="nav-text">4.2 数据不一致状态</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#4-3-%E6%97%A5%E5%BF%97%E5%BC%8F%E6%96%87%E4%BB%B6%E7%B3%BB%E7%BB%9F-%EF%BC%88Journaling-filesystem%EF%BC%89"><span class="nav-text">4.3 日志式文件系统 （Journaling filesystem）</span></a></li></ol></li></ol></li></ol></div>
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#Linux文件系统基础知识"><span class="nav-text">Linux文件系统基础知识</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#1-Linux文件系统特性"><span class="nav-text">1. Linux文件系统特性</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#2-Linux-的-EXT2-文件系统（inode）"><span class="nav-text">2. Linux 的 EXT2 文件系统（inode）</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#2-1-data-block-（数据区块）"><span class="nav-text">2.1 data block （数据区块）</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#2-2-inode-table（inode表）"><span class="nav-text">2.2 inode table（inode表）</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#2-3-Superblock-（超级区块）"><span class="nav-text">2.3 Superblock （超级区块）</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#2-4-Filesystem-Description-（文件系统描述说明）"><span class="nav-text">2.4 Filesystem Description （文件系统描述说明）</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#2-5-block-bitmap-（区块对照表）"><span class="nav-text">2.5 block bitmap （区块对照表）</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#2-6-inode-bitmap-（inode-对照表）"><span class="nav-text">2. 6  inode bitmap （inode 对照表）</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#3-inode-block与目录树的关系"><span class="nav-text">3. inode+block与目录树的关系</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#3-1-目录"><span class="nav-text">3.1 目录</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#3-2-文件"><span class="nav-text">3.2 文件</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#3-3-目录树读取"><span class="nav-text">3.3 目录树读取</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#4-日志式文件系统"><span class="nav-text">4. 日志式文件系统</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#4-1-写入数据时的操作"><span class="nav-text">4.1 写入数据时的操作</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#4-2-数据不一致状态"><span class="nav-text">4.2 数据不一致状态</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#4-3-日志式文件系统-（Journaling-filesystem）"><span class="nav-text">4.3 日志式文件系统 （Journaling filesystem）</span></a></li></ol></li></ol></li></ol></div>
       </div>
       <!--/noindex-->
 

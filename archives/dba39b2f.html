@@ -4,7 +4,7 @@
   <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
 <meta name="theme-color" content="#222">
-<meta name="generator" content="Hexo 5.1.1">
+<meta name="generator" content="Hexo 4.2.1">
   <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
   <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png">
   <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png">
@@ -21,7 +21,7 @@
 
 <script id="hexo-configurations">
     var NexT = window.NexT || {};
-    var CONFIG = {"hostname":"www.ravenxrz.ink","root":"/","scheme":"Mist","version":"7.8.0","exturl":true,"sidebar":{"position":"left","display":"always","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":true,"show_result":true,"style":"flat"},"back2top":{"enable":true,"sidebar":false,"scrollpercent":true},"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":true,"lazyload":true,"pangu":true,"comments":{"style":"tabs","active":"gitalk","storage":true,"lazyload":true,"nav":null,"activeClass":"gitalk"},"algolia":{"hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":true,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},"motion":{"enable":false,"async":true,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}}};
+    var CONFIG = {"hostname":"www.ravenxrz.ink","root":"/","scheme":"Mist","version":"7.8.0","exturl":true,"sidebar":{"position":"left","display":"always","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":true,"show_result":true,"style":"flat"},"back2top":{"enable":true,"sidebar":false,"scrollpercent":true},"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":true,"lazyload":true,"pangu":true,"comments":{"style":"tabs","active":"gitalk","storage":true,"lazyload":true,"nav":null,"activeClass":"gitalk"},"algolia":{"hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":true,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},"motion":{"enable":false,"async":true,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},"path":"search.xml"};
   </script>
 
   <meta name="description" content="本文讲解如何在Idea上搭建JavaFX开发环境，对应视频：https:&#x2F;&#x2F;www.bilibili.com&#x2F;video&#x2F;BV1tz411q7Q1&#x2F; 如果想了解如何打包JavaFX程序，参见：https:&#x2F;&#x2F;www.ravenxrz.ink&#x2F;archives&#x2F;421e5ad2.html">
@@ -41,7 +41,7 @@
 <meta property="og:image" content="https://cdn.jsdelivr.net/gh/ravenxrz/PicBed/img/image-20200506112428268.png">
 <meta property="og:image" content="https://cdn.jsdelivr.net/gh/ravenxrz/PicBed/img/image-20200506112458825.png">
 <meta property="article:published_time" content="2020-05-06T03:09:00.000Z">
-<meta property="article:modified_time" content="2020-09-06T02:45:08.033Z">
+<meta property="article:modified_time" content="2020-09-06T07:37:36.754Z">
 <meta property="article:author" content="Raven">
 <meta property="article:tag" content="环境搭建">
 <meta name="twitter:card" content="summary">
@@ -91,6 +91,7 @@
   </style>
 </noscript>
 
+<link rel="alternate" href="/atom.xml" title="Raven's Blog" type="application/atom+xml">
 </head>
 
 <body itemscope itemtype="http://schema.org/WebPage">
@@ -241,7 +242,7 @@
                   <i class="fa fa-calendar-check-o"></i>
                 </span>
                 <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2020-09-06 10:45:08" itemprop="dateModified" datetime="2020-09-06T10:45:08+08:00">2020-09-06</time>
+                <time title="修改时间：2020-09-06 15:37:36" itemprop="dateModified" datetime="2020-09-06T15:37:36+08:00">2020-09-06</time>
               </span>
             <span class="post-meta-item">
               <span class="post-meta-item-icon">
@@ -271,15 +272,15 @@
     <div class="post-body" itemprop="articleBody">
 
       
-        <p>本文讲解如何在Idea上搭建JavaFX开发环境，对应视频：<a target="_blank" rel="noopener" href="https://www.bilibili.com/video/BV1tz411q7Q1/">https://www.bilibili.com/video/BV1tz411q7Q1/</a></p>
+        <p>本文讲解如何在Idea上搭建JavaFX开发环境，对应视频：<span class="exturl" data-url="aHR0cHM6Ly93d3cuYmlsaWJpbGkuY29tL3ZpZGVvL0JWMXR6NDExcTdRMS8=" title="https://www.bilibili.com/video/BV1tz411q7Q1/">https://www.bilibili.com/video/BV1tz411q7Q1/<i class="fa fa-external-link"></i></span></p>
 <p>如果想了解如何打包JavaFX程序，参见：<a href="https://www.ravenxrz.ink/archives/421e5ad2.html">https://www.ravenxrz.ink/archives/421e5ad2.html</a></p>
 <a id="more"></a>
 
-<h2 id="Start"><a href="#Start" class="headerlink" title="Start"></a>Start</h2><p>要搭建环境，最直接的肯定是参看官方文档了，<a target="_blank" rel="noopener" href="https://openjfx.io/openjfx-docs/">https://openjfx.io/openjfx-docs/</a></p>
-<p><img src="https://cdn.jsdelivr.net/gh/ravenxrz/PicBed/img/image-20200506111205459.png" alt="image-20200506111205459"></p>
+<h2 id="Start"><a href="#Start" class="headerlink" title="Start"></a>Start</h2><p>要搭建环境，最直接的肯定是参看官方文档了，<span class="exturl" data-url="aHR0cHM6Ly9vcGVuamZ4LmlvL29wZW5qZngtZG9jcy8=" title="https://openjfx.io/openjfx-docs/">https://openjfx.io/openjfx-docs/<i class="fa fa-external-link"></i></span></p>
+<p><img data-src="https://cdn.jsdelivr.net/gh/ravenxrz/PicBed/img/image-20200506111205459.png" alt="image-20200506111205459"></p>
 <p>这里再复述一遍：</p>
-<h3 id="step1-添加archetype（只用第一次添加，后面创建项目就不用了）"><a href="#step1-添加archetype（只用第一次添加，后面创建项目就不用了）" class="headerlink" title="step1: 添加archetype（只用第一次添加，后面创建项目就不用了）"></a>step1: 添加archetype（只用第一次添加，后面创建项目就不用了）</h3><p><img src="https://cdn.jsdelivr.net/gh/ravenxrz/PicBed/img/image-20200506111939997.png" alt="image-20200506111939997"></p>
-<p><img src="https://cdn.jsdelivr.net/gh/ravenxrz/PicBed/img/image-20200506112020694.png" alt="image-20200506112020694"></p>
+<h3 id="step1-添加archetype（只用第一次添加，后面创建项目就不用了）"><a href="#step1-添加archetype（只用第一次添加，后面创建项目就不用了）" class="headerlink" title="step1: 添加archetype（只用第一次添加，后面创建项目就不用了）"></a>step1: 添加archetype（只用第一次添加，后面创建项目就不用了）</h3><p><img data-src="https://cdn.jsdelivr.net/gh/ravenxrz/PicBed/img/image-20200506111939997.png" alt="image-20200506111939997"></p>
+<p><img data-src="https://cdn.jsdelivr.net/gh/ravenxrz/PicBed/img/image-20200506112020694.png" alt="image-20200506112020694"></p>
 <ul>
 <li><p>the groupId (org.openjfx),</p>
 </li>
@@ -288,9 +289,9 @@
 <li><p>the version (0.0.1)</p>
 </li>
 </ul>
-<h3 id="step2-创建项目"><a href="#step2-创建项目" class="headerlink" title="step2 创建项目"></a>step2 创建项目</h3><p><img src="https://cdn.jsdelivr.net/gh/ravenxrz/PicBed/img/image-20200506112115982.png" alt="image-20200506112115982"></p>
-<p><img src="https://cdn.jsdelivr.net/gh/ravenxrz/PicBed/img/image-20200506112145436.png" alt="image-20200506112145436"></p>
-<p><img src="https://cdn.jsdelivr.net/gh/ravenxrz/PicBed/img/image-20200506112203726.png" alt="image-20200506112203726"></p>
+<h3 id="step2-创建项目"><a href="#step2-创建项目" class="headerlink" title="step2 创建项目"></a>step2 创建项目</h3><p><img data-src="https://cdn.jsdelivr.net/gh/ravenxrz/PicBed/img/image-20200506112115982.png" alt="image-20200506112115982"></p>
+<p><img data-src="https://cdn.jsdelivr.net/gh/ravenxrz/PicBed/img/image-20200506112145436.png" alt="image-20200506112145436"></p>
+<p><img data-src="https://cdn.jsdelivr.net/gh/ravenxrz/PicBed/img/image-20200506112203726.png" alt="image-20200506112203726"></p>
 <p>value中填写：</p>
 <ul>
 <li>javafx-archetype-fxml， javafx项目包含fxml</li>
@@ -298,16 +299,16 @@
 </ul>
 <p>二者选一，我以javafx-archetype-simple为例</p>
 <p>然后点击右上角的+：</p>
-<p><img src="https://cdn.jsdelivr.net/gh/ravenxrz/PicBed/img/image-20200506112319277.png" alt="image-20200506112319277"></p>
+<p><img data-src="https://cdn.jsdelivr.net/gh/ravenxrz/PicBed/img/image-20200506112319277.png" alt="image-20200506112319277"></p>
 <p>指定javafx的版本，目前最新为14。</p>
 <p>Finish即可。第一次创建可能有点慢，因为maven需要下载一些依赖包。</p>
 <p>打开pom文件，修改javafx插件版本为0.03：</p>
 <figure class="highlight"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">&lt;plugin&gt;</span><br><span class="line">    &lt;groupId&gt;org.openjfx&lt;/groupId&gt;</span><br><span class="line">    &lt;artifactId&gt;javafx-maven-plugin&lt;/artifactId&gt;</span><br><span class="line">    &lt;version&gt;0.0.3&lt;/version&gt;</span><br><span class="line">    &lt;configuration&gt;</span><br><span class="line">        &lt;mainClass&gt;org.example.App&lt;/mainClass&gt;</span><br><span class="line">    &lt;/configuration&gt;</span><br><span class="line">&lt;/plugin&gt;</span><br></pre></td></tr></table></figure>
 
 <p>看一下创建好的目录：</p>
-<p><img src="https://cdn.jsdelivr.net/gh/ravenxrz/PicBed/img/image-20200506112428268.png" alt="image-20200506112428268"></p>
+<p><img data-src="https://cdn.jsdelivr.net/gh/ravenxrz/PicBed/img/image-20200506112428268.png" alt="image-20200506112428268"></p>
 <p>打开App，运行。</p>
-<p><img src="https://cdn.jsdelivr.net/gh/ravenxrz/PicBed/img/image-20200506112458825.png" alt="image-20200506112458825"></p>
+<p><img data-src="https://cdn.jsdelivr.net/gh/ravenxrz/PicBed/img/image-20200506112458825.png" alt="image-20200506112458825"></p>
 
     </div>
 
@@ -430,7 +431,7 @@
 
       <!--noindex-->
       <div class="post-toc-wrap sidebar-panel">
-          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#Start"><span class="nav-text">Start</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#step1-%E6%B7%BB%E5%8A%A0archetype%EF%BC%88%E5%8F%AA%E7%94%A8%E7%AC%AC%E4%B8%80%E6%AC%A1%E6%B7%BB%E5%8A%A0%EF%BC%8C%E5%90%8E%E9%9D%A2%E5%88%9B%E5%BB%BA%E9%A1%B9%E7%9B%AE%E5%B0%B1%E4%B8%8D%E7%94%A8%E4%BA%86%EF%BC%89"><span class="nav-text">step1: 添加archetype（只用第一次添加，后面创建项目就不用了）</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#step2-%E5%88%9B%E5%BB%BA%E9%A1%B9%E7%9B%AE"><span class="nav-text">step2 创建项目</span></a></li></ol></li></ol></div>
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#Start"><span class="nav-text">Start</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#step1-添加archetype（只用第一次添加，后面创建项目就不用了）"><span class="nav-text">step1: 添加archetype（只用第一次添加，后面创建项目就不用了）</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#step2-创建项目"><span class="nav-text">step2 创建项目</span></a></li></ol></li></ol></div>
       </div>
       <!--/noindex-->
 

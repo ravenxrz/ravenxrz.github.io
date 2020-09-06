@@ -4,7 +4,7 @@
   <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
 <meta name="theme-color" content="#222">
-<meta name="generator" content="Hexo 5.1.1">
+<meta name="generator" content="Hexo 4.2.1">
   <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
   <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png">
   <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png">
@@ -21,7 +21,7 @@
 
 <script id="hexo-configurations">
     var NexT = window.NexT || {};
-    var CONFIG = {"hostname":"www.ravenxrz.ink","root":"/","scheme":"Mist","version":"7.8.0","exturl":true,"sidebar":{"position":"left","display":"always","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":true,"show_result":true,"style":"flat"},"back2top":{"enable":true,"sidebar":false,"scrollpercent":true},"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":true,"lazyload":true,"pangu":true,"comments":{"style":"tabs","active":"gitalk","storage":true,"lazyload":true,"nav":null,"activeClass":"gitalk"},"algolia":{"hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":true,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},"motion":{"enable":false,"async":true,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}}};
+    var CONFIG = {"hostname":"www.ravenxrz.ink","root":"/","scheme":"Mist","version":"7.8.0","exturl":true,"sidebar":{"position":"left","display":"always","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":true,"show_result":true,"style":"flat"},"back2top":{"enable":true,"sidebar":false,"scrollpercent":true},"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":true,"lazyload":true,"pangu":true,"comments":{"style":"tabs","active":"gitalk","storage":true,"lazyload":true,"nav":null,"activeClass":"gitalk"},"algolia":{"hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":true,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},"motion":{"enable":false,"async":true,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},"path":"search.xml"};
   </script>
 
   <meta name="description" content="1. Q&amp;A 我几天前下的pdf文档，txt文件等放在哪儿了？ 今天我创建了哪些文件？ 某个目录下的markdown文件一共有多少个？ 如何批量删除符合条件的文件?  上面这些问题通通都可以使用find命令来解决。  find命令在类unix系统下都可以使用，windows平台可通过安装cygwin等仿linux环境来使用。">
@@ -33,7 +33,7 @@
 <meta property="og:locale" content="zh_CN">
 <meta property="og:image" content="https://shapeshed.com/images/articles/find.png">
 <meta property="article:published_time" content="2020-04-11T12:53:30.000Z">
-<meta property="article:modified_time" content="2020-09-06T02:45:08.043Z">
+<meta property="article:modified_time" content="2020-09-06T07:37:36.764Z">
 <meta property="article:author" content="Raven">
 <meta property="article:tag" content="linux">
 <meta property="article:tag" content="find命令">
@@ -84,6 +84,7 @@
   </style>
 </noscript>
 
+<link rel="alternate" href="/atom.xml" title="Raven's Blog" type="application/atom+xml">
 </head>
 
 <body itemscope itemtype="http://schema.org/WebPage">
@@ -234,7 +235,7 @@
                   <i class="fa fa-calendar-check-o"></i>
                 </span>
                 <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2020-09-06 10:45:08" itemprop="dateModified" datetime="2020-09-06T10:45:08+08:00">2020-09-06</time>
+                <time title="修改时间：2020-09-06 15:37:36" itemprop="dateModified" datetime="2020-09-06T15:37:36+08:00">2020-09-06</time>
               </span>
             <span class="post-meta-item">
               <span class="post-meta-item-icon">
@@ -275,7 +276,7 @@
 <p>find命令在类unix系统下都可以使用，windows平台可通过安装cygwin等仿linux环境来使用。</p>
 </blockquote>
 <a id="more"></a>
-<h2 id="2-find命令"><a href="#2-find命令" class="headerlink" title="2.  find命令"></a>2.  find命令</h2><h2 id="2-1-what-is-find-command"><a href="#2-1-what-is-find-command" class="headerlink" title="2.1 what is find command?"></a>2.1 what is find command?</h2><p><img src="https://shapeshed.com/images/articles/find.png" alt="find man page"></p>
+<h2 id="2-find命令"><a href="#2-find命令" class="headerlink" title="2.  find命令"></a>2.  find命令</h2><h2 id="2-1-what-is-find-command"><a href="#2-1-what-is-find-command" class="headerlink" title="2.1 what is find command?"></a>2.1 what is find command?</h2><p><img data-src="https://shapeshed.com/images/articles/find.png" alt="find man page"></p>
 <h2 id="2-2-通过文件名来搜索文件"><a href="#2-2-通过文件名来搜索文件" class="headerlink" title="2.2 通过文件名来搜索文件"></a>2.2 通过文件名来搜索文件</h2><p>可以通过<code>-name</code>参数来完全匹配单个文件，或使用通配符来批量匹配一批文件。</p>
 <p>实验环境：</p>
 <figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line">.</span><br><span class="line">├── bar</span><br><span class="line">├── baz</span><br><span class="line">│   ├── file1</span><br><span class="line">│   ├── file10</span><br><span class="line">│   ├── file2</span><br><span class="line">│   ├── file3</span><br><span class="line">│   ├── file4</span><br><span class="line">│   ├── file5</span><br><span class="line">│   ├── file6</span><br><span class="line">│   ├── file7</span><br><span class="line">│   ├── file8</span><br><span class="line">│   └── file9</span><br><span class="line">└── bop</span><br></pre></td></tr></table></figure>
@@ -360,8 +361,8 @@
 
 <p>OK, find的常用使用方法就总结到这里。更多的使用方法请参照<code>man find</code></p>
 <h2 id="参考："><a href="#参考：" class="headerlink" title="参考："></a>参考：</h2><ul>
-<li><a target="_blank" rel="noopener" href="https://www.cyberciti.biz/faq/howto-finding-files-by-date/">Find Files By Access, Modification Date / Time Under Linux or UNIX</a></li>
-<li><a target="_blank" rel="noopener" href="https://shapeshed.com/unix-find/">Linux and Unix find command tutorial with examples</a></li>
+<li><span class="exturl" data-url="aHR0cHM6Ly93d3cuY3liZXJjaXRpLmJpei9mYXEvaG93dG8tZmluZGluZy1maWxlcy1ieS1kYXRlLw==" title="https://www.cyberciti.biz/faq/howto-finding-files-by-date/">Find Files By Access, Modification Date / Time Under Linux or UNIX<i class="fa fa-external-link"></i></span></li>
+<li><span class="exturl" data-url="aHR0cHM6Ly9zaGFwZXNoZWQuY29tL3VuaXgtZmluZC8=" title="https://shapeshed.com/unix-find/">Linux and Unix find command tutorial with examples<i class="fa fa-external-link"></i></span></li>
 </ul>
 
     </div>
@@ -486,7 +487,7 @@
 
       <!--noindex-->
       <div class="post-toc-wrap sidebar-panel">
-          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#1-Q-amp-A"><span class="nav-text">1. Q&amp;A</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#2-find%E5%91%BD%E4%BB%A4"><span class="nav-text">2.  find命令</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#2-1-what-is-find-command"><span class="nav-text">2.1 what is find command?</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#2-2-%E9%80%9A%E8%BF%87%E6%96%87%E4%BB%B6%E5%90%8D%E6%9D%A5%E6%90%9C%E7%B4%A2%E6%96%87%E4%BB%B6"><span class="nav-text">2.2 通过文件名来搜索文件</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#2-3-%E5%88%A0%E9%99%A4%E7%AC%A6%E5%90%88%E6%9D%A1%E4%BB%B6%E7%9A%84%E6%96%87%E4%BB%B6"><span class="nav-text">2.3 删除符合条件的文件</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#2-4-%E6%8C%87%E5%AE%9A%E6%90%9C%E7%B4%A2%E7%B1%BB%E5%9E%8B%EF%BC%88%E7%9B%AE%E5%BD%95or%E6%96%87%E4%BB%B6%EF%BC%9F"><span class="nav-text">2.4 指定搜索类型（目录or文件？)</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#2-5-%E5%A6%82%E4%BD%95%E6%A0%B9%E6%8D%AE%E6%97%B6%E9%97%B4%E6%88%B3%E5%AF%BB%E6%89%BE%E6%96%87%E4%BB%B6"><span class="nav-text">2.5 如何根据时间戳寻找文件</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#2-6-%E9%80%9A%E8%BF%87%E6%96%87%E4%BB%B6%E6%9D%83%E9%99%90%E6%89%BE%E6%96%87%E4%BB%B6"><span class="nav-text">2.6 通过文件权限找文件</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#2-7-newer%E5%8F%82%E6%95%B0"><span class="nav-text">2.7 -newer参数</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#2-8-%E9%87%8D%E7%82%B9%EF%BC%81-%E6%89%BE%E5%88%B0%E7%AC%A6%E5%90%88%E6%9D%A1%E4%BB%B6%E7%9A%84%E6%96%87%E4%BB%B6%E5%B9%B6%E6%89%A7%E8%A1%8C%E6%9F%90%E7%A7%8D%E5%8F%82%E6%95%B0"><span class="nav-text">2.8 重点！ 找到符合条件的文件并执行某种参数</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%8F%82%E8%80%83%EF%BC%9A"><span class="nav-text">参考：</span></a></li></ol></div>
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#1-Q-amp-A"><span class="nav-text">1. Q&amp;A</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#2-find命令"><span class="nav-text">2.  find命令</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#2-1-what-is-find-command"><span class="nav-text">2.1 what is find command?</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#2-2-通过文件名来搜索文件"><span class="nav-text">2.2 通过文件名来搜索文件</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#2-3-删除符合条件的文件"><span class="nav-text">2.3 删除符合条件的文件</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#2-4-指定搜索类型（目录or文件？"><span class="nav-text">2.4 指定搜索类型（目录or文件？)</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#2-5-如何根据时间戳寻找文件"><span class="nav-text">2.5 如何根据时间戳寻找文件</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#2-6-通过文件权限找文件"><span class="nav-text">2.6 通过文件权限找文件</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#2-7-newer参数"><span class="nav-text">2.7 -newer参数</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#2-8-重点！-找到符合条件的文件并执行某种参数"><span class="nav-text">2.8 重点！ 找到符合条件的文件并执行某种参数</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#参考："><span class="nav-text">参考：</span></a></li></ol></div>
       </div>
       <!--/noindex-->
 

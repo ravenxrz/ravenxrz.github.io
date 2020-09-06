@@ -4,7 +4,7 @@
   <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
 <meta name="theme-color" content="#222">
-<meta name="generator" content="Hexo 5.1.1">
+<meta name="generator" content="Hexo 4.2.1">
   <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
   <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png">
   <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png">
@@ -21,7 +21,7 @@
 
 <script id="hexo-configurations">
     var NexT = window.NexT || {};
-    var CONFIG = {"hostname":"www.ravenxrz.ink","root":"/","scheme":"Mist","version":"7.8.0","exturl":true,"sidebar":{"position":"left","display":"always","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":true,"show_result":true,"style":"flat"},"back2top":{"enable":true,"sidebar":false,"scrollpercent":true},"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":true,"lazyload":true,"pangu":true,"comments":{"style":"tabs","active":"gitalk","storage":true,"lazyload":true,"nav":null,"activeClass":"gitalk"},"algolia":{"hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":true,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},"motion":{"enable":false,"async":true,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}}};
+    var CONFIG = {"hostname":"www.ravenxrz.ink","root":"/","scheme":"Mist","version":"7.8.0","exturl":true,"sidebar":{"position":"left","display":"always","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":true,"show_result":true,"style":"flat"},"back2top":{"enable":true,"sidebar":false,"scrollpercent":true},"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":true,"lazyload":true,"pangu":true,"comments":{"style":"tabs","active":"gitalk","storage":true,"lazyload":true,"nav":null,"activeClass":"gitalk"},"algolia":{"hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":true,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},"motion":{"enable":false,"async":true,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},"path":"search.xml"};
   </script>
 
   <meta name="description" content="i&gt; 翻译自:https:&#x2F;&#x2F;www.internalpointers.com&#x2F;post&#x2F;understanding-meaning-lvalues-and-rvalues-c 我一直苦于理解C++中的左值和右值。现在我感觉是时候分享出我对它们的理解了，因为它们在C++语言发展中扮演者越来越重要的角色。 一旦你理解了lvalues和rvalues的含义，你就可以更深入地研究高级c++特性，比">
@@ -32,7 +32,7 @@
 <meta property="og:description" content="i&gt; 翻译自:https:&#x2F;&#x2F;www.internalpointers.com&#x2F;post&#x2F;understanding-meaning-lvalues-and-rvalues-c 我一直苦于理解C++中的左值和右值。现在我感觉是时候分享出我对它们的理解了，因为它们在C++语言发展中扮演者越来越重要的角色。 一旦你理解了lvalues和rvalues的含义，你就可以更深入地研究高级c++特性，比">
 <meta property="og:locale" content="zh_CN">
 <meta property="article:published_time" content="2019-10-13T05:59:01.000Z">
-<meta property="article:modified_time" content="2020-09-06T02:45:08.062Z">
+<meta property="article:modified_time" content="2020-09-06T07:37:36.784Z">
 <meta property="article:author" content="Raven">
 <meta property="article:tag" content="C++">
 <meta name="twitter:card" content="summary">
@@ -81,6 +81,7 @@
   </style>
 </noscript>
 
+<link rel="alternate" href="/atom.xml" title="Raven's Blog" type="application/atom+xml">
 </head>
 
 <body itemscope itemtype="http://schema.org/WebPage">
@@ -231,7 +232,7 @@
                   <i class="fa fa-calendar-check-o"></i>
                 </span>
                 <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2020-09-06 10:45:08" itemprop="dateModified" datetime="2020-09-06T10:45:08+08:00">2020-09-06</time>
+                <time title="修改时间：2020-09-06 15:37:36" itemprop="dateModified" datetime="2020-09-06T15:37:36+08:00">2020-09-06</time>
               </span>
             <span class="post-meta-item">
               <span class="post-meta-item-icon">
@@ -261,7 +262,7 @@
     <div class="post-body" itemprop="articleBody">
 
       
-        <p>i&gt; 翻译自:<a target="_blank" rel="noopener" href="https://www.internalpointers.com/post/understanding-meaning-lvalues-and-rvalues-c">https://www.internalpointers.com/post/understanding-meaning-lvalues-and-rvalues-c</a></p>
+        <p>i&gt; 翻译自:<span class="exturl" data-url="aHR0cHM6Ly93d3cuaW50ZXJuYWxwb2ludGVycy5jb20vcG9zdC91bmRlcnN0YW5kaW5nLW1lYW5pbmctbHZhbHVlcy1hbmQtcnZhbHVlcy1j" title="https://www.internalpointers.com/post/understanding-meaning-lvalues-and-rvalues-c">https://www.internalpointers.com/post/understanding-meaning-lvalues-and-rvalues-c<i class="fa fa-external-link"></i></span></p>
 <p>我一直苦于理解C++中的左值和右值。现在我感觉是时候分享出我对它们的理解了，因为它们在C++语言发展中扮演者越来越重要的角色。</p>
 <p>一旦你理解了lvalues和rvalues的含义，你就可以更深入地研究高级c++特性，比如move语义和右值引用。</p>
 <a id="more"></a>
@@ -334,8 +335,8 @@
 
 
 <h2 id="6-Conclusion"><a href="#6-Conclusion" class="headerlink" title="6. Conclusion"></a>6. Conclusion</h2><p>最后一段，不打算翻译。</p>
-<p>Understanding the meaning of lvalues and rvalues has given me the chance to figure out several of the C++’s inner workings. C++11 pushes the limits of rvalues even further, by introducing the concept of rvalue references and move semantics, where — surprise! — rvalues too are modifiable. I will restlessly dive into that minefield in one of my <a target="_blank" rel="noopener" href="https://www.internalpointers.com/post/c-rvalue-references-and-move-semantics-beginners">next articles</a>.</p>
-<h2 id="Sources"><a href="#Sources" class="headerlink" title="Sources"></a>Sources</h2><p>Thomas Becker’s Homepage - <em>C++ Rvalue References Explained</em> (<a target="_blank" rel="noopener" href="http://thbecker.net/articles/rvalue_references/section_01.html">link</a>)<br>Eli Bendersky’s website - <em>Understanding lvalues and rvalues in C and C++</em> (<a target="_blank" rel="noopener" href="http://eli.thegreenplace.net/2011/12/15/understanding-lvalues-and-rvalues-in-c-and-c">link</a>)<br>StackOverflow - <em>Rvalue Reference is Treated as an Lvalue?</em> (<a target="_blank" rel="noopener" href="http://stackoverflow.com/questions/28483250/rvalue-reference-is-treated-as-an-lvalue">link</a>)<br>StackOverflow - <em>Const reference and lvalue</em> (<a target="_blank" rel="noopener" href="http://stackoverflow.com/questions/22845167/const-reference-and-lvalue">link</a>)<br>CppReference.com - <em>Reference declaration</em> (<a target="_blank" rel="noopener" href="http://en.cppreference.com/w/cpp/language/reference">link</a>)</p>
+<p>Understanding the meaning of lvalues and rvalues has given me the chance to figure out several of the C++’s inner workings. C++11 pushes the limits of rvalues even further, by introducing the concept of rvalue references and move semantics, where — surprise! — rvalues too are modifiable. I will restlessly dive into that minefield in one of my <span class="exturl" data-url="aHR0cHM6Ly93d3cuaW50ZXJuYWxwb2ludGVycy5jb20vcG9zdC9jLXJ2YWx1ZS1yZWZlcmVuY2VzLWFuZC1tb3ZlLXNlbWFudGljcy1iZWdpbm5lcnM=" title="https://www.internalpointers.com/post/c-rvalue-references-and-move-semantics-beginners">next articles<i class="fa fa-external-link"></i></span>.</p>
+<h2 id="Sources"><a href="#Sources" class="headerlink" title="Sources"></a>Sources</h2><p>Thomas Becker’s Homepage - <em>C++ Rvalue References Explained</em> (<span class="exturl" data-url="aHR0cDovL3RoYmVja2VyLm5ldC9hcnRpY2xlcy9ydmFsdWVfcmVmZXJlbmNlcy9zZWN0aW9uXzAxLmh0bWw=" title="http://thbecker.net/articles/rvalue_references/section_01.html">link<i class="fa fa-external-link"></i></span>)<br>Eli Bendersky’s website - <em>Understanding lvalues and rvalues in C and C++</em> (<span class="exturl" data-url="aHR0cDovL2VsaS50aGVncmVlbnBsYWNlLm5ldC8yMDExLzEyLzE1L3VuZGVyc3RhbmRpbmctbHZhbHVlcy1hbmQtcnZhbHVlcy1pbi1jLWFuZC1j" title="http://eli.thegreenplace.net/2011/12/15/understanding-lvalues-and-rvalues-in-c-and-c">link<i class="fa fa-external-link"></i></span>)<br>StackOverflow - <em>Rvalue Reference is Treated as an Lvalue?</em> (<span class="exturl" data-url="aHR0cDovL3N0YWNrb3ZlcmZsb3cuY29tL3F1ZXN0aW9ucy8yODQ4MzI1MC9ydmFsdWUtcmVmZXJlbmNlLWlzLXRyZWF0ZWQtYXMtYW4tbHZhbHVl" title="http://stackoverflow.com/questions/28483250/rvalue-reference-is-treated-as-an-lvalue">link<i class="fa fa-external-link"></i></span>)<br>StackOverflow - <em>Const reference and lvalue</em> (<span class="exturl" data-url="aHR0cDovL3N0YWNrb3ZlcmZsb3cuY29tL3F1ZXN0aW9ucy8yMjg0NTE2Ny9jb25zdC1yZWZlcmVuY2UtYW5kLWx2YWx1ZQ==" title="http://stackoverflow.com/questions/22845167/const-reference-and-lvalue">link<i class="fa fa-external-link"></i></span>)<br>CppReference.com - <em>Reference declaration</em> (<span class="exturl" data-url="aHR0cDovL2VuLmNwcHJlZmVyZW5jZS5jb20vdy9jcHAvbGFuZ3VhZ2UvcmVmZXJlbmNl" title="http://en.cppreference.com/w/cpp/language/reference">link<i class="fa fa-external-link"></i></span>)</p>
 
     </div>
 

@@ -4,7 +4,7 @@
   <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
 <meta name="theme-color" content="#222">
-<meta name="generator" content="Hexo 5.1.1">
+<meta name="generator" content="Hexo 4.2.1">
   <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
   <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png">
   <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png">
@@ -21,7 +21,7 @@
 
 <script id="hexo-configurations">
     var NexT = window.NexT || {};
-    var CONFIG = {"hostname":"www.ravenxrz.ink","root":"/","scheme":"Mist","version":"7.8.0","exturl":true,"sidebar":{"position":"left","display":"always","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":true,"show_result":true,"style":"flat"},"back2top":{"enable":true,"sidebar":false,"scrollpercent":true},"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":true,"lazyload":true,"pangu":true,"comments":{"style":"tabs","active":"gitalk","storage":true,"lazyload":true,"nav":null,"activeClass":"gitalk"},"algolia":{"hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":true,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},"motion":{"enable":false,"async":true,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}}};
+    var CONFIG = {"hostname":"www.ravenxrz.ink","root":"/","scheme":"Mist","version":"7.8.0","exturl":true,"sidebar":{"position":"left","display":"always","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":true,"show_result":true,"style":"flat"},"back2top":{"enable":true,"sidebar":false,"scrollpercent":true},"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":true,"lazyload":true,"pangu":true,"comments":{"style":"tabs","active":"gitalk","storage":true,"lazyload":true,"nav":null,"activeClass":"gitalk"},"algolia":{"hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":true,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},"motion":{"enable":false,"async":true,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},"path":"search.xml"};
   </script>
 
   <meta name="description" content="i&gt; 本科毕设题目为《基于深度学习的图像去雾方法研究与实现》 毕设总结系列：  毕设总结零–绪论 毕设总结一–传统去雾理论 毕设总结二–论文复现工作1–暗通道去雾(DCP) 毕设总结三–论文复现工作2–MSCNN去雾 毕设总结四–最终去雾方案的确定与实现–DeBlurGanToDehaze 毕设总结五–杂项">
@@ -32,7 +32,7 @@
 <meta property="og:description" content="i&gt; 本科毕设题目为《基于深度学习的图像去雾方法研究与实现》 毕设总结系列：  毕设总结零–绪论 毕设总结一–传统去雾理论 毕设总结二–论文复现工作1–暗通道去雾(DCP) 毕设总结三–论文复现工作2–MSCNN去雾 毕设总结四–最终去雾方案的确定与实现–DeBlurGanToDehaze 毕设总结五–杂项">
 <meta property="og:locale" content="zh_CN">
 <meta property="article:published_time" content="2019-07-19T07:58:58.000Z">
-<meta property="article:modified_time" content="2020-09-06T02:45:08.060Z">
+<meta property="article:modified_time" content="2020-09-06T07:37:36.782Z">
 <meta property="article:author" content="Raven">
 <meta property="article:tag" content="图像去雾">
 <meta name="twitter:card" content="summary">
@@ -81,6 +81,7 @@
   </style>
 </noscript>
 
+<link rel="alternate" href="/atom.xml" title="Raven's Blog" type="application/atom+xml">
 </head>
 
 <body itemscope itemtype="http://schema.org/WebPage">
@@ -231,7 +232,7 @@
                   <i class="fa fa-calendar-check-o"></i>
                 </span>
                 <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2020-09-06 10:45:08" itemprop="dateModified" datetime="2020-09-06T10:45:08+08:00">2020-09-06</time>
+                <time title="修改时间：2020-09-06 15:37:36" itemprop="dateModified" datetime="2020-09-06T15:37:36+08:00">2020-09-06</time>
               </span>
             <span class="post-meta-item">
               <span class="post-meta-item-icon">
@@ -278,7 +279,7 @@
 <li>DeBlurGan中可以尝试把ResBlock改为DenseBlock，但是注意DenseBlock很容易显存爆炸，我当初是实现了DenseBlock的，但是无奈显存直接爆炸了。曾经看过Pytorch似乎可以解决DenseBlock显存爆炸的问题，但是keras暂时还没有。显存爆炸的原因我已经忘记了，所以无法贴出相关链接。但是当时是在Github的issue上看到的，算是一条线索吧。</li>
 </ul>
 <h3 id="2-2-展望与不足"><a href="#2-2-展望与不足" class="headerlink" title="2.2 展望与不足"></a>2.2 展望与不足</h3><ul>
-<li><p>虽然没有实际测试服务器的去雾速度，但是个人感觉还是很快的。那么这样其实可以做一个<strong>视频实时去雾</strong>的应用，比如在咱们重庆高速公路上雾天天气还是蛮频繁的，做一个实时去雾处理可以大大降低车祸事故率。<strong>什么？担心上传雾图下载雾图速度慢？</strong>5G都要来了，咱应该不怕这个。更何况也可以把网络迁移到硬件设备上去，参考<a target="_blank" rel="noopener" href="https://www.tensorflow.org/lite">TensorFlow Lite</a>。</p>
+<li><p>虽然没有实际测试服务器的去雾速度，但是个人感觉还是很快的。那么这样其实可以做一个<strong>视频实时去雾</strong>的应用，比如在咱们重庆高速公路上雾天天气还是蛮频繁的，做一个实时去雾处理可以大大降低车祸事故率。<strong>什么？担心上传雾图下载雾图速度慢？</strong>5G都要来了，咱应该不怕这个。更何况也可以把网络迁移到硬件设备上去，参考<span class="exturl" data-url="aHR0cHM6Ly93d3cudGVuc29yZmxvdy5vcmcvbGl0ZQ==" title="https://www.tensorflow.org/lite">TensorFlow Lite<i class="fa fa-external-link"></i></span>。</p>
 <hr>
 <p><strong>————-下段话已过时。————-</strong></p>
 <p>如果有读过我的代码的小伙伴，肯定知道不论是train还是test，我都把整个网络的输入固定了size，这就造成了整个网络只接受固定size的图片，其余size的图片需要做resize处理，resize肯定会失真，这是一个缺点。修复这个缺点的重点有两个：</p>
@@ -305,16 +306,16 @@
 <p>i&gt; 所以一条建议：先去TexStudio工作室搜搜有不有你本校的模板，没有的话尽量就用word编排，当然如果你对自己的Latex能力有信心，那就做一份吧，还能为你本校的后辈们留点东西，方便后辈们写论文咯。</p>
 <p>[post cid=”145”/]</p>
 <h3 id="2-5-其他参考资料"><a href="#2-5-其他参考资料" class="headerlink" title="2.5 其他参考资料"></a>2.5 其他参考资料</h3><ul>
-<li><a target="_blank" rel="noopener" href="https://ramhiser.com/post/2018-05-14-autoencoders-with-keras/">自编码器 Autoencoders with Keras</a></li>
+<li><span class="exturl" data-url="aHR0cHM6Ly9yYW1oaXNlci5jb20vcG9zdC8yMDE4LTA1LTE0LWF1dG9lbmNvZGVycy13aXRoLWtlcmFzLw==" title="https://ramhiser.com/post/2018-05-14-autoencoders-with-keras/">自编码器 Autoencoders with Keras<i class="fa fa-external-link"></i></span></li>
 <li>[Kears中如何保存模型？](How to Check-Point Deep Learning Models in Keras)</li>
-<li><a target="_blank" rel="noopener" href="https://blog.csdn.net/u014281392/article/details/75152809">经典CNN之：VGGNet - 机器会学习的博客 - CSDN博客</a></li>
-<li><a target="_blank" rel="noopener" href="https://blog.csdn.net/qq_38906523/article/details/79769571">深度学习—残差resnet网络原理详解 - Dean - CSDN博客</a></li>
-<li><a target="_blank" rel="noopener" href="https://my.oschina.net/u/876354/blog/1622896">大话深度残差网络（DRN）ResNet网络原理 - 雪饼的个人空间 - OSCHINA</a></li>
-<li><a target="_blank" rel="noopener" href="https://blog.csdn.net/u014380165/article/details/75142664/">DenseNet算法详解 - AI之路 - CSDN博客</a></li>
-<li><a target="_blank" rel="noopener" href="https://blog.csdn.net/stdcoutzyx/article/details/54025243">感知损失(Perceptual Losses)</a></li>
-<li><a target="_blank" rel="noopener" href="https://buptldy.github.io/2016/10/29/2016-10-29-deconv/">转置卷积、去卷积概念梳理</a></li>
-<li><a target="_blank" rel="noopener" href="https://blog.csdn.net/jacke121/article/details/79874555">训练loss不下降原因集合 - jacke121的专栏 - CSDN博客</a></li>
-<li><a target="_blank" rel="noopener" href="https://zhuanlan.zhihu.com/p/50757421">图像质量评价指标之 PSNR 和 SSIM - 知乎</a></li>
+<li><span class="exturl" data-url="aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L3UwMTQyODEzOTIvYXJ0aWNsZS9kZXRhaWxzLzc1MTUyODA5" title="https://blog.csdn.net/u014281392/article/details/75152809">经典CNN之：VGGNet - 机器会学习的博客 - CSDN博客<i class="fa fa-external-link"></i></span></li>
+<li><span class="exturl" data-url="aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L3FxXzM4OTA2NTIzL2FydGljbGUvZGV0YWlscy83OTc2OTU3MQ==" title="https://blog.csdn.net/qq_38906523/article/details/79769571">深度学习—残差resnet网络原理详解 - Dean - CSDN博客<i class="fa fa-external-link"></i></span></li>
+<li><span class="exturl" data-url="aHR0cHM6Ly9teS5vc2NoaW5hLm5ldC91Lzg3NjM1NC9ibG9nLzE2MjI4OTY=" title="https://my.oschina.net/u/876354/blog/1622896">大话深度残差网络（DRN）ResNet网络原理 - 雪饼的个人空间 - OSCHINA<i class="fa fa-external-link"></i></span></li>
+<li><span class="exturl" data-url="aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L3UwMTQzODAxNjUvYXJ0aWNsZS9kZXRhaWxzLzc1MTQyNjY0Lw==" title="https://blog.csdn.net/u014380165/article/details/75142664/">DenseNet算法详解 - AI之路 - CSDN博客<i class="fa fa-external-link"></i></span></li>
+<li><span class="exturl" data-url="aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L3N0ZGNvdXR6eXgvYXJ0aWNsZS9kZXRhaWxzLzU0MDI1MjQz" title="https://blog.csdn.net/stdcoutzyx/article/details/54025243">感知损失(Perceptual Losses)<i class="fa fa-external-link"></i></span></li>
+<li><span class="exturl" data-url="aHR0cHM6Ly9idXB0bGR5LmdpdGh1Yi5pby8yMDE2LzEwLzI5LzIwMTYtMTAtMjktZGVjb252Lw==" title="https://buptldy.github.io/2016/10/29/2016-10-29-deconv/">转置卷积、去卷积概念梳理<i class="fa fa-external-link"></i></span></li>
+<li><span class="exturl" data-url="aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L2phY2tlMTIxL2FydGljbGUvZGV0YWlscy83OTg3NDU1NQ==" title="https://blog.csdn.net/jacke121/article/details/79874555">训练loss不下降原因集合 - jacke121的专栏 - CSDN博客<i class="fa fa-external-link"></i></span></li>
+<li><span class="exturl" data-url="aHR0cHM6Ly96aHVhbmxhbi56aGlodS5jb20vcC81MDc1NzQyMQ==" title="https://zhuanlan.zhihu.com/p/50757421">图像质量评价指标之 PSNR 和 SSIM - 知乎<i class="fa fa-external-link"></i></span></li>
 </ul>
 <h2 id="3-结语"><a href="#3-结语" class="headerlink" title="3. 结语"></a>3. 结语</h2><p>总算是写到了本系列的最后一篇文章了，这个系列的结束，基本上意味着我在学校的最后工作也做完了，感谢在毕设5个月来一直帮助我的师兄，<br>接下来就是浪咯，好久没玩游戏了，最近应该也不会更新博文了吧，去放松一把啦。</p>
 
@@ -439,7 +440,7 @@
 
       <!--noindex-->
       <div class="post-toc-wrap sidebar-panel">
-          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#1-%E5%89%8D%E8%A8%80"><span class="nav-text">1.  前言</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#2-%E4%B8%80%E4%BA%9B%E6%9D%82%E9%A1%B9"><span class="nav-text">2.  一些杂项</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#2-1-%E5%8E%BB%E9%9B%BE%E6%96%B0%E6%83%B3%E6%B3%95"><span class="nav-text">2.1 去雾新想法</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#2-2-%E5%B1%95%E6%9C%9B%E4%B8%8E%E4%B8%8D%E8%B6%B3"><span class="nav-text">2.2 展望与不足</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#2-3-Android-app%E5%B1%95%E7%A4%BA%E5%8E%BB%E9%9B%BE%EF%BC%9F"><span class="nav-text">2.3   Android app展示去雾？</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#2-4-Latex-%E5%86%99%E6%AF%95%E8%AE%BE%E8%AE%BA%E6%96%87%EF%BC%9F"><span class="nav-text">2.4 Latex 写毕设论文？</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#2-5-%E5%85%B6%E4%BB%96%E5%8F%82%E8%80%83%E8%B5%84%E6%96%99"><span class="nav-text">2.5 其他参考资料</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#3-%E7%BB%93%E8%AF%AD"><span class="nav-text">3. 结语</span></a></li></ol></div>
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#1-前言"><span class="nav-text">1.  前言</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#2-一些杂项"><span class="nav-text">2.  一些杂项</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#2-1-去雾新想法"><span class="nav-text">2.1 去雾新想法</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#2-2-展望与不足"><span class="nav-text">2.2 展望与不足</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#2-3-Android-app展示去雾？"><span class="nav-text">2.3   Android app展示去雾？</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#2-4-Latex-写毕设论文？"><span class="nav-text">2.4 Latex 写毕设论文？</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#2-5-其他参考资料"><span class="nav-text">2.5 其他参考资料</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#3-结语"><span class="nav-text">3. 结语</span></a></li></ol></div>
       </div>
       <!--/noindex-->
 

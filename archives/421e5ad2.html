@@ -4,7 +4,7 @@
   <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
 <meta name="theme-color" content="#222">
-<meta name="generator" content="Hexo 5.1.1">
+<meta name="generator" content="Hexo 4.2.1">
   <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
   <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png">
   <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png">
@@ -21,7 +21,7 @@
 
 <script id="hexo-configurations">
     var NexT = window.NexT || {};
-    var CONFIG = {"hostname":"www.ravenxrz.ink","root":"/","scheme":"Mist","version":"7.8.0","exturl":true,"sidebar":{"position":"left","display":"always","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":true,"show_result":true,"style":"flat"},"back2top":{"enable":true,"sidebar":false,"scrollpercent":true},"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":true,"lazyload":true,"pangu":true,"comments":{"style":"tabs","active":"gitalk","storage":true,"lazyload":true,"nav":null,"activeClass":"gitalk"},"algolia":{"hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":true,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},"motion":{"enable":false,"async":true,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}}};
+    var CONFIG = {"hostname":"www.ravenxrz.ink","root":"/","scheme":"Mist","version":"7.8.0","exturl":true,"sidebar":{"position":"left","display":"always","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":true,"show_result":true,"style":"flat"},"back2top":{"enable":true,"sidebar":false,"scrollpercent":true},"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":true,"lazyload":true,"pangu":true,"comments":{"style":"tabs","active":"gitalk","storage":true,"lazyload":true,"nav":null,"activeClass":"gitalk"},"algolia":{"hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":true,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},"motion":{"enable":false,"async":true,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},"path":"search.xml"};
   </script>
 
   <meta name="description" content="jpackage是java 14里面自带的打包工具，jpackage解决了java开发过程中得一个难题：分发自己的程序，需要客户电脑中已安装jre环境。有了jpackage，我们可以直接将java程序打包成安装包，具体来说：  Windows：exe，msi Mac：dmg，pkg Linux：deb，rpm  jpackage目前并不成熟，但是也算是可以使用。另外，虽然jpackage可以打包各">
@@ -59,7 +59,7 @@
 <meta property="og:image" content="https://cdn.jsdelivr.net/gh/ravenxrz/PicBed/img/image-20200506102742159.png">
 <meta property="og:image" content="https://cdn.jsdelivr.net/gh/ravenxrz/PicBed/img/image-20200506103403094.png">
 <meta property="article:published_time" content="2020-05-06T00:16:53.000Z">
-<meta property="article:modified_time" content="2020-09-06T02:45:08.034Z">
+<meta property="article:modified_time" content="2020-09-06T07:37:36.754Z">
 <meta property="article:author" content="Raven">
 <meta property="article:tag" content="jpackage">
 <meta name="twitter:card" content="summary">
@@ -109,6 +109,7 @@
   </style>
 </noscript>
 
+<link rel="alternate" href="/atom.xml" title="Raven's Blog" type="application/atom+xml">
 </head>
 
 <body itemscope itemtype="http://schema.org/WebPage">
@@ -259,7 +260,7 @@
                   <i class="fa fa-calendar-check-o"></i>
                 </span>
                 <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2020-09-06 10:45:08" itemprop="dateModified" datetime="2020-09-06T10:45:08+08:00">2020-09-06</time>
+                <time title="修改时间：2020-09-06 15:37:36" itemprop="dateModified" datetime="2020-09-06T15:37:36+08:00">2020-09-06</time>
               </span>
             <span class="post-meta-item">
               <span class="post-meta-item-icon">
@@ -300,34 +301,34 @@
 
 <p>额外建议：jpackage打包，涉及到java 9中的模块概念以及如何使用jlink自定义jre的知识，请自行学习。推荐阅读：</p>
 <ul>
-<li><a target="_blank" rel="noopener" href="https://www.liaoxuefeng.com/wiki/1252599548343744/1281795926523938">模块-廖雪峰</a></li>
-<li><a target="_blank" rel="noopener" href="https://juejin.im/post/5a7c643a6fb9a0633b20febe">Java9新特性系列（模块化系统: Jigsaw-&gt;Modularity）</a></li>
-<li><a target="_blank" rel="noopener" href="https://zhuanlan.zhihu.com/p/45824326">我的Java（定制你的Java/JavaFX Runtime）</a></li>
+<li><span class="exturl" data-url="aHR0cHM6Ly93d3cubGlhb3h1ZWZlbmcuY29tL3dpa2kvMTI1MjU5OTU0ODM0Mzc0NC8xMjgxNzk1OTI2NTIzOTM4" title="https://www.liaoxuefeng.com/wiki/1252599548343744/1281795926523938">模块-廖雪峰<i class="fa fa-external-link"></i></span></li>
+<li><span class="exturl" data-url="aHR0cHM6Ly9qdWVqaW4uaW0vcG9zdC81YTdjNjQzYTZmYjlhMDYzM2IyMGZlYmU=" title="https://juejin.im/post/5a7c643a6fb9a0633b20febe">Java9新特性系列（模块化系统: Jigsaw-&gt;Modularity）<i class="fa fa-external-link"></i></span></li>
+<li><span class="exturl" data-url="aHR0cHM6Ly96aHVhbmxhbi56aGlodS5jb20vcC80NTgyNDMyNg==" title="https://zhuanlan.zhihu.com/p/45824326">我的Java（定制你的Java/JavaFX Runtime）<i class="fa fa-external-link"></i></span></li>
 </ul>
 <p>本文主要介绍如何使用jpackage打包，以及在打包过程中遇到的各种坑。</p>
 <h2 id="1-环境准备"><a href="#1-环境准备" class="headerlink" title="1. 环境准备"></a>1. 环境准备</h2><p>要使用jpackage打包，请确保：</p>
 <ol>
 <li>安装好jdk 14，配置好JAVA_HOME和PATH</li>
-<li>windows平台，请安装<a target="_blank" rel="noopener" href="https://github.com/wixtoolset/wix3">wix3</a></li>
+<li>windows平台，请安装<span class="exturl" data-url="aHR0cHM6Ly9naXRodWIuY29tL3dpeHRvb2xzZXQvd2l4Mw==" title="https://github.com/wixtoolset/wix3">wix3<i class="fa fa-external-link"></i></span></li>
 </ol>
 <p>安装好，打开cmd，执行jpackage -h：</p>
-<p><img src="https://cdn.jsdelivr.net/gh/ravenxrz/PicBed/img/image-20200506083414289.png" alt="image-20200506083414289"></p>
+<p><img data-src="https://cdn.jsdelivr.net/gh/ravenxrz/PicBed/img/image-20200506083414289.png" alt="image-20200506083414289"></p>
 <p>如果有这样的显示，那说明安装成功。注意首行的WARNING，这个不用管，因为jpackage目前还属于一个孵化阶段，所有有这样的提示。</p>
 <p>另外，下文中的所有程序都可放在了github，地址：</p>
-<p><a target="_blank" rel="noopener" href="https://github.com/raven-misc/jpackage-demo">https://github.com/raven-misc/jpackage-demo</a></p>
+<p><span class="exturl" data-url="aHR0cHM6Ly9naXRodWIuY29tL3JhdmVuLW1pc2MvanBhY2thZ2UtZGVtbw==" title="https://github.com/raven-misc/jpackage-demo">https://github.com/raven-misc/jpackage-demo<i class="fa fa-external-link"></i></span></p>
 <h2 id="2-非模块程序打包"><a href="#2-非模块程序打包" class="headerlink" title="2. 非模块程序打包"></a>2. 非模块程序打包</h2><p>先以<strong>非模块程序</strong>为例，新建一个java项目，得到如下目录：</p>
-<p><img src="https://cdn.jsdelivr.net/gh/ravenxrz/PicBed/img/image-20200506085408605.png" alt="image-20200506085408605"></p>
+<p><img data-src="https://cdn.jsdelivr.net/gh/ravenxrz/PicBed/img/image-20200506085408605.png" alt="image-20200506085408605"></p>
 <p>代码：</p>
 <figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">package</span> com.raven;</span><br><span class="line"></span><br><span class="line"><span class="keyword">import</span> java.awt.*;</span><br><span class="line"></span><br><span class="line"><span class="comment">/**</span></span><br><span class="line"><span class="comment"> * <span class="doctag">@author</span> Raven</span></span><br><span class="line"><span class="comment"> * <span class="doctag">@version</span> 1.0</span></span><br><span class="line"><span class="comment"> * <span class="doctag">@date</span> 2020/5/6 8:53</span></span><br><span class="line"><span class="comment"> */</span></span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">App</span> </span>&#123;</span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">main</span><span class="params">(String[] args)</span> </span>&#123;</span><br><span class="line">        Toolkit.getDefaultToolkit().beep();</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br></pre></td></tr></table></figure>
 
 <p>功能很简单，让系统发出beep声。</p>
 <p>然后将这个项目打包成jar包，可以通过命令，也可以直接通过idea，自行选择，我这里采用idea：</p>
-<p><img src="https://pic.downk.cc/item/5eb22654c2a9a83be5ae6281.png" alt="image-20200506085602846"></p>
+<p><img data-src="https://pic.downk.cc/item/5eb22654c2a9a83be5ae6281.png" alt="image-20200506085602846"></p>
 <p>测试一下通过java -jar能否运行：</p>
-<p><img src="https://cdn.jsdelivr.net/gh/ravenxrz/PicBed/img/image-20200506090006946.png" alt="image-20200506090006946"></p>
+<p><img data-src="https://cdn.jsdelivr.net/gh/ravenxrz/PicBed/img/image-20200506090006946.png" alt="image-20200506090006946"></p>
 <p>好的，现在我们将这个jar包打成安装包：</p>
 <p>在根目录下建立一个lib，并把Non-modular-packging-demo.jar复制进lib目录下：</p>
-<p><img src="https://cdn.jsdelivr.net/gh/ravenxrz/PicBed/img/image-20200506090210470.png" alt="image-20200506090210470"></p>
+<p><img data-src="https://cdn.jsdelivr.net/gh/ravenxrz/PicBed/img/image-20200506090210470.png" alt="image-20200506090210470"></p>
 <h3 id="2-1-安装包"><a href="#2-1-安装包" class="headerlink" title="2.1 安装包"></a>2.1 安装包</h3><p>在根目录下，打开你的terminal，执行（命令是执行不成功的，会报311错误，但是先执行看看）：</p>
 <figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">jpackage --name Non-modular-installer --input lib --main-class com.raven.App --main-jar Non-m</span><br><span class="line">odular-packaging-demo.jar</span><br></pre></td></tr></table></figure>
 
@@ -346,7 +347,7 @@
 <p>不过在我使用这条命令时(2020/5/5)，<strong>报了311错误</strong>，源头来自wix。解决方案，在命令后指定vendor，如：</p>
 <figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">jpackage --name Non-modular-installer --input lib --main-class com.raven.App --main-jar Non-m</span><br><span class="line">odular-packaging-demo.jar --vendor raven</span><br></pre></td></tr></table></figure>
 
-<p><img src="https://cdn.jsdelivr.net/gh/ravenxrz/PicBed/img/image-20200506091042775.png" alt="image-20200506091042775"></p>
+<p><img data-src="https://cdn.jsdelivr.net/gh/ravenxrz/PicBed/img/image-20200506091042775.png" alt="image-20200506091042775"></p>
 <p>ok，已经打包成功，试试安装吧（提示，又会有想不到的效果）。</p>
 <p>相信你通过双击安装，已经发现了问题，那就是安装后没有任何效果，没有windows-menu，没有windows快捷键，程序也没有运行启动。但是<strong>控制面板已经找到安装程序了</strong>。我一度以为是自己电脑环境的问题，最后发现在windows平台上还需加上几条命令才行：</p>
 <figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">jpackage --name Non-modular-installer --input lib --main-class com.raven.App --main-jar Non-modular-packaging-demo.jar --vendor raven --win-dir-chooser --win-shortcut --win-menu-group &quot;Non-modular-packaging&quot; --win-menu</span><br></pre></td></tr></table></figure>
@@ -358,34 +359,34 @@
 <li>–win-menu-group,启动该应用程序所在的菜单组(实测无效，但是必须有这条命令，没有–win-menu会报311错误)</li>
 <li>–win-menu，添加到系统菜单中</li>
 </ul>
-<p><img src="https://cdn.jsdelivr.net/gh/ravenxrz/PicBed/img/image-20200506091723697.png" alt="image-20200506091723697"></p>
-<p><img src="https://cdn.jsdelivr.net/gh/ravenxrz/PicBed/img/image-20200506091759019.png" alt="image-20200506091759019"></p>
-<p><img src="https://cdn.jsdelivr.net/gh/ravenxrz/PicBed/img/image-20200506091808728.png" alt="image-20200506091808728"></p>
+<p><img data-src="https://cdn.jsdelivr.net/gh/ravenxrz/PicBed/img/image-20200506091723697.png" alt="image-20200506091723697"></p>
+<p><img data-src="https://cdn.jsdelivr.net/gh/ravenxrz/PicBed/img/image-20200506091759019.png" alt="image-20200506091759019"></p>
+<p><img data-src="https://cdn.jsdelivr.net/gh/ravenxrz/PicBed/img/image-20200506091808728.png" alt="image-20200506091808728"></p>
 <p>现在双击启动程序试试，应该就有beep了。再看看安装目录：</p>
-<p><img src="https://cdn.jsdelivr.net/gh/ravenxrz/PicBed/img/image-20200506092615980.png" alt="image-20200506092615980"></p>
+<p><img data-src="https://cdn.jsdelivr.net/gh/ravenxrz/PicBed/img/image-20200506092615980.png" alt="image-20200506092615980"></p>
 <h3 id="2-2-便携版（无需安装）"><a href="#2-2-便携版（无需安装）" class="headerlink" title="2.2 便携版（无需安装）"></a>2.2 便携版（无需安装）</h3><p>jpackage提供一个选项，可以用来生成镜像（image），而这个镜像就可以充当便携版执行命令和上面基本一致，添加–type app-image命令,删除所有–win-xxx即可：</p>
 <figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">jpackage --name Non-modular-installer --type app-image --input lib --main-class com.raven.App --main-jar Non-modular-packaging-demo.jar --vendor raven</span><br></pre></td></tr></table></figure>
 
-<p><img src="https://cdn.jsdelivr.net/gh/ravenxrz/PicBed/img/image-20200506092833058.png" alt="image-20200506092833058"></p>
+<p><img data-src="https://cdn.jsdelivr.net/gh/ravenxrz/PicBed/img/image-20200506092833058.png" alt="image-20200506092833058"></p>
 <p>内部目录和安装包安装后的目录完全一致，所以直接压缩这个文件夹就有便携版了。</p>
 <h3 id="2-3-便携版–-gt-安装包"><a href="#2-3-便携版–-gt-安装包" class="headerlink" title="2.3 便携版–&gt;安装包"></a>2.3 便携版–&gt;安装包</h3><p>我们打包成镜像后，还可以将镜像转化为安装包（通常发生在我们想对镜像做一些定制化内容时），执行命令:</p>
 <figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">jpackage --name Non-modular-installer --type msi --app-image Non-modular-installer --vendor raven</span><br></pre></td></tr></table></figure>
 
 <p>这里打包成msi:</p>
-<p><img src="https://cdn.jsdelivr.net/gh/ravenxrz/PicBed/img/image-20200506093330774.png" alt="image-20200506093330774"></p>
+<p><img data-src="https://cdn.jsdelivr.net/gh/ravenxrz/PicBed/img/image-20200506093330774.png" alt="image-20200506093330774"></p>
 <h2 id="3-模块程序打包"><a href="#3-模块程序打包" class="headerlink" title="3. 模块程序打包"></a>3. 模块程序打包</h2><p>通过maven新建JavaFX项目，得到如下目录：</p>
-<p><img src="https://cdn.jsdelivr.net/gh/ravenxrz/PicBed/img/image-20200506085023406.png" alt="image-20200506085023406"></p>
+<p><img data-src="https://cdn.jsdelivr.net/gh/ravenxrz/PicBed/img/image-20200506085023406.png" alt="image-20200506085023406"></p>
 <p>运行一下，看下效果：</p>
-<p><img src="https://cdn.jsdelivr.net/gh/ravenxrz/PicBed/img/image-20200506093953328.png" alt="image-20200506093953328"></p>
+<p><img data-src="https://cdn.jsdelivr.net/gh/ravenxrz/PicBed/img/image-20200506093953328.png" alt="image-20200506093953328"></p>
 <p>模块化程序打包就略微复杂一些了，首先明确一点，idea中，有maven在，所有的编译输出不在out目录下，而在target目录下：</p>
-<p><img src="https://cdn.jsdelivr.net/gh/ravenxrz/PicBed/img/image-20200506094133814.png" alt="image-20200506094133814"></p>
+<p><img data-src="https://cdn.jsdelivr.net/gh/ravenxrz/PicBed/img/image-20200506094133814.png" alt="image-20200506094133814"></p>
 <p>除此之外，还需要明确我们当前的模块名：</p>
-<p><img src="https://cdn.jsdelivr.net/gh/ravenxrz/PicBed/img/image-20200506094239319.png" alt="image-20200506094239319"></p>
+<p><img data-src="https://cdn.jsdelivr.net/gh/ravenxrz/PicBed/img/image-20200506094239319.png" alt="image-20200506094239319"></p>
 <p>当前模块名为app。</p>
 <h3 id="2-1-字节码打包"><a href="#2-1-字节码打包" class="headerlink" title="2.1 字节码打包"></a>2.1 字节码打包</h3><p>首先确定依赖的modules，在module-info.java文件中，</p>
-<p><img src="https://cdn.jsdelivr.net/gh/ravenxrz/PicBed/img/image-20200506095324701.png" alt="image-20200506095324701"></p>
+<p><img data-src="https://cdn.jsdelivr.net/gh/ravenxrz/PicBed/img/image-20200506095324701.png" alt="image-20200506095324701"></p>
 <p>生成如下的依赖图：</p>
-<p><img src="https://cdn.jsdelivr.net/gh/ravenxrz/PicBed/img/image-20200506095350078.png" alt="image-20200506095350078"></p>
+<p><img data-src="https://cdn.jsdelivr.net/gh/ravenxrz/PicBed/img/image-20200506095350078.png" alt="image-20200506095350078"></p>
 <p>不用关注java开头和jdk开头的模块，因为它们是系统自带的。也就是所当前app模块直接或间接依赖了：</p>
 <ul>
 <li>javafx.controls</li>
@@ -393,9 +394,9 @@
 <li>javafx.base</li>
 </ul>
 <p>三个模块，现在我们要找到这个三个模块jar包路径，如何找？</p>
-<p><img src="https://cdn.jsdelivr.net/gh/ravenxrz/PicBed/img/image-20200506095511115.png" alt="image-20200506095511115"></p>
+<p><img data-src="https://cdn.jsdelivr.net/gh/ravenxrz/PicBed/img/image-20200506095511115.png" alt="image-20200506095511115"></p>
 <p>在这上面右键–&gt;Show in Exploer即可。</p>
-<p><img src="https://cdn.jsdelivr.net/gh/ravenxrz/PicBed/img/image-20200506095601116.png" alt="image-20200506095601116"></p>
+<p><img data-src="https://cdn.jsdelivr.net/gh/ravenxrz/PicBed/img/image-20200506095601116.png" alt="image-20200506095601116"></p>
 <p>可以看到导航到了我们的maven仓库中，分别记下这三个jar包的路径，如下：</p>
 <figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">C:\Users\Raven\.m2\repository\org\openjfx\javafx-controls\14\javafx-controls-14 win.jar;C:\Users\Raven\.m2\repository\org\openjfx\javafx-base\14\javafx-base-14-win.jar;C:\Users\Raven\.m2\repository\org\openjfx\javafx-graphics\14\javafx-graphics-14-win.jar</span><br></pre></td></tr></table></figure>
 
@@ -410,14 +411,14 @@
 <li>–module-path: 也就是前面让你找的几个依赖模块的jar包路径（以;间隔）+classes（自己的模块）</li>
 <li>-m: 指定主模块及主程序。 app/com.raven.App, “/“前是模块名，”/“后是主程序全路径。</li>
 </ul>
-<p><img src="https://cdn.jsdelivr.net/gh/ravenxrz/PicBed/img/image-20200506100019571.png" alt="image-20200506100019571"></p>
+<p><img data-src="https://cdn.jsdelivr.net/gh/ravenxrz/PicBed/img/image-20200506100019571.png" alt="image-20200506100019571"></p>
 <p>现在还会遇到的问题，在”非模块程序打包“下都已经作了说明，现在补全所有命令：</p>
 <figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">jpackage --name &quot;Modular-installer&quot; --module-path classes;C:\Users\Raven\.m2\repository\org\openjfx\javafx-controls\14\javafx-controls-14-win.jar;C:\Users\Raven\.m2\repository\org\openjfx\javafx-base\14\javafx-base-14-win.jar;C:\Users\Raven\.m2\repository\org\openjfx\javafx-graphics\14\javafx-graphics-14-win.jar -m app/com.raven.App --vendor raven --win-dir-chooser --win-shortcut --win-menu-group &quot;Modular-packaging&quot; --win-menu</span><br></pre></td></tr></table></figure>
 
 <h3 id="2-2-通过jar包打包"><a href="#2-2-通过jar包打包" class="headerlink" title="2.2 通过jar包打包"></a>2.2 通过jar包打包</h3><p>注意到我们上面module-path中有一项是classes，这就是我们自己的模块，我们也可以先将整个模块打包成jar包，然后替换classes。</p>
 <p>有maven，打包就是再简单不过的事了，</p>
-<p><img src="https://cdn.jsdelivr.net/gh/ravenxrz/PicBed/img/image-20200506100337247.png" alt="image-20200506100337247"></p>
-<p><img src="https://cdn.jsdelivr.net/gh/ravenxrz/PicBed/img/image-20200506100405088.png" alt="image-20200506100405088"></p>
+<p><img data-src="https://cdn.jsdelivr.net/gh/ravenxrz/PicBed/img/image-20200506100337247.png" alt="image-20200506100337247"></p>
+<p><img data-src="https://cdn.jsdelivr.net/gh/ravenxrz/PicBed/img/image-20200506100405088.png" alt="image-20200506100405088"></p>
 <p>重新执行命令：</p>
 <figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">jpackage --name &quot;Modular-installer&quot; --module-path Modular-packaging-demo-1.0-SNAPSHOT.jar;C:\Users\Raven\.m2\repository\org\openjfx\javafx-controls\14\javafx-controls-14-win.jar;C:\Users\Raven\.m2\repository\org\openjfx\javafx-base\14\javafx-base-14-win.jar;C:\Users\Raven\.m2\repository\org\openjfx\javafx-graphics\14\javafx-graphics-14-win.jar -m app/com.raven.App --vendor raven --win-dir-chooser --win-shortcut --win-menu-group &quot;Modular-packaging&quot; --win-menu</span><br></pre></td></tr></table></figure>
 
@@ -430,9 +431,9 @@
 <figure class="highlight"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">&lt;plugin&gt;</span><br><span class="line">    &lt;groupId&gt;org.openjfx&lt;/groupId&gt;</span><br><span class="line">    &lt;artifactId&gt;javafx-maven-plugin&lt;/artifactId&gt;</span><br><span class="line">    &lt;version&gt;0.0.3&lt;/version&gt;</span><br><span class="line">    &lt;configuration&gt;</span><br><span class="line">        &lt;mainClass&gt;com.raven.App&lt;/mainClass&gt;</span><br><span class="line">    &lt;/configuration&gt;</span><br><span class="line">&lt;/plugin&gt;</span><br></pre></td></tr></table></figure>
 
 <p>注意版本一定要是0.0.3+。然后点击：</p>
-<p><img src="https://cdn.jsdelivr.net/gh/ravenxrz/PicBed/img/image-20200506102259548.png" alt="image-20200506102259548"></p>
+<p><img data-src="https://cdn.jsdelivr.net/gh/ravenxrz/PicBed/img/image-20200506102259548.png" alt="image-20200506102259548"></p>
 <p>会得到：</p>
-<p><img src="https://cdn.jsdelivr.net/gh/ravenxrz/PicBed/img/image-20200506102410359.png" alt="image-20200506102410359"></p>
+<p><img data-src="https://cdn.jsdelivr.net/gh/ravenxrz/PicBed/img/image-20200506102410359.png" alt="image-20200506102410359"></p>
 <p>在image/bin中打开terminal，执行<code>java --list-modules</code>命令：</p>
 <figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line">app</span><br><span class="line">java.base@14.0.1</span><br><span class="line">java.datatransfer@14.0.1</span><br><span class="line">java.desktop@14.0.1</span><br><span class="line">java.prefs@14.0.1</span><br><span class="line">java.xml@14.0.1</span><br><span class="line">javafx.base</span><br><span class="line">javafx.controls</span><br><span class="line">javafx.graphics</span><br><span class="line">jdk.unsupported@14.0.1</span><br></pre></td></tr></table></figure>
 
@@ -441,7 +442,7 @@
 <figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">jpackage -n Modular-packaging-demo --type msi --runtime-image image --vendor raven</span><br></pre></td></tr></table></figure>
 
 <p>老规矩，如果需要menu，shortcut，自己添加。</p>
-<p><img src="https://cdn.jsdelivr.net/gh/ravenxrz/PicBed/img/image-20200506102742159.png" alt="image-20200506102742159"></p>
+<p><img data-src="https://cdn.jsdelivr.net/gh/ravenxrz/PicBed/img/image-20200506102742159.png" alt="image-20200506102742159"></p>
 <p>细心的同学会发现一个问题，那就是我们手动打包的exe文件对比通过jre打包的文件，体积会小很多。这怎么办呢？</p>
 <p>回想一下，为什么我们要通过插件来打包，<strong>因为我们不想手动找各个模块的依赖路径</strong>。换句话说，只要我能够方便的获取模块的依赖路径就好了。</p>
 <p>好，那怎么办呢？</p>
@@ -449,12 +450,12 @@
 <figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">mvn clean -X javafx:jlink</span><br></pre></td></tr></table></figure>
 
 <p>-X打开debug。最后会得到：</p>
-<p><img src="https://cdn.jsdelivr.net/gh/ravenxrz/PicBed/img/image-20200506103403094.png" alt="image-20200506103403094"></p>
+<p><img data-src="https://cdn.jsdelivr.net/gh/ravenxrz/PicBed/img/image-20200506103403094.png" alt="image-20200506103403094"></p>
 <p>这就是我们的依赖路径了，提取出来，再手动执行jpackage就ok了。</p>
 <h2 id="4-参考"><a href="#4-参考" class="headerlink" title="4. 参考"></a>4. 参考</h2><ul>
-<li><a target="_blank" rel="noopener" href="https://openjdk.java.net/jeps/343">JEP 343: Packaging Tool (Incubator)</a></li>
-<li><a target="_blank" rel="noopener" href="https://www.bilibili.com/video/BV1tz411q7Q1?p=4">JavaFX环境搭建&amp;部署打包</a></li>
-<li><a target="_blank" rel="noopener" href="https://dzone.com/articles/a-brief-example-using-the-early-access-jpackage-ut">Brief Example Using the Early Access jpackage Utility</a></li>
+<li><span class="exturl" data-url="aHR0cHM6Ly9vcGVuamRrLmphdmEubmV0L2plcHMvMzQz" title="https://openjdk.java.net/jeps/343">JEP 343: Packaging Tool (Incubator)<i class="fa fa-external-link"></i></span></li>
+<li><span class="exturl" data-url="aHR0cHM6Ly93d3cuYmlsaWJpbGkuY29tL3ZpZGVvL0JWMXR6NDExcTdRMT9wPTQ=" title="https://www.bilibili.com/video/BV1tz411q7Q1?p=4">JavaFX环境搭建&amp;部署打包<i class="fa fa-external-link"></i></span></li>
+<li><span class="exturl" data-url="aHR0cHM6Ly9kem9uZS5jb20vYXJ0aWNsZXMvYS1icmllZi1leGFtcGxlLXVzaW5nLXRoZS1lYXJseS1hY2Nlc3MtanBhY2thZ2UtdXQ=" title="https://dzone.com/articles/a-brief-example-using-the-early-access-jpackage-ut">Brief Example Using the Early Access jpackage Utility<i class="fa fa-external-link"></i></span></li>
 </ul>
 <p>总算是写完了，从学习modular到遇到各种坑，花了差不多整整一天，就为了打包javafx。总体来说，jpackage还不算成熟，仍有些bug，比如为什么一定要添加vendor，又如为什么–win-menu一定要和–win-menu-group配套。但总体来说能使用。</p>
 
@@ -579,7 +580,7 @@
 
       <!--noindex-->
       <div class="post-toc-wrap sidebar-panel">
-          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#1-%E7%8E%AF%E5%A2%83%E5%87%86%E5%A4%87"><span class="nav-text">1. 环境准备</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#2-%E9%9D%9E%E6%A8%A1%E5%9D%97%E7%A8%8B%E5%BA%8F%E6%89%93%E5%8C%85"><span class="nav-text">2. 非模块程序打包</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#2-1-%E5%AE%89%E8%A3%85%E5%8C%85"><span class="nav-text">2.1 安装包</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#2-2-%E4%BE%BF%E6%90%BA%E7%89%88%EF%BC%88%E6%97%A0%E9%9C%80%E5%AE%89%E8%A3%85%EF%BC%89"><span class="nav-text">2.2 便携版（无需安装）</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#2-3-%E4%BE%BF%E6%90%BA%E7%89%88%E2%80%93-gt-%E5%AE%89%E8%A3%85%E5%8C%85"><span class="nav-text">2.3 便携版–&gt;安装包</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#3-%E6%A8%A1%E5%9D%97%E7%A8%8B%E5%BA%8F%E6%89%93%E5%8C%85"><span class="nav-text">3. 模块程序打包</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#2-1-%E5%AD%97%E8%8A%82%E7%A0%81%E6%89%93%E5%8C%85"><span class="nav-text">2.1 字节码打包</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#2-2-%E9%80%9A%E8%BF%87jar%E5%8C%85%E6%89%93%E5%8C%85"><span class="nav-text">2.2 通过jar包打包</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#2-3-%E6%89%93%E5%8C%85%E6%88%90%E9%95%9C%E5%83%8F%EF%BC%88%E4%BE%BF%E6%90%BA%E7%89%88%EF%BC%89"><span class="nav-text">2.3 打包成镜像（便携版）</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#2-4-%E5%AE%9A%E5%88%B6jre%EF%BC%8C%E8%87%AA%E5%AE%9A%E4%B9%89jlink%EF%BC%8C%E6%8F%92%E4%BB%B6%E5%8C%96%EF%BC%88%E6%8E%A8%E8%8D%90%E6%89%93%E5%8C%85%E6%96%B9%E5%BC%8F%EF%BC%89"><span class="nav-text">2.4 定制jre，自定义jlink，插件化（推荐打包方式）</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#4-%E5%8F%82%E8%80%83"><span class="nav-text">4. 参考</span></a></li></ol></div>
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#1-环境准备"><span class="nav-text">1. 环境准备</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#2-非模块程序打包"><span class="nav-text">2. 非模块程序打包</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#2-1-安装包"><span class="nav-text">2.1 安装包</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#2-2-便携版（无需安装）"><span class="nav-text">2.2 便携版（无需安装）</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#2-3-便携版–-gt-安装包"><span class="nav-text">2.3 便携版–&gt;安装包</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#3-模块程序打包"><span class="nav-text">3. 模块程序打包</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#2-1-字节码打包"><span class="nav-text">2.1 字节码打包</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#2-2-通过jar包打包"><span class="nav-text">2.2 通过jar包打包</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#2-3-打包成镜像（便携版）"><span class="nav-text">2.3 打包成镜像（便携版）</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#2-4-定制jre，自定义jlink，插件化（推荐打包方式）"><span class="nav-text">2.4 定制jre，自定义jlink，插件化（推荐打包方式）</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#4-参考"><span class="nav-text">4. 参考</span></a></li></ol></div>
       </div>
       <!--/noindex-->
 
