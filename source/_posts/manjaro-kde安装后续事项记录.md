@@ -1,0 +1,166 @@
+---
+title: manjaro-kde安装后续事项记录
+categories: Linux
+tags: manjaro
+abbrlink: c8147f45
+date: 2020-06-08 10:55:23
+---
+
+本博文主要写给自己做记录，其它朋友也作为参考。
+
+## 1. 更新源
+
+安装任何linux发行版后（除非是国内开发的发行版，如deepin），第一步做的就是切换到国内源，manjaro也不例外:
+
+```shell
+sudo pacman-mirrors -i -c China -m rank 
+```
+
+添加archlinux源：
+
+```
+suo /etc/pacman.conf
+## 中国科学技术大学 (ipv4, ipv6, http, https)
+[archlinuxcn]
+Server = https://mirrors.ustc.edu.cn/archlinuxcn/$arch
+```
+
+更新：
+
+```shell
+sudo pacman -Syyu
+```
+
+<!--more-->
+
+## 2. 添加必要软件
+
+1. vim, google-chrome, rime输入法
+
+```shell
+sudo pacman -S vim google-chrome fcitx-rime
+```
+
+输入法需要配置一下，在~/.xprofile中添加:
+
+```
+# fcitx
+export GTK_IM_MODULE=fcitx
+export XMODIFIERS=@im=fcitx
+export QT_IM_MODULE=fcitx
+```
+
+注销重登录(或重启)。
+
+rime 输入法配置，直接从自己的nutstore上拉下配置，放到 `~/.config/fcitx/rime`下，重新部署rime即可。
+
+删除firefox。
+
+2. 添加yay或yaourt 以aur。 或者manjaro自带的包管理gui工具也很好使用，手动打开aur就行。
+
+```shell
+sudo pacman -S yay # 或yaourt
+```
+
+3. electron-ssr ， 这个就不说了，要想chrome同步，总得有个工具吧。
+
+```shell
+yay -S electron-ssr
+```
+
+ok，有了上述软件，其余的就比较简单了。
+
+4. zsh & on-my-zsh安装及终端配置
+
+参考：https://www.ravenxrz.ink/archives/6c55eca4.html
+
+终端主要是配置 颜色方案和字体大小，按照个人喜好即可。
+
+update: 个人将Breath2 换为 Breath。
+
+![](https://pic.downk.cc/item/5edda5ebc2a9a83be5dc28d1.png)
+
+5. netease-music, vscode及相关配置。
+
+vscode下载Settings Sync插件即可。
+
+6. redshift 安装
+
+linux下类似windows平台的flux软件，用于护眼。下载安装后，需要配置一下：
+
+```shell
+sudo vim /etc/geoclue/geoclue.conf 
+# 填写
+[redshift]
+allowed=true
+system=false
+users=
+```
+
+```shell
+mkdir ~/.config/redshift
+vim ~/.config/redshift.conf
+
+# 填写
+; Global settings for redshift
+[redshift]
+; Set the day and night screen temperatures
+temp-day=4300
+temp-night=3500
+```
+
+7. 下载工具
+
+xdman ，类似于windows平台的idm
+
+这个用manjaro自带的包管理工具下载。yay和yaourt我都build失败了，不知道为什么。
+
+记得开启aur。
+
+![](https://pic.downk.cc/item/5edda47ec2a9a83be5d8d6bf.png)
+
+和idm差不多，多线程下载，支持代理，支持视频抓取，集成浏览器插件，代理所有下载。very nice~。
+
+update: xdman似乎不支持高分屏, 目前已更换为**Persepolis**.
+
+8. 截图工具
+
+这里暂时用了deepin的截图工具，等待snipaste的linux版本。
+
+安装:
+
+```shell
+sudo pacman -S deepin-screenshot  
+```
+
+update: 改用flameshot
+
+```
+sudo pacman -S flameshot
+```
+
+下面的命令改用flameshot gui即可。
+
+配置快捷键：
+
+![](https://pic.downk.cc/item/5edda503c2a9a83be5da0f25.png)
+
+选custom shortcuts:
+
+![](https://pic.downk.cc/item/5edda561c2a9a83be5daf28a.png)
+
+![](https://pic.downk.cc/item/5edda59dc2a9a83be5db75d3.png)
+
+9. qq-linux，虽然及其简陋，但是也算能用。
+
+10. 剪切板历史配置
+
+    manjaro居然自带了这个功能，类似于windows下载ditto，超爱。
+
+    ![](https://pic.downk.cc/item/5edda7aac2a9a83be5e052f9.png)
+
+    ![](https://pic.downk.cc/item/5edda770c2a9a83be5dfdcad.png)
+
+
+
+剩下的就是按照自己喜好安装了。如：idea, pdf阅读器，git客户端等等。

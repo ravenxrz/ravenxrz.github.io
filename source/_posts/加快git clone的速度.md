@@ -1,0 +1,50 @@
+---
+title: 加快git clone的速度
+tags: 
+	- git clone
+categories: 杂文
+abbrlink: fd5e897c
+date: 2019-10-31 16:44:11
+---
+作为全球最大的同性交友网站，github几乎是每个程序员天天打交道的地方。clone别人开源的代码仓库是再正常不过的事情。然而github服务器毕竟在国外，这就造成了我们clone的速度非常慢，从几K到几时K不等。所以有必要说一下如何提速。
+
+<!-- more -->
+
+## 1. 设置
+
+既然服务器在国外，首先想到的当然是挂代理啦。所以，请确保你有一个ss/ssr账号。
+
+然后打开cmd窗口,输入:
+
+```
+git config --global http.proxy socks5://127.0.0.1:1080
+git config --global https.proxy socks5://127.0.0.1:1080
+```
+
+注意末尾是1080端口，这是默认ss所会占用的端口，但是如果你非常幸运不是默认的端口，怎么去查看shaowsocksR所占用的端口呢。
+
+1. 找到ssr的pid
+
+   打开cmd，输入`tasklist`，找到shadowsocksR，旁边那个数字就是pid了。
+
+   ![](https://pic.superbed.cn/item/5dbaa12abd461d945a7d03a3.jpg)
+
+2. 得到所占用的端口，输入`netstat -ano | findstr "pid"`，这里的pid替换为你在第一步中得到的pid号，如我这里就是11916，然后就可以得到端口了。
+
+   ![](https://pic.superbed.cn/item/5dbaa188bd461d945a7d07f0.jpg)
+
+最后把命令行中的端口改为对应的端口号就行了。
+
+## 2. 检验
+
+看你设置是否成功，首先进入用户目录下,C:\User\用户名，然后打开.gitconfig文件，看是否是下面这个样子：
+
+![](https://pic.superbed.cn/item/5dbaa207bd461d945a7d0ca0.jpg)
+
+如果有http，https对应的项，那就是设置成功了。现在来clone一个仓库试试：
+
+![](https://pic.superbed.cn/item/5dbaa25dbd461d945a7d10a1.jpg)
+
+可以看到速度基本可以达到MB级别以上。
+
+ok，good luck。

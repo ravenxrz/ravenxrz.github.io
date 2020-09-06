@@ -1,0 +1,55 @@
+---
+title: Linux内核学习踩坑日记-为你的主机加上Linux内核APi手册
+categories: Linux
+toc: true
+abbrlink: a5232e28
+date: 2019-04-02 13:58:08
+tags:
+	- 内核手册
+---
+
+
+> 初入Linux内核世界，和在应用层面编程的感觉大不相同，没有好用IDE, 还要阅读大量复杂的linux源码。想着至少要有个Linux Kernel 的APi吧，不然编程真的好难受，所以就有了这篇文章。
+
+经过一番百度，安装内核的`Api`大多数需要在Linux源码根目录下执行`make mandocs`命令，大多数情况下都能执行成功，但是我就是这么不幸地被提示没有`mandocs`这个目标可生成。。**经过一番百度，无果。**
+想着会不会是我的Linux版本太高，所以不行（当时使用的版本是`4.15.x`)。更换为`3.x`的内核以后，确实能够生成了，但是不知道是不是我的脸比较黑，`3.x`的内核对`Ubuntu18`的支持不大友好，鼠标移动时光标乱晃，而且很卡，所以没办法又从找了个`4.14`的内核，还是没有。最后更换为了`4.9.x`的内核，终于能够生成。
+<!-- more -->
+如何检测自己的`Linux`版本能不能生成`mandocs`呢？
+
+其实可以在`Linux`源码路径下执行`make help`命令，如果看到:
+
+![在这里插入图片描述](https://pic3.superbed.cn/item/5cfbae96451253d178d962ea.png)
+就是可以生成（该截图来自内核4.9.x)。
+**否则，就需要更换内核**。
+
+# OK，废话了这么多。来说一下怎么安装：
+
+**step1:** 用上文提到的`make help`命令，确定自己的`linux`内核可以生成`mandocs`
+
+**step2:** 安装xmlto：`sudo apt install xmlto`
+
+**step3:** 到源码路径下面执行`make mandocs` 需要等一段时间
+
+**step4:** 安装mandocs: `sudo make installmandocs` 继续等待一段时间..
+
+如果以上你都成功了，那么在`/usr/local/man`路径下应该有一个`man9`的目录，如下图。
+
+![在这里插入图片描述](https://pic.superbed.cn/item/5cfbae9c451253d178d96361.png)
+
+执行 `man kmalloc`看下安装成功没，如果是下图，那么恭喜你，你可以溜了。
+
+![在这里插入图片描述](https://pic.superbed.cn/item/5cfbae9d451253d178d96395.png)
+
+然而我就是这么脸黑，经历过更换多个内核，好不容易把`mandocs`安装成功了，但是使用`man kmalloc`的时候，**显示出来的却是一片空白**，甚至连普通的`ls,find`等指令全都不见了。经过一波`google`，终于找到了解决方案：
+```
+    sudo apt install apparmor-utils
+    
+    sudo aa-disable /usr/bin/man
+```
+
+这应该是`ubuntu`更新后的一个`bug`。不过所幸有解决方案。
+
+至此，你就可以使用man命令查`Kernel`的`api`啦。
+
+
+

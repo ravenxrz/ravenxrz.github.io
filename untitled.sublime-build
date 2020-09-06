@@ -1,0 +1,3 @@
+{
+	"hexo build": "hexo clean && hexo g && hexo d"
+}

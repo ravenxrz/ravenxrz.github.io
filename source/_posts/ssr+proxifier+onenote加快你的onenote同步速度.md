@@ -1,0 +1,112 @@
+---
+title: ssr+proxifier+onenote加快你的onenote同步速度
+categories: 杂文
+toc: true
+thumbnail: /thumbnails/plant.jpg
+abbrlink: 8db8ac8b
+date: 2019-09-13 13:58:15
+tags: 
+	- ssr
+	- proxifier
+	- onenote
+---
+
+从本文中你可以学到：
+
+- 如何开启pc的全局代理
+- 如何开启pc中个别程序的单独代理（玩游戏，onenote同步可使用）
+<!-- more -->
+## 0. 前言
+本文所说的onenote，特指onenote2016。onenote uwp版本（即win10上的版本）已不存在同步问题，基本上是秒同步了，但是uwp版本阉割了很多功能,也不知道微软咋想的。。。。
+
+新学期开始啦，从这学期开始上课都在用ipad做笔记，笔记类应用当然是首推onenote，然而onenote的最大诟病就是他这鸡肋的同步速度，pc与ipad之间的同步总是要等很久才能完成。于是各种百度谷歌，网上的方法差不多有这几种：
+
+1. 注册微软商业用户，每月30不说（现在好像是35了），还得将原来账户上的所有笔记搬到这上面来，有点麻烦，但是效果肯定是最好的。
+
+2. 使用酸酸乳，更改user-rule.txt文档（该文件在你的酸酸乳软件的根目录下）为:
+
+   ```
+   ! Put user rules line by line in this file.
+   ! See https://adblockplus.org/en/filter-cheatsheet
+   ! OneNote Start
+   .officeapps.live.com
+   .docs.live.net
+   ! OneNote End
+   ```
+
+3. 开手机热点，然后连接手机的热点来同步。
+
+由于我就一学生党，第一个方法就不考虑了。后面两个方法都试了，但是均没有效果，所以又是一阵百度，最后发现了使用proxifier这款软件搭配ssr可以大幅提升onenote的同步速度。下面就来说说如何操作吧。
+
+## 1. proxifier配置
+
+### 1.1 什么是proxifier？
+
+说proxifier之前，先说说我们平常使用的酸酸乳，它是一款基于socks5的代理软件，但是它不像vpn那样能够代理全局，常见的情况下，酸酸乳仅能代理浏览器。有同学说，我在酸酸乳中开了全局代理啊，咋就不是全局代理了？那我们就来验证一下，其实要验证很简单，打开你的cmd，ping一下google，ping得通，ok，那你可能的确是全局代理了。
+
+![](https://ae01.alicdn.com/kf/Hfb5fe0522ab84a64adc168354ed7a7dcv.jpg)
+
+相信99.9%的同学都ping不通吧。这时就需要proxifier出场了。
+
+> Proxifier是一款功能非常强大的socks5客户端，可以让不支持通过[代理服务器](https://baike.baidu.com/item/代理服务器/97996)工作的网络程序能通过HTTPS或SOCKS代理或代理链。 -- 摘自《百度百科》
+
+也就说让原本不支持socks代理的程序，现在也能支持了。换言之，**原来即使开着酸酸乳也不走代理的软件，现在也能走代理了。**
+
+### 1.1 下载proxifier
+
+proxifier原本是一款收费的软件，不够又怎能奈何国内的强大破解呢。可从下面这个链接下载：http://soft.onlinedown.net/soft/971579.htm
+
+下载以后，一路安装即可。
+
+### 1.2 配置
+
+打开proxifier，首先配置代理服务器：
+
+![](https://ae01.alicdn.com/kf/H7d7405b93a414ce8bb9c2080f19ea286v.jpg)
+
+![](https://ae01.alicdn.com/kf/H20ba309ae41b48a9b68e991d1e0e4516b.jpg)
+
+![](https://ae01.alicdn.com/kf/Hb4af7c1157ad495d8327b5937729b0abx.jpg)
+
+地址填写127.0.0.1,端口填写1080，协议选socks5，最后确定即可。
+
+接着配置代理规则：
+
+![](https://ae01.alicdn.com/kf/H13e1a3dc9c624a47afad9afd34df4860u.jpg)
+
+![](https://ae01.alicdn.com/kf/Hb37d450731fa4c21921a125789e3065cP.png)
+
+如果要要所有应用全都走代理，就像如下配置：
+
+![](https://ae01.alicdn.com/kf/He1333e6853674779befed5d0c46844c01.jpg)
+
+名称可以随意取，动作选择Proxy SOCKS5，确定即可。
+
+![](https://ae01.alicdn.com/kf/H843c8f44d1bb4186b97177369df46236u.png)
+
+现在再打开cmd，来ping一下？
+
+![](https://ae01.alicdn.com/kf/H865124e87b494acebeeb4a3889717645S.jpg)
+
+可以看到我们已经ping通google了。
+
+当然了，不是所有应用都需要走代理的，我们当然也可以只针对某个应用来单独设置，这里就针对onenote来设置，也就是本文的最初目的，加快onenote的同步：
+
+回到增添规则的菜单：
+
+![](https://ae01.alicdn.com/kf/Hf5091a5de48e4b44b2d1a6b132108f09g.jpg)
+
+我这里通过浏览，增添了onenote和onedrive，确定，回到上一级，关掉all的规则，打开onenote规则，如图：
+
+![](https://ae01.alicdn.com/kf/Hebab826439a145ca92f0cee5dfecb34a2.jpg)
+
+现在打开onenote，随便写点什么让它同步，或者加点图片，这样才能看得出效果，如下图：
+
+![](https://ae01.alicdn.com/kf/H7fda71fbe1ea439cb3d3845ae3ab8e44k.jpg)
+
+当你在onenote中同步时，proxifier就会打印相应的log，这里可以看到onenote的确走了酸酸乳的代理。
+
+## 参考
+
+- [Windows使用shadowsocks和Proxifier实现为电脑上任何一个程序代理 ](https://my.oschina.net/u/1427693/blog/739108)
+- [Windows 软件推荐：Proxifier（大幅度提高 OneDrive、OneNote 这类软件的同步速度）](http://maybeiwill.me/proxifier/)

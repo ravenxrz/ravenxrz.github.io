@@ -1,0 +1,153 @@
+---
+title: Deepin安装后续事项记录
+categories: Linux
+abbrlink: 8134a50f
+date: 2020-07-21 14:18:35
+tags:
+---
+
+manjaro是个人最喜欢的linux发行版，但是给我的台式机安装后，总是死机，无奈暂时转入deepin。
+
+> 后来发现manjaro死机，应该是给cpu超频的原因, 因为deepin也死机了，关闭超频后，一切正常，但是已经在deepin上安装好了各种环境，不想再更换回去。
+
+本文依然是自己给自己的备份。
+
+<!--more-->
+
+安装流程：
+
+1. 更新仓库
+
+   ```shell
+   sudo apt update &&　sudo apt ugprade -y
+   ```
+
+2. 几个前提软件：vim ,google-chrome, fcitx-rime
+
+   ```shell
+   sudo apt install vim google-chromme-stable fcitx-rime 
+   ```
+
+   如果有fcitx-rime的备份，拉下备份即可，路径：
+
+   ```
+   ~/.config/fcitx/rime
+   ```
+
+3. zsh+oh-myz-zsh配置：https://www.ravenxrz.ink/archives/6c55eca4.html
+
+4. electron--ssr，要使用chrome，得先同步一下，地址:https://github.com/qingshuisiyuan/electron-ssr-backup/releases/download/v0.2.6/electron-ssr-0.2.6.deb
+
+ok,有了这几个，后面就会容易很多。
+
+openjdk , vscode， idea，clion，netease-clound-music, Persepolis, **copyQ**， barrier（两台物理机共用一套键鼠，个人目前台式机linux做开发，笔记本windows办公），wps（应急用）,tldr(快速查命令手册), gitkraken, okular(pdf阅读器)
+
+自定义快捷键：
+
+控制面板->键盘和语言->快捷键：
+
+- 截图--F2
+- 终端雷神模式-F12
+
+## **一些问题：**
+
+**fcitx开机候选字体过小：**
+
+![](https://cdn.jsdelivr.net/gh/ravenxrz/PicBed/img/5f15095614195aa594196163.jpg)
+
+**copyQ窗口显示快捷键设置：**
+
+1. 打开copyQ应用程序
+2. F6
+3. 添加
+4. 显示/隐藏主窗口
+5. 添加全局快捷键(Ctrl+`)， 和windows上的ditto保持一致。
+
+更多copyQ问题：https://copyq.readthedocs.io/en/latest/faq.html
+
+**deepin风扇声音巨大：**
+
+windows下，我的台式机几乎是静音，但是deepin（也包括manjaro)风扇声音巨大。查看系统资源占用，cpu, memory, disk都很低，最终觉得可能是gpu的风扇问题，无法方便的查看gpu占用率，于是安装：
+
+```shell
+nvidia-smi
+```
+
+安装这个软件包，会自动安装一些nvidia的模块，安装后重启，发现已经没有风扇声音了。
+
+**开机自动的问题：**
+
+有时候哦需要添加一些开机自动的软件或者脚本。这一点deepin做的还是相当不错的，对于gui的应用，可以通过 右键->添加到开机自启动来做。对于脚本，个人安装的的是zsh terminal，所以对应到.zshrc文件，可以直接在该文件中添加脚本，考虑到可维护性的问题，可以手动建立一个.myautostartup.sh脚本，然后在.zshrc文件中添加：
+
+```shell
+source ~/.myautostartup.sh
+```
+
+以后所有的要开机自启动的脚本直接在myautostartup.sh添加即可。
+
+额外说一下barriers的配置脚本：
+
+```shell
+/usr/bin/barriers --no-tray --debug INFO --name raven-desktop-deepin --enable-crypto -c ~/.barrier_config --address :24800 
+```
+
+.barrier_config文件：
+
+```
+section: screens
+	raven-desktop-deepin:
+		halfDuplexCapsLock = false
+		halfDuplexNumLock = false
+		halfDuplexScrollLock = false
+		xtestIsXineramaUnaware = false
+		switchCorners = none 
+		switchCornerSize = 0
+	raven-laptop-win:
+		halfDuplexCapsLock = false
+		halfDuplexNumLock = false
+		halfDuplexScrollLock = false
+		xtestIsXineramaUnaware = false
+		switchCorners = none 
+		switchCornerSize = 0
+	raven-laptop-manjaro:
+		halfDuplexCapsLock = false
+		halfDuplexNumLock = false
+		halfDuplexScrollLock = false
+		xtestIsXineramaUnaware = false
+		switchCorners = none 
+		switchCornerSize = 0
+end
+
+section: aliases
+end
+
+section: links
+	raven-desktop-deepin:
+		right = raven-laptop-win
+	raven-laptop-win:
+		left = raven-desktop-deepin
+		down = raven-laptop-manjaro
+	raven-laptop-manjaro:
+		up = raven-laptop-win
+end
+
+section: options
+	relativeMouseMoves = false
+	screenSaverSync = true
+	win32KeepForeground = false
+	clipboardSharing = true
+	switchCorners = none 
+	switchCornerSize = 0
+end
+
+```
+
+**qt creator高分屏显示问题**
+
+![](https://cdn.jsdelivr.net/gh/ravenxrz/PicBed/img/5f150c1114195aa5941a289e.jpg)
+
+**vim，ideavim，qtvim配置**
+
+terminal的vim，采用：https://github.com/amix/vimrc 配置
+
+ideavim和qtvim采用：https://gist.github.com/ravenxrz/dba8dd0c1eba4bb039f008f56867e083

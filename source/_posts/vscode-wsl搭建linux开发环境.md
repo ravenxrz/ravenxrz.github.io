@@ -1,0 +1,47 @@
+---
+title: vscode+wsl搭建linux开发环境
+categories: 杂文
+tags: 开发工具
+abbrlink: 960b6cb
+date: 2020-06-06 20:35:36
+---
+
+本篇博客仅写给自己做备份查看用。
+
+背景：
+
+- 第n次放弃vscode又重新拾起，认真找了个系统视频看完后，现在感觉确实蛮香的；
+- 开虚拟机做linux开发，对于我的旧笔记本来说太难受了；
+- windows 的 linux子系统尝鲜。
+
+<!-- more -->
+
+### 1.安装windows的linux子系统。
+
+参考:https://docs.microsoft.com/en-us/windows/wsl/install-win10
+
+**安装wsl2.**
+
+尽量安装最新的系统，如ubuntu20.
+
+**必要的配置：**
+
+- 换源，参考：https://www.ravenxrz.ink/archives/32b1479.html
+- 安装必要组件，build-essential, cmake等。
+- 安装必要vim插件，写点配置，小脚本需要vim。参考：https://github.com/amix/vimrc
+- 安装zsh和oh-my-zsh， 参考：https://www.ravenxrz.ink/archives/6c55eca4.html
+
+ok，基本需要的东西都搞定了。
+
+### 2. 安装vscode
+
+自行官网下载。
+
+下载后第一步安装，Settings sync插件，把自己的设置从gist中拉下来。
+
+从Remote-WSl插件slidebar中，打开wsl。
+
+![image-20200606204430438](https://cdn.jsdelivr.net/gh/ravenxrz/PicBed/img/image-20200606204430438.png)
+
+然后就可以愉快的进行开发了。
+

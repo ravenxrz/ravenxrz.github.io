@@ -1,0 +1,34 @@
+---
+title: 解决matlab导出图片不清晰的方法
+categories: 杂文
+toc: true
+abbrlink: dbe95ce6
+date: 2019-05-27 13:59:14
+tags:
+	- matlab
+	- 图片
+---
+
+
+> 今天在使用matlab绘图时发现导出的图片并不清晰，百度了一番，发现了两种解决方案。
+
+<!-- more -->
+## 方法一：通过编辑->复制图片解决
+
+如图：
+
+![](https://pic.superbed.cn/item/5cfbaea5451253d178d9641c.png)
+
+缺点：不能直接导出图片文件
+
+## 方法二：设置渲染模式
+
+这个方法对我来说没用。不过你可以试试。
+
+Step1:打开图片导出设置：
+
+![](https://pic.superbed.cn/item/5cfbaea6451253d178d9644f.png)
+
+Step2:  设置为矢量:
+
+![](https://pic.superbed.cn/item/5cfbaea8451253d178d9648b.png)

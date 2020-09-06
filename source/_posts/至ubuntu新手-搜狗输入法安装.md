@@ -1,0 +1,90 @@
+---
+title: 至ubuntu新手-搜狗输入法安装
+categories: Linux
+toc: true
+abbrlink: 2535dbde
+date: 2019-05-03 13:59:12
+tags:
+	- 输入法
+	- Ubuntu
+---
+
+
+对于`Ubuntu`的初学者来说，来到`Ubuntu`众多不习惯之一就是没有好用的输入法了。所以这里介绍一下如何在`Ubuntu`下安装搜狗输入法。
+
+### step1 到搜狗输入法官网下载linux版本安装包
+
+网址：https://pinyin.sogou.com/linux/?r=pinyin。
+根据自己操作系统的版本选择32还是64位的os。一般情况个人使用都是64位的了，只有部分实验室平台还在使用32位。
+
+最后可以得到一个`deb`包。暂时不安装。
+<!-- more -->
+### step2 安装各个fcitx包
+
+打开你的`ubuntu software`
+
+![在这里插入图片描述](https://pic.superbed.cn/item/5cfbaea9451253d178d964c7.png)
+在搜索框搜索`fcitx`:
+
+![在这里插入图片描述](https://pic1.superbed.cn/item/5cfbaeab451253d178d96512.png)
+如果你的搜索框搜索出有上述结果就**全部安装**，如果没有就需要**更换源**：
+
+这里说一下更换源的方法，一般来说更换源的方法其实都是更改下面这个文件里面的内容：
+
+![在这里插入图片描述](https://pic.superbed.cn/item/5cfbaeac451253d178d9654c.png)
+这就分为手动更新和采用ubuntu自动选项更新了。我就比较懒了，一般使用`ubuntu`自带方式更新，方法如下：
+
+1.打开`ubuntu software`：
+![在这里插入图片描述](https://pic.superbed.cn/item/5cfbaeae451253d178d96586.png)
+
+选择`software&updates`。得到如下界面:
+
+![在这里插入图片描述](https://pic1.superbed.cn/item/5cfbaeb5451253d178d96651.png)
+更改中间的Download from，我这里已经更改为阿里云的了，一般来说国内用阿里，163，搜狐的都还不错。具体使用哪个就看你自己咯。
+
+选择完后，在终端执行:
+
+```
+sudo apt update
+sudo apt upgrade
+```
+
+跑完再去`ubuntu software`中搜索`fcitx`应该就没问题了。
+
+### step3 安装搜狗输入法包
+
+找到你在第一步中下载的安装包，双击或者使用终端执行`sudo dpkg -i xxxx.deb`(xxx 代表搜狗的那个包名)安装。在**这之中可能会出现安装出错，未完成安装**。这时候在终端执行`sudo apt install -f`即可。安装完成后**关机重启**。
+
+### step4 切换输入源
+打开设置中心，我这里以ubuntu18为例，其他版本差不多。
+找到语言设置
+![在这里插入图片描述](https://pic.superbed.cn/item/5cfbaeb6451253d178d96683.png)
+打开“管理已安装语言”：
+![在这里插入图片描述](https://pic3.superbed.cn/item/5cfbaeb8451253d178d966b9.png)
+更改**Keyborad input method system** 为 **fcitx**。
+
+### step5 配置输入法
+
+终于到了最后一步，打开`fcitx config Tool`:
+
+![在这里插入图片描述](https://pic.superbed.cn/item/5cfbb467451253d178d9aeba.png)
+
+通过点击+号，找到搜狗输入法添加即可，不过推荐面板上再添加一个英文输入法，因为不论是编程还是敲命令都是用英文的嘛。方便切换。
+
+ok，安装至此算是结束了，快去看看是否可以使用了吧。
+
+![在这里插入图片描述](https://pic.superbed.cn/item/5cfbb469451253d178d9aef6.png)
+
+### 一些额外的问题：
+FAQ：为什么我的fcitx CPU占用率很高？如下图:
+![在这里插入图片描述](https://pic.superbed.cn/item/5cfbb46b451253d178d9af40.png)
+这其实是搜狗云输入的问题，打开 fcitx config tool，找到附件项(Addon)：
+
+![在这里插入图片描述](https://pic.superbed.cn/item/5cfbb46c451253d178d9af75.png)
+勾选高级选项，并取消搜狗云输入即可:
+![在这里插入图片描述](https://pic.superbed.cn/item/5cfbb46e451253d178d9afa9.png)
+最后重启。
+
+虽然搜狗输入法还有一些莫名的bug，比如输入的时候显示全是乱的，切换卡顿等等。不过，笔者也使用过IBus的输入方式，安装方式简单一些，但是输入效果和搜狗完全没得比。综合来看，还是选择搜狗吧。
+
+
