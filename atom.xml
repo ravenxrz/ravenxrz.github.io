@@ -42,28 +42,6 @@
   </entry>
   
   <entry>
-    <title>Hello World</title>
-    <link href="https://www.ravenxrz.ink/archives/undefined.html"/>
-    <id>https://www.ravenxrz.ink/archives/undefined.html</id>
-    <published>2020-09-06T03:31:09.751Z</published>
-    <updated>2020-09-06T03:31:09.751Z</updated>
-    
-    <content type="html"><![CDATA[<p>Welcome to <span class="exturl" data-url="aHR0cHM6Ly9oZXhvLmlvLw==" title="https://hexo.io/">Hexo<i class="fa fa-external-link"></i></span>! This is your very first post. Check <span class="exturl" data-url="aHR0cHM6Ly9oZXhvLmlvL2RvY3Mv" title="https://hexo.io/docs/">documentation<i class="fa fa-external-link"></i></span> for more info. If you get any problems when using Hexo, you can find the answer in <span class="exturl" data-url="aHR0cHM6Ly9oZXhvLmlvL2RvY3MvdHJvdWJsZXNob290aW5nLmh0bWw=" title="https://hexo.io/docs/troubleshooting.html">troubleshooting<i class="fa fa-external-link"></i></span> or you can ask me on <span class="exturl" data-url="aHR0cHM6Ly9naXRodWIuY29tL2hleG9qcy9oZXhvL2lzc3Vlcw==" title="https://github.com/hexojs/hexo/issues">GitHub<i class="fa fa-external-link"></i></span>.</p><h2 id="Quick-Start"><a href="#Quick-Start" class="headerlink" title="Quick Start"></a>Quick Start</h2><h3 id="Create-a-new-post"><a href="#Create-a-new-post" class="headerlink" title="Create a new post"></a>Create a new post</h3><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ hexo new <span class="string">&quot;My New Post&quot;</span></span><br></pre></td></tr></table></figure><p>More info: <span class="exturl" data-url="aHR0cHM6Ly9oZXhvLmlvL2RvY3Mvd3JpdGluZy5odG1s" title="https://hexo.io/docs/writing.html">Writing<i class="fa fa-external-link"></i></span></p><h3 id="Run-server"><a href="#Run-server" class="headerlink" title="Run server"></a>Run server</h3><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ hexo server</span><br></pre></td></tr></table></figure><p>More info: <span class="exturl" data-url="aHR0cHM6Ly9oZXhvLmlvL2RvY3Mvc2VydmVyLmh0bWw=" title="https://hexo.io/docs/server.html">Server<i class="fa fa-external-link"></i></span></p><h3 id="Generate-static-files"><a href="#Generate-static-files" class="headerlink" title="Generate static files"></a>Generate static files</h3><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ hexo generate</span><br></pre></td></tr></table></figure><p>More info: <span class="exturl" data-url="aHR0cHM6Ly9oZXhvLmlvL2RvY3MvZ2VuZXJhdGluZy5odG1s" title="https://hexo.io/docs/generating.html">Generating<i class="fa fa-external-link"></i></span></p><h3 id="Deploy-to-remote-sites"><a href="#Deploy-to-remote-sites" class="headerlink" title="Deploy to remote sites"></a>Deploy to remote sites</h3><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ hexo deploy</span><br></pre></td></tr></table></figure><p>More info: <span class="exturl" data-url="aHR0cHM6Ly9oZXhvLmlvL2RvY3Mvb25lLWNvbW1hbmQtZGVwbG95bWVudC5odG1s" title="https://hexo.io/docs/one-command-deployment.html">Deployment<i class="fa fa-external-link"></i></span></p>]]></content>
-    
-    <summary type="html">
-    
-      
-      
-        &lt;p&gt;Welcome to &lt;span class=&quot;exturl&quot; data-url=&quot;aHR0cHM6Ly9oZXhvLmlvLw==&quot; title=&quot;https://hexo.io/&quot;&gt;Hexo&lt;i class=&quot;fa fa-external-link&quot;&gt;&lt;/i&gt;&lt;/spa
-      
-    
-    </summary>
-    
-    
-    
-  </entry>
-  
-  <entry>
     <title>Csapp-Malloclab题解</title>
     <link href="https://www.ravenxrz.ink/archives/36920455.html"/>
     <id>https://www.ravenxrz.ink/archives/36920455.html</id>
@@ -553,6 +531,39 @@
     
     
       <category term="aria2" scheme="https://www.ravenxrz.ink/tags/aria2/"/>
+    
+  </entry>
+  
+  <entry>
+    <title>潘多拉（Openwrt）固件无线中继&amp;无线桥接设置方法</title>
+    <link href="https://www.ravenxrz.ink/archives/2c9084de.html"/>
+    <id>https://www.ravenxrz.ink/archives/2c9084de.html</id>
+    <published>2020-05-02T02:46:40.000Z</published>
+    <updated>2020-09-06T07:37:36.783Z</updated>
+    
+    <content type="html"><![CDATA[<p>潘多拉是openwrt的一个分支，所以两者的设置方案基本相同。这里以潘多拉为例，进行说明。</p><p>虽然非必须，但是我还是强烈建议了解一下路由器的各个<a href="https://www.ravenxrz.ink/archives/b8925de5.html">工作模式的区别</a>。</p><h2 id="配置"><a href="#配置" class="headerlink" title="配置"></a>配置</h2><p>openwrt设置无线中继的方式和常用固件的方式不同，比如我们常用的tp-link，它设置无线中继只用选定无线桥接（无线中继，WDS）功能，扫描被中继的wifi，填入密码，写入新wifi的ssid即可。openwrt则不同，openwrt没有提供一键无线中继的功能，相反它将这个功能分为两个部分：</p><ol><li>作为client去接收主路由的信号</li><li>作为master发射信号给其它上网设备</li></ol><p>整个配置架构如下：</p><p><img data-src="https://cdn.jsdelivr.net/gh/ravenxrz/PicBed/img/image-20200502105953768.png" alt="image-20200502105953768"></p><a id="more"></a><p>现在开始来配置吧：</p><h3 id="step1：修改接口ip"><a href="#step1：修改接口ip" class="headerlink" title="step1：修改接口ip"></a>step1：修改接口ip</h3><p>首先要做的是，将从路由器的网段和主路由器的网段分开。</p><p>假设主路由采用网段192.168.1.x，那么从路由器就不能使用这个网段，将它改为192.168.2.x。</p><p>如下图：</p><p><img data-src="https://cdn.jsdelivr.net/gh/ravenxrz/PicBed/img/image-20200502110942144.png" alt="image-20200502110942144"></p><p>注意更改网段后，进入管理后台也需要更高地址，如原来是192.168.1.1，现在则变为了192.168.2.1。</p><h3 id="step2：配置Client，接收主路由信号"><a href="#step2：配置Client，接收主路由信号" class="headerlink" title="step2：配置Client，接收主路由信号"></a>step2：配置Client，接收主路由信号</h3><p>网络-&gt;无线，如果你的路由器支持双频的话，默认情况下是有两个接口，如：下：</p><p><img data-src="https://cdn.jsdelivr.net/gh/ravenxrz/PicBed/img/image-20200502111303939.png" alt="image-20200502111303939"></p><p>现在选择一个网卡，点扫描，我就选择5G频段的网卡：</p><p><img data-src="https://cdn.jsdelivr.net/gh/ravenxrz/PicBed/img/image-20200502111352587.png" alt="image-20200502111352587"></p><p>选中要加入的网络，点“加入网络”</p><p><img data-src="https://cdn.jsdelivr.net/gh/ravenxrz/PicBed/img/image-20200502111512207.png" alt="image-20200502111512207"></p><p><img data-src="https://cdn.jsdelivr.net/gh/ravenxrz/PicBed/img/image-20200502115024472.png" alt="image-20200502115024472"></p><p>现在来检查一下配置是否成功，点击接口：</p><p><img data-src="https://cdn.jsdelivr.net/gh/ravenxrz/PicBed/img/image-20200502112017941.png" alt="image-20200502112017941"></p><p>可以看到”CONNECT_5G”（如果你前面都按照步骤来做，你应该看WWAN接口）这个接口被分配了192.168.123.187这个ip，而我的主路由的网段就是192.168.123.x。如果你没有的话，点一下旁边的“连接”按钮。</p><p>现在，Client端就算配置完成了，现在你可以通过有线连接从路由器进行上网了。所以配置到这里，从路由器相当于充当了无线网卡的功能。（想一下，买一个USB无线网卡查到台式机上）。</p><p>下面，我们需要把从路由的wifi发射出去。</p><h3 id="step3：配置Master，发送从路由信号"><a href="#step3：配置Master，发送从路由信号" class="headerlink" title="step3：配置Master，发送从路由信号"></a>step3：配置Master，发送从路由信号</h3><p>回到无线选项，点击添加</p><p><img data-src="https://cdn.jsdelivr.net/gh/ravenxrz/PicBed/img/image-20200502112402242.png" alt="image-20200502112402242"></p><p><img data-src="https://cdn.jsdelivr.net/gh/ravenxrz/PicBed/img/image-20200502112856370.png" alt="image-20200502112856370"></p><p>三个注意点：</p><ol><li>SSID的设置，可和主路由相同，这样可实现无线漫游（即信号弱时自动切换），不同，则相当于一个新的wifi。</li><li>模式一定选择“接入点AP”。</li><li>网络接口选择lan。</li></ol><p>保存生效即可。</p><p>ok，到这一步，你的其它设备可以通过无线上网了。但是现在有一些问题需要说明：</p><h3 id="step4-2-4G转5G，5G转2-4G"><a href="#step4-2-4G转5G，5G转2-4G" class="headerlink" title="step4: 2.4G转5G，5G转2.4G"></a>step4: 2.4G转5G，5G转2.4G</h3><p>如果你一路配置过来，你的无线功能界面应该长这个样子：</p><p><img data-src="https://cdn.jsdelivr.net/gh/ravenxrz/PicBed/img/image-20200502112740680.png" alt="image-20200502112740680"></p><p>也就是说，我们用了一张网卡，既充当了接收端，又充当了发送端。那么最大带宽就会减半。所以，如果你的路由器时双频的，我们可以用一张网卡来做接收端，另一张网卡做发送端。</p><p>比如，用2.4G做接收，5G做发送：</p><p><img data-src="https://cdn.jsdelivr.net/gh/ravenxrz/PicBed/img/image-20200502113029714.png" alt="image-20200502113029714"></p><p>具体配置和step2中完全相同。这里不赘述。</p><h2 id="从路由器和主路由（同一网段or不同网段？）"><a href="#从路由器和主路由（同一网段or不同网段？）" class="headerlink" title="从路由器和主路由（同一网段or不同网段？）"></a>从路由器和主路由（同一网段or不同网段？）</h2><p>像上面那样的配置，从路由下的设备和主路由下的设备是在不同网段的。那这就会有个问题了，比如我要和基友们玩mc，我挂在主路由下，他们挂在从路由下，这怎么玩啊？</p><p>那怎么解决呢？根据我百度出来的资料来看，目前有两种解决方案：</p><ol><li>安装luci-proto-relay ，插件解决。这个方案，我没有尝试，因为略微复杂，贴一个链接：<span class="exturl" data-url="aHR0cHM6Ly93d3cucmlnaHQuY29tLmNuL0ZPUlVNL3RocmVhZC0xOTAxMTUtMS0xLmh0bWw=" title="https://www.right.com.cn/FORUM/thread-190115-1-1.html">https://www.right.com.cn/FORUM/thread-190115-1-1.html<i class="fa fa-external-link"></i></span></li><li>添加桥接接口，形成“假的同一网段”。</li></ol><p>这里就详细说一下第二个方法：</p><p>打开接口界面，添加接口：</p><p><img data-src="https://cdn.jsdelivr.net/gh/ravenxrz/PicBed/img/image-20200502113749281.png"></p><p>然后其余设置都采用默认。</p><p>最后会得到下图：</p><p><img data-src="https://cdn.jsdelivr.net/gh/ravenxrz/PicBed/img/image-20200502115224199.png" alt="image-20200502113901838"></p><p>同样，查看是否获得了ip，如果没有，点击一下旁边的“连接”。</p><p><strong>为什么说这是一个“假的同网段呢”。</strong></p><p>因为在主路由下的设备网段都是“192.168.123.x”，而在从路由器下的设备网段依然是“192.168.2.x”。</p><p>只不过通过relay接口的桥接，可以实现相互通信了。</p><p><strong>那这样的好处是什么呢？</strong></p><p>如果形成“真的同网段”，那么我们无法容易地进入从路由器设备的管理界面。但是如果是“假同网段”，我们依然可以通过192.168.2.1进入后台管理界面。</p><h2 id="参考"><a href="#参考" class="headerlink" title="参考"></a>参考</h2><ul><li><p><span class="exturl" data-url="aHR0cHM6Ly93d3cuY25ibG9ncy5jb20vd3NpbmUvcC81MjM4NDY1Lmh0bWw=" title="https://www.cnblogs.com/wsine/p/5238465.html">Openwrt无线中继设置并访问外网<i class="fa fa-external-link"></i></span></p></li><li><p><span class="exturl" data-url="aHR0cHM6Ly93d3cucmlnaHQuY29tLmNuL2ZvcnVtL3RocmVhZC00MDA5NTY0LTEtMS5odG1s" title="https://www.right.com.cn/forum/thread-4009564-1-1.html">OpenWrt简单实现无线桥接与主路由“同网段”<i class="fa fa-external-link"></i></span></p></li><li><p><span class="exturl" data-url="aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L2x2c2hhb3JvbmcvYXJ0aWNsZS9kZXRhaWxzLzUzMjMwNTQ1" title="https://blog.csdn.net/lvshaorong/article/details/53230545">OpenWrt路由器无线中继、桥接、信号放大、访客网络的实现方案<i class="fa fa-external-link"></i></span></p></li></ul>]]></content>
+    
+    <summary type="html">
+    
+      &lt;p&gt;潘多拉是openwrt的一个分支，所以两者的设置方案基本相同。这里以潘多拉为例，进行说明。&lt;/p&gt;
+&lt;p&gt;虽然非必须，但是我还是强烈建议了解一下路由器的各个&lt;a href=&quot;https://www.ravenxrz.ink/archives/b8925de5.html&quot;&gt;工作模式的区别&lt;/a&gt;。&lt;/p&gt;
+&lt;h2 id=&quot;配置&quot;&gt;&lt;a href=&quot;#配置&quot; class=&quot;headerlink&quot; title=&quot;配置&quot;&gt;&lt;/a&gt;配置&lt;/h2&gt;&lt;p&gt;openwrt设置无线中继的方式和常用固件的方式不同，比如我们常用的tp-link，它设置无线中继只用选定无线桥接（无线中继，WDS）功能，扫描被中继的wifi，填入密码，写入新wifi的ssid即可。openwrt则不同，openwrt没有提供一键无线中继的功能，相反它将这个功能分为两个部分：&lt;/p&gt;
+&lt;ol&gt;
+&lt;li&gt;作为client去接收主路由的信号&lt;/li&gt;
+&lt;li&gt;作为master发射信号给其它上网设备&lt;/li&gt;
+&lt;/ol&gt;
+&lt;p&gt;整个配置架构如下：&lt;/p&gt;
+&lt;p&gt;&lt;img data-src=&quot;https://cdn.jsdelivr.net/gh/ravenxrz/PicBed/img/image-20200502105953768.png&quot; alt=&quot;image-20200502105953768&quot;&gt;&lt;/p&gt;
+    
+    </summary>
+    
+    
+      <category term="路由器" scheme="https://www.ravenxrz.ink/categories/%E8%B7%AF%E7%94%B1%E5%99%A8/"/>
+    
+    
+      <category term="无线中继" scheme="https://www.ravenxrz.ink/tags/%E6%97%A0%E7%BA%BF%E4%B8%AD%E7%BB%A7/"/>
+    
+      <category term="无线桥接" scheme="https://www.ravenxrz.ink/tags/%E6%97%A0%E7%BA%BF%E6%A1%A5%E6%8E%A5/"/>
     
   </entry>
   
