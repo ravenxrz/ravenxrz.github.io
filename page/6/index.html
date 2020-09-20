@@ -125,12 +125,12 @@
   </li>
         <li class="menu-item menu-item-archives">
 
-    <a href="/archives/" rel="section"><i class="fa fa-fw fa-fa fa-archive"></i>归档<span class="badge">119</span></a>
+    <a href="/archives/" rel="section"><i class="fa fa-fw fa-fa fa-archive"></i>归档<span class="badge">120</span></a>
 
   </li>
         <li class="menu-item menu-item-categories">
 
-    <a href="/categories/" rel="section"><i class="fa fa-fw fa-fa fa-th"></i>分类<span class="badge">17</span></a>
+    <a href="/categories/" rel="section"><i class="fa fa-fw fa-fa fa-th"></i>分类<span class="badge">18</span></a>
 
   </li>
         <li class="menu-item menu-item-tags">
@@ -195,6 +195,88 @@
 
           <div class="content index posts-expand">
             
+      
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="https://www.ravenxrz.ink/archives/9c2ab089.html">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="https://pic.downk.cc/item/5e907515504f4bcb04b6f798.jpg">
+      <meta itemprop="name" content="Raven">
+      <meta itemprop="description" content="分享技术，记录生活">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Raven's Blog">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">
+          
+            <a href="/archives/9c2ab089.html" class="post-title-link" itemprop="url">导读-Log-structuredFileSystem</a>
+        </h2>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+
+              <time title="创建时间：2019-09-23 13:58:48" itemprop="dateCreated datePublished" datetime="2019-09-23T13:58:48+08:00">2019-09-23</time>
+            </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-calendar-check-o"></i>
+                </span>
+                <span class="post-meta-item-text">更新于</span>
+                <time title="修改时间：2020-09-06 15:37:36" itemprop="dateModified" datetime="2020-09-06T15:37:36+08:00">2020-09-06</time>
+              </span>
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              <span class="post-meta-item-text">分类于</span>
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/%E8%AE%BA%E6%96%87/" itemprop="url" rel="index"><span itemprop="name">论文</span></a>
+                </span>
+            </span>
+
+          
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+          <p>i&gt; 本文转载自：<span class="exturl" data-url="aHR0cHM6Ly96aHVhbmxhbi56aGlodS5jb20vcC80MTM1ODAxMw==" title="https://zhuanlan.zhihu.com/p/41358013">https://zhuanlan.zhihu.com/p/41358013<i class="fa fa-external-link"></i></span></p>
+<p>“<span class="exturl" data-url="aHR0cHM6Ly9saW5rLnpoaWh1LmNvbS8/dGFyZ2V0PWh0dHBzOi8vcGVvcGxlLmVlY3MuYmVya2VsZXkuZWR1L35icmV3ZXIvY3MyNjIvTEZTLnBkZg==" title="https://link.zhihu.com/?target=https://people.eecs.berkeley.edu/~brewer/cs262/LFS.pdf">The Design and Implementation of a Log-Structured File System<i class="fa fa-external-link"></i></span>“ 是 Mendel Rosenblum 和 John K. Ousterhout 在90年代初发表的一篇经典论文。且不提论文的两个作者都大名鼎鼎：Rosenblum 是 Vmware 的联合创始人，Ousterhout 是 <span class="exturl" data-url="aHR0cHM6Ly9saW5rLnpoaWh1LmNvbS8/dGFyZ2V0PWh0dHBzOi8vcmFmdC5naXRodWIuaW8vcmFmdC5wZGY=" title="https://link.zhihu.com/?target=https://raft.github.io/raft.pdf">Raft<i class="fa fa-external-link"></i></span>的作者之一（Ongaro 的老板）; 这篇论文在发表之后就引起了长达数年的 <span class="exturl" data-url="aHR0cHM6Ly9saW5rLnpoaWh1LmNvbS8/dGFyZ2V0PWh0dHBzOi8vZW4ud2lraXBlZGlhLm9yZy93aWtpL1VuaXhfRmlsZV9TeXN0ZW0=" title="https://link.zhihu.com/?target=https://en.wikipedia.org/wiki/Unix_File_System">Fast File System<i class="fa fa-external-link"></i></span> 和 LFS 之间的<span class="exturl" data-url="aHR0cHM6Ly9saW5rLnpoaWh1LmNvbS8/dGFyZ2V0PWh0dHA6Ly93d3cuZWVjcy5oYXJ2YXJkLmVkdS9+bWFyZ28vY3MyNjEvcGFwZXItaGlzdG9yeS9zZWNvbmQtc3VibWlzc2lvbi5wZGY=" title="https://link.zhihu.com/?target=http://www.eecs.harvard.edu/~margo/cs261/paper-history/second-submission.pdf">口水战<i class="fa fa-external-link"></i></span>。LFS 在提出后的前10多年里并没有被业界采用（猜猜为什么），但当 SSD 的价格下降并成为主流后，LFS 却焕发了第二春：LFS 被广泛运用在 SSD 的 firmware 中，而且新的文件系统，譬如基于 journal 的 <span class="exturl" data-url="aHR0cHM6Ly9saW5rLnpoaWh1LmNvbS8/dGFyZ2V0PWh0dHBzOi8vZW4ud2lraXBlZGlhLm9yZy93aWtpL0V4dDQ=" title="https://link.zhihu.com/?target=https://en.wikipedia.org/wiki/Ext4">ext3/ext4<i class="fa fa-external-link"></i></span>和支持 copy on write 的 <span class="exturl" data-url="aHR0cHM6Ly9saW5rLnpoaWh1LmNvbS8/dGFyZ2V0PWh0dHBzOi8vZW4ud2lraXBlZGlhLm9yZy93aWtpL0J0cmZz" title="https://link.zhihu.com/?target=https://en.wikipedia.org/wiki/Btrfs">btrfs<i class="fa fa-external-link"></i></span>都吸取了LFS 的 idea；甚至我们常用的<span class="exturl" data-url="aHR0cHM6Ly9saW5rLnpoaWh1LmNvbS8/dGFyZ2V0PWh0dHBzOi8vZW4ud2lraXBlZGlhLm9yZy93aWtpL0xvZy1zdHJ1Y3R1cmVkX21lcmdlLXRyZWU=" title="https://link.zhihu.com/?target=https://en.wikipedia.org/wiki/Log-structured_merge-tree">LSM<i class="fa fa-external-link"></i></span>算法都能看到 LFS 的影子。</p>
+          <!--noindex-->
+            <div class="post-button">
+              <a class="btn" href="/archives/9c2ab089.html#more" rel="contents">
+                阅读全文 &raquo;
+              </a>
+            </div>
+          <!--/noindex-->
+        
+      
+    </div>
+
+    
+    
+    
+      <footer class="post-footer">
+        <div class="post-eof"></div>
+      </footer>
+  </article>
+  
+  
+  
+
       
   
   
@@ -953,89 +1035,6 @@
   
   
 
-      
-  
-  
-  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
-    <link itemprop="mainEntityOfPage" href="https://www.ravenxrz.ink/archives/6802486f.html">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="image" content="https://pic.downk.cc/item/5e907515504f4bcb04b6f798.jpg">
-      <meta itemprop="name" content="Raven">
-      <meta itemprop="description" content="分享技术，记录生活">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="Raven's Blog">
-    </span>
-      <header class="post-header">
-        <h2 class="post-title" itemprop="name headline">
-          
-            <a href="/archives/6802486f.html" class="post-title-link" itemprop="url">umask命令详解</a>
-        </h2>
-
-        <div class="post-meta">
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="fa fa-calendar-o"></i>
-              </span>
-              <span class="post-meta-item-text">发表于</span>
-
-              <time title="创建时间：2019-08-17 13:58:20" itemprop="dateCreated datePublished" datetime="2019-08-17T13:58:20+08:00">2019-08-17</time>
-            </span>
-              <span class="post-meta-item">
-                <span class="post-meta-item-icon">
-                  <i class="fa fa-calendar-check-o"></i>
-                </span>
-                <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2020-09-06 15:37:36" itemprop="dateModified" datetime="2020-09-06T15:37:36+08:00">2020-09-06</time>
-              </span>
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="fa fa-folder-o"></i>
-              </span>
-              <span class="post-meta-item-text">分类于</span>
-                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/categories/Linux/" itemprop="url" rel="index"><span itemprop="name">Linux</span></a>
-                </span>
-            </span>
-
-          
-
-        </div>
-      </header>
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-
-      
-          <p>umask命令详解</p>
-<p>也许你会和我一样，以为会使用chmod，chown这类命令就掌握了linux文件权限篇的基础知识。但是其实还有一个很重要的命令，命令虽小但是影响深远。它就是umask。</p>
-<p>umask是控制文件权限中的一个重要命令或者说是一个重要的配置选项。前者可通过在shell中设置，而后者则需要在配置文件（**/etc/profile<strong>或</strong>/etc/bashrc**）中设置。在正式说明umask的相关知识前，需要讲解一个通识：</p>
-          <!--noindex-->
-            <div class="post-button">
-              <a class="btn" href="/archives/6802486f.html#more" rel="contents">
-                阅读全文 &raquo;
-              </a>
-            </div>
-          <!--/noindex-->
-        
-      
-    </div>
-
-    
-    
-    
-      <footer class="post-footer">
-        <div class="post-eof"></div>
-      </footer>
-  </article>
-  
-  
-  
-
 
   
   <nav class="pagination">
@@ -1107,14 +1106,14 @@
       <div class="site-state-item site-state-posts">
           <a href="/archives/">
         
-          <span class="site-state-item-count">119</span>
+          <span class="site-state-item-count">120</span>
           <span class="site-state-item-name">日志</span>
         </a>
       </div>
       <div class="site-state-item site-state-categories">
             <a href="/categories/">
           
-        <span class="site-state-item-count">17</span>
+        <span class="site-state-item-count">18</span>
         <span class="site-state-item-name">分类</span></a>
       </div>
       <div class="site-state-item site-state-tags">

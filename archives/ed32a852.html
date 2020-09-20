@@ -1,0 +1,768 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 4.2.1">
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+  <meta http-equiv="Cache-Control" content="no-transform">
+  <meta http-equiv="Cache-Control" content="no-siteapp">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+<link rel="stylesheet" href="//cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@5/css/all.min.css">
+  <link rel="stylesheet" href="//cdn.jsdelivr.net/npm/pace-js@1/themes/blue/pace-theme-minimal.css">
+  <script src="//cdn.jsdelivr.net/npm/pace-js@1/pace.min.js"></script>
+
+<script id="hexo-configurations">
+    var NexT = window.NexT || {};
+    var CONFIG = {"hostname":"www.ravenxrz.ink","root":"/","scheme":"Mist","version":"7.8.0","exturl":true,"sidebar":{"position":"left","display":"always","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":true,"show_result":true,"style":"flat"},"back2top":{"enable":true,"sidebar":false,"scrollpercent":true},"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":true,"lazyload":true,"pangu":true,"comments":{"style":"tabs","active":"gitalk","storage":true,"lazyload":true,"nav":null,"activeClass":"gitalk"},"algolia":{"hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":true,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},"motion":{"enable":false,"async":true,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},"path":"search.xml"};
+  </script>
+
+  <meta name="description" content="今天来说说tarjan算法，一种用于求解连通图的关键点算法。">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Tarjan算法详解">
+<meta property="og:url" content="https://www.ravenxrz.ink/archives/ed32a852.html">
+<meta property="og:site_name" content="Raven&#39;s Blog">
+<meta property="og:description" content="今天来说说tarjan算法，一种用于求解连通图的关键点算法。">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="https://cdn.jsdelivr.net/gh/ravenxrz/PicBed/img/image-20200920111152803.png">
+<meta property="og:image" content="https://cdn.jsdelivr.net/gh/ravenxrz/PicBed/img/image-20200920111908187.png">
+<meta property="og:image" content="https://pic.downk.cc/item/5f674a36160a154a67fe2e78.png">
+<meta property="og:image" content="https://pic.downk.cc/item/5f674a53160a154a67fe3be6.png">
+<meta property="og:image" content="https://pic.downk.cc/item/5f674a76160a154a67fe4a72.png">
+<meta property="og:image" content="https://cdn.jsdelivr.net/gh/ravenxrz/PicBed/img/image-20200920114204133.png">
+<meta property="og:image" content="https://cdn.jsdelivr.net/gh/ravenxrz/PicBed/img/image-20200920114503369.png">
+<meta property="og:image" content="https://pic.downk.cc/item/5f674a8b160a154a67fe53eb.png">
+<meta property="og:image" content="https://pic.downk.cc/item/5f674aa4160a154a67fe5edb.png">
+<meta property="og:image" content="https://pic.downk.cc/item/5f674acc160a154a67fe71ab.png">
+<meta property="og:image" content="https://pic.downk.cc/item/5f674ae1160a154a67fe7b26.png">
+<meta property="og:image" content="https://pic.downk.cc/item/5f674af8160a154a67fe8508.png">
+<meta property="article:published_time" content="2020-09-20T04:23:12.000Z">
+<meta property="article:modified_time" content="2020-09-20T04:30:23.840Z">
+<meta property="article:author" content="Raven">
+<meta property="article:tag" content="IT">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://cdn.jsdelivr.net/gh/ravenxrz/PicBed/img/image-20200920111152803.png">
+
+<link rel="canonical" href="https://www.ravenxrz.ink/archives/ed32a852.html">
+
+
+<script id="page-configurations">
+  // https://hexo.io/docs/variables.html
+  CONFIG.page = {
+    sidebar: "",
+    isHome : false,
+    isPost : true,
+    lang   : 'zh-CN'
+  };
+</script>
+
+  <title>Tarjan算法详解 | Raven's Blog</title>
+  
+
+
+
+
+
+
+  <noscript>
+  <style>
+  .use-motion .brand,
+  .use-motion .menu-item,
+  .sidebar-inner,
+  .use-motion .post-block,
+  .use-motion .pagination,
+  .use-motion .comments,
+  .use-motion .post-header,
+  .use-motion .post-body,
+  .use-motion .collection-header { opacity: initial; }
+
+  .use-motion .site-title,
+  .use-motion .site-subtitle {
+    opacity: initial;
+    top: initial;
+  }
+
+  .use-motion .logo-line-before i { left: initial; }
+  .use-motion .logo-line-after i { right: initial; }
+  </style>
+</noscript>
+
+<link rel="alternate" href="/atom.xml" title="Raven's Blog" type="application/atom+xml">
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage">
+  <div class="container">
+    <div class="headband"></div>
+
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切换导航栏">
+      <span class="toggle-line toggle-line-first"></span>
+      <span class="toggle-line toggle-line-middle"></span>
+      <span class="toggle-line toggle-line-last"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <span class="logo-line-before"><i></i></span>
+      <h1 class="site-title">Raven's Blog</h1>
+      <span class="logo-line-after"><i></i></span>
+    </a>
+      <p class="site-subtitle" itemprop="description">zhang.xingrui@foxmail.com</p>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger">
+        <i class="fa fa-search fa-fw fa-lg"></i>
+    </div>
+  </div>
+</div>
+
+
+
+
+<nav class="site-nav">
+  <ul id="menu" class="menu">
+        <li class="menu-item menu-item-home">
+
+    <a href="/" rel="section"><i class="fa fa-fw fa-fa fa-home"></i>首页</a>
+
+  </li>
+        <li class="menu-item menu-item-archives">
+
+    <a href="/archives/" rel="section"><i class="fa fa-fw fa-fa fa-archive"></i>归档<span class="badge">120</span></a>
+
+  </li>
+        <li class="menu-item menu-item-categories">
+
+    <a href="/categories/" rel="section"><i class="fa fa-fw fa-fa fa-th"></i>分类<span class="badge">18</span></a>
+
+  </li>
+        <li class="menu-item menu-item-tags">
+
+    <a href="/tags/" rel="section"><i class="fa fa-fw fa-fa fa-tags"></i>标签<span class="badge">114</span></a>
+
+  </li>
+        <li class="menu-item menu-item-about">
+
+    <a href="/about/" rel="section"><i class="fa fa-fw fa-fa fa-user"></i>关于</a>
+
+  </li>
+      <li class="menu-item menu-item-search">
+        <a role="button" class="popup-trigger"><i class="fa fa-search fa-fw"></i>搜索
+        </a>
+      </li>
+  </ul>
+</nav>
+
+
+
+  <div class="search-pop-overlay">
+    <div class="popup search-popup">
+        <div class="search-header">
+  <span class="search-icon">
+    <i class="fa fa-search"></i>
+  </span>
+  <div class="search-input-container">
+    <input autocomplete="off" autocapitalize="off"
+           placeholder="搜索..." spellcheck="false"
+           type="search" class="search-input">
+  </div>
+  <span class="popup-btn-close">
+    <i class="fa fa-times-circle"></i>
+  </span>
+</div>
+<div id="search-result">
+  <div id="no-result">
+    <i class="fa fa-spinner fa-pulse fa-5x fa-fw"></i>
+  </div>
+</div>
+
+    </div>
+  </div>
+
+</div>
+    </header>
+
+    
+  <div class="back-to-top">
+    <i class="fa fa-arrow-up"></i>
+    <span>0%</span>
+  </div>
+
+  <span class="exturl github-corner" data-url="aHR0cHM6Ly9naXRodWIuY29tL3JhdmVueHJ6" title="Follow me on GitHub" aria-label="Follow me on GitHub"><svg width="80" height="80" viewBox="0 0 250 250" aria-hidden="true"><path d="M0,0 L115,115 L130,115 L142,142 L250,250 L250,0 Z"></path><path d="M128.3,109.0 C113.8,99.7 119.0,89.6 119.0,89.6 C122.0,82.7 120.5,78.6 120.5,78.6 C119.2,72.0 123.4,76.3 123.4,76.3 C127.3,80.9 125.5,87.3 125.5,87.3 C122.9,97.6 130.6,101.9 134.4,103.2" fill="currentColor" style="transform-origin: 130px 106px;" class="octo-arm"></path><path d="M115.0,115.0 C114.9,115.1 118.7,116.5 119.8,115.4 L133.7,101.6 C136.9,99.2 139.9,98.4 142.2,98.6 C133.8,88.0 127.5,74.4 143.8,58.0 C148.5,53.4 154.0,51.2 159.7,51.0 C160.3,49.4 163.2,43.6 171.4,40.1 C171.4,40.1 176.1,42.5 178.8,56.2 C183.1,58.6 187.2,61.8 190.9,65.4 C194.5,69.0 197.7,73.2 200.1,77.6 C213.8,80.2 216.3,84.9 216.3,84.9 C212.7,93.1 206.9,96.0 205.4,96.6 C205.1,102.4 203.0,107.8 198.3,112.5 C181.9,128.9 168.3,122.5 157.7,114.1 C157.9,116.9 156.7,120.9 152.7,124.9 L141.0,136.5 C139.8,137.7 141.6,141.9 141.8,141.8 Z" fill="currentColor" class="octo-body"></path></svg></span>
+
+
+    <main class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          
+
+          <div class="content post posts-expand">
+            
+
+    
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="https://www.ravenxrz.ink/archives/ed32a852.html">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="https://pic.downk.cc/item/5e907515504f4bcb04b6f798.jpg">
+      <meta itemprop="name" content="Raven">
+      <meta itemprop="description" content="分享技术，记录生活">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Raven's Blog">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          Tarjan算法详解
+        </h1>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+              
+
+              <time title="创建时间：2020-09-20 12:23:12 / 修改时间：12:30:23" itemprop="dateCreated datePublished" datetime="2020-09-20T12:23:12+08:00">2020-09-20</time>
+            </span>
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              <span class="post-meta-item-text">分类于</span>
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/LeetCode/" itemprop="url" rel="index"><span itemprop="name">LeetCode</span></a>
+                </span>
+            </span>
+
+          
+            <span class="post-meta-item" title="阅读次数" id="busuanzi_container_page_pv" style="display: none;">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-fa fa-eye"></i>
+              </span>
+              <span class="post-meta-item-text">阅读次数：</span>
+              <span id="busuanzi_value_page_pv"></span>
+            </span>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+        <p>今天来说说tarjan算法，一种用于求解连通图的关键点算法。</p>
+<a id="more"></a>
+
+<h2 id="1-什么是关节点？"><a href="#1-什么是关节点？" class="headerlink" title="1.什么是关节点？"></a>1.什么是关节点？</h2><p>假设现在有一个连通图，在去掉这个图中的某个节点后，连通分量增加，那么这个节点就是关节点。如下图的3去掉后，整个图拆分为了4个连通分量{1,2,4,5}</p>
+<img data-src="https://cdn.jsdelivr.net/gh/ravenxrz/PicBed/img/image-20200920111152803.png" alt="image-20200920111152803" style="zoom: 67%;" />
+
+<h2 id="2-求解关键点"><a href="#2-求解关键点" class="headerlink" title="2.求解关键点"></a>2.求解关键点</h2><h3 id="1-暴力法"><a href="#1-暴力法" class="headerlink" title="1. 暴力法"></a>1. 暴力法</h3><p>如果在没有学习过tarjan算法前，求解一个图的关键点最直观的方法就是暴力求解。可以分别在原连通图中去掉一点，然后用dfs或bfs遍历，若在去掉某个的点后，整个图的连通度有所增加，则该点一定是个关键点。伪代码如下:</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">for i in &#123;node1,node2...noden&#125;</span><br><span class="line">	去掉nodei</span><br><span class="line">	求解当前图的连通度</span><br><span class="line">	if 连通度增加</span><br><span class="line">		nodei 是关键点</span><br><span class="line">	复原nodei</span><br><span class="line">end</span><br></pre></td></tr></table></figure>
+
+<p>显然，包利发虽然简单，但是复杂度较高。下面我们来看tarjan算法。</p>
+<h3 id="2-tarjan算法"><a href="#2-tarjan算法" class="headerlink" title="2. tarjan算法"></a>2. tarjan算法</h3><p><strong>回边概念</strong></p>
+<p>为了说明方便，我们以下图为例：</p>
+<img data-src="https://cdn.jsdelivr.net/gh/ravenxrz/PicBed/img/image-20200920111908187.png" alt="image-20200920111908187" style="zoom:67%;" />
+
+<p>现在，我们从0开始对这个图做一个dfs<strong>先序</strong>遍历，可以得到<strong>深度优先搜索树</strong>如下：</p>
+<img data-src="https://pic.downk.cc/item/5f674a36160a154a67fe2e78.png" alt="image-20200920112158018" style="zoom:50%;" />
+
+<p>这个图和上个图唯一的区别在于将1-3的边改为了红色，因为实际遍历过程中，不会经过这条边，我们把这种在dfs遍历中不会经过的边但又实际存在图中的边称为<strong>“回边“</strong>。</p>
+<p>ok，有了回边的概念，现在说明我们应该如何确定连通图中的关键点：</p>
+<blockquote>
+<p>以下摘自: <span class="exturl" data-url="aHR0cHM6Ly93d3cuY25ibG9ncy5jb20vbnVsbHp4L3AvNzk2ODExMC5odG1s" title="https://www.cnblogs.com/nullzx/p/7968110.html">https://www.cnblogs.com/nullzx/p/7968110.html<i class="fa fa-external-link"></i></span></p>
+</blockquote>
+<p>假设DFS中我们从顶点U访问到了顶点V（此时顶点V还未被访问过），那么我们称顶点U为顶点V的父顶点，V为U的孩子顶点。在顶点U之前被访问过的顶点，我们就称之为U的祖先顶点。</p>
+<p>显然如果顶点U的<strong>所有孩子顶点</strong>可以不通过父顶点U而访问到U的祖先顶点，那么说明此时去掉顶点U不影响图的连通性，U就不是割点。相反，如果顶点U<strong>至少存在一个孩子顶点</strong>，必须通过父顶点U才能访问到U的祖先顶点，那么去掉顶点U后，顶点U的祖先顶点和孩子顶点就不连通了，说明U是一个割点。</p>
+<p><img data-src="https://pic.downk.cc/item/5f674a53160a154a67fe3be6.png" alt="image-20200920112749317"></p>
+<p>上图中的箭头表示DFS访问的顺序（而不表示有向图），对于顶点D而言，D的孩子顶点可以通过连通区域1红色的边回到D的祖先顶点C（此时C已被访问过），所以此时D不是割点。</p>
+<p><img data-src="https://pic.downk.cc/item/5f674a76160a154a67fe4a72.png" alt="image-20200920112807700"></p>
+<p>上图中的连通区域2中的顶点，必须通过D才能访问到D的祖先顶点，所以说此时D为割点。再次强调一遍，箭头仅仅表示DFS的访问顺序，而不是表示该图是有向图。</p>
+<p>除了上述情况，我们还应该考虑一个特殊情况，那就是DFS的根节点，因为根节点没有祖先节点。其实根顶点是不是割点也很好判断，如果从根顶点出发，一次DFS就能访问到所有的顶点，那么根顶点就不是割点。反之，如果回溯到根顶点后，还有未访问过的顶点，需要在邻接顶点上再次进行DFS，根顶点就是割点。</p>
+<p>所以，tarjan算法的核心可以总结如如下两条规则：</p>
+<ol>
+<li>对于dfs生成树的根节点，如果根节点存在两颗或者两颗以上的子树，则该该节点必为关键点。</li>
+<li>对于非叶子节点v，若v的子树中的所有节点均无指向v的祖先节点的回边，则v为关键点。</li>
+</ol>
+<p>对于规则1,非常好判断。所以主要说一下规则2：</p>
+<p>要实现规则2，我们需要三个辅助数组：</p>
+<ol>
+<li>dfn[n]数组</li>
+</ol>
+<p>dfn数组的下标表示图中定点的编号，数组中的值表示dfs中的遍历顺序（访问时间戳）。每访问到一个未访问过的顶点，访问顺序的值（时间戳）就增加1。子顶点的dfn值一定比父顶点的dfn值大（但不一定恰好大1，比如父顶点有两个及两个以上分支的情况）。在访问一个顶点后，它的dfn的值就确定下来了，不会再改变。</p>
+<ol start="2">
+<li>low数组</li>
+</ol>
+<p>low数组的下标表示顶点的编号，数组中的值表示DFS中该顶点<strong>不通过父顶点</strong>能访问到的祖先顶点中最小的顺序值（或者说时间戳）。</p>
+<blockquote>
+<p>想一下，为什么不能通过父顶点来访问父顶点的祖先顶点？</p>
+<p>因为我们是要判断父节点是不是关键点，如果以父节点做中间访问点就没有意义了。</p>
+</blockquote>
+<p>请好好理解low数组，因为它是tarjan算法的核心。</p>
+<ol start="3">
+<li>parent数组</li>
+</ol>
+<p>parent数组的下标标识顶点的编号，数组中的值表示该顶点的父节点编号。主要用于辅助low数组的计算，再次说明low数组的含义是节点不通过其父节点能够访问的最小祖先节点的时间戳。</p>
+<h3 id="3-看一个例子"><a href="#3-看一个例子" class="headerlink" title="3. 看一个例子"></a>3. 看一个例子</h3><p>图片摘自：<span class="exturl" data-url="aHR0cHM6Ly93d3cuY25ibG9ncy5jb20vbnVsbHp4L3AvNzk2ODExMC5odG1s" title="https://www.cnblogs.com/nullzx/p/7968110.html">https://www.cnblogs.com/nullzx/p/7968110.html<i class="fa fa-external-link"></i></span></p>
+<p>可见，最难计算的是low数组。下面以一个具体的例子来说明如何计算dfn和low数组：</p>
+<p>下图中蓝色实线箭头表示已访问过的路径，无箭头虚线表示未访问路径。已访问过的顶点用黄色标记，未访问的顶点用白色标记，DFS当前正在处理的顶点用绿色表示。带箭头的蓝色虚线表示DFS回溯时的返回路径。</p>
+<p><img data-src="https://cdn.jsdelivr.net/gh/ravenxrz/PicBed/img/image-20200920114204133.png" alt="image-20200920114204133"></p>
+<p>假设从A点出发，当前遍历到I节点，注意dfn数组是如何计算的，只要dfs前进一步，dfn就会+1. low数组的初始值和dfn相同。</p>
+<p>当前节点为I，I想继续往前，但是发现D已经被遍历过了，于是（I，D）形成一个回边，且D不是I的父亲节点。所以我们可以更新I的low值，具体更新规则如下：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">if(low[I] &gt; dfn[D] )</span><br><span class="line"></span><br><span class="line">  low[I] &#x3D; dfn[D]</span><br></pre></td></tr></table></figure>
+
+<p>所以现在I的low值为4，</p>
+<p><img data-src="https://cdn.jsdelivr.net/gh/ravenxrz/PicBed/img/image-20200920114503369.png" alt="image-20200920114503369"></p>
+<p>现在I没有其他连接点，所以回退到H，H发现可以通过I到达D，且D不是H的父亲节点。于是可以更新H的low值为：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">if(low[I] &lt; dfn[H] &amp;&amp; low[I] !&#x3D; dfn[parent[D]])</span><br><span class="line"> low[H] &#x3D; low[I]</span><br></pre></td></tr></table></figure>
+
+<p><img data-src="https://pic.downk.cc/item/5f674a8b160a154a67fe53eb.png" alt="image-20200920115233737"></p>
+<p>现在H继续向前到J：</p>
+<p><img data-src="https://pic.downk.cc/item/5f674aa4160a154a67fe5edb.png" alt="image-20200920115330764"></p>
+<p><img data-src="https://pic.downk.cc/item/5f674acc160a154a67fe71ab.png" alt="image-20200920115344808"></p>
+<p>同理，由DFS访问顶点B，dfn[J] &gt; dfn[B]，B为祖先顶点，顶点J不经过父顶点H能访问到的最早时间戳就是dfn[B]，即low[J] = 2</p>
+<p><img data-src="https://pic.downk.cc/item/5f674ae1160a154a67fe7b26.png" alt="image-20200920115401233"></p>
+<p>我们从顶点J回溯到顶点H，显然到目前为止顶点H能访问到的最早时间戳就更新为2（因为我们到现在为止知道了能从H访问到J），所以low[H] = 2。</p>
+<p>ok，后面重新回溯到G-&gt;F-&gt;E, 剩下的过程（访问K和L）和上面类似，不再赘述。</p>
+<h3 id="4-tarjan-C-实现"><a href="#4-tarjan-C-实现" class="headerlink" title="4. tarjan C++实现"></a>4. tarjan C++实现</h3><p>既然核心的部分已经理解了，代码写起来就相对容易了。</p>
+<p>1.首先声明几个辅助数组</p>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">vector</span>&lt;<span class="keyword">bool</span>&gt; visited;</span><br><span class="line"><span class="built_in">vector</span>&lt;<span class="keyword">int</span>&gt; dfn;         <span class="comment">/*第一次访问到第idx个节点时的时间戳*/</span></span><br><span class="line"><span class="built_in">vector</span>&lt;<span class="keyword">int</span>&gt; low;         <span class="comment">/*第idx个节点及其子树能够回溯到的最小节点处的时间戳*/</span></span><br><span class="line"><span class="built_in">vector</span>&lt;<span class="keyword">int</span>&gt; parent;      <span class="comment">/*第idx个节点的父亲节点*/</span></span><br><span class="line"><span class="built_in">set</span>&lt;<span class="keyword">int</span>&gt; joint_node;      <span class="comment">/* 保存关节点 */</span></span><br></pre></td></tr></table></figure>
+
+<ol start="2">
+<li>初始化图</li>
+</ol>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">/* create graph from the input file */</span></span><br><span class="line"><span class="built_in">vector</span>&lt;<span class="built_in">vector</span>&lt;<span class="keyword">int</span>&gt;&gt; &amp;&amp;link_graph = create_link_graph();</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="built_in">vector</span>&lt;<span class="built_in">vector</span>&lt;<span class="keyword">int</span>&gt;&gt; <span class="title">create_link_graph</span><span class="params">()</span> </span>&#123;</span><br><span class="line">    <span class="function"><span class="keyword">const</span> <span class="built_in">string</span> <span class="title">path</span><span class="params">(<span class="string">"/home/raven/Projects/Clion/MyLeetCode/0.数据结构/6.图/tarjan_input1.txt"</span>)</span></span>;</span><br><span class="line">    <span class="function">ifstream <span class="title">fin</span><span class="params">(path)</span></span>;</span><br><span class="line">    <span class="keyword">if</span> (!fin.is_open()) <span class="built_in">exit</span>(<span class="number">-1</span>);</span><br><span class="line"></span><br><span class="line">    <span class="keyword">int</span> node_num;</span><br><span class="line">    <span class="built_in">string</span> <span class="built_in">line</span>;</span><br><span class="line">    fin &gt;&gt; node_num;</span><br><span class="line">    <span class="function"><span class="built_in">vector</span>&lt;<span class="built_in">vector</span>&lt;<span class="keyword">int</span>&gt;&gt; <span class="title">link_graph</span><span class="params">(node_num, <span class="built_in">vector</span>&lt;<span class="keyword">int</span>&gt;())</span></span>;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">while</span> (getline(fin, <span class="built_in">line</span>)) &#123;</span><br><span class="line">        <span class="keyword">unsigned</span> <span class="keyword">long</span> i = <span class="built_in">line</span>.find_first_of(<span class="string">':'</span>);</span><br><span class="line">        <span class="keyword">if</span> (i == <span class="built_in">std</span>::<span class="built_in">string</span>::npos) <span class="keyword">continue</span>;</span><br><span class="line"></span><br><span class="line">        <span class="built_in">string</span> num_str = <span class="built_in">line</span>.substr(<span class="number">0</span>, i); <span class="comment">/* 序号 */</span></span><br><span class="line">        <span class="built_in">string</span> connect_node = <span class="built_in">line</span>.substr(i + <span class="number">1</span>, <span class="built_in">line</span>.<span class="built_in">size</span>() - i);   <span class="comment">/* 想连接的点 */</span></span><br><span class="line">        <span class="function"><span class="built_in">stringstream</span> <span class="title">sstream1</span><span class="params">(num_str)</span></span>;</span><br><span class="line">        sstream1 &gt;&gt; i;</span><br><span class="line">        <span class="function"><span class="built_in">stringstream</span> <span class="title">sstream2</span><span class="params">(connect_node)</span></span>;</span><br><span class="line"></span><br><span class="line">        <span class="comment">/* 初始化与 i 相连的node */</span></span><br><span class="line">        <span class="keyword">int</span> temp;</span><br><span class="line">        <span class="keyword">while</span> (sstream2 &gt;&gt; temp) &#123;</span><br><span class="line">            link_graph[i].push_back(temp);</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">return</span> link_graph;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>其中：tarjan_input1.txt文件如下:</p>
+<p>首行代表节点个数，其余行代表从一个链链表。</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">6</span><br><span class="line">0: 1</span><br><span class="line">1: 0 2 3</span><br><span class="line">2: 1 3</span><br><span class="line">3: 1 2 4 5</span><br><span class="line">4: 3</span><br><span class="line">5: 3</span><br></pre></td></tr></table></figure>
+
+<p>这里采用邻接链表的方式保存图， 原图如下：</p>
+<img data-src="https://pic.downk.cc/item/5f674af8160a154a67fe8508.png" alt="image-20200920120055167" style="zoom:67%;" />
+
+<ol start="3">
+<li>tarjan算法</li>
+</ol>
+<p>显然tarjan算法和dfs算法有联系：我们把dfs的框架搭起来：</p>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">void</span> <span class="title">dfs</span><span class="params">(<span class="keyword">const</span> <span class="built_in">vector</span>&lt;vecotr&lt;<span class="keyword">int</span>&gt;&gt; &amp;graph, <span class="keyword">int</span> cur_node)</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">	<span class="keyword">if</span>(!visited[cur_node]) &#123;</span><br><span class="line">         visited[cur_node] = <span class="literal">true</span>;</span><br><span class="line">        <span class="keyword">for</span>(<span class="keyword">auto</span> connaected_node : graph[cur_node])&#123;</span><br><span class="line">            dfs(graph,connected_node);</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>现在在这个框架上改：</p>
+<ol>
+<li><p>low,parent,dfn数组的初始化</p>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">void</span> <span class="title">dfs</span><span class="params">(<span class="keyword">const</span> <span class="built_in">vector</span>&lt;vecotr&lt;<span class="keyword">int</span>&gt;&gt; &amp;graph, <span class="keyword">int</span> from_node, <span class="keyword">int</span> to_node)</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">    <span class="keyword">static</span> <span class="keyword">int</span> counter = <span class="number">0</span>;</span><br><span class="line">    <span class="keyword">int</span> cur_node = to_node;</span><br><span class="line">	<span class="keyword">if</span>(!visited[cur_node]) &#123;		<span class="comment">/* 这个作用域暂时不修改 */</span></span><br><span class="line">         visited[cur_node] = <span class="literal">true</span>;</span><br><span class="line">         parent[cur_node] = from_node;</span><br><span class="line">         dfn[cur_node] = ++counter;</span><br><span class="line">         low[cur_node] = dfn[cur_node];		<span class="comment">/* low初始值和dfn相同 */</span></span><br><span class="line">        </span><br><span class="line">        <span class="keyword">for</span>(<span class="keyword">auto</span> connected_node : graph[cur_node])&#123;</span><br><span class="line">            dfs(graph,connected_node);</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>回边情况</p>
+</li>
+</ol>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">void</span> <span class="title">dfs</span><span class="params">(<span class="keyword">const</span> <span class="built_in">vector</span>&lt;vecotr&lt;<span class="keyword">int</span>&gt;&gt; &amp;graph, <span class="keyword">int</span> from_node, <span class="keyword">int</span> to_node)</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">    <span class="keyword">static</span> <span class="keyword">int</span> counter = <span class="number">0</span>;</span><br><span class="line">    <span class="keyword">int</span> cur_node = to_node;</span><br><span class="line">	<span class="keyword">if</span>(!visited[cur_node]) &#123;		<span class="comment">/* 第一部分：这个作用域暂时不修改 */</span></span><br><span class="line">         visited[cur_node] = <span class="literal">true</span>;</span><br><span class="line">         parent[cur_node] = from_node;</span><br><span class="line">         dfn[cur_node] = ++counter;</span><br><span class="line">         low[cur_node] = dfn[cur_node];		<span class="comment">/* 第一部分：low初始值和dfn相同 */</span></span><br><span class="line">        </span><br><span class="line">        <span class="keyword">for</span>(<span class="keyword">auto</span> connected_node : graph[cur_node])&#123;</span><br><span class="line">            dfs(graph,connected_node);</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;<span class="keyword">else</span>&#123;	<span class="comment">/* 第二部分：cur_node 已经是访问过的点，说明(from_node, to_node)这条边是回边，可能需要更新low数组 */</span></span><br><span class="line">       	 <span class="keyword">if</span>(to_node != parent[cur_node] &amp;&amp; low[from_node] &gt; dfn[to_node])&#123;</span><br><span class="line">             low[cur_node] = dfn[to_node];</span><br><span class="line">         &#125;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<ol start="3">
+<li>dfs 从深节点回溯到浅节点的情况</li>
+</ol>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">void</span> <span class="title">dfs</span><span class="params">(<span class="keyword">const</span> <span class="built_in">vector</span>&lt;vecotr&lt;<span class="keyword">int</span>&gt;&gt; &amp;graph, <span class="keyword">int</span> from_node, <span class="keyword">int</span> to_node)</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">    <span class="keyword">static</span> <span class="keyword">int</span> counter = <span class="number">0</span>;</span><br><span class="line">    <span class="keyword">int</span> cur_node = to_node;</span><br><span class="line">	<span class="keyword">if</span>(!visited[cur_node]) &#123;		<span class="comment">/* 第一部分：这个作用域暂时不修改 */</span></span><br><span class="line">         visited[cur_node] = <span class="literal">true</span>;</span><br><span class="line">         parent[cur_node] = from_node;</span><br><span class="line">         dfn[cur_node] = ++counter;</span><br><span class="line">         low[cur_node] = dfn[cur_node];		<span class="comment">/* 第一部分：low初始值和dfn相同 */</span></span><br><span class="line">        </span><br><span class="line">        <span class="keyword">for</span>(<span class="keyword">auto</span> connected_node : graph[cur_node])&#123;</span><br><span class="line">            <span class="keyword">if</span>(connected_node == from_node) <span class="keyword">continue</span>;</span><br><span class="line">            </span><br><span class="line">            dfs(graph,connected_node);</span><br><span class="line">            <span class="comment">/* 第三部分：从dfs中回溯回来 */</span></span><br><span class="line">            <span class="keyword">if</span>(low[connected_node] != dfn[parent[cur_node]] &amp;&amp;	<span class="comment">/* 第三部分：子树的回边节点时间戳不是本节点的父节点的时间戳 */</span></span><br><span class="line">              low[connected_node] &lt; dfn[cur_node])&#123;			<span class="comment">/*  第三部分：子树的回边节点时间戳小于当前节点的时间戳 */</span></span><br><span class="line">                 low[cur_node] = <span class="built_in">min</span>(low[cur_node],low[connected_node]);		<span class="comment">/*	第三部分：min函数是为了保证在cur_node的多个子树中选择最小的那个*/</span></span><br><span class="line">            &#125;<span class="keyword">else</span> <span class="keyword">if</span>(low[connected_node] &gt; dfn[cur_node])&#123;	<span class="comment">/* 第三部分： 子树中存在节点必须经过cur_node才能回到上层 */</span></span><br><span class="line">                joint_node.insert(cur_node);</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;<span class="keyword">else</span>&#123;	<span class="comment">/* 第二部分：cur_node 已经是访问过的点，说明(from_node, to_node)这条边是回边，可能需要更新low数组 */</span></span><br><span class="line">       	 <span class="keyword">if</span>(to_node != parent[cur_node] &amp;&amp; low[from_node] &gt; dfn[to_node])&#123;</span><br><span class="line">             low[cur_node] = dfn[to_node];</span><br><span class="line">         &#125;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<ol start="4">
+<li>root节点单独处理</li>
+</ol>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line"> <span class="comment">/* root node单独处理 */</span></span><br><span class="line"><span class="keyword">int</span> child_num = <span class="number">0</span>;</span><br><span class="line"><span class="keyword">for</span> (<span class="keyword">auto</span> connected_node : link_graph[<span class="number">0</span>]) &#123;</span><br><span class="line">    <span class="keyword">if</span>(!visited[connected_node])&#123;</span><br><span class="line">        child_num++;</span><br><span class="line">        dfs(link_graph, <span class="number">0</span>, connected_node);</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">if</span>(child_num&gt;=<span class="number">2</span>)&#123;</span><br><span class="line">        joint_node.insert(<span class="number">0</span>);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<ol start="5">
+<li>完整代码</li>
+</ol>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br><span class="line">75</span><br><span class="line">76</span><br><span class="line">77</span><br><span class="line">78</span><br><span class="line">79</span><br><span class="line">80</span><br><span class="line">81</span><br><span class="line">82</span><br><span class="line">83</span><br><span class="line">84</span><br><span class="line">85</span><br><span class="line">86</span><br><span class="line">87</span><br><span class="line">88</span><br><span class="line">89</span><br><span class="line">90</span><br><span class="line">91</span><br><span class="line">92</span><br><span class="line">93</span><br><span class="line">94</span><br><span class="line">95</span><br><span class="line">96</span><br><span class="line">97</span><br><span class="line">98</span><br><span class="line">99</span><br><span class="line">100</span><br><span class="line">101</span><br><span class="line">102</span><br><span class="line">103</span><br><span class="line">104</span><br><span class="line">105</span><br><span class="line">106</span><br><span class="line">107</span><br><span class="line">108</span><br><span class="line">109</span><br><span class="line">110</span><br><span class="line">111</span><br><span class="line">112</span><br><span class="line">113</span><br><span class="line">114</span><br><span class="line">115</span><br><span class="line">116</span><br><span class="line">117</span><br><span class="line">118</span><br><span class="line">119</span><br><span class="line">120</span><br><span class="line">121</span><br><span class="line">122</span><br><span class="line">123</span><br><span class="line">124</span><br><span class="line">125</span><br><span class="line">126</span><br><span class="line">127</span><br><span class="line">128</span><br><span class="line">129</span><br><span class="line">130</span><br><span class="line">131</span><br><span class="line">132</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">/**</span></span><br><span class="line"><span class="comment"> * Created by raven on 2020/9/20.</span></span><br><span class="line"><span class="comment"> * 求解连通图的关键点</span></span><br><span class="line"><span class="comment"> * 书上讲解得不好</span></span><br><span class="line"><span class="comment"> * 讲解参考：https://www.cnblogs.com/nullzx/p/7968110.html</span></span><br><span class="line"><span class="comment"> * 输入： tarjan_input.txt 采用邻接链表表示</span></span><br><span class="line"><span class="comment"> */</span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;fstream&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;vector&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;iostream&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;sstream&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;string&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;set&gt;</span></span></span><br><span class="line"></span><br><span class="line"><span class="keyword">using</span> <span class="keyword">namespace</span> <span class="built_in">std</span>;</span><br><span class="line"></span><br><span class="line"><span class="built_in">vector</span>&lt;<span class="keyword">bool</span>&gt; visited;</span><br><span class="line"><span class="built_in">vector</span>&lt;<span class="keyword">int</span>&gt; dfn;         <span class="comment">/*第一次访问到第idx个节点时的时间戳*/</span></span><br><span class="line"><span class="built_in">vector</span>&lt;<span class="keyword">int</span>&gt; low;         <span class="comment">/*第idx个节点及其子树能够回溯到的最小节点处的时间戳*/</span></span><br><span class="line"><span class="built_in">vector</span>&lt;<span class="keyword">int</span>&gt; parent;      <span class="comment">/*第idx个节点的父亲节点*/</span></span><br><span class="line"><span class="built_in">set</span>&lt;<span class="keyword">int</span>&gt; joint_node;     <span class="comment">/* 关节点 */</span></span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">void</span> <span class="title">print_link_graph</span><span class="params">(<span class="keyword">const</span> <span class="built_in">vector</span>&lt;<span class="built_in">vector</span>&lt;<span class="keyword">int</span>&gt;&gt; &amp;link_graph)</span> </span>&#123;</span><br><span class="line">    <span class="keyword">for</span> (<span class="keyword">int</span> i = <span class="number">0</span>; i &lt; link_graph.<span class="built_in">size</span>(); i++) &#123;</span><br><span class="line">        <span class="built_in">cout</span> &lt;&lt; i &lt;&lt; <span class="string">" connect to "</span>;</span><br><span class="line">        <span class="keyword">for</span> (<span class="keyword">int</span> j = <span class="number">0</span>; j &lt; link_graph[i].<span class="built_in">size</span>(); j++) &#123;</span><br><span class="line">            <span class="built_in">cout</span> &lt;&lt; link_graph[i][j] &lt;&lt; <span class="string">" "</span>;</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="built_in">cout</span> &lt;&lt; <span class="built_in">endl</span>;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="built_in">vector</span>&lt;<span class="built_in">vector</span>&lt;<span class="keyword">int</span>&gt;&gt; <span class="title">create_link_graph</span><span class="params">()</span> </span>&#123;</span><br><span class="line">    <span class="function"><span class="keyword">const</span> <span class="built_in">string</span> <span class="title">path</span><span class="params">(<span class="string">"/home/raven/Projects/Clion/MyLeetCode/0.数据结构/6.图/tarjan_input3.txt"</span>)</span></span>;</span><br><span class="line">    <span class="function">ifstream <span class="title">fin</span><span class="params">(path)</span></span>;</span><br><span class="line">    <span class="keyword">if</span> (!fin.is_open()) <span class="built_in">exit</span>(<span class="number">-1</span>);</span><br><span class="line"></span><br><span class="line">    <span class="keyword">int</span> node_num;</span><br><span class="line">    <span class="built_in">string</span> <span class="built_in">line</span>;</span><br><span class="line">    fin &gt;&gt; node_num;</span><br><span class="line">    <span class="function"><span class="built_in">vector</span>&lt;<span class="built_in">vector</span>&lt;<span class="keyword">int</span>&gt;&gt; <span class="title">link_graph</span><span class="params">(node_num, <span class="built_in">vector</span>&lt;<span class="keyword">int</span>&gt;())</span></span>;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">while</span> (getline(fin, <span class="built_in">line</span>)) &#123;</span><br><span class="line">        <span class="keyword">unsigned</span> <span class="keyword">long</span> i = <span class="built_in">line</span>.find_first_of(<span class="string">':'</span>);</span><br><span class="line">        <span class="keyword">if</span> (i == <span class="built_in">std</span>::<span class="built_in">string</span>::npos) <span class="keyword">continue</span>;</span><br><span class="line"></span><br><span class="line">        <span class="built_in">string</span> num_str = <span class="built_in">line</span>.substr(<span class="number">0</span>, i); <span class="comment">/* 序号 */</span></span><br><span class="line">        <span class="built_in">string</span> connect_node = <span class="built_in">line</span>.substr(i + <span class="number">1</span>, <span class="built_in">line</span>.<span class="built_in">size</span>() - i);   <span class="comment">/* 想连接的点 */</span></span><br><span class="line">        <span class="function"><span class="built_in">stringstream</span> <span class="title">sstream1</span><span class="params">(num_str)</span></span>;</span><br><span class="line">        sstream1 &gt;&gt; i;</span><br><span class="line">        <span class="function"><span class="built_in">stringstream</span> <span class="title">sstream2</span><span class="params">(connect_node)</span></span>;</span><br><span class="line"></span><br><span class="line">        <span class="comment">/* 初始化与 i 相连的node */</span></span><br><span class="line">        <span class="keyword">int</span> temp;</span><br><span class="line">        <span class="keyword">while</span> (sstream2 &gt;&gt; temp) &#123;</span><br><span class="line">            link_graph[i].push_back(temp);</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">return</span> link_graph;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">void</span> <span class="title">dfs</span><span class="params">(<span class="keyword">const</span> <span class="built_in">vector</span>&lt;<span class="built_in">vector</span>&lt;<span class="keyword">int</span>&gt;&gt; &amp;link_graph, <span class="keyword">int</span> from_node, <span class="keyword">int</span> to_node)</span> </span>&#123;</span><br><span class="line">    <span class="keyword">static</span> <span class="keyword">int</span> counter = <span class="number">0</span>;       <span class="comment">/* 时间戳 */</span></span><br><span class="line">    <span class="keyword">int</span> cur_node = to_node;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">if</span> (!visited[cur_node]) &#123;     <span class="comment">/* 深入到子树 */</span></span><br><span class="line">        visited[cur_node] = <span class="literal">true</span>;</span><br><span class="line">        dfn[cur_node] = ++counter;</span><br><span class="line">        low[cur_node] = dfn[cur_node];</span><br><span class="line">        parent[cur_node] = from_node;</span><br><span class="line"></span><br><span class="line">        <span class="comment">/* dfs from "cur_node" */</span></span><br><span class="line">        <span class="keyword">for</span> (<span class="keyword">auto</span> connected_node: link_graph[cur_node]) &#123;</span><br><span class="line">            <span class="keyword">if</span> (connected_node == parent[cur_node]) <span class="keyword">continue</span>;    <span class="comment">/* 去掉直接相邻parent回边 */</span></span><br><span class="line"></span><br><span class="line">            dfs(link_graph, cur_node, connected_node);</span><br><span class="line">            <span class="comment">/* 从dfs回来后，已经求解到子树能够回溯到的最小节点 */</span></span><br><span class="line">            <span class="keyword">if</span> (low[connected_node] &lt; dfn[cur_node] &amp;&amp;           <span class="comment">/* 子树回边到的最小节点在本节点之上 */</span></span><br><span class="line">                low[connected_node] != dfn[parent[cur_node]]) &#123;  <span class="comment">/* 保证子树回边到的最小节点不是本节点的parent节点 */</span></span><br><span class="line">                low[cur_node] = <span class="built_in">min</span>(low[cur_node],low[connected_node]);</span><br><span class="line">            &#125; <span class="keyword">else</span></span><br><span class="line">                <span class="keyword">if</span> (low[connected_node] &gt; dfn[cur_node]) &#123;</span><br><span class="line">                joint_node.insert(cur_node);</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;</span><br><span class="line">    &#125; <span class="keyword">else</span> &#123;          <span class="comment">/* 回边 */</span></span><br><span class="line">        <span class="keyword">if</span> (cur_node != parent[from_node] &amp;&amp; dfn[cur_node] &lt; low[from_node]) &#123;</span><br><span class="line">            low[from_node] = dfn[cur_node];</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">int</span> <span class="title">main</span><span class="params">()</span> </span>&#123;</span><br><span class="line">    <span class="comment">/* create graph from the input file */</span></span><br><span class="line">    <span class="built_in">vector</span>&lt;<span class="built_in">vector</span>&lt;<span class="keyword">int</span>&gt;&gt; &amp;&amp;link_graph = create_link_graph();</span><br><span class="line"></span><br><span class="line">    <span class="comment">/* print result */</span></span><br><span class="line">    print_link_graph(link_graph);</span><br><span class="line"></span><br><span class="line">    <span class="comment">/* initialize global vars */</span></span><br><span class="line">    visited.resize(link_graph.<span class="built_in">size</span>());</span><br><span class="line">    dfn.reserve(link_graph.<span class="built_in">size</span>());</span><br><span class="line">    low.reserve(link_graph.<span class="built_in">size</span>());</span><br><span class="line">    parent.reserve(link_graph.<span class="built_in">size</span>());</span><br><span class="line"></span><br><span class="line">    <span class="comment">/* tarjan algorithm */</span></span><br><span class="line">    <span class="comment">/* start from node 0 */</span></span><br><span class="line">    visited[<span class="number">0</span>] = <span class="literal">true</span>;</span><br><span class="line">    dfn[<span class="number">0</span>] = <span class="number">0</span>;</span><br><span class="line">    low[<span class="number">0</span>] = <span class="number">0</span>;</span><br><span class="line">    parent[<span class="number">0</span>] = <span class="number">-1</span>;</span><br><span class="line"></span><br><span class="line">    <span class="comment">/* root node单独处理 */</span></span><br><span class="line">    <span class="keyword">int</span> child_num = <span class="number">0</span>;</span><br><span class="line">    <span class="keyword">for</span> (<span class="keyword">auto</span> connected_node : link_graph[<span class="number">0</span>]) &#123;</span><br><span class="line">        <span class="keyword">if</span>(!visited[connected_node])&#123;</span><br><span class="line">            child_num++;</span><br><span class="line">            dfs(link_graph, <span class="number">0</span>, connected_node);</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="keyword">if</span>(child_num&gt;=<span class="number">2</span>)&#123;</span><br><span class="line">            joint_node.insert(<span class="number">0</span>);</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="comment">/* print answer */</span></span><br><span class="line">    <span class="keyword">for</span>(<span class="keyword">auto</span> node : joint_node)&#123;</span><br><span class="line">        <span class="built_in">cout</span> &lt;&lt; <span class="string">"joint node "</span> &lt;&lt; node &lt;&lt; <span class="built_in">endl</span>;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">return</span> <span class="number">0</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h2 id="3-参考"><a href="#3-参考" class="headerlink" title="3. 参考"></a>3. 参考</h2><ol>
+<li><span class="exturl" data-url="aHR0cHM6Ly93d3cuY25ibG9ncy5jb20vbnVsbHp4L3AvNzk2ODExMC5odG1s" title="https://www.cnblogs.com/nullzx/p/7968110.html">Tarjan算法：求解图的割点与桥（割边）<i class="fa fa-external-link"></i></span></li>
+<li><a href="">数据结构(C语言版本)</a></li>
+</ol>
+
+    </div>
+
+    
+    
+    
+        <div class="reward-container">
+  <div>文章对你有帮助?打赏一下作者吧</div>
+  <button onclick="var qr = document.getElementById('qr'); qr.style.display = (qr.style.display === 'none') ? 'block' : 'none';">
+    打赏
+  </button>
+  <div id="qr" style="display: none;">
+      
+      <div style="display: inline-block;">
+        <img src="https://pic.downk.cc/item/5d064208451253d178a15b27.png" alt="Raven 微信支付">
+        <p>微信支付</p>
+      </div>
+      
+      <div style="display: inline-block;">
+        <img src="https://pic.downk.cc/item/5d0641c7451253d178a15376.png" alt="Raven 支付宝">
+        <p>支付宝</p>
+      </div>
+
+  </div>
+</div>
+
+        
+
+<div>
+<ul class="post-copyright">
+  <li class="post-copyright-author">
+    <strong>本文作者： </strong>Raven
+  </li>
+  <li class="post-copyright-link">
+    <strong>本文链接：</strong>
+    <a href="https://www.ravenxrz.ink/archives/ed32a852.html" title="Tarjan算法详解">https://www.ravenxrz.ink/archives/ed32a852.html</a>
+  </li>
+  <li class="post-copyright-license">
+    <strong>版权声明： </strong>本博客所有文章除特别声明外，均采用 <span class="exturl" data-url="aHR0cHM6Ly9jcmVhdGl2ZWNvbW1vbnMub3JnL2xpY2Vuc2VzL2J5LW5jLXNhLzQuMC8="><i class="fa fa-fw fa-creative-commons"></i>BY-NC-SA</span> 许可协议。转载请注明出处！
+  </li>
+</ul>
+</div>
+
+
+      <footer class="post-footer">
+
+        
+
+
+        
+    <div class="post-nav">
+      <div class="post-nav-item">
+    <a href="/archives/5d2f135a.html" rel="prev" title="Csapp-Proxylab题解">
+      <i class="fa fa-chevron-left"></i> Csapp-Proxylab题解
+    </a></div>
+      <div class="post-nav-item"></div>
+    </div>
+      </footer>
+    
+  </article>
+  
+  
+  
+
+
+
+          </div>
+          
+    <div class="comments" id="gitalk-container"></div>
+
+<script>
+  window.addEventListener('tabs:register', () => {
+    let { activeClass } = CONFIG.comments;
+    if (CONFIG.comments.storage) {
+      activeClass = localStorage.getItem('comments_active') || activeClass;
+    }
+    if (activeClass) {
+      let activeTab = document.querySelector(`a[href="#comment-${activeClass}"]`);
+      if (activeTab) {
+        activeTab.click();
+      }
+    }
+  });
+  if (CONFIG.comments.storage) {
+    window.addEventListener('tabs:click', event => {
+      if (!event.target.matches('.tabs-comment .tab-content .tab-pane')) return;
+      let commentClass = event.target.classList[1];
+      localStorage.setItem('comments_active', commentClass);
+    });
+  }
+</script>
+
+        </div>
+          
+  
+  <div class="toggle sidebar-toggle">
+    <span class="toggle-line toggle-line-first"></span>
+    <span class="toggle-line toggle-line-middle"></span>
+    <span class="toggle-line toggle-line-last"></span>
+  </div>
+
+  <aside class="sidebar">
+    <div class="sidebar-inner">
+
+      <ul class="sidebar-nav motion-element">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          站点概览
+        </li>
+      </ul>
+
+      <!--noindex-->
+      <div class="post-toc-wrap sidebar-panel">
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#1-什么是关节点？"><span class="nav-text">1.什么是关节点？</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#2-求解关键点"><span class="nav-text">2.求解关键点</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#1-暴力法"><span class="nav-text">1. 暴力法</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#2-tarjan算法"><span class="nav-text">2. tarjan算法</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#3-看一个例子"><span class="nav-text">3. 看一个例子</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#4-tarjan-C-实现"><span class="nav-text">4. tarjan C++实现</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#3-参考"><span class="nav-text">3. 参考</span></a></li></ol></div>
+      </div>
+      <!--/noindex-->
+
+      <div class="site-overview-wrap sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+    <img class="site-author-image" itemprop="image" alt="Raven"
+      src="https://pic.downk.cc/item/5e907515504f4bcb04b6f798.jpg">
+  <p class="site-author-name" itemprop="name">Raven</p>
+  <div class="site-description" itemprop="description">分享技术，记录生活</div>
+</div>
+<div class="site-state-wrap motion-element">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+          <a href="/archives/">
+        
+          <span class="site-state-item-count">120</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+            <a href="/categories/">
+          
+        <span class="site-state-item-count">18</span>
+        <span class="site-state-item-name">分类</span></a>
+      </div>
+      <div class="site-state-item site-state-tags">
+            <a href="/tags/">
+          
+        <span class="site-state-item-count">114</span>
+        <span class="site-state-item-name">标签</span></a>
+      </div>
+  </nav>
+</div>
+  <div class="links-of-author motion-element">
+      <span class="links-of-author-item">
+        <span class="exturl" data-url="aHR0cHM6Ly9naXRodWIuY29tL3JhdmVueHJ6" title="GitHub → https:&#x2F;&#x2F;github.com&#x2F;ravenxrz"><i class="fa fa-fw fa-fab fa-github"></i>GitHub</span>
+      </span>
+      <span class="links-of-author-item">
+        <span class="exturl" data-url="bWFpbHRvOnpoYWduLnhpbmdydWlAZm94bWFpbC5jb20=" title="E-Mail → mailto:zhagn.xingrui@foxmail.com"><i class="fa fa-fw fa-fa fa-envelope"></i>E-Mail</span>
+      </span>
+  </div>
+  <div class="cc-license motion-element" itemprop="license">
+    <span class="exturl cc-opacity" data-url="aHR0cHM6Ly9jcmVhdGl2ZWNvbW1vbnMub3JnL2xpY2Vuc2VzL2J5LW5jLXNhLzQuMC8="><img src="/images/cc-by-nc-sa.svg" alt="Creative Commons"></span>
+  </div>
+
+
+  <div class="links-of-blogroll motion-element">
+    <div class="links-of-blogroll-title">
+      <i class="fa fa-fw fa-fa fa-link"></i>
+      Links
+    </div>
+    <ul class="links-of-blogroll-list">
+        <li class="links-of-blogroll-item">
+          <a href="/resources" title="&#x2F;resources">我的资源</a>
+        </li>
+    </ul>
+  </div>
+
+      </div>
+
+    </div>
+  </aside>
+  <div id="sidebar-dimmer"></div>
+
+
+      </div>
+    </main>
+
+    <footer class="footer">
+      <div class="footer-inner">
+        
+
+        
+
+<div class="copyright">
+  
+  &copy; 2017 – 
+  <span itemprop="copyrightYear">2020</span>
+  <span class="with-love">
+    <i class="fa fa-fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">Raven</span>
+</div>
+  <div class="powered-by">由 <span class="exturl theme-link" data-url="aHR0cHM6Ly9oZXhvLmlv">Hexo</span> & <span class="exturl theme-link" data-url="aHR0cHM6Ly9taXN0LnRoZW1lLW5leHQub3Jn">NexT.Mist</span> 强力驱动
+  </div>
+
+        
+<div class="busuanzi-count">
+  <script async src="https://busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+    <span class="post-meta-item" id="busuanzi_container_site_uv" style="display: none;">
+      <span class="post-meta-item-icon">
+        <i class="fa fa-fa fa-user"></i>
+      </span>
+      <span class="site-uv" title="总访客量">
+        <span id="busuanzi_value_site_uv"></span>
+      </span>
+    </span>
+    <span class="post-meta-divider">|</span>
+    <span class="post-meta-item" id="busuanzi_container_site_pv" style="display: none;">
+      <span class="post-meta-item-icon">
+        <i class="fa fa-fa fa-eye"></i>
+      </span>
+      <span class="site-pv" title="总访问量">
+        <span id="busuanzi_value_site_pv"></span>
+      </span>
+    </span>
+</div>
+
+
+
+
+
+
+
+
+      </div>
+    </footer>
+  </div>
+
+  
+  <script src="//cdn.jsdelivr.net/npm/animejs@3.1.0/lib/anime.min.js"></script>
+  <script src="//cdn.jsdelivr.net/npm/medium-zoom@1/dist/medium-zoom.min.js"></script>
+  <script src="//cdn.jsdelivr.net/npm/lozad@1/dist/lozad.min.js"></script>
+  <script src="//cdn.jsdelivr.net/npm/pangu@4/dist/browser/pangu.min.js"></script>
+
+<script src="/js/utils.js"></script>
+
+
+<script src="/js/schemes/muse.js"></script>
+
+
+<script src="/js/next-boot.js"></script>
+
+
+
+
+  
+  <script>
+    (function(){
+      var bp = document.createElement('script');
+      var curProtocol = window.location.protocol.split(':')[0];
+      bp.src = (curProtocol === 'https') ? 'https://zz.bdstatic.com/linksubmit/push.js' : 'http://push.zhanzhang.baidu.com/push.js';
+      var s = document.getElementsByTagName("script")[0];
+      s.parentNode.insertBefore(bp, s);
+    })();
+  </script>
+
+
+
+
+  
+<script src="/js/local-search.js"></script>
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+  
+      
+
+<script>
+  if (typeof MathJax === 'undefined') {
+    window.MathJax = {
+      loader: {
+        source: {
+          '[tex]/amsCd': '[tex]/amscd',
+          '[tex]/AMScd': '[tex]/amscd'
+        }
+      },
+      tex: {
+        inlineMath: {'[+]': [['$', '$']]},
+        tags: 'ams'
+      },
+      options: {
+        renderActions: {
+          findScript: [10, doc => {
+            document.querySelectorAll('script[type^="math/tex"]').forEach(node => {
+              const display = !!node.type.match(/; *mode=display/);
+              const math = new doc.options.MathItem(node.textContent, doc.inputJax[0], display);
+              const text = document.createTextNode('');
+              node.parentNode.replaceChild(text, node);
+              math.start = {node: text, delim: '', n: 0};
+              math.end = {node: text, delim: '', n: 0};
+              doc.math.push(math);
+            });
+          }, '', false],
+          insertedScript: [200, () => {
+            document.querySelectorAll('mjx-container').forEach(node => {
+              let target = node.parentNode;
+              if (target.nodeName.toLowerCase() === 'li') {
+                target.parentNode.classList.add('has-jax');
+              }
+            });
+          }, '', false]
+        }
+      }
+    };
+    (function () {
+      var script = document.createElement('script');
+      script.src = '//cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js';
+      script.defer = true;
+      document.head.appendChild(script);
+    })();
+  } else {
+    MathJax.startup.document.state(0);
+    MathJax.texReset();
+    MathJax.typeset();
+  }
+</script>
+
+    
+
+  
+  <script src="//cdn.jsdelivr.net/npm/quicklink@1/dist/quicklink.umd.js"></script>
+  <script>
+      window.addEventListener('load', () => {
+      quicklink({
+        timeout : 3000,
+        priority: true,
+        ignores : [uri => uri.includes('#'),uri => uri === 'https://www.ravenxrz.ink/archives/ed32a852.html',]
+      });
+      });
+  </script>
+
+<link rel="stylesheet" href="//cdn.jsdelivr.net/npm/gitalk@1/dist/gitalk.min.css">
+
+<script>
+NexT.utils.loadComments(document.querySelector('#gitalk-container'), () => {
+  NexT.utils.getScript('//cdn.jsdelivr.net/npm/gitalk@1/dist/gitalk.min.js', () => {
+    var gitalk = new Gitalk({
+      clientID    : 'b2fd373d2ca2e03e591e',
+      clientSecret: 'de4ab066908c1fbd32d3a45e091b3538761d685b',
+      repo        : 'BlogComment',
+      owner       : 'ravenxrz',
+      admin       : ['ravenxrz'],
+      id          : 'd6676c694ec27d1369149ed86e150771',
+        language: '',
+      distractionFreeMode: true
+    });
+    gitalk.render('gitalk-container');
+  }, window.Gitalk);
+});
+</script>
+
+</body>
+</html>
