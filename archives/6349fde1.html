@@ -31,11 +31,13 @@
 <meta property="og:site_name" content="Raven&#39;s Blog">
 <meta property="og:description" content="上文我们说了leveldb的Put操作。简单来说就是先向log写入一条记录，用于保证本条记录的持久性，然后向memtable插入本条记录。当然这个过程还可能牵涉到compaction，但从宏观上就是这么简单的两步。 今天我们再来谈谈leveldb的Get操作。">
 <meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="https://pic.downk.cc/item/5f82c4201cd1bbb86b405985.png">
 <meta property="article:published_time" content="2020-10-12T10:59:42.000Z">
-<meta property="article:modified_time" content="2020-10-12T11:08:17.957Z">
+<meta property="article:modified_time" content="2020-10-12T11:39:53.577Z">
 <meta property="article:author" content="Raven">
 <meta property="article:tag" content="IT">
 <meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://pic.downk.cc/item/5f82c4201cd1bbb86b405985.png">
 
 <link rel="canonical" href="https://www.ravenxrz.ink/archives/6349fde1.html">
 
@@ -226,7 +228,7 @@
               <span class="post-meta-item-text">发表于</span>
               
 
-              <time title="创建时间：2020-10-12 18:59:42 / 修改时间：19:08:17" itemprop="dateCreated datePublished" datetime="2020-10-12T18:59:42+08:00">2020-10-12</time>
+              <time title="创建时间：2020-10-12 18:59:42 / 修改时间：19:39:53" itemprop="dateCreated datePublished" datetime="2020-10-12T18:59:42+08:00">2020-10-12</time>
             </span>
             <span class="post-meta-item">
               <span class="post-meta-item-icon">
@@ -285,7 +287,7 @@
 
 <p>实际的sstable来自cache（前提是开启了cache，否则依然是从文件系统中的文件中获取）。</p>
 <h3 id="3-总结："><a href="#3-总结：" class="headerlink" title="3. 总结："></a>3. 总结：</h3><p>总结流程图如下：</p>
-<p>![](<span class="exturl" data-url="aHR0cHM6Ly9jZG4uanNkZWxpdnIubmV0L2doL3JhdmVueHJ6L1BpY0JlZC9pbWcvbGV2ZWxkYua6kOeggemYheivuy1jb3B5LeesrA==" title="https://cdn.jsdelivr.net/gh/ravenxrz/PicBed/img/leveldb源码阅读-copy-第">https://cdn.jsdelivr.net/gh/ravenxrz/PicBed/img/leveldb源码阅读-copy-第<i class="fa fa-external-link"></i></span> 25 页 (1).png)</p>
+<p><img data-src="https://pic.downk.cc/item/5f82c4201cd1bbb86b405985.png" alt=""></p>
 <p>首先去mem中读，读不到，去imm中读，读不到，去底层sstable中读，因为sstable可能被cache到内存，所以可以去cache中读，如果系统没有配置cache，或者cache中没有cache到指定sstable，则到文件系统中读。</p>
 <p>关于RangeQuery操作，其实就是对Iterator的操作，而leveldb的Iterator已经在DBIter介绍，所以不再赘述。</p>
 

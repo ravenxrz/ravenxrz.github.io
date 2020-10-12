@@ -31,11 +31,14 @@
 <meta property="og:site_name" content="Raven&#39;s Blog">
 <meta property="og:description" content="InternalIterator在LevelDB中并没有InternalIterator这个类，它是一个功能Iterator，实现的功能是遍历整个leveldb的key value.从本质上来看就是一个MergingIterator.">
 <meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="https://pic.downk.cc/item/5f8441891cd1bbb86b045762.png">
+<meta property="og:image" content="https://pic.downk.cc/item/5f8441901cd1bbb86b045c7f.png">
 <meta property="article:published_time" content="2020-10-12T10:56:54.000Z">
-<meta property="article:modified_time" content="2020-10-12T11:08:17.961Z">
+<meta property="article:modified_time" content="2020-10-12T11:45:28.798Z">
 <meta property="article:author" content="Raven">
 <meta property="article:tag" content="IT">
 <meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://pic.downk.cc/item/5f8441891cd1bbb86b045762.png">
 
 <link rel="canonical" href="https://www.ravenxrz.ink/archives/615b88c9.html">
 
@@ -226,7 +229,7 @@
               <span class="post-meta-item-text">发表于</span>
               
 
-              <time title="创建时间：2020-10-12 18:56:54 / 修改时间：19:08:17" itemprop="dateCreated datePublished" datetime="2020-10-12T18:56:54+08:00">2020-10-12</time>
+              <time title="创建时间：2020-10-12 18:56:54 / 修改时间：19:45:28" itemprop="dateCreated datePublished" datetime="2020-10-12T18:56:54+08:00">2020-10-12</time>
             </span>
             <span class="post-meta-item">
               <span class="post-meta-item-icon">
@@ -283,9 +286,9 @@
 <figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="function">Iterator* <span class="title">Version::NewConcatenatingIterator</span><span class="params">(<span class="keyword">const</span> ReadOptions&amp; options,</span></span></span><br><span class="line"><span class="function"><span class="params">                                            <span class="keyword">int</span> level)</span> <span class="keyword">const</span> </span>&#123;</span><br><span class="line">  <span class="keyword">return</span> NewTwoLevelIterator(</span><br><span class="line">      <span class="keyword">new</span> LevelFileNumIterator(vset_-&gt;icmp_, &amp;files_[level]), <span class="comment">// index iter 为 LevelFileNumIterator, 即存放的是SStable的FileMetaData。 key是sstable的最大key，value是sstable的 file number和file size</span></span><br><span class="line">      &amp;GetFileIterator, vset_-&gt;table_cache_, options);	<span class="comment">// data iter是 sstable的iterator，即TwoLevelIterator</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
 
 <p>ConcatenatingIterator是用来遍历出level0的其他level的iterator。 依然是一个组合iterator，如下图：</p>
-<p>![](<span class="exturl" data-url="aHR0cHM6Ly9jZG4uanNkZWxpdnIubmV0L2doL3JhdmVueHJ6L1BpY0JlZC9pbWcv57uY5Zu+5paH5Lu2LeesrA==" title="https://cdn.jsdelivr.net/gh/ravenxrz/PicBed/img/绘图文件-第">https://cdn.jsdelivr.net/gh/ravenxrz/PicBed/img/绘图文件-第<i class="fa fa-external-link"></i></span> 10 页.png)</p>
+<p><img data-src="https://pic.downk.cc/item/5f8441891cd1bbb86b045762.png" alt=""></p>
 <h2 id="4-总结"><a href="#4-总结" class="headerlink" title="4. 总结"></a>4. 总结</h2><p>InternalIterator是一个功能Iterator，功能是遍历整个leveldb系统。包括mem,imm, 以及各level的sstable。本质上是一个MergingIterator.如下图：</p>
-<p>![](<span class="exturl" data-url="aHR0cHM6Ly9jZG4uanNkZWxpdnIubmV0L2doL3JhdmVueHJ6L1BpY0JlZC9pbWcv57uY5Zu+5paH5Lu2LeesrA==" title="https://cdn.jsdelivr.net/gh/ravenxrz/PicBed/img/绘图文件-第">https://cdn.jsdelivr.net/gh/ravenxrz/PicBed/img/绘图文件-第<i class="fa fa-external-link"></i></span> 11 页.png)</p>
+<p><img data-src="https://pic.downk.cc/item/5f8441901cd1bbb86b045c7f.png" alt=""></p>
 
     </div>
 
