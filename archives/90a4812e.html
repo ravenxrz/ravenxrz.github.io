@@ -1,0 +1,763 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 4.2.1">
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+  <meta http-equiv="Cache-Control" content="no-transform">
+  <meta http-equiv="Cache-Control" content="no-siteapp">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+<link rel="stylesheet" href="//cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@5/css/all.min.css">
+  <link rel="stylesheet" href="//cdn.jsdelivr.net/npm/pace-js@1/themes/blue/pace-theme-minimal.css">
+  <script src="//cdn.jsdelivr.net/npm/pace-js@1/pace.min.js"></script>
+
+<script id="hexo-configurations">
+    var NexT = window.NexT || {};
+    var CONFIG = {"hostname":"www.ravenxrz.ink","root":"/","scheme":"Mist","version":"7.8.0","exturl":true,"sidebar":{"position":"left","display":"always","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":true,"show_result":true,"style":"flat"},"back2top":{"enable":true,"sidebar":false,"scrollpercent":true},"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":true,"lazyload":true,"pangu":true,"comments":{"style":"tabs","active":"gitalk","storage":true,"lazyload":true,"nav":null,"activeClass":"gitalk"},"algolia":{"hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":true,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},"motion":{"enable":false,"async":true,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},"path":"search.xml"};
+  </script>
+
+  <meta name="description" content="1.Version 相关的数据结构为什么要用version控制？ 对于同一笔记录，如果读和写同一时间发生，reader可能读到不一致的数据或者是修改了一半的数据。对于这种情况，有三种常见的解决方法：  悲观锁  ，最简单的处理方式，就是加锁保护，写的时候不许读，读的时候不许写。效率低。  乐观锁   它假设多用户并发的事物在处理时不会彼此互相影响，各事务能够在不产生锁的的情况下处理各自影响的那">
+<meta property="og:type" content="article">
+<meta property="og:title" content="leveldb源码阅读记录-Version数据结构及MANIFEST文件">
+<meta property="og:url" content="https://www.ravenxrz.ink/archives/90a4812e.html">
+<meta property="og:site_name" content="Raven&#39;s Blog">
+<meta property="og:description" content="1.Version 相关的数据结构为什么要用version控制？ 对于同一笔记录，如果读和写同一时间发生，reader可能读到不一致的数据或者是修改了一半的数据。对于这种情况，有三种常见的解决方法：  悲观锁  ，最简单的处理方式，就是加锁保护，写的时候不许读，读的时候不许写。效率低。  乐观锁   它假设多用户并发的事物在处理时不会彼此互相影响，各事务能够在不产生锁的的情况下处理各自影响的那">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="https://cdn.jsdelivr.net/gh/ravenxrz/PicBed/img/image-20200917191610062.png">
+<meta property="og:image" content="https://bean-li.github.io/assets/LevelDB/version_versionset.png">
+<meta property="og:image" content="https://cdn.jsdelivr.net/gh/ravenxrz/PicBed/img/image-20200917210900575.png">
+<meta property="og:image" content="https://cdn.jsdelivr.net/gh/ravenxrz/PicBed/img/image-20200917210931871.png">
+<meta property="og:image" content="https://cdn.jsdelivr.net/gh/ravenxrz/PicBed/img/image-20201006194127291.png">
+<meta property="og:image" content="https://cdn.jsdelivr.net/gh/ravenxrz/PicBed/img/image-20201006194516231.png">
+<meta property="og:image" content="https://bean-li.github.io/assets/LevelDB/write_a_manifest.png">
+<meta property="article:published_time" content="2020-10-12T03:19:43.000Z">
+<meta property="article:modified_time" content="2020-10-12T03:20:17.692Z">
+<meta property="article:author" content="Raven">
+<meta property="article:tag" content="IT">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://cdn.jsdelivr.net/gh/ravenxrz/PicBed/img/image-20200917191610062.png">
+
+<link rel="canonical" href="https://www.ravenxrz.ink/archives/90a4812e.html">
+
+
+<script id="page-configurations">
+  // https://hexo.io/docs/variables.html
+  CONFIG.page = {
+    sidebar: "",
+    isHome : false,
+    isPost : true,
+    lang   : 'zh-CN'
+  };
+</script>
+
+  <title>leveldb源码阅读记录-Version数据结构及MANIFEST文件 | Raven's Blog</title>
+  
+
+
+
+
+
+
+  <noscript>
+  <style>
+  .use-motion .brand,
+  .use-motion .menu-item,
+  .sidebar-inner,
+  .use-motion .post-block,
+  .use-motion .pagination,
+  .use-motion .comments,
+  .use-motion .post-header,
+  .use-motion .post-body,
+  .use-motion .collection-header { opacity: initial; }
+
+  .use-motion .site-title,
+  .use-motion .site-subtitle {
+    opacity: initial;
+    top: initial;
+  }
+
+  .use-motion .logo-line-before i { left: initial; }
+  .use-motion .logo-line-after i { right: initial; }
+  </style>
+</noscript>
+
+<link rel="alternate" href="/atom.xml" title="Raven's Blog" type="application/atom+xml">
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage">
+  <div class="container">
+    <div class="headband"></div>
+
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切换导航栏">
+      <span class="toggle-line toggle-line-first"></span>
+      <span class="toggle-line toggle-line-middle"></span>
+      <span class="toggle-line toggle-line-last"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <span class="logo-line-before"><i></i></span>
+      <h1 class="site-title">Raven's Blog</h1>
+      <span class="logo-line-after"><i></i></span>
+    </a>
+      <p class="site-subtitle" itemprop="description">zhang.xingrui@foxmail.com</p>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger">
+        <i class="fa fa-search fa-fw fa-lg"></i>
+    </div>
+  </div>
+</div>
+
+
+
+
+<nav class="site-nav">
+  <ul id="menu" class="menu">
+        <li class="menu-item menu-item-home">
+
+    <a href="/" rel="section"><i class="fa fa-fw fa-fa fa-home"></i>首页</a>
+
+  </li>
+        <li class="menu-item menu-item-archives">
+
+    <a href="/archives/" rel="section"><i class="fa fa-fw fa-fa fa-archive"></i>归档<span class="badge">129</span></a>
+
+  </li>
+        <li class="menu-item menu-item-categories">
+
+    <a href="/categories/" rel="section"><i class="fa fa-fw fa-fa fa-th"></i>分类<span class="badge">19</span></a>
+
+  </li>
+        <li class="menu-item menu-item-tags">
+
+    <a href="/tags/" rel="section"><i class="fa fa-fw fa-fa fa-tags"></i>标签<span class="badge">114</span></a>
+
+  </li>
+        <li class="menu-item menu-item-about">
+
+    <a href="/about/" rel="section"><i class="fa fa-fw fa-fa fa-user"></i>关于</a>
+
+  </li>
+      <li class="menu-item menu-item-search">
+        <a role="button" class="popup-trigger"><i class="fa fa-search fa-fw"></i>搜索
+        </a>
+      </li>
+  </ul>
+</nav>
+
+
+
+  <div class="search-pop-overlay">
+    <div class="popup search-popup">
+        <div class="search-header">
+  <span class="search-icon">
+    <i class="fa fa-search"></i>
+  </span>
+  <div class="search-input-container">
+    <input autocomplete="off" autocapitalize="off"
+           placeholder="搜索..." spellcheck="false"
+           type="search" class="search-input">
+  </div>
+  <span class="popup-btn-close">
+    <i class="fa fa-times-circle"></i>
+  </span>
+</div>
+<div id="search-result">
+  <div id="no-result">
+    <i class="fa fa-spinner fa-pulse fa-5x fa-fw"></i>
+  </div>
+</div>
+
+    </div>
+  </div>
+
+</div>
+    </header>
+
+    
+  <div class="back-to-top">
+    <i class="fa fa-arrow-up"></i>
+    <span>0%</span>
+  </div>
+
+  <span class="exturl github-corner" data-url="aHR0cHM6Ly9naXRodWIuY29tL3JhdmVueHJ6" title="Follow me on GitHub" aria-label="Follow me on GitHub"><svg width="80" height="80" viewBox="0 0 250 250" aria-hidden="true"><path d="M0,0 L115,115 L130,115 L142,142 L250,250 L250,0 Z"></path><path d="M128.3,109.0 C113.8,99.7 119.0,89.6 119.0,89.6 C122.0,82.7 120.5,78.6 120.5,78.6 C119.2,72.0 123.4,76.3 123.4,76.3 C127.3,80.9 125.5,87.3 125.5,87.3 C122.9,97.6 130.6,101.9 134.4,103.2" fill="currentColor" style="transform-origin: 130px 106px;" class="octo-arm"></path><path d="M115.0,115.0 C114.9,115.1 118.7,116.5 119.8,115.4 L133.7,101.6 C136.9,99.2 139.9,98.4 142.2,98.6 C133.8,88.0 127.5,74.4 143.8,58.0 C148.5,53.4 154.0,51.2 159.7,51.0 C160.3,49.4 163.2,43.6 171.4,40.1 C171.4,40.1 176.1,42.5 178.8,56.2 C183.1,58.6 187.2,61.8 190.9,65.4 C194.5,69.0 197.7,73.2 200.1,77.6 C213.8,80.2 216.3,84.9 216.3,84.9 C212.7,93.1 206.9,96.0 205.4,96.6 C205.1,102.4 203.0,107.8 198.3,112.5 C181.9,128.9 168.3,122.5 157.7,114.1 C157.9,116.9 156.7,120.9 152.7,124.9 L141.0,136.5 C139.8,137.7 141.6,141.9 141.8,141.8 Z" fill="currentColor" class="octo-body"></path></svg></span>
+
+
+    <main class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          
+
+          <div class="content post posts-expand">
+            
+
+    
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="https://www.ravenxrz.ink/archives/90a4812e.html">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="https://pic.downk.cc/item/5e907515504f4bcb04b6f798.jpg">
+      <meta itemprop="name" content="Raven">
+      <meta itemprop="description" content="分享技术，记录生活">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Raven's Blog">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          leveldb源码阅读记录-Version数据结构及MANIFEST文件
+        </h1>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+              
+
+              <time title="创建时间：2020-10-12 11:19:43 / 修改时间：11:20:17" itemprop="dateCreated datePublished" datetime="2020-10-12T11:19:43+08:00">2020-10-12</time>
+            </span>
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              <span class="post-meta-item-text">分类于</span>
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/leveldb/" itemprop="url" rel="index"><span itemprop="name">leveldb</span></a>
+                </span>
+            </span>
+
+          
+            <span class="post-meta-item" title="阅读次数" id="busuanzi_container_page_pv" style="display: none;">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-fa fa-eye"></i>
+              </span>
+              <span class="post-meta-item-text">阅读次数：</span>
+              <span id="busuanzi_value_page_pv"></span>
+            </span>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+        <a id="more"></a>
+
+<h2 id="1-Version-相关的数据结构"><a href="#1-Version-相关的数据结构" class="headerlink" title="1.Version 相关的数据结构"></a>1.Version 相关的数据结构</h2><p>为什么要用version控制？</p>
+<p>对于同一笔记录，如果读和写同一时间发生，reader可能读到不一致的数据或者是修改了一半的数据。对于这种情况，有三种常见的解决方法：</p>
+<ul>
+<li>悲观锁  ，最简单的处理方式，就是加锁保护，写的时候不许读，读的时候不许写。效率低。 </li>
+<li>乐观锁   它假设多用户并发的事物在处理时不会彼此互相影响，各事务能够在不产生锁的的情况下处理各自影响的那部分数据。在提交数据更新之前，每个事务会先检查在该事务读取数据后，有没有其他事务又修改了该数据。 果其他事务有更新的话，正在提交的事务会进行回滚;这样做不会有锁竞争更不会产生死锁， 但如果数据竞争的概率较高，效率也会受影响 。</li>
+<li>MVCC，MVCC是一个数据库常用的概念。Multiversion concurrency control多版本并发控制。每一个执行操作的用户，看到的都是数据库特定时刻的的快照(snapshot), writer的任何未完成的修改都不会被其他的用户所看到;当对数据进行更新的时候并是不直接覆盖，而是先进行标记, 然后在其他地方添加新的数据，从而形成一个新版本, 此时再来读取的reader看到的就是最新的版本了。所以这种处理策略是维护了多个版本的数据的,但只有一个是最新的。</li>
+</ul>
+<p>leveldb中的version就是MVCC思想的体现。</p>
+<h3 id="1-VersionEdit"><a href="#1-VersionEdit" class="headerlink" title="1. VersionEdit"></a>1. VersionEdit</h3><p>VersionEdit是LevelDB两个Version之间的差量，即：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">Versoin0 + VersoinEdit &#x3D; Version1</span><br></pre></td></tr></table></figure>
+
+<p>差量包括本次操作，新增的文件和删除的文件。</p>
+<p>看看VersionEdit的成员：</p>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">private</span>:</span><br><span class="line"> <span class="keyword">friend</span> <span class="class"><span class="keyword">class</span> <span class="title">VersionSet</span>;</span></span><br><span class="line"></span><br><span class="line"> <span class="keyword">typedef</span> <span class="built_in">std</span>::<span class="built_in">set</span>&lt;<span class="built_in">std</span>::pair&lt;<span class="keyword">int</span>, <span class="keyword">uint64_t</span>&gt;&gt; DeletedFileSet;</span><br><span class="line"></span><br><span class="line"> <span class="built_in">std</span>::<span class="built_in">string</span> comparator_;</span><br><span class="line"> <span class="keyword">uint64_t</span> log_number_;</span><br><span class="line"> <span class="keyword">uint64_t</span> prev_log_number_;</span><br><span class="line"> <span class="keyword">uint64_t</span> next_file_number_;	</span><br><span class="line"> SequenceNumber last_sequence_;</span><br><span class="line"> <span class="keyword">bool</span> has_comparator_;</span><br><span class="line"> <span class="keyword">bool</span> has_log_number_;</span><br><span class="line"> <span class="keyword">bool</span> has_prev_log_number_;</span><br><span class="line"> <span class="keyword">bool</span> has_next_file_number_;</span><br><span class="line"> <span class="keyword">bool</span> has_last_sequence_;</span><br><span class="line"></span><br><span class="line"> <span class="built_in">std</span>::<span class="built_in">vector</span>&lt;<span class="built_in">std</span>::pair&lt;<span class="keyword">int</span>, InternalKey&gt;&gt; compact_pointers_;		<span class="comment">// 存放这个version的压缩指针，pair.first对应哪一个level， pair.second 对应哪一个key开始compaction</span></span><br><span class="line"> DeletedFileSet deleted_files_;</span><br><span class="line"> <span class="built_in">std</span>::<span class="built_in">vector</span>&lt;<span class="built_in">std</span>::pair&lt;<span class="keyword">int</span>, FileMetaData&gt;&gt; new_files_;</span><br></pre></td></tr></table></figure>
+
+<p>关注最后3个， compacton_pointers暂时不管，<strong>delted_files_, new_files_是这次版本修改的差量。</strong></p>
+<p><strong>关注new_files_中的FileMetaData，因为一次版本修改新增的文件是这个类的集合，</strong></p>
+<h3 id="2-FileMetaData"><a href="#2-FileMetaData" class="headerlink" title="2. FileMetaData"></a>2. FileMetaData</h3><p>FileMetaData是每个Version内部维持的文件，每层中都有多个FileMetaData（个人猜想，这和SST相关，但是不是SST）</p>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"><span class="class"><span class="keyword">struct</span> <span class="title">FileMetaData</span> &#123;</span></span><br><span class="line">  FileMetaData() : refs(<span class="number">0</span>), allowed_seeks(<span class="number">1</span> &lt;&lt; <span class="number">30</span>), file_size(<span class="number">0</span>) &#123;&#125;</span><br><span class="line"></span><br><span class="line">  <span class="keyword">int</span> refs;</span><br><span class="line">  <span class="keyword">int</span> allowed_seeks;  <span class="comment">// Seeks allowed until compaction</span></span><br><span class="line">  <span class="keyword">uint64_t</span> number;</span><br><span class="line">  <span class="keyword">uint64_t</span> file_size;    <span class="comment">// File size in bytes</span></span><br><span class="line">  InternalKey smallest;  <span class="comment">// Smallest internal key served by table</span></span><br><span class="line">  InternalKey largest;   <span class="comment">// Largest internal key served by table</span></span><br><span class="line">&#125;;</span><br></pre></td></tr></table></figure>
+
+<p>很容易猜到这个类应该就是用来记录SST的元数据，即Manifest中的数据。</p>
+<h3 id="3-Version"><a href="#3-Version" class="headerlink" title="3. Version"></a>3. Version</h3><img data-src="https://cdn.jsdelivr.net/gh/ravenxrz/PicBed/img/image-20200917191610062.png" alt="image-20200917200526294" style="zoom:50%;" />
+
+<p>来看看Version的成员：</p>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">private</span>:</span><br><span class="line">...</span><br><span class="line"></span><br><span class="line"><span class="comment">// 这里看出leveldb在系统中维护的version组成一个链表，且系统中可能存在多个VersionSet。每个Set维护一（多）组Version</span></span><br><span class="line"> VersionSet* vset_;  <span class="comment">// VersionSet to which this Version belongs</span></span><br><span class="line"> Version* next_;     <span class="comment">// Next version in linked list</span></span><br><span class="line"> Version* prev_;     <span class="comment">// Previous version in linked list</span></span><br><span class="line"> <span class="keyword">int</span> refs_;          <span class="comment">// Number of live refs to this version  // 引用计数，估计和回收Version相关</span></span><br><span class="line"></span><br><span class="line"> <span class="comment">// 每层的files, 每个file都是FileMetadata</span></span><br><span class="line"> <span class="comment">// List of files per level</span></span><br><span class="line"> <span class="built_in">std</span>::<span class="built_in">vector</span>&lt;FileMetaData*&gt; files_[<span class="built_in">config</span>::kNumLevels];</span><br><span class="line"></span><br><span class="line"> <span class="comment">// Next file to compact based on seek stats.</span></span><br><span class="line"> FileMetaData* file_to_compact_;</span><br><span class="line"> <span class="keyword">int</span> file_to_compact_level_;</span><br><span class="line"></span><br><span class="line"> <span class="comment">// compaction相关，根据compactoin_score_决定是否需要compaction</span></span><br><span class="line"> <span class="comment">// Level that should be compacted next and its compaction score.</span></span><br><span class="line"> <span class="comment">// Score &lt; 1 means compaction is not strictly needed.  These fields</span></span><br><span class="line"> <span class="comment">// are initialized by Finalize().</span></span><br><span class="line"> <span class="keyword">double</span> compaction_score_;</span><br><span class="line"> <span class="keyword">int</span> compaction_level_;</span><br></pre></td></tr></table></figure>
+
+<p>next_和prev_指针，表明version之间组成一个双链表。</p>
+<p>files_是这个version的files。</p>
+<p>下面是和compaction相关的结构。</p>
+<h3 id="4-VersionSet"><a href="#4-VersionSet" class="headerlink" title="4. VersionSet"></a>4. VersionSet</h3><figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">private</span>:</span><br><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">Builder</span>;</span></span><br><span class="line"></span><br><span class="line"><span class="keyword">friend</span> <span class="class"><span class="keyword">class</span> <span class="title">Compaction</span>;</span></span><br><span class="line"><span class="keyword">friend</span> <span class="class"><span class="keyword">class</span> <span class="title">Version</span>;</span></span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">bool</span> <span class="title">ReuseManifest</span><span class="params">(<span class="keyword">const</span> <span class="built_in">std</span>::<span class="built_in">string</span>&amp; dscname, <span class="keyword">const</span> <span class="built_in">std</span>::<span class="built_in">string</span>&amp; dscbase)</span></span>;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">void</span> <span class="title">Finalize</span><span class="params">(Version* v)</span></span>;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">void</span> <span class="title">GetRange</span><span class="params">(<span class="keyword">const</span> <span class="built_in">std</span>::<span class="built_in">vector</span>&lt;FileMetaData*&gt;&amp; inputs, InternalKey* smallest,</span></span></span><br><span class="line"><span class="function"><span class="params">InternalKey* largest)</span></span>;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">void</span> <span class="title">GetRange2</span><span class="params">(<span class="keyword">const</span> <span class="built_in">std</span>::<span class="built_in">vector</span>&lt;FileMetaData*&gt;&amp; inputs1,</span></span></span><br><span class="line"><span class="function"><span class="params"><span class="keyword">const</span> <span class="built_in">std</span>::<span class="built_in">vector</span>&lt;FileMetaData*&gt;&amp; inputs2,</span></span></span><br><span class="line"><span class="function"><span class="params">InternalKey* smallest, InternalKey* largest)</span></span>;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">void</span> <span class="title">SetupOtherInputs</span><span class="params">(Compaction* c)</span></span>;</span><br><span class="line"></span><br><span class="line"><span class="comment">// Save current contents to *log</span></span><br><span class="line"><span class="function">Status <span class="title">WriteSnapshot</span><span class="params">(<span class="built_in">log</span>::Writer* <span class="built_in">log</span>)</span></span>;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">void</span> <span class="title">AppendVersion</span><span class="params">(Version* v)</span></span>;</span><br><span class="line"></span><br><span class="line">Env* <span class="keyword">const</span> env_;</span><br><span class="line"><span class="keyword">const</span> <span class="built_in">std</span>::<span class="built_in">string</span> dbname_;</span><br><span class="line"><span class="keyword">const</span> Options* <span class="keyword">const</span> options_;</span><br><span class="line">TableCache* <span class="keyword">const</span> table_cache_;</span><br><span class="line"><span class="keyword">const</span> InternalKeyComparator icmp_;</span><br><span class="line"><span class="keyword">uint64_t</span> next_file_number_;</span><br><span class="line"><span class="keyword">uint64_t</span> manifest_file_number_;</span><br><span class="line"><span class="keyword">uint64_t</span> last_sequence_;</span><br><span class="line"><span class="keyword">uint64_t</span> log_number_;</span><br><span class="line"><span class="keyword">uint64_t</span> prev_log_number_;  <span class="comment">// 0 or backing store for memtable being compacted</span></span><br><span class="line"></span><br><span class="line"><span class="comment">// Opened lazily</span></span><br><span class="line">WritableFile* descriptor_file_;</span><br><span class="line"><span class="built_in">log</span>::Writer* descriptor_log_;</span><br><span class="line">Version dummy_versions_;  <span class="comment">// Head of circular doubly-linked list of versions.	链表head</span></span><br><span class="line">Version* current_;        <span class="comment">// == dummy_versions_.prev_							 当前version</span></span><br><span class="line"></span><br><span class="line"><span class="comment">// 下一次compaction时，每层compaction的开始key</span></span><br><span class="line"><span class="comment">// Per-level key at which the next compaction at that level should start.</span></span><br><span class="line"><span class="comment">// Either an empty string, or a valid InternalKey.</span></span><br><span class="line"><span class="built_in">std</span>::<span class="built_in">string</span> compact_pointer_[<span class="built_in">config</span>::kNumLevels];</span><br></pre></td></tr></table></figure>
+
+<p><img data-src="https://bean-li.github.io/assets/LevelDB/version_versionset.png" alt="img"></p>
+<p>LevelDB会触发Compaction，会对一些文件进行清理操作，让数据更加有序，清理后的数据放到新的版本里面，而老的数据作为原始的素材，最终是要清理掉的，但是如果有读事务位于旧的文件，那么暂时就不能删除。因此利用引用计数，只要一个Verison还活着，就不允许删除该Verison管理的所有文件。当一个Version生命周期结束，它管理的所有文件的引用计数减1.</p>
+<p>当一个version被销毁时，每个和它想关联的file的引用计数都会-1，当引用计数小于=0时，file被删除：</p>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br></pre></td><td class="code"><pre><span class="line">Version::~Version() &#123;</span><br><span class="line">  assert(refs_ == <span class="number">0</span>);</span><br><span class="line"></span><br><span class="line">  <span class="comment">// Remove from linked list</span></span><br><span class="line">  prev_-&gt;next_ = next_;</span><br><span class="line">  next_-&gt;prev_ = prev_;</span><br><span class="line"></span><br><span class="line">  <span class="comment">// Drop references to files</span></span><br><span class="line">  <span class="keyword">for</span> (<span class="keyword">int</span> level = <span class="number">0</span>; level &lt; <span class="built_in">config</span>::kNumLevels; level++) &#123;</span><br><span class="line">    <span class="keyword">for</span> (<span class="keyword">size_t</span> i = <span class="number">0</span>; i &lt; files_[level].<span class="built_in">size</span>(); i++) &#123;</span><br><span class="line">      FileMetaData* f = files_[level][i];</span><br><span class="line">      assert(f-&gt;refs &gt; <span class="number">0</span>);</span><br><span class="line">      f-&gt;refs--;</span><br><span class="line">      <span class="keyword">if</span> (f-&gt;refs &lt;= <span class="number">0</span>) &#123;</span><br><span class="line">        <span class="keyword">delete</span> f;</span><br><span class="line">      &#125;</span><br><span class="line">    &#125;</span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h3 id="5-VersionEdit-amp-Version"><a href="#5-VersionEdit-amp-Version" class="headerlink" title="5.  VersionEdit &amp; Version"></a>5.  VersionEdit &amp; Version</h3><p>前面说到， Version + VersionEdit = new Version，如何应用这个增量呢？</p>
+<p>具体的操作是在VersionSet中的Builder中的。</p>
+<p>首先可以看到，Builder是在 LogAndApply，Recover中被调用的：</p>
+<img data-src="https://cdn.jsdelivr.net/gh/ravenxrz/PicBed/img/image-20200917210900575.png" alt="image-20200917210900575" style="zoom:50%;" />
+
+<p>重点看一下LogAndApply</p>
+<img data-src="https://cdn.jsdelivr.net/gh/ravenxrz/PicBed/img/image-20200917210931871.png" alt="image-20200917210931871" style="zoom:50%;" />
+
+<p>可以看到，一共有4个函数调用了LogAndApply，DB打开时，其余3个都是和Compaction相关。</p>
+<p>说LogAndApply之前，先说一下VersionEdit：</p>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"> <span class="keyword">private</span>:</span><br><span class="line"> <span class="keyword">friend</span> <span class="class"><span class="keyword">class</span> <span class="title">VersionSet</span>;</span></span><br><span class="line"></span><br><span class="line"> <span class="keyword">typedef</span> <span class="built_in">std</span>::<span class="built_in">set</span>&lt;<span class="built_in">std</span>::pair&lt;<span class="keyword">int</span>, <span class="keyword">uint64_t</span>&gt;&gt; DeletedFileSet; <span class="comment">// level和filenumber的pair</span></span><br><span class="line">DeletedFileSet deleted_files_;</span><br><span class="line"> <span class="built_in">std</span>::<span class="built_in">vector</span>&lt;<span class="built_in">std</span>::pair&lt;<span class="keyword">int</span>, FileMetaData&gt;&gt; new_files_;	<span class="comment">// level和filemetadata</span></span><br></pre></td></tr></table></figure>
+
+<p>先看==<strong>deleted_files_</strong>:==</p>
+<p>只在RemoveFile函数调用中，增加。</p>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// Delete the specified "file" from the specified "level".</span></span><br><span class="line"><span class="function"><span class="keyword">void</span> <span class="title">RemoveFile</span><span class="params">(<span class="keyword">int</span> level, <span class="keyword">uint64_t</span> file)</span> </span>&#123;</span><br><span class="line">  deleted_files_.insert(<span class="built_in">std</span>::make_pair(level, file));</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>RemoveFile函数调用，有两个函数caller:</p>
+<p><img data-src="https://cdn.jsdelivr.net/gh/ravenxrz/PicBed/img/image-20201006194127291.png" alt="image-20201006194127291"></p>
+<p>AddInputDeletions， 在常规compaction中，加入所有选中了的compaction文件。</p>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">void</span> <span class="title">Compaction::AddInputDeletions</span><span class="params">(VersionEdit* edit)</span> </span>&#123;</span><br><span class="line">  <span class="keyword">for</span> (<span class="keyword">int</span> which = <span class="number">0</span>; which &lt; <span class="number">2</span>; which++) &#123;</span><br><span class="line">    <span class="keyword">for</span> (<span class="keyword">size_t</span> i = <span class="number">0</span>; i &lt; inputs_[which].<span class="built_in">size</span>(); i++) &#123;</span><br><span class="line">        <span class="comment">// !!!</span></span><br><span class="line">      edit-&gt;RemoveFile(level_ + which, inputs_[which][i]-&gt;number);</span><br><span class="line">    &#125;</span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>BackgroundCompaction，上层与下层不重叠的情况。</p>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br></pre></td><td class="code"><pre><span class="line">Status status;</span><br><span class="line"> <span class="keyword">if</span> (c == <span class="literal">nullptr</span>) &#123;</span><br><span class="line">   <span class="comment">// Nothing to do</span></span><br><span class="line"> &#125; <span class="keyword">else</span> <span class="keyword">if</span> (!is_manual &amp;&amp; c-&gt;IsTrivialMove()) &#123;</span><br><span class="line">   <span class="comment">// Move file to next level</span></span><br><span class="line">   assert(c-&gt;num_input_files(<span class="number">0</span>) == <span class="number">1</span>);</span><br><span class="line">   FileMetaData* f = c-&gt;input(<span class="number">0</span>, <span class="number">0</span>);</span><br><span class="line">     <span class="comment">// !!!!</span></span><br><span class="line">   c-&gt;edit()-&gt;RemoveFile(c-&gt;level(), f-&gt;number);</span><br><span class="line">   c-&gt;edit()-&gt;AddFile(c-&gt;level() + <span class="number">1</span>, f-&gt;number, f-&gt;file_size, f-&gt;smallest,</span><br><span class="line">                      f-&gt;largest);</span><br><span class="line">   status = versions_-&gt;LogAndApply(c-&gt;edit(), &amp;mutex_);</span><br><span class="line">   <span class="keyword">if</span> (!status.ok()) &#123;</span><br><span class="line">     RecordBackgroundError(status);</span><br><span class="line">   &#125;</span><br><span class="line">   VersionSet::LevelSummaryStorage tmp;</span><br><span class="line">   Log(options_.info_log, <span class="string">"Moved #%lld to level-%d %lld bytes %s: %s\n"</span>,</span><br><span class="line">       <span class="keyword">static_cast</span>&lt;<span class="keyword">unsigned</span> <span class="keyword">long</span> <span class="keyword">long</span>&gt;(f-&gt;number), c-&gt;level() + <span class="number">1</span>,</span><br><span class="line">       <span class="keyword">static_cast</span>&lt;<span class="keyword">unsigned</span> <span class="keyword">long</span> <span class="keyword">long</span>&gt;(f-&gt;file_size),</span><br><span class="line">       status.ToString().c_str(), versions_-&gt;LevelSummary(&amp;tmp));</span><br><span class="line"> &#125;</span><br></pre></td></tr></table></figure>
+
+<p>再看==<strong>new_files_</strong>==</p>
+<p>new_files_在==<strong>AddFile</strong>==中增加：‘</p>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// Add the specified file at the specified number.</span></span><br><span class="line"><span class="comment">// REQUIRES: This version has not been saved (see VersionSet::SaveTo)</span></span><br><span class="line"><span class="comment">// REQUIRES: "smallest" and "largest" are smallest and largest keys in file</span></span><br><span class="line"><span class="function"><span class="keyword">void</span> <span class="title">AddFile</span><span class="params">(<span class="keyword">int</span> level, <span class="keyword">uint64_t</span> file, <span class="keyword">uint64_t</span> file_size,</span></span></span><br><span class="line"><span class="function"><span class="params">             <span class="keyword">const</span> InternalKey&amp; smallest, <span class="keyword">const</span> InternalKey&amp; largest)</span> </span>&#123;</span><br><span class="line">  FileMetaData f;</span><br><span class="line">  f.number = file;</span><br><span class="line">  f.file_size = file_size;</span><br><span class="line">  f.smallest = smallest;</span><br><span class="line">  f.largest = largest;</span><br><span class="line">  new_files_.push_back(<span class="built_in">std</span>::make_pair(level, f));</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>AddFile被下图中的3各函数call：</p>
+<p><img data-src="https://cdn.jsdelivr.net/gh/ravenxrz/PicBed/img/image-20201006194516231.png" alt="image-20201006194516231"></p>
+<p>WriteLevel0Table中是memtable dump 到level0所生成的新文件。</p>
+<p>BackgroundCompaction是上层与下层不重叠的情况。</p>
+<p>说说InstallCompactionResults：</p>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line"><span class="function">Status <span class="title">DBImpl::InstallCompactionResults</span><span class="params">(CompactionState* compact)</span> </span>&#123;</span><br><span class="line">  <span class="comment">// Add compaction outputs</span></span><br><span class="line">  compact-&gt;compaction-&gt;AddInputDeletions(compact-&gt;compaction-&gt;edit());</span><br><span class="line">  <span class="keyword">const</span> <span class="keyword">int</span> level = compact-&gt;compaction-&gt;level();</span><br><span class="line">  <span class="keyword">for</span> (<span class="keyword">size_t</span> i = <span class="number">0</span>; i &lt; compact-&gt;outputs.<span class="built_in">size</span>(); i++) &#123;</span><br><span class="line">    <span class="keyword">const</span> CompactionState::Output&amp; out = compact-&gt;outputs[i];</span><br><span class="line">     <span class="comment">// 在level+1中生成新文件的结果</span></span><br><span class="line">    compact-&gt;compaction-&gt;edit()-&gt;AddFile(level + <span class="number">1</span>, out.number, out.file_size,</span><br><span class="line">                                         out.smallest, out.largest);</span><br><span class="line">  &#125;</span><br><span class="line">  <span class="keyword">return</span> versions_-&gt;LogAndApply(compact-&gt;compaction-&gt;edit(), &amp;mutex_);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+
+
+<h2 id="2-如何应用VersionEdit-Version-New-Version"><a href="#2-如何应用VersionEdit-Version-New-Version" class="headerlink" title="2. 如何应用VersionEdit+Version = New Version"></a>2. 如何应用VersionEdit+Version = New Version</h2><h3 id="1-LogAndApply"><a href="#1-LogAndApply" class="headerlink" title="1. LogAndApply"></a>1. LogAndApply</h3><p>看一下LogAndApply的工作：</p>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br><span class="line">75</span><br><span class="line">76</span><br><span class="line">77</span><br><span class="line">78</span><br><span class="line">79</span><br><span class="line">80</span><br><span class="line">81</span><br><span class="line">82</span><br><span class="line">83</span><br><span class="line">84</span><br><span class="line">85</span><br><span class="line">86</span><br><span class="line">87</span><br><span class="line">88</span><br><span class="line">89</span><br><span class="line">90</span><br><span class="line">91</span><br><span class="line">92</span><br><span class="line">93</span><br><span class="line">94</span><br><span class="line">95</span><br><span class="line">96</span><br><span class="line">97</span><br></pre></td><td class="code"><pre><span class="line"><span class="function">Status <span class="title">VersionSet::LogAndApply</span><span class="params">(VersionEdit* edit, port::Mutex* mu)</span> </span>&#123;</span><br><span class="line">    <span class="comment">// 1. 为edit生成log_number</span></span><br><span class="line">  <span class="keyword">if</span> (edit-&gt;has_log_number_) &#123;</span><br><span class="line">    assert(edit-&gt;log_number_ &gt;= log_number_);</span><br><span class="line">    assert(edit-&gt;log_number_ &lt; next_file_number_);</span><br><span class="line">  &#125; <span class="keyword">else</span> &#123;</span><br><span class="line">    edit-&gt;SetLogNumber(log_number_);</span><br><span class="line">  &#125;</span><br><span class="line"></span><br><span class="line">  <span class="keyword">if</span> (!edit-&gt;has_prev_log_number_) &#123;</span><br><span class="line">    edit-&gt;SetPrevLogNumber(prev_log_number_);</span><br><span class="line">  &#125;</span><br><span class="line"></span><br><span class="line">  edit-&gt;SetNextFile(next_file_number_);</span><br><span class="line">  edit-&gt;SetLastSequence(last_sequence_);</span><br><span class="line"></span><br><span class="line">    <span class="comment">// 引用edit到当前版本</span></span><br><span class="line">  Version* v = <span class="keyword">new</span> Version(<span class="keyword">this</span>);</span><br><span class="line">  &#123;</span><br><span class="line">    <span class="function">Builder <span class="title">builder</span><span class="params">(<span class="keyword">this</span>, current_)</span></span>;</span><br><span class="line">    builder.Apply(edit);</span><br><span class="line">    builder.SaveTo(v);</span><br><span class="line">  &#125;</span><br><span class="line">    </span><br><span class="line">   <span class="comment">// 计算v的compaction相关变量，（compaction level和compaction score)</span></span><br><span class="line">  Finalize(v);</span><br><span class="line"></span><br><span class="line">  <span class="comment">// Initialize new descriptor log file if necessary by creating</span></span><br><span class="line">  <span class="comment">// a temporary file that contains a snapshot of the current version.</span></span><br><span class="line">  <span class="built_in">std</span>::<span class="built_in">string</span> new_manifest_file;</span><br><span class="line">  Status s;</span><br><span class="line">  <span class="keyword">if</span> (descriptor_log_ == <span class="literal">nullptr</span>) &#123;</span><br><span class="line">    <span class="comment">// No reason to unlock *mu here since we only hit this path in the</span></span><br><span class="line">    <span class="comment">// first call to LogAndApply (when opening the database).</span></span><br><span class="line">    assert(descriptor_file_ == <span class="literal">nullptr</span>);</span><br><span class="line">     <span class="comment">// new_manifest_file为当前manifest文件路径</span></span><br><span class="line">    new_manifest_file = DescriptorFileName(dbname_, manifest_file_number_);</span><br><span class="line">    edit-&gt;SetNextFile(next_file_number_);</span><br><span class="line">     <span class="comment">// 创建文件</span></span><br><span class="line">    s = env_-&gt;NewWritableFile(new_manifest_file, &amp;descriptor_file_);</span><br><span class="line">    <span class="keyword">if</span> (s.ok()) &#123;</span><br><span class="line">        <span class="comment">// 创建manifest写者</span></span><br><span class="line">      descriptor_log_ = <span class="keyword">new</span> <span class="built_in">log</span>::Writer(descriptor_file_);</span><br><span class="line">      s = WriteSnapshot(descriptor_log_);</span><br><span class="line">    &#125;</span><br><span class="line">  &#125;</span><br><span class="line"></span><br><span class="line">  <span class="comment">// Unlock during expensive MANIFEST log write</span></span><br><span class="line">  &#123;</span><br><span class="line">    mu-&gt;Unlock();</span><br><span class="line"></span><br><span class="line">    <span class="comment">// Write new record to MANIFEST log</span></span><br><span class="line">    <span class="keyword">if</span> (s.ok()) &#123;</span><br><span class="line">      <span class="built_in">std</span>::<span class="built_in">string</span> record;</span><br><span class="line">        <span class="comment">// edit内容编码到record !!, 可以看一下是怎么编码的</span></span><br><span class="line">      edit-&gt;EncodeTo(&amp;record);</span><br><span class="line">       <span class="comment">// 写入manifest文件</span></span><br><span class="line">      s = descriptor_log_-&gt;AddRecord(record);</span><br><span class="line">      <span class="keyword">if</span> (s.ok()) &#123;</span><br><span class="line">          <span class="comment">// 同步</span></span><br><span class="line">        s = descriptor_file_-&gt;Sync();</span><br><span class="line">      &#125;</span><br><span class="line">      <span class="keyword">if</span> (!s.ok()) &#123;</span><br><span class="line">        Log(options_-&gt;info_log, <span class="string">"MANIFEST write: %s\n"</span>, s.ToString().c_str());</span><br><span class="line">      &#125;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">     <span class="comment">// 更新Current指针</span></span><br><span class="line">    <span class="comment">// If we just created a new descriptor file, install it by writing a</span></span><br><span class="line">    <span class="comment">// new CURRENT file that points to it.</span></span><br><span class="line">    <span class="keyword">if</span> (s.ok() &amp;&amp; !new_manifest_file.empty()) &#123;</span><br><span class="line">      s = SetCurrentFile(env_, dbname_, manifest_file_number_);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    mu-&gt;Lock();</span><br><span class="line">  &#125;</span><br><span class="line"></span><br><span class="line">   <span class="comment">// 插入当前version到VersionSet中</span></span><br><span class="line">  <span class="comment">// Install the new version</span></span><br><span class="line">  <span class="keyword">if</span> (s.ok()) &#123;</span><br><span class="line">     <span class="comment">// 插入version，更新current</span></span><br><span class="line">    AppendVersion(v);</span><br><span class="line">    log_number_ = edit-&gt;log_number_;</span><br><span class="line">    prev_log_number_ = edit-&gt;prev_log_number_;</span><br><span class="line">  &#125; <span class="keyword">else</span> &#123;</span><br><span class="line">    <span class="keyword">delete</span> v;</span><br><span class="line">    <span class="keyword">if</span> (!new_manifest_file.empty()) &#123;</span><br><span class="line">      <span class="keyword">delete</span> descriptor_log_;</span><br><span class="line">      <span class="keyword">delete</span> descriptor_file_;</span><br><span class="line">      descriptor_log_ = <span class="literal">nullptr</span>;</span><br><span class="line">      descriptor_file_ = <span class="literal">nullptr</span>;</span><br><span class="line">      env_-&gt;RemoveFile(new_manifest_file);</span><br><span class="line">    &#125;</span><br><span class="line">  &#125;</span><br><span class="line"></span><br><span class="line">  <span class="keyword">return</span> s;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>工作：</p>
+<ol>
+<li>执行 old version + version_edit = new version</li>
+<li>编码versionedit，并将其写入到manifest中，同时修改 CURRENT 指针</li>
+<li>将新生成的version插入到versionset中</li>
+</ol>
+<p>current_版本的更替时机一定要注意到，LogAndApply生成新版本之后，同时将VersionEdit记录到MANIFEST文件之后。</p>
+<h3 id="2-Builder"><a href="#2-Builder" class="headerlink" title="2.Builder"></a>2.Builder</h3><p>builder的内部数据域：</p>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br></pre></td><td class="code"><pre><span class="line"> <span class="keyword">typedef</span> <span class="built_in">std</span>::<span class="built_in">set</span>&lt;FileMetaData*, BySmallestKey&gt; FileSet;</span><br><span class="line"> <span class="class"><span class="keyword">struct</span> <span class="title">LevelState</span> &#123;</span></span><br><span class="line">   <span class="built_in">std</span>::<span class="built_in">set</span>&lt;<span class="keyword">uint64_t</span>&gt; deleted_files;</span><br><span class="line">   FileSet* added_files;</span><br><span class="line"> &#125;;</span><br><span class="line"></span><br><span class="line"> VersionSet* vset_;</span><br><span class="line"> Version* base_;</span><br><span class="line"> LevelState levels_[<span class="built_in">config</span>::kNumLevels];</span><br><span class="line"></span><br><span class="line"><span class="comment">// 构造函数</span></span><br><span class="line"> <span class="comment">// Initialize a builder with the files from *base and other info from *vset</span></span><br><span class="line"> Builder(VersionSet* vset, Version* base) : vset_(vset), base_(base) &#123;</span><br><span class="line">   base_-&gt;Ref();</span><br><span class="line">   BySmallestKey cmp;</span><br><span class="line">   cmp.internal_comparator = &amp;vset_-&gt;icmp_;</span><br><span class="line">   <span class="keyword">for</span> (<span class="keyword">int</span> level = <span class="number">0</span>; level &lt; <span class="built_in">config</span>::kNumLevels; level++) &#123;</span><br><span class="line">     levels_[level].added_files = <span class="keyword">new</span> FileSet(cmp);</span><br><span class="line">   &#125;</span><br><span class="line"> &#125;</span><br></pre></td></tr></table></figure>
+
+<p>核心代码：</p>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">  <span class="comment">// 引用edit到当前版本</span></span><br><span class="line">Version* v = <span class="keyword">new</span> Version(<span class="keyword">this</span>);</span><br><span class="line">&#123;</span><br><span class="line">  <span class="function">Builder <span class="title">builder</span><span class="params">(<span class="keyword">this</span>, current_)</span></span>;		<span class="comment">// builder的base就是current_版本</span></span><br><span class="line">  builder.Apply(edit);</span><br><span class="line">  builder.SaveTo(v);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>==Apply:==</p>
+<p><strong>将edit中的更改保存在builder中。</strong></p>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// Apply all of the edits in *edit to the current state.</span></span><br><span class="line"><span class="function"><span class="keyword">void</span> <span class="title">Apply</span><span class="params">(VersionEdit* edit)</span> </span>&#123;</span><br><span class="line">  <span class="comment">// Update compaction pointers</span></span><br><span class="line">  <span class="keyword">for</span> (<span class="keyword">size_t</span> i = <span class="number">0</span>; i &lt; edit-&gt;compact_pointers_.<span class="built_in">size</span>(); i++) &#123;</span><br><span class="line">    <span class="keyword">const</span> <span class="keyword">int</span> level = edit-&gt;compact_pointers_[i].first;	<span class="comment">// first为 level</span></span><br><span class="line">    vset_-&gt;compact_pointer_[level] =</span><br><span class="line">        edit-&gt;compact_pointers_[i].second.Encode().ToString(); <span class="comment">// second 为 这一level开始compaction的key</span></span><br><span class="line">  &#125;</span><br><span class="line"></span><br><span class="line">  <span class="comment">// Delete files 删除文件保存在builder中</span></span><br><span class="line">  <span class="keyword">for</span> (<span class="keyword">const</span> <span class="keyword">auto</span>&amp; deleted_file_set_kvp : edit-&gt;deleted_files_) &#123;</span><br><span class="line">    <span class="keyword">const</span> <span class="keyword">int</span> level = deleted_file_set_kvp.first;</span><br><span class="line">    <span class="keyword">const</span> <span class="keyword">uint64_t</span> number = deleted_file_set_kvp.second;</span><br><span class="line">    levels_[level].deleted_files.insert(number);			<span class="comment">// delete 的 file用number表示</span></span><br><span class="line">  &#125;</span><br><span class="line"></span><br><span class="line">  <span class="comment">// Add new files</span></span><br><span class="line">  <span class="keyword">for</span> (<span class="keyword">size_t</span> i = <span class="number">0</span>; i &lt; edit-&gt;new_files_.<span class="built_in">size</span>(); i++) &#123;</span><br><span class="line">    <span class="keyword">const</span> <span class="keyword">int</span> level = edit-&gt;new_files_[i].first;</span><br><span class="line">    FileMetaData* f = <span class="keyword">new</span> FileMetaData(edit-&gt;new_files_[i].second);</span><br><span class="line">    f-&gt;refs = <span class="number">1</span>;</span><br><span class="line"></span><br><span class="line">     <span class="comment">// 计算seek_allow</span></span><br><span class="line">    <span class="comment">// We arrange to automatically compact this file after</span></span><br><span class="line">    <span class="comment">// a certain number of seeks.  Let's assume:</span></span><br><span class="line">    <span class="comment">//   (1) One seek costs 10ms</span></span><br><span class="line">    <span class="comment">//   (2) Writing or reading 1MB costs 10ms (100MB/s)</span></span><br><span class="line">    <span class="comment">//   (3) A compaction of 1MB does 25MB of IO:</span></span><br><span class="line">    <span class="comment">//         1MB read from this level</span></span><br><span class="line">    <span class="comment">//         10-12MB read from next level (boundaries may be misaligned)</span></span><br><span class="line">    <span class="comment">//         10-12MB written to next level</span></span><br><span class="line">    <span class="comment">// This implies that 25 seeks cost the same as the compaction</span></span><br><span class="line">    <span class="comment">// of 1MB of data.  I.e., one seek costs approximately the</span></span><br><span class="line">    <span class="comment">// same as the compaction of 40KB of data.  We are a little</span></span><br><span class="line">    <span class="comment">// conservative and allow approximately one seek for every 16KB</span></span><br><span class="line">    <span class="comment">// of data before triggering a compaction.</span></span><br><span class="line">    f-&gt;allowed_seeks = <span class="keyword">static_cast</span>&lt;<span class="keyword">int</span>&gt;((f-&gt;file_size / <span class="number">16384U</span>));	</span><br><span class="line">    <span class="keyword">if</span> (f-&gt;allowed_seeks &lt; <span class="number">100</span>) f-&gt;allowed_seeks = <span class="number">100</span>;</span><br><span class="line"></span><br><span class="line">     <span class="comment">// 如果文件之前删除了，现在又新添加了，则覆盖原来删除的文件（删除也是一个插入）</span></span><br><span class="line">    levels_[level].deleted_files.erase(f-&gt;number);</span><br><span class="line">    levels_[level].added_files-&gt;insert(f);</span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>首先提取edit中删除的文件和新增的文件，放在Buider中。中间穿插了一个 file的seek_allow计算：<strong>seek_allow用于触发compaction。</strong><br>1次seek的cost相当于compact 40kb的数据。保守估计，所以1次seek的cost相当于compact 16kb的数据。<strong>目前还不懂为什么。</strong></p>
+<p>==SaveTo:==</p>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// Save the current state in *v.</span></span><br><span class="line">  <span class="function"><span class="keyword">void</span> <span class="title">SaveTo</span><span class="params">(Version* v)</span> </span>&#123;</span><br><span class="line">    BySmallestKey cmp;		<span class="comment">// 按照smallestkey比较，如果key相同，按照file number比较，越新越好</span></span><br><span class="line">    cmp.internal_comparator = &amp;vset_-&gt;icmp_;</span><br><span class="line">    <span class="keyword">for</span> (<span class="keyword">int</span> level = <span class="number">0</span>; level &lt; <span class="built_in">config</span>::kNumLevels; level++) &#123;		<span class="comment">// 一层层的合并</span></span><br><span class="line">      <span class="comment">// Merge the set of added files with the set of pre-existing files.</span></span><br><span class="line">      <span class="comment">// Drop any deleted files.  Store the result in *v.</span></span><br><span class="line">      <span class="keyword">const</span> <span class="built_in">std</span>::<span class="built_in">vector</span>&lt;FileMetaData*&gt;&amp; base_files = base_-&gt;files_[level];</span><br><span class="line">      <span class="built_in">std</span>::<span class="built_in">vector</span>&lt;FileMetaData*&gt;::const_iterator base_iter = base_files.<span class="built_in">begin</span>();</span><br><span class="line">      <span class="built_in">std</span>::<span class="built_in">vector</span>&lt;FileMetaData*&gt;::const_iterator base_end = base_files.<span class="built_in">end</span>();</span><br><span class="line">      <span class="keyword">const</span> FileSet* added_files = levels_[level].added_files;</span><br><span class="line">      v-&gt;files_[level].reserve(base_files.<span class="built_in">size</span>() + added_files-&gt;<span class="built_in">size</span>());</span><br><span class="line">      <span class="comment">// 小于added_files的key 的 当前版本中的文件，全部加入新版本中</span></span><br><span class="line">      <span class="keyword">for</span> (<span class="keyword">const</span> <span class="keyword">auto</span>&amp; added_file : *added_files) &#123;</span><br><span class="line">        <span class="comment">// Add all smaller files listed in base_</span></span><br><span class="line"></span><br><span class="line">        <span class="keyword">for</span> (<span class="built_in">std</span>::<span class="built_in">vector</span>&lt;FileMetaData*&gt;::const_iterator bpos =</span><br><span class="line">                 <span class="built_in">std</span>::upper_bound(base_iter, base_end, added_file, cmp);	<span class="comment">// 查一下upper_bound函数</span></span><br><span class="line">             base_iter != bpos; ++base_iter) &#123;</span><br><span class="line">		</span><br><span class="line">          MaybeAddFile(v, level, *base_iter);</span><br><span class="line">        &#125;</span><br><span class="line">		 <span class="comment">// 加入 added_file</span></span><br><span class="line">        MaybeAddFile(v, level, added_file);</span><br><span class="line">      &#125;</span><br><span class="line">	</span><br><span class="line">      <span class="comment">// 剩余文件整合</span></span><br><span class="line">      <span class="comment">// Add remaining base files</span></span><br><span class="line">      <span class="keyword">for</span> (; base_iter != base_end; ++base_iter) &#123;</span><br><span class="line">        MaybeAddFile(v, level, *base_iter);</span><br><span class="line">      &#125;</span><br><span class="line"></span><br><span class="line">       <span class="comment">// 下面是检查level&gt;0是否有overlap</span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">ifndef</span> NDEBUG</span></span><br><span class="line">      <span class="comment">// Make sure there is no overlap in levels &gt; 0</span></span><br><span class="line">      <span class="keyword">if</span> (level &gt; <span class="number">0</span>) &#123;</span><br><span class="line">        <span class="keyword">for</span> (<span class="keyword">uint32_t</span> i = <span class="number">1</span>; i &lt; v-&gt;files_[level].<span class="built_in">size</span>(); i++) &#123;</span><br><span class="line">          <span class="keyword">const</span> InternalKey&amp; prev_end = v-&gt;files_[level][i - <span class="number">1</span>]-&gt;largest;</span><br><span class="line">          <span class="keyword">const</span> InternalKey&amp; this_begin = v-&gt;files_[level][i]-&gt;smallest;</span><br><span class="line">          <span class="keyword">if</span> (vset_-&gt;icmp_.Compare(prev_end, this_begin) &gt;= <span class="number">0</span>) &#123;</span><br><span class="line">            <span class="built_in">std</span>::<span class="built_in">fprintf</span>(<span class="built_in">stderr</span>, <span class="string">"overlapping ranges in same level %s vs. %s\n"</span>,</span><br><span class="line">                         prev_end.DebugString().c_str(),</span><br><span class="line">                         this_begin.DebugString().c_str());</span><br><span class="line">            <span class="built_in">std</span>::<span class="built_in">abort</span>();</span><br><span class="line">          &#125;</span><br><span class="line">        &#125;</span><br><span class="line">      &#125;</span><br><span class="line"><span class="meta">#<span class="meta-keyword">endif</span></span></span><br><span class="line">    &#125;</span><br><span class="line">  &#125;</span><br><span class="line"></span><br><span class="line"> <span class="function"><span class="keyword">void</span> <span class="title">MaybeAddFile</span><span class="params">(Version* v, <span class="keyword">int</span> level, FileMetaData* f)</span> </span>&#123;</span><br><span class="line">    <span class="keyword">if</span> (levels_[level].deleted_files.count(f-&gt;number) &gt; <span class="number">0</span>) &#123;</span><br><span class="line">      <span class="comment">// File is deleted: do nothing  // 在删除列表，不用添加</span></span><br><span class="line">    &#125; <span class="keyword">else</span> &#123;</span><br><span class="line">      <span class="built_in">std</span>::<span class="built_in">vector</span>&lt;FileMetaData*&gt;* files = &amp;v-&gt;files_[level];</span><br><span class="line">      <span class="keyword">if</span> (level &gt; <span class="number">0</span> &amp;&amp; !files-&gt;empty()) &#123;	<span class="comment">// 考虑level&gt;0, 要求key不能overlap</span></span><br><span class="line">        <span class="comment">// Must not overlap</span></span><br><span class="line">        assert(vset_-&gt;icmp_.Compare((*files)[files-&gt;<span class="built_in">size</span>() - <span class="number">1</span>]-&gt;largest,</span><br><span class="line">                                    f-&gt;smallest) &lt; <span class="number">0</span>);</span><br><span class="line">      &#125;</span><br><span class="line">      f-&gt;refs++;	<span class="comment">//  当前新版本v 对file有引用，所以refs++</span></span><br><span class="line">      files-&gt;push_back(f);	 <span class="comment">// 实际压入到新版本</span></span><br><span class="line">    &#125;	</span><br><span class="line">  &#125;</span><br></pre></td></tr></table></figure>
+
+<h3 id="3-Finalize"><a href="#3-Finalize" class="headerlink" title="3. Finalize"></a>3. Finalize</h3><p>这里决定下一次compaction的best level。</p>
+<p>level0: 根据文件数量决定。</p>
+<p>其余：根据该层的文件大小决定。</p>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">void</span> <span class="title">VersionSet::Finalize</span><span class="params">(Version* v)</span> </span>&#123;</span><br><span class="line">  <span class="comment">// Precomputed best level for next compaction</span></span><br><span class="line">  <span class="keyword">int</span> best_level = <span class="number">-1</span>;</span><br><span class="line">  <span class="keyword">double</span> best_score = <span class="number">-1</span>;</span><br><span class="line"></span><br><span class="line">  <span class="keyword">for</span> (<span class="keyword">int</span> level = <span class="number">0</span>; level &lt; <span class="built_in">config</span>::kNumLevels - <span class="number">1</span>; level++) &#123;</span><br><span class="line">    <span class="keyword">double</span> score;</span><br><span class="line">    <span class="keyword">if</span> (level == <span class="number">0</span>) &#123;</span><br><span class="line">      <span class="comment">// level0 单独处理，文件数量 超过kL0_CompactionTrigger时，就trigger compaction</span></span><br><span class="line">        </span><br><span class="line">      <span class="comment">// We treat level-0 specially by bounding the number of files</span></span><br><span class="line">      <span class="comment">// instead of number of bytes for two reasons:</span></span><br><span class="line">      <span class="comment">//</span></span><br><span class="line">      <span class="comment">// (1) With larger write-buffer sizes, it is nice not to do too</span></span><br><span class="line">      <span class="comment">// many level-0 compactions.</span></span><br><span class="line">      <span class="comment">//</span></span><br><span class="line">      <span class="comment">// (2) The files in level-0 are merged on every read and</span></span><br><span class="line">      <span class="comment">// therefore we wish to avoid too many files when the individual</span></span><br><span class="line">      <span class="comment">// file size is small (perhaps because of a small write-buffer</span></span><br><span class="line">      <span class="comment">// setting, or very high compression ratios, or lots of</span></span><br><span class="line">      <span class="comment">// overwrites/deletions).</span></span><br><span class="line">      score = v-&gt;files_[level].<span class="built_in">size</span>() /</span><br><span class="line">              <span class="keyword">static_cast</span>&lt;<span class="keyword">double</span>&gt;(<span class="built_in">config</span>::kL0_CompactionTrigger);	<span class="comment">// static const int kL0_CompactionTrigger = 4;</span></span><br><span class="line">    &#125; <span class="keyword">else</span> &#123;</span><br><span class="line">        <span class="comment">// 其余level 用文件size来比较</span></span><br><span class="line">      <span class="comment">// Compute the ratio of current size to size limit.</span></span><br><span class="line">      <span class="keyword">const</span> <span class="keyword">uint64_t</span> level_bytes = TotalFileSize(v-&gt;files_[level]);</span><br><span class="line">      score =</span><br><span class="line">          <span class="keyword">static_cast</span>&lt;<span class="keyword">double</span>&gt;(level_bytes) / MaxBytesForLevel(options_, level);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">if</span> (score &gt; best_score) &#123;</span><br><span class="line">      best_level = level;</span><br><span class="line">      best_score = score;</span><br><span class="line">    &#125;</span><br><span class="line">  &#125;</span><br><span class="line"></span><br><span class="line">  v-&gt;compaction_level_ = best_level;</span><br><span class="line">  v-&gt;compaction_score_ = best_score;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h3 id="4-Manifest相关"><a href="#4-Manifest相关" class="headerlink" title="==4.  Manifest相关=="></a>==4.  Manifest相关==</h3><p>在VersionSet::LogAndApply中。</p>
+<p>==创建manifest操作writer==</p>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// Initialize new descriptor log file if necessary by creating</span></span><br><span class="line">  <span class="comment">// a temporary file that contains a snapshot of the current version.</span></span><br><span class="line">  <span class="built_in">std</span>::<span class="built_in">string</span> new_manifest_file;</span><br><span class="line">  Status s;</span><br><span class="line">  <span class="keyword">if</span> (descriptor_log_ == <span class="literal">nullptr</span>) &#123;</span><br><span class="line">    <span class="comment">// No reason to unlock *mu here since we only hit this path in the</span></span><br><span class="line">    <span class="comment">// first call to LogAndApply (when opening the database).</span></span><br><span class="line">    assert(descriptor_file_ == <span class="literal">nullptr</span>);</span><br><span class="line">    new_manifest_file = DescriptorFileName(dbname_, manifest_file_number_);</span><br><span class="line">    edit-&gt;SetNextFile(next_file_number_);</span><br><span class="line">    s = env_-&gt;NewWritableFile(new_manifest_file, &amp;descriptor_file_);</span><br><span class="line">    <span class="keyword">if</span> (s.ok()) &#123;</span><br><span class="line">        <span class="comment">// 这里创建最终的writer，从本质上来看，manifest也是一个log</span></span><br><span class="line">      descriptor_log_ = <span class="keyword">new</span> <span class="built_in">log</span>::Writer(descriptor_file_);</span><br><span class="line">       <span class="comment">// 保存当前合并后的version的snapshot，事实上，这里是开辟新的version snapshot manifest，旧manifest将会被删除</span></span><br><span class="line">      s = WriteSnapshot(descriptor_log_);</span><br><span class="line">    &#125;</span><br><span class="line">  &#125;</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="comment">// 根据dbname和 manifest_file_number生成manifest文件全路径</span></span><br><span class="line"><span class="function"><span class="built_in">std</span>::<span class="built_in">string</span> <span class="title">DescriptorFileName</span><span class="params">(<span class="keyword">const</span> <span class="built_in">std</span>::<span class="built_in">string</span>&amp; dbname, <span class="keyword">uint64_t</span> number)</span> </span>&#123;</span><br><span class="line">  assert(number &gt; <span class="number">0</span>);</span><br><span class="line">  <span class="keyword">char</span> buf[<span class="number">100</span>];</span><br><span class="line">  <span class="built_in">std</span>::<span class="built_in">snprintf</span>(buf, <span class="keyword">sizeof</span>(buf), <span class="string">"/MANIFEST-%06llu"</span>,</span><br><span class="line">                <span class="keyword">static_cast</span>&lt;<span class="keyword">unsigned</span> <span class="keyword">long</span> <span class="keyword">long</span>&gt;(number));</span><br><span class="line">  <span class="keyword">return</span> dbname + buf;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>==写入manifest，manifest保存着这次修改的差量，即VersionEdit。==</p>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// Unlock during expensive MANIFEST log write</span></span><br><span class="line">  &#123;</span><br><span class="line">    mu-&gt;Unlock();</span><br><span class="line"></span><br><span class="line">    <span class="comment">// Write new record to MANIFEST log</span></span><br><span class="line">    <span class="keyword">if</span> (s.ok()) &#123;</span><br><span class="line">      <span class="built_in">std</span>::<span class="built_in">string</span> record;</span><br><span class="line">      edit-&gt;EncodeTo(&amp;record);	<span class="comment">// 序列化到record中</span></span><br><span class="line">      s = descriptor_log_-&gt;AddRecord(record);	<span class="comment">// 写入</span></span><br><span class="line">      <span class="keyword">if</span> (s.ok()) &#123;</span><br><span class="line">        s = descriptor_file_-&gt;Sync();</span><br><span class="line">      &#125;</span><br><span class="line">      <span class="keyword">if</span> (!s.ok()) &#123;</span><br><span class="line">        Log(options_-&gt;info_log, <span class="string">"MANIFEST write: %s\n"</span>, s.ToString().c_str());</span><br><span class="line">      &#125;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="comment">// If we just created a new descriptor file, install it by writing a</span></span><br><span class="line">    <span class="comment">// new CURRENT file that points to it.</span></span><br><span class="line">    <span class="keyword">if</span> (s.ok() &amp;&amp; !new_manifest_file.empty()) &#123;</span><br><span class="line">      s = SetCurrentFile(env_, dbname_, manifest_file_number_);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    mu-&gt;Lock();</span><br><span class="line">  &#125;</span><br></pre></td></tr></table></figure>
+
+
+
+<p>现在来看看edit如何encode以及encode了哪些字段：</p>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// Tag numbers for serialized VersionEdit.  These numbers are written to</span></span><br><span class="line"><span class="comment">// disk and should not be changed.</span></span><br><span class="line"><span class="keyword">enum</span> Tag &#123;</span><br><span class="line">  kComparator = <span class="number">1</span>,</span><br><span class="line">  kLogNumber = <span class="number">2</span>,</span><br><span class="line">  kNextFileNumber = <span class="number">3</span>,</span><br><span class="line">  kLastSequence = <span class="number">4</span>,</span><br><span class="line">  kCompactPointer = <span class="number">5</span>,</span><br><span class="line">  kDeletedFile = <span class="number">6</span>,</span><br><span class="line">  kNewFile = <span class="number">7</span>,</span><br><span class="line">  <span class="comment">// 8 was used for large value refs</span></span><br><span class="line">  kPrevLogNumber = <span class="number">9</span></span><br><span class="line">&#125;;</span><br><span class="line"></span><br><span class="line"><span class="comment">// 对应VersionEdit中的成员</span></span><br><span class="line"><span class="built_in">std</span>::<span class="built_in">string</span> comparator_;</span><br><span class="line"><span class="keyword">uint64_t</span> log_number_;</span><br><span class="line"><span class="keyword">uint64_t</span> prev_log_number_;</span><br><span class="line"><span class="keyword">uint64_t</span> next_file_number_;</span><br><span class="line">SequenceNumber last_sequence_;</span><br><span class="line"><span class="keyword">bool</span> has_comparator_;</span><br><span class="line"><span class="keyword">bool</span> has_log_number_;</span><br><span class="line"><span class="keyword">bool</span> has_prev_log_number_;</span><br><span class="line"><span class="keyword">bool</span> has_next_file_number_;</span><br><span class="line"><span class="keyword">bool</span> has_last_sequence_;</span><br><span class="line"></span><br><span class="line"><span class="built_in">std</span>::<span class="built_in">vector</span>&lt;<span class="built_in">std</span>::pair&lt;<span class="keyword">int</span>, InternalKey&gt;&gt; compact_pointers_;</span><br><span class="line">DeletedFileSet deleted_files_;</span><br><span class="line"><span class="built_in">std</span>::<span class="built_in">vector</span>&lt;<span class="built_in">std</span>::pair&lt;<span class="keyword">int</span>, FileMetaData&gt;&gt; new_files_;</span><br></pre></td></tr></table></figure>
+
+
+
+<p><img data-src="https://bean-li.github.io/assets/LevelDB/write_a_manifest.png" alt="img"></p>
+<p>==EncodeTo==</p>
+<p>编码</p>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">void</span> <span class="title">VersionEdit::EncodeTo</span><span class="params">(<span class="built_in">std</span>::<span class="built_in">string</span>* dst)</span> <span class="keyword">const</span> </span>&#123;</span><br><span class="line">  <span class="keyword">if</span> (has_comparator_) &#123;</span><br><span class="line">    PutVarint32(dst, kComparator);</span><br><span class="line">    PutLengthPrefixedSlice(dst, comparator_);</span><br><span class="line">  &#125;</span><br><span class="line">  <span class="keyword">if</span> (has_log_number_) &#123;</span><br><span class="line">    PutVarint32(dst, kLogNumber);</span><br><span class="line">    PutVarint64(dst, log_number_);</span><br><span class="line">  &#125;</span><br><span class="line">  <span class="keyword">if</span> (has_prev_log_number_) &#123;</span><br><span class="line">    PutVarint32(dst, kPrevLogNumber);</span><br><span class="line">    PutVarint64(dst, prev_log_number_);</span><br><span class="line">  &#125;</span><br><span class="line">  <span class="keyword">if</span> (has_next_file_number_) &#123;</span><br><span class="line">    PutVarint32(dst, kNextFileNumber);</span><br><span class="line">    PutVarint64(dst, next_file_number_);</span><br><span class="line">  &#125;</span><br><span class="line">  <span class="keyword">if</span> (has_last_sequence_) &#123;</span><br><span class="line">    PutVarint32(dst, kLastSequence);</span><br><span class="line">    PutVarint64(dst, last_sequence_);</span><br><span class="line">  &#125;</span><br><span class="line"></span><br><span class="line">  <span class="keyword">for</span> (<span class="keyword">size_t</span> i = <span class="number">0</span>; i &lt; compact_pointers_.<span class="built_in">size</span>(); i++) &#123;</span><br><span class="line">    PutVarint32(dst, kCompactPointer);</span><br><span class="line">    PutVarint32(dst, compact_pointers_[i].first);  <span class="comment">// level</span></span><br><span class="line">    PutLengthPrefixedSlice(dst, compact_pointers_[i].second.Encode());</span><br><span class="line">  &#125;</span><br><span class="line"></span><br><span class="line">  <span class="keyword">for</span> (<span class="keyword">const</span> <span class="keyword">auto</span>&amp; deleted_file_kvp : deleted_files_) &#123;</span><br><span class="line">    PutVarint32(dst, kDeletedFile);</span><br><span class="line">    PutVarint32(dst, deleted_file_kvp.first);   <span class="comment">// level</span></span><br><span class="line">    PutVarint64(dst, deleted_file_kvp.second);  <span class="comment">// file number</span></span><br><span class="line">  &#125;</span><br><span class="line"></span><br><span class="line">  <span class="keyword">for</span> (<span class="keyword">size_t</span> i = <span class="number">0</span>; i &lt; new_files_.<span class="built_in">size</span>(); i++) &#123;</span><br><span class="line">    <span class="keyword">const</span> FileMetaData&amp; f = new_files_[i].second;</span><br><span class="line">    PutVarint32(dst, kNewFile);</span><br><span class="line">    PutVarint32(dst, new_files_[i].first);  <span class="comment">// level</span></span><br><span class="line">    PutVarint64(dst, f.number);</span><br><span class="line">    PutVarint64(dst, f.file_size);</span><br><span class="line">    PutLengthPrefixedSlice(dst, f.smallest.Encode());</span><br><span class="line">    PutLengthPrefixedSlice(dst, f.largest.Encode());</span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>直接编码到dst中，这里的string相当于字节数组。</p>
+<h3 id="Manifest具体保存内容？"><a href="#Manifest具体保存内容？" class="headerlink" title="Manifest具体保存内容？"></a>Manifest具体保存内容？</h3><p>其实看到这里，我们知道manifest其实就是保存各个versionedit中的与下面字段对应的数据。</p>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">enum</span> Tag &#123;</span><br><span class="line">  kComparator = <span class="number">1</span>,</span><br><span class="line">  kLogNumber = <span class="number">2</span>,</span><br><span class="line">  kNextFileNumber = <span class="number">3</span>,</span><br><span class="line">  kLastSequence = <span class="number">4</span>,</span><br><span class="line">  kCompactPointer = <span class="number">5</span>,</span><br><span class="line">  kDeletedFile = <span class="number">6</span>,</span><br><span class="line">  kNewFile = <span class="number">7</span>,</span><br><span class="line">  <span class="comment">// 8 was used for large value refs</span></span><br><span class="line">  kPrevLogNumber = <span class="number">9</span></span><br><span class="line">&#125;;</span><br></pre></td></tr></table></figure>
+    </div>
+
+    
+    
+    
+        <div class="reward-container">
+  <div>文章对你有帮助?打赏一下作者吧</div>
+  <button onclick="var qr = document.getElementById('qr'); qr.style.display = (qr.style.display === 'none') ? 'block' : 'none';">
+    打赏
+  </button>
+  <div id="qr" style="display: none;">
+      
+      <div style="display: inline-block;">
+        <img src="https://pic.downk.cc/item/5d064208451253d178a15b27.png" alt="Raven 微信支付">
+        <p>微信支付</p>
+      </div>
+      
+      <div style="display: inline-block;">
+        <img src="https://pic.downk.cc/item/5d0641c7451253d178a15376.png" alt="Raven 支付宝">
+        <p>支付宝</p>
+      </div>
+
+  </div>
+</div>
+
+        
+
+<div>
+<ul class="post-copyright">
+  <li class="post-copyright-author">
+    <strong>本文作者： </strong>Raven
+  </li>
+  <li class="post-copyright-link">
+    <strong>本文链接：</strong>
+    <a href="https://www.ravenxrz.ink/archives/90a4812e.html" title="leveldb源码阅读记录-Version数据结构及MANIFEST文件">https://www.ravenxrz.ink/archives/90a4812e.html</a>
+  </li>
+  <li class="post-copyright-license">
+    <strong>版权声明： </strong>本博客所有文章除特别声明外，均采用 <span class="exturl" data-url="aHR0cHM6Ly9jcmVhdGl2ZWNvbW1vbnMub3JnL2xpY2Vuc2VzL2J5LW5jLXNhLzQuMC8="><i class="fa fa-fw fa-creative-commons"></i>BY-NC-SA</span> 许可协议。转载请注明出处！
+  </li>
+</ul>
+</div>
+
+
+      <footer class="post-footer">
+
+        
+
+
+        
+    <div class="post-nav">
+      <div class="post-nav-item">
+    <a href="/archives/aba77258.html" rel="prev" title="leveldb源码阅读记录-Memtable">
+      <i class="fa fa-chevron-left"></i> leveldb源码阅读记录-Memtable
+    </a></div>
+      <div class="post-nav-item"></div>
+    </div>
+      </footer>
+    
+  </article>
+  
+  
+  
+
+
+
+          </div>
+          
+    <div class="comments" id="gitalk-container"></div>
+
+<script>
+  window.addEventListener('tabs:register', () => {
+    let { activeClass } = CONFIG.comments;
+    if (CONFIG.comments.storage) {
+      activeClass = localStorage.getItem('comments_active') || activeClass;
+    }
+    if (activeClass) {
+      let activeTab = document.querySelector(`a[href="#comment-${activeClass}"]`);
+      if (activeTab) {
+        activeTab.click();
+      }
+    }
+  });
+  if (CONFIG.comments.storage) {
+    window.addEventListener('tabs:click', event => {
+      if (!event.target.matches('.tabs-comment .tab-content .tab-pane')) return;
+      let commentClass = event.target.classList[1];
+      localStorage.setItem('comments_active', commentClass);
+    });
+  }
+</script>
+
+        </div>
+          
+  
+  <div class="toggle sidebar-toggle">
+    <span class="toggle-line toggle-line-first"></span>
+    <span class="toggle-line toggle-line-middle"></span>
+    <span class="toggle-line toggle-line-last"></span>
+  </div>
+
+  <aside class="sidebar">
+    <div class="sidebar-inner">
+
+      <ul class="sidebar-nav motion-element">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          站点概览
+        </li>
+      </ul>
+
+      <!--noindex-->
+      <div class="post-toc-wrap sidebar-panel">
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#1-Version-相关的数据结构"><span class="nav-text">1.Version 相关的数据结构</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#1-VersionEdit"><span class="nav-text">1. VersionEdit</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#2-FileMetaData"><span class="nav-text">2. FileMetaData</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#3-Version"><span class="nav-text">3. Version</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#4-VersionSet"><span class="nav-text">4. VersionSet</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#5-VersionEdit-amp-Version"><span class="nav-text">5.  VersionEdit &amp; Version</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#2-如何应用VersionEdit-Version-New-Version"><span class="nav-text">2. 如何应用VersionEdit+Version &#x3D; New Version</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#1-LogAndApply"><span class="nav-text">1. LogAndApply</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#2-Builder"><span class="nav-text">2.Builder</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#3-Finalize"><span class="nav-text">3. Finalize</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#4-Manifest相关"><span class="nav-text">&#x3D;&#x3D;4.  Manifest相关&#x3D;&#x3D;</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Manifest具体保存内容？"><span class="nav-text">Manifest具体保存内容？</span></a></li></ol></li></ol></div>
+      </div>
+      <!--/noindex-->
+
+      <div class="site-overview-wrap sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+    <img class="site-author-image" itemprop="image" alt="Raven"
+      src="https://pic.downk.cc/item/5e907515504f4bcb04b6f798.jpg">
+  <p class="site-author-name" itemprop="name">Raven</p>
+  <div class="site-description" itemprop="description">分享技术，记录生活</div>
+</div>
+<div class="site-state-wrap motion-element">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+          <a href="/archives/">
+        
+          <span class="site-state-item-count">129</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+            <a href="/categories/">
+          
+        <span class="site-state-item-count">19</span>
+        <span class="site-state-item-name">分类</span></a>
+      </div>
+      <div class="site-state-item site-state-tags">
+            <a href="/tags/">
+          
+        <span class="site-state-item-count">114</span>
+        <span class="site-state-item-name">标签</span></a>
+      </div>
+  </nav>
+</div>
+  <div class="links-of-author motion-element">
+      <span class="links-of-author-item">
+        <span class="exturl" data-url="aHR0cHM6Ly9naXRodWIuY29tL3JhdmVueHJ6" title="GitHub → https:&#x2F;&#x2F;github.com&#x2F;ravenxrz"><i class="fa fa-fw fa-fab fa-github"></i>GitHub</span>
+      </span>
+      <span class="links-of-author-item">
+        <span class="exturl" data-url="bWFpbHRvOnpoYWduLnhpbmdydWlAZm94bWFpbC5jb20=" title="E-Mail → mailto:zhagn.xingrui@foxmail.com"><i class="fa fa-fw fa-fa fa-envelope"></i>E-Mail</span>
+      </span>
+  </div>
+  <div class="cc-license motion-element" itemprop="license">
+    <span class="exturl cc-opacity" data-url="aHR0cHM6Ly9jcmVhdGl2ZWNvbW1vbnMub3JnL2xpY2Vuc2VzL2J5LW5jLXNhLzQuMC8="><img src="/images/cc-by-nc-sa.svg" alt="Creative Commons"></span>
+  </div>
+
+
+  <div class="links-of-blogroll motion-element">
+    <div class="links-of-blogroll-title">
+      <i class="fa fa-fw fa-fa fa-link"></i>
+      Links
+    </div>
+    <ul class="links-of-blogroll-list">
+        <li class="links-of-blogroll-item">
+          <a href="/resources" title="&#x2F;resources">我的资源</a>
+        </li>
+    </ul>
+  </div>
+
+      </div>
+
+    </div>
+  </aside>
+  <div id="sidebar-dimmer"></div>
+
+
+      </div>
+    </main>
+
+    <footer class="footer">
+      <div class="footer-inner">
+        
+
+        
+
+<div class="copyright">
+  
+  &copy; 2017 – 
+  <span itemprop="copyrightYear">2020</span>
+  <span class="with-love">
+    <i class="fa fa-fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">Raven</span>
+</div>
+  <div class="powered-by">由 <span class="exturl theme-link" data-url="aHR0cHM6Ly9oZXhvLmlv">Hexo</span> & <span class="exturl theme-link" data-url="aHR0cHM6Ly9taXN0LnRoZW1lLW5leHQub3Jn">NexT.Mist</span> 强力驱动
+  </div>
+
+        
+<div class="busuanzi-count">
+  <script async src="https://busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+    <span class="post-meta-item" id="busuanzi_container_site_uv" style="display: none;">
+      <span class="post-meta-item-icon">
+        <i class="fa fa-fa fa-user"></i>
+      </span>
+      <span class="site-uv" title="总访客量">
+        <span id="busuanzi_value_site_uv"></span>
+      </span>
+    </span>
+    <span class="post-meta-divider">|</span>
+    <span class="post-meta-item" id="busuanzi_container_site_pv" style="display: none;">
+      <span class="post-meta-item-icon">
+        <i class="fa fa-fa fa-eye"></i>
+      </span>
+      <span class="site-pv" title="总访问量">
+        <span id="busuanzi_value_site_pv"></span>
+      </span>
+    </span>
+</div>
+
+
+
+
+
+
+
+
+      </div>
+    </footer>
+  </div>
+
+  
+  <script src="//cdn.jsdelivr.net/npm/animejs@3.1.0/lib/anime.min.js"></script>
+  <script src="//cdn.jsdelivr.net/npm/medium-zoom@1/dist/medium-zoom.min.js"></script>
+  <script src="//cdn.jsdelivr.net/npm/lozad@1/dist/lozad.min.js"></script>
+  <script src="//cdn.jsdelivr.net/npm/pangu@4/dist/browser/pangu.min.js"></script>
+
+<script src="/js/utils.js"></script>
+
+
+<script src="/js/schemes/muse.js"></script>
+
+
+<script src="/js/next-boot.js"></script>
+
+
+
+
+  
+  <script>
+    (function(){
+      var bp = document.createElement('script');
+      var curProtocol = window.location.protocol.split(':')[0];
+      bp.src = (curProtocol === 'https') ? 'https://zz.bdstatic.com/linksubmit/push.js' : 'http://push.zhanzhang.baidu.com/push.js';
+      var s = document.getElementsByTagName("script")[0];
+      s.parentNode.insertBefore(bp, s);
+    })();
+  </script>
+
+
+
+
+  
+<script src="/js/local-search.js"></script>
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+  
+      
+
+<script>
+  if (typeof MathJax === 'undefined') {
+    window.MathJax = {
+      loader: {
+        source: {
+          '[tex]/amsCd': '[tex]/amscd',
+          '[tex]/AMScd': '[tex]/amscd'
+        }
+      },
+      tex: {
+        inlineMath: {'[+]': [['$', '$']]},
+        tags: 'ams'
+      },
+      options: {
+        renderActions: {
+          findScript: [10, doc => {
+            document.querySelectorAll('script[type^="math/tex"]').forEach(node => {
+              const display = !!node.type.match(/; *mode=display/);
+              const math = new doc.options.MathItem(node.textContent, doc.inputJax[0], display);
+              const text = document.createTextNode('');
+              node.parentNode.replaceChild(text, node);
+              math.start = {node: text, delim: '', n: 0};
+              math.end = {node: text, delim: '', n: 0};
+              doc.math.push(math);
+            });
+          }, '', false],
+          insertedScript: [200, () => {
+            document.querySelectorAll('mjx-container').forEach(node => {
+              let target = node.parentNode;
+              if (target.nodeName.toLowerCase() === 'li') {
+                target.parentNode.classList.add('has-jax');
+              }
+            });
+          }, '', false]
+        }
+      }
+    };
+    (function () {
+      var script = document.createElement('script');
+      script.src = '//cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js';
+      script.defer = true;
+      document.head.appendChild(script);
+    })();
+  } else {
+    MathJax.startup.document.state(0);
+    MathJax.texReset();
+    MathJax.typeset();
+  }
+</script>
+
+    
+
+  
+  <script src="//cdn.jsdelivr.net/npm/quicklink@1/dist/quicklink.umd.js"></script>
+  <script>
+      window.addEventListener('load', () => {
+      quicklink({
+        timeout : 3000,
+        priority: true,
+        ignores : [uri => uri.includes('#'),uri => uri === 'https://www.ravenxrz.ink/archives/90a4812e.html',]
+      });
+      });
+  </script>
+
+<link rel="stylesheet" href="//cdn.jsdelivr.net/npm/gitalk@1/dist/gitalk.min.css">
+
+<script>
+NexT.utils.loadComments(document.querySelector('#gitalk-container'), () => {
+  NexT.utils.getScript('//cdn.jsdelivr.net/npm/gitalk@1/dist/gitalk.min.js', () => {
+    var gitalk = new Gitalk({
+      clientID    : 'b2fd373d2ca2e03e591e',
+      clientSecret: 'de4ab066908c1fbd32d3a45e091b3538761d685b',
+      repo        : 'BlogComment',
+      owner       : 'ravenxrz',
+      admin       : ['ravenxrz'],
+      id          : 'b9536ff917567acda651fd0dc84df2d8',
+        language: '',
+      distractionFreeMode: true
+    });
+    gitalk.render('gitalk-container');
+  }, window.Gitalk);
+});
+</script>
+
+</body>
+</html>
