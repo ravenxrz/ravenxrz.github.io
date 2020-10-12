@@ -432,7 +432,7 @@ void BlockBuilder::Add(const Slice& key, const Slice& value) {
 
 从上面的代码中，我们可以知道datablock里面一个key value pair的数据格式为：
 
-![](https://cdn.jsdelivr.net/gh/ravenxrz/PicBed/img/key value pair的数据格式-1600852877733.png)
+![](https://pic.downk.cc/item/5f8444041cd1bbb86b061575.png)
 
 ## 4. Index Block
 

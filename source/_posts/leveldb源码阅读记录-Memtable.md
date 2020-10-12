@@ -175,7 +175,7 @@ void MemTable::Add(SequenceNumber s, ValueType type, const Slice& key,
 
 代码很短，基本就是申请一个buf，然后填充数据,最后将buf插入到skiplist中。具体填充的字段如下：
 
-![](https://cdn.jsdelivr.net/gh/ravenxrz/PicBed/img/leveldb源码阅读-copy-memtable插入一个entry (1).png)
+![](https://pic.downk.cc/item/5f8442441cd1bbb86b04da1b.png)
 
 ## 4. Get操作
 

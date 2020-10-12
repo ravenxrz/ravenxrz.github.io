@@ -82,9 +82,9 @@ void DBImpl::BackgroundCall() {
 
 这里的调用链比较清晰：
 
-<img src="https://cdn.jsdelivr.net/gh/ravenxrz/PicBed/img/leveldb源码阅读-copy-minor_compaction过程1 (1).png" style="zoom: 33%;" />
+<img src="https://pic.downk.cc/item/5f84430d1cd1bbb86b056b74.png" style="zoom: 33%;" />
 
-<img src="https://cdn.jsdelivr.net/gh/ravenxrz/PicBed/img/leveldb源码阅读-copy-compaction (1).png" style="zoom:33%;" />
+<img src="https://pic.downk.cc/item/5f84432b1cd1bbb86b0582d0.png" style="zoom:33%;" />
 
 需要注意的是，DBImpl::MaybeScheduleCompaction 是一个递归调用，递归结束的地方在：
 
@@ -221,7 +221,7 @@ Status DBImpl::WriteLevel0Table(MemTable* mem, VersionEdit* edit,
 
 ### 1 WriteLevel0Table 流程图
 
-<img src="https://cdn.jsdelivr.net/gh/ravenxrz/PicBed/img/leveldb源码阅读-copy-WriteLevel0Table.png" style="zoom:50%;" />
+<img src="https://pic.downk.cc/item/5f84433d1cd1bbb86b058e5b.png" style="zoom:50%;" />
 
 #### 3个函数的分析
 
@@ -911,7 +911,7 @@ void Version::GetOverlappingInputs(int level, const InternalKey* begin,
 
 ####  举个例子（level0 compaction的sstable选择）
 
-![](https://cdn.jsdelivr.net/gh/ravenxrz/PicBed/img/leveldb源码阅读-copy-level0 compaction.png)
+![](https://pic.downk.cc/item/5f84436e1cd1bbb86b05b42f.png)
 
 假设在level 0中选择了**8-14** 这个sstable。现在从头开始遍历，查看是否有需要加入的其他sstable。
 
@@ -1056,19 +1056,19 @@ if (!c->inputs_[1].empty()) {
 
 这段代码的意思是，在选中level n+1层的sstable后，可能还可以加入一些level n的sstable。举个例子：
 
-![](https://cdn.jsdelivr.net/gh/ravenxrz/PicBed/img/leveldb源码阅读-copy-level n重新加入一些sstable.png)
+![](https://pic.downk.cc/item/5f84437a1cd1bbb86b05bbf2.png)
 
 假设现在在level n选择的是8-12这个sstable，则在level n+1 可以选择8-9，10-16着连个sstable。 这一切做完后，发现在level n中存在13-15这个sstable，加入13-15并不影响level n+1 sstable的选择。
 
 上面那段代码就是做这个工作。举个不会加入新sstable的例子：
 
-![](https://cdn.jsdelivr.net/gh/ravenxrz/PicBed/img/leveldb源码阅读-copy-第 16 页 (1).png)
+![](https://pic.downk.cc/item/5f8443831cd1bbb86b05c1ea.png)
 
 在这样的情况下，13-18的重新加入，level n+1 需要重新加入17-20，所以不应该加入13-18.
 
 但是再看下一个例子：
 
-![](https://cdn.jsdelivr.net/gh/ravenxrz/PicBed/img/leveldb源码阅读-copy-第 17 页.png)
+![](https://pic.downk.cc/item/5f84438c1cd1bbb86b05c90f.png)
 
 这个例子中，虽然新加入level 13-18，扩大了inputs_的范围，但是由于并没有造成level n+1的sstable重新选择，所以依然可以加入13-18.
 
@@ -1216,11 +1216,11 @@ void AddBoundaryInputs(const InternalKeyComparator& icmp,
 
 在AddBoundaryInputs调用前，我们已经确定了inputs[0], 如果不考虑level0的话，对于其他level，inputs[0]为一个sstable。这个sstable存在一个key range[low,high], 我们都知道 sstable内部存的key是InternalKey, InternalKey内部封装了user key。如下图：
 
-![](https://cdn.jsdelivr.net/gh/ravenxrz/PicBed/img/leveldb源码阅读-copy-memtable插入一个entry (1).png)
+![](https://pic.downk.cc/item/5f8442441cd1bbb86b04da1b.png)
 
 因为只要internel key不相同，那么就可认为key是不重叠的。也就是说只要(key, sequence number,type)三个任一个不同，就可以认为key是不同。 那现在可能就存在这样一个情况， 相邻两个sstable的user key相同。如下图表示：
 
-![](https://cdn.jsdelivr.net/gh/ravenxrz/PicBed/img/leveldb源码阅读-copy-AddBoundaryInputs (1).png)
+![](https://pic.downk.cc/item/5f84439f1cd1bbb86b05d684.png)
 
 sstable 1中的上届(upper)的user key 和 sstable 2的下届(lower)的user key相同，都为key2. 假设我们当前inputs[0]就是sstable 1。 那么AddBoundaryInputs函数的作用就是将sstable 2添加到inputs[0]中。 当然这是一个递归的过程，加完sstable 2，可能sstable 3的下届user key又和sstable 2的上届相同，所以继续添加。
 
@@ -1479,7 +1479,7 @@ ok，总结一下，花个流程图。
 
 #### seek_compaction的流程图（何时触发，如何触发）
 
-<img src="https://cdn.jsdelivr.net/gh/ravenxrz/PicBed/img/leveldb源码阅读-copy-seek_compaction (2).png" style="zoom:50%;" />
+<img src="https://pic.downk.cc/item/5f8443b11cd1bbb86b05e0f2.png" style="zoom:50%;" />
 
 #### 3.  allowed_seeks--的时机 (2) & DBIter
 

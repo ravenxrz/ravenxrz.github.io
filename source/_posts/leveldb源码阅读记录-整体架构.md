@@ -224,4 +224,4 @@ Version0 +VersionEdit-->Version1
 
 VersionEdit 会保存到 manifest 文件中，当做数据恢复时就会从 manifest 文件中读出来重建数据。
 
-这其实是一种MVCC思想的实现。后续
+这其实是一种MVCC思想的实现。

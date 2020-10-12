@@ -131,7 +131,7 @@ static Iterator* GetFileIterator(void* arg, const ReadOptions& options,
 
 到这里可以得到结论， TwoLevelIterator由两个iterator组成，一个是LevelFileNumIterator， 用于提供数据索引需要的元信息。另一个是cache iterator, 用于实际访问数据。
 
-![](https://cdn.jsdelivr.net/gh/ravenxrz/PicBed/img/leveldb源码阅读-copy-twoleveliterator (1).png)
+![](https://pic.downk.cc/item/5f8441d31cd1bbb86b048b26.png)
 
 注意：这里LevelFileNumIterator和Table Iterator实际上又会被IteratorWrapper warp起来。（上文也提到了）。
 

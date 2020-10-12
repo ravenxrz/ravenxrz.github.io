@@ -108,10 +108,10 @@ Iterator* Version::NewConcatenatingIterator(const ReadOptions& options,
 
 ConcatenatingIterator是用来遍历出level0的其他level的iterator。 依然是一个组合iterator，如下图：
 
-![](https://cdn.jsdelivr.net/gh/ravenxrz/PicBed/img/绘图文件-第 10 页.png)
+![](https://pic.downk.cc/item/5f8441891cd1bbb86b045762.png)
 
 ## 4. 总结
 
 InternalIterator是一个功能Iterator，功能是遍历整个leveldb系统。包括mem,imm, 以及各level的sstable。本质上是一个MergingIterator.如下图：
 
-![](https://cdn.jsdelivr.net/gh/ravenxrz/PicBed/img/绘图文件-第 11 页.png)
+![](https://pic.downk.cc/item/5f8441901cd1bbb86b045c7f.png)

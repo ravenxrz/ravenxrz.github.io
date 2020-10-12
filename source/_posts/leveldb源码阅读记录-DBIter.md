@@ -79,7 +79,7 @@ private:
 
 我们从一次WriteBatch出发，看看序列号是怎么使用及修改的。先给出结论图：
 
-![](https://cdn.jsdelivr.net/gh/ravenxrz/PicBed/img/绘图文件-第 13 页.png)
+![](https://pic.downk.cc/item/5f8440df1cd1bbb86b03d7eb.png)
 
 **我们知道一个WriteBatch对一次批量写操作的封装。**先看看一个WriteBatch的结构：
 
@@ -114,7 +114,7 @@ private:
 
 **由8字节序列号，4字节count，和实际数据record数组组成。**
 
-![](https://cdn.jsdelivr.net/gh/ravenxrz/PicBed/img/绘图文件-第 12 页.png)
+![](https://pic.downk.cc/item/5f8440ec1cd1bbb86b03df83.png)
 
 ==一次Put操作：==
 
@@ -255,7 +255,7 @@ Status DBImpl::Write(const WriteOptions& options, WriteBatch* updates) {
 因为**iter_遍历的是数据库的每一条记录。它是以InternalKey(userkey, seq, type)为遍历粒度的，只要InternalKey中任意一个组成元素不同，MergingIterator就认为他们是不同的kv对。**
 而**DBIter是以userkey为遍历粒度的，只要记录的userkey相同，那么DBIter就认为他们是一条记录（不同版本），sqe越大代表该记录越新。每次迭代将跳到下一个不同userkey的记录，且==DBIter在遍历一个InternalKey时仅会检索InternalKey->seq 小于 DBIter创建时所初始化的seq号。==**举个例子：
 
-![](https://cdn.jsdelivr.net/gh/ravenxrz/PicBed/img/绘图文件-第 14 页 (1).png)
+![](https://pic.downk.cc/item/5f8440a11cd1bbb86b03a6c3.png)
 
 上面表示了6个InternalKey，冒号前为user_key,冒号后为序列号。现假设创建DBIter时，所初始化的seq为2. 则DBIter在从前往后遍历时，将会直接跳过 key1:6,key1:5,key1:4 和key2:3.  只会从key2:2开始遍历。
 
@@ -301,7 +301,7 @@ void DBIter::FindNextUserEntry(bool skipping, std::string* skip) {
 
 用一个例子来解释这个函数的作用：
 
-![](https://cdn.jsdelivr.net/gh/ravenxrz/PicBed/img/绘图文件-第 15 页 (2).png)
+![](https://pic.downk.cc/item/5f8440b51cd1bbb86b03b759.png)
 
 上图中， 每个节点由3个字段组成，由冒号:分隔，第1个为user_key，第2个为版本号，第3个为节点类型（1代表普通值，0代表删除）。
 
@@ -391,7 +391,7 @@ void DBIter::Next() {
 
 还是用例子来说：
 
-![](https://cdn.jsdelivr.net/gh/ravenxrz/PicBed/img/绘图文件-第 16 页.png)
+![](https://pic.downk.cc/item/5f8440fa1cd1bbb86b03ea50.png)
 
 假设当前iter_ 指向 key0:8:1。则Next函数的工作如下：
 
@@ -451,7 +451,7 @@ void DBIter::FindPrevUserEntry() {
 
 
 
-![](D:/坚果云同步/图库/绘图文件-第 17 页.png)
+![](https://pic.downk.cc/item/5f8441241cd1bbb86b040b4b.png)
 
 假设当前iter指向 key1:4:1, 则FindPrevUserEntry的工作为：
 
@@ -540,7 +540,7 @@ void DBIter::Prev() {
 
 这个很简单了，不过这里也终于解释了saved_key_，saved_value_已经direction变量的作用。因为在反向遍历时，会出现这种的情况：
 
-![](https://cdn.jsdelivr.net/gh/ravenxrz/PicBed/img/绘图文件-第 18 页.png)
+![](https://pic.downk.cc/item/5f8441351cd1bbb86b041853.png)
 
 反向遍历时，需要的key应该时key1:6:1, 但是iter_已经指向了key0:7:1。 正向遍历则不存在这个问题，所以DBIter使用了三个额外的变量(direction,saved_key,saved_value)来区分正向遍历和反向遍历。
 

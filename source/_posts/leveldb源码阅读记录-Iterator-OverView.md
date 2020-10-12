@@ -160,7 +160,7 @@ TwoLevelIterator实现逻辑上有层次关系的数据的遍历操作。组合�
 
 对SST文件的遍历，通过[庖丁解LevelDB之数据存储](https://link.jianshu.com?t=http://catkang.github.io/2017/01/17/leveldb-data.html)可知，这里有明显的层级关系，可以利用上面介绍的TwoLevelIterator，其**index iterator**为Index Block的Block::Iter，**data iterator**为Data Block的Block::Iter
 
-![](https://upload-images.jianshu.io/upload_images/530927-6993a1249b141f7e.png?imageMogr2/auto-orient/strip|imageView2/2/w/415/format/webp)
+![](https://pic.downk.cc/item/5f8442be1cd1bbb86b053032.jpg)
 
 Table::Iterator
 
@@ -172,7 +172,7 @@ Compaction过程中需要对多个文件进行归并操作，并将结果输出�
 
 *   其他Level文件，包含文件索引的TwoLevelIterator，由Version::LevelFileNumIterato作为index iterator，Table::Iterator作为data iterator
 
-![](https://upload-images.jianshu.io/upload_images/530927-2b69b6b6c162fa70.png?imageMogr2/auto-orient/strip|imageView2/2/w/998/format/webp)
+![](https://pic.downk.cc/item/5f8442c81cd1bbb86b0537ed.jpg)
 
 Compaction过程Iterator
 
@@ -180,7 +180,7 @@ Compaction过程Iterator
 
 LevelDB作为整体同样通过Iterator向外部用户提供遍历全部数据的能力。这里使用MergingIterator将Memtable，Immutable memtable及各层SST文件的Iterator归并起来，使得外部使用者不用关心具体的内部实现而有序的循环LevelDB内部的数据，LevelDB首先实现了NewInternalIterator：
 
-![](https://upload-images.jianshu.io/upload_images/530927-cacadb66612c54d0.png?imageMogr2/auto-orient/strip|imageView2/2/w/1200/format/webp)
+![](https://pic.downk.cc/item/5f8442d21cd1bbb86b053fa4.jpg)
 
 在NewInternalIterator的基础上，LevelDB又封装了DBIter来处理快照，过滤已删除key。
 

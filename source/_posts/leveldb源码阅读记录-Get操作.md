@@ -225,7 +225,7 @@ void Version::ForEachOverlapping(Slice user_key, Slice internal_key, void* arg,
 
 总结流程图如下：
 
-![](https://cdn.jsdelivr.net/gh/ravenxrz/PicBed/img/leveldb源码阅读-copy-第 25 页 (1).png)
+![](https://pic.downk.cc/item/5f82c4201cd1bbb86b405985.png)
 
 首先去mem中读，读不到，去imm中读，读不到，去底层sstable中读，因为sstable可能被cache到内存，所以可以去cache中读，如果系统没有配置cache，或者cache中没有cache到指定sstable，则到文件系统中读。
 

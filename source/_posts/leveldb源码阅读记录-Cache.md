@@ -392,7 +392,7 @@ void LRUCache::LRU_Append(LRUHandle* list, LRUHandle* e) {
 
 每次插入都是向list head的前面插入一个新节点，作为最新节点。所以有：
 
-![](https://cdn.jsdelivr.net/gh/ravenxrz/PicBed/img/绘图文件-第 5 页.png)
+![](https://pic.downk.cc/item/5f84428f1cd1bbb86b050fa0.png)
 
 ## 4. ShardedLRUCache
 

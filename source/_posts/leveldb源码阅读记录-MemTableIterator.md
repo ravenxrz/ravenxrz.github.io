@@ -12,6 +12,8 @@ tags:
 
 MemTableIteraotr是用来遍历MemTable的Iterator。
 
+<!--more-->
+
 ## 1. 基本定义
 
 下面是它的代码，代码很短：
@@ -55,7 +57,7 @@ MemTable::Table其实是SkipList的别名，所以最终就是对SkipList的Iter
 
 如果你之前阅读了本系列的ksiplist文章， 那应该知道skiplist中只有key没有value， key里面存放的东西就是本文开篇中给出的图。它既包含了key也包含了value。下图是iter中的key的布局：
 
-![](https://cdn.jsdelivr.net/gh/ravenxrz/PicBed/img/leveldb源码阅读-copy-memtable插入一个entry (1).png)
+![](https://pic.downk.cc/item/5f8442441cd1bbb86b04da1b.png)
 
 ## 2. key
 

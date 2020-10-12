@@ -226,7 +226,7 @@ void PutLengthPrefixedSlice(std::string* dst, const Slice& value) {
 
 对于一个字符串，这里首先将它的长度放到dst中，然后再将数值放入。 
 
-![](https://cdn.jsdelivr.net/gh/ravenxrz/PicBed/img/绘图文件-第 20 页.png)
+![](https://pic.downk.cc/item/5f8444821cd1bbb86b066dd9.png)
 
 Get函数：
 
