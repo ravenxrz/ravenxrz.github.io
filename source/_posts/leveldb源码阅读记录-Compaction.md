@@ -577,7 +577,7 @@ level 6          1000000M
 
 我个人的理解是，查找一个key，根据manifest判定这个key可能在某个sstable中（manifest中存放了sstable的smallest和largest key）,但是实际上并不在，所以总是在更深层中去找。那查找本层的sstable就是对io的浪费，而且也说明了本层和更深层的key有比较严重的相互重叠。举个例子，如下图：
 
-<img src="../../../图库/leveldb源码阅读-copy-seek compaction.png" style="zoom:33%;" />
+<img src="https://pic.downk.cc/item/5f844aeb1cd1bbb86b0a9343.png" style="zoom:33%;" />
 
 现在查找6， 对于level1的sstable来说，key的range在[1,9], 所以会查找这个sstable，显然6不在其中，于是向下层中找，level2的这个sstable的key range为[2,8]，在这里找到了。 这样level1的io就是浪费掉的， level1和level2的key overlap也比较严重，长此以往浪费io，所以需要compaction。
 
