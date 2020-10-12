@@ -36,6 +36,7 @@
 <meta property="og:image" content="https://cdn.jsdelivr.net/gh/ravenxrz/PicBed/img/%E5%86%99%E5%85%A5%E4%B8%80%E4%B8%AAdatablock%E7%9A%84%E6%B5%81%E7%A8%8B-1600853106778.png">
 <meta property="og:image" content="https://www.ravenxrz.ink/%E5%9B%BE%E5%BA%93/datablock%E6%A0%BC%E5%BC%8F.png">
 <meta property="og:image" content="https://cdn.jsdelivr.net/gh/ravenxrz/PicBed/img/data_block_of_sstable.png">
+<meta property="og:image" content="https://pic.downk.cc/item/5f8444041cd1bbb86b061575.png">
 <meta property="og:image" content="https://cdn.jsdelivr.net/gh/ravenxrz/PicBed/img/image-20200923192147959.png">
 <meta property="og:image" content="https://cdn.jsdelivr.net/gh/ravenxrz/PicBed/img/leveldb%E6%BA%90%E7%A0%81%E9%98%85%E8%AF%BB%20(2).png">
 <meta property="og:image" content="https://cdn.jsdelivr.net/gh/ravenxrz/PicBed/img/leveldb%E6%BA%90%E7%A0%81%E9%98%85%E8%AF%BB-index%20entry%20key%E8%AE%A1%E7%AE%97%E6%96%B9%E5%BC%8F.png">
@@ -46,7 +47,7 @@
 <meta property="og:image" content="https://cdn.jsdelivr.net/gh/ravenxrz/PicBed/img/leveldb%E6%BA%90%E7%A0%81%E9%98%85%E8%AF%BB-copy-%E7%AC%AC%2012%20%E9%A1%B5%20(5).png">
 <meta property="og:image" content="https://cdn.jsdelivr.net/gh/ravenxrz/PicBed/img/leveldb%E6%BA%90%E7%A0%81%E9%98%85%E8%AF%BB-copy-filter%20block%E7%9A%84layout%20(1).png">
 <meta property="article:published_time" content="2020-10-12T09:00:00.000Z">
-<meta property="article:modified_time" content="2020-10-12T09:20:45.444Z">
+<meta property="article:modified_time" content="2020-10-12T11:55:24.497Z">
 <meta property="article:author" content="Raven">
 <meta property="article:tag" content="IT">
 <meta name="twitter:card" content="summary">
@@ -241,7 +242,7 @@
               <span class="post-meta-item-text">发表于</span>
               
 
-              <time title="创建时间：2020-10-12 17:00:00 / 修改时间：17:20:45" itemprop="dateCreated datePublished" datetime="2020-10-12T17:00:00+08:00">2020-10-12</time>
+              <time title="创建时间：2020-10-12 17:00:00 / 修改时间：19:55:24" itemprop="dateCreated datePublished" datetime="2020-10-12T17:00:00+08:00">2020-10-12</time>
             </span>
             <span class="post-meta-item">
               <span class="post-meta-item-icon">
@@ -368,7 +369,7 @@
 <p>这部分代码相对简单，首先确定当前要add的key与之前最后一个加入的key的共享长度，非共享长度，然后写入这些元数据(<shared><non_shared><value_size>)， 接着再写入数据（数据只用写非共享长度即可）。<strong>最后将当前key作为下一次add key的比较对象。</strong></p>
 <p>==前缀压缩的时候当前key主要参照的是他/它前面的一个key，而不是起始点的key。==</p>
 <h4 id="key-value-pair的layout"><a href="#key-value-pair的layout" class="headerlink" title="key value pair的layout"></a>key value pair的layout</h4><p>从上面的代码中，我们可以知道datablock里面一个key value pair的数据格式为：</p>
-<p>![](<span class="exturl" data-url="aHR0cHM6Ly9jZG4uanNkZWxpdnIubmV0L2doL3JhdmVueHJ6L1BpY0JlZC9pbWcva2V5" title="https://cdn.jsdelivr.net/gh/ravenxrz/PicBed/img/key">https://cdn.jsdelivr.net/gh/ravenxrz/PicBed/img/key<i class="fa fa-external-link"></i></span> value pair的数据格式-1600852877733.png)</p>
+<p><img data-src="https://pic.downk.cc/item/5f8444041cd1bbb86b061575.png" alt=""></p>
 <h2 id="4-Index-Block"><a href="#4-Index-Block" class="headerlink" title="4. Index Block"></a>4. Index Block</h2><p>我们在前面说明了如何存放data block，既然可以存放，那自然可以取出来，问题是应该如何存储，注意到sstable内的datablock是有序的，自然会想到采用二分查找的方法来做搜索。leveldb是如何实现data block的搜索的？答案就在这个index block中。</p>
 <p>index block中存放的是data block的索引。看看index block的类型：</p>
 <p><img data-src="https://cdn.jsdelivr.net/gh/ravenxrz/PicBed/img/image-20200923192147959.png" alt="image-20200923192147959"></p>
