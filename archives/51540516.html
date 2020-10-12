@@ -24,42 +24,20 @@
     var CONFIG = {"hostname":"www.ravenxrz.ink","root":"/","scheme":"Mist","version":"7.8.0","exturl":true,"sidebar":{"position":"left","display":"always","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":true,"show_result":true,"style":"flat"},"back2top":{"enable":true,"sidebar":false,"scrollpercent":true},"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":true,"lazyload":true,"pangu":true,"comments":{"style":"tabs","active":"gitalk","storage":true,"lazyload":true,"nav":null,"activeClass":"gitalk"},"algolia":{"hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":true,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},"motion":{"enable":false,"async":true,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},"path":"search.xml"};
   </script>
 
-  <meta name="description" content="1. 前言笔者是个比较喜欢尝试新东西的人，最近找到一个好玩又好用的数学绘图网站。可用于数值计算，函数绘图（支持动态函数），几何绘图等等。在数学建模，论文函数绘制，动态展示函数变化等等方面可能会用到。所以，就来介绍一下这个网站。">
+  <meta name="description" content="MemTableIterator读这篇文章前，请先阅读 skiplist实现和memtable两篇文章。 MemTableIteraotr是用来遍历MemTable的Iterator。 1. 基本定义下面是它的代码，代码很短： 123456789101112131415161718192021222324252627class MemTableIterator : public Iterator">
 <meta property="og:type" content="article">
-<meta property="og:title" content="好玩的数学网站-Desmos">
-<meta property="og:url" content="https://www.ravenxrz.ink/archives/27d14722.html">
+<meta property="og:title" content="leveldb源码阅读记录-MemTableIterator">
+<meta property="og:url" content="https://www.ravenxrz.ink/archives/51540516.html">
 <meta property="og:site_name" content="Raven&#39;s Blog">
-<meta property="og:description" content="1. 前言笔者是个比较喜欢尝试新东西的人，最近找到一个好玩又好用的数学绘图网站。可用于数值计算，函数绘图（支持动态函数），几何绘图等等。在数学建模，论文函数绘制，动态展示函数变化等等方面可能会用到。所以，就来介绍一下这个网站。">
+<meta property="og:description" content="MemTableIterator读这篇文章前，请先阅读 skiplist实现和memtable两篇文章。 MemTableIteraotr是用来遍历MemTable的Iterator。 1. 基本定义下面是它的代码，代码很短： 123456789101112131415161718192021222324252627class MemTableIterator : public Iterator">
 <meta property="og:locale" content="zh_CN">
-<meta property="og:image" content="https://pic3.superbed.cn/item/5cfbad1a451253d178d94d0d.jpg">
-<meta property="og:image" content="https://pic3.superbed.cn/item/5cfbad1e451253d178d94d57.jpg">
-<meta property="og:image" content="https://pic.superbed.cn/item/5cfbad24451253d178d94dd0.jpg">
-<meta property="og:image" content="https://pic.superbed.cn/item/5cfbad26451253d178d94e10.jpg">
-<meta property="og:image" content="https://pic2.superbed.cn/item/5cfbad28451253d178d94e4a.jpg">
-<meta property="og:image" content="https://pic.superbed.cn/item/5cfbad2b451253d178d94e8a.jpg">
-<meta property="og:image" content="https://pic3.superbed.cn/item/5cfbad2c451253d178d94ec5.jpg">
-<meta property="og:image" content="https://pic.superbed.cn/item/5cfbad2d451253d178d94f03.jpg">
-<meta property="og:image" content="https://pic3.superbed.cn/item/5cfbad2f451253d178d94f3b.jpg">
-<meta property="og:image" content="https://pic.superbed.cn/item/5cfbad32451253d178d94f7e.jpg">
-<meta property="og:image" content="https://pic.superbed.cn/item/5cfbad34451253d178d94fb9.jpg">
-<meta property="og:image" content="https://pic1.superbed.cn/item/5cfbad37451253d178d94ffe.jpg">
-<meta property="og:image" content="https://pic1.superbed.cn/item/5cfbad3a451253d178d95058.jpg">
-<meta property="og:image" content="https://pic.superbed.cn/item/5cfbad3d451253d178d95096.jpg">
-<meta property="og:image" content="https://pic.superbed.cn/item/5cfbad43451253d178d95110.jpg">
-<meta property="og:image" content="https://raw.githubusercontent.com/ravenxrz/BlogPic/master/img/007LxXtnly1g2ofycr6udg311s0jjk3z.gif">
-<meta property="og:image" content="https://pic.superbed.cn/item/5cfbad45451253d178d95147.jpg">
-<meta property="og:image" content="https://pic1.superbed.cn/item/5cfbad4b451253d178d951a6.jpg">
-<meta property="og:image" content="https://pic.superbed.cn/item/5cfbad4d451253d178d951ef.jpg">
-<meta property="og:image" content="https://pic.superbed.cn/item/5cfbad51451253d178d9523c.jpg">
-<meta property="og:image" content="https://pic.superbed.cn/item/5cfbad58451253d178d952cf.jpg">
-<meta property="article:published_time" content="2019-01-25T05:58:47.000Z">
-<meta property="article:modified_time" content="2020-09-06T07:37:36.778Z">
+<meta property="article:published_time" content="2020-10-12T10:36:12.000Z">
+<meta property="article:modified_time" content="2020-10-12T09:38:21.450Z">
 <meta property="article:author" content="Raven">
-<meta property="article:tag" content="Desmos">
+<meta property="article:tag" content="IT">
 <meta name="twitter:card" content="summary">
-<meta name="twitter:image" content="https://pic3.superbed.cn/item/5cfbad1a451253d178d94d0d.jpg">
 
-<link rel="canonical" href="https://www.ravenxrz.ink/archives/27d14722.html">
+<link rel="canonical" href="https://www.ravenxrz.ink/archives/51540516.html">
 
 
 <script id="page-configurations">
@@ -72,7 +50,7 @@
   };
 </script>
 
-  <title>好玩的数学网站-Desmos | Raven's Blog</title>
+  <title>leveldb源码阅读记录-MemTableIterator | Raven's Blog</title>
   
 
 
@@ -224,7 +202,7 @@
   
   
   <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
-    <link itemprop="mainEntityOfPage" href="https://www.ravenxrz.ink/archives/27d14722.html">
+    <link itemprop="mainEntityOfPage" href="https://www.ravenxrz.ink/archives/51540516.html">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
       <meta itemprop="image" content="https://pic.downk.cc/item/5e907515504f4bcb04b6f798.jpg">
@@ -237,7 +215,7 @@
     </span>
       <header class="post-header">
         <h1 class="post-title" itemprop="name headline">
-          好玩的数学网站-Desmos
+          leveldb源码阅读记录-MemTableIterator
         </h1>
 
         <div class="post-meta">
@@ -246,23 +224,17 @@
                 <i class="fa fa-calendar-o"></i>
               </span>
               <span class="post-meta-item-text">发表于</span>
+              
 
-              <time title="创建时间：2019-01-25 13:58:47" itemprop="dateCreated datePublished" datetime="2019-01-25T13:58:47+08:00">2019-01-25</time>
+              <time title="创建时间：2020-10-12 18:36:12 / 修改时间：17:38:21" itemprop="dateCreated datePublished" datetime="2020-10-12T18:36:12+08:00">2020-10-12</time>
             </span>
-              <span class="post-meta-item">
-                <span class="post-meta-item-icon">
-                  <i class="fa fa-calendar-check-o"></i>
-                </span>
-                <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2020-09-06 15:37:36" itemprop="dateModified" datetime="2020-09-06T15:37:36+08:00">2020-09-06</time>
-              </span>
             <span class="post-meta-item">
               <span class="post-meta-item-icon">
                 <i class="fa fa-folder-o"></i>
               </span>
               <span class="post-meta-item-text">分类于</span>
                 <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/categories/%E6%95%B0%E5%AD%A6%E5%BB%BA%E6%A8%A1/" itemprop="url" rel="index"><span itemprop="name">数学建模</span></a>
+                  <a href="/categories/leveldb/" itemprop="url" rel="index"><span itemprop="name">leveldb</span></a>
                 </span>
             </span>
 
@@ -284,80 +256,26 @@
     <div class="post-body" itemprop="articleBody">
 
       
-        <h2 id="1-前言"><a href="#1-前言" class="headerlink" title="1. 前言"></a>1. 前言</h2><p>笔者是个比较喜欢尝试新东西的人，最近找到一个好玩又好用的数学绘图网站。可用于数值计算，函数绘图（支持动态函数），几何绘图等等。在数学建模，论文函数绘制，动态展示函数变化等等方面可能会用到。所以，就来介绍一下这个网站。</p>
-<a id="more"></a>
-<h2 id="2-使用介绍"><a href="#2-使用介绍" class="headerlink" title="2. 使用介绍"></a>2. 使用介绍</h2><p>首先当然是贴出它的官网了：<span class="exturl" data-url="aHR0cHM6Ly93d3cuZGVzbW9zLmNvbS8=" title="https://www.desmos.com/">https://www.desmos.com/<i class="fa fa-external-link"></i></span></p>
-<p><img data-src="https://pic3.superbed.cn/item/5cfbad1a451253d178d94d0d.jpg" alt="官网"></p>
-<p>点击<strong>Start Graphing</strong>就可以开始了，<em>下面几个蓝色按钮是它的几个子功能，不用太关注</em>。</p>
-<h3 id="2-1-主界面功能介绍"><a href="#2-1-主界面功能介绍" class="headerlink" title="2.1 主界面功能介绍"></a>2.1 主界面功能介绍</h3><p><img data-src="https://pic3.superbed.cn/item/5cfbad1e451253d178d94d57.jpg" alt="主界面"></p>
-<p>主要关注左边的空白区域，因为后续的操作几乎都是围绕着这片区域来完成。除此之外，可通过<strong>分享按钮来下载你绘制好的图像</strong>，<strong>问号按钮有相关的入门教程</strong>（视频教程在youtube上，所以可能需要到科学上网）。</p>
-<p><img data-src="https://pic.superbed.cn/item/5cfbad24451253d178d94dd0.jpg" alt="侧边栏"></p>
-<p>点击侧边栏，可以看到该网站给我们很多模板，我们可以随便点击一个来看看效果，这里我打开了一个四阶多项式拟合：</p>
-<p><img data-src="https://pic.superbed.cn/item/5cfbad26451253d178d94e10.jpg" alt="拟合"></p>
-<p>左边是整个绘制的核心。</p>
-<p>首先是输入了散点的<code>x，y</code>坐标，然后第二栏中输入要拟合的表达式，在<code>desmos</code>中，**~<strong>代表回归拟合的意思，拟合的参数有<code>a,b,c,d,f</code>。输入完成后，它会</strong>自动拟合并绘制图图像，然后将各参数显示出来。**</p>
-<h3 id="2-2-基本功能入门"><a href="#2-2-基本功能入门" class="headerlink" title="2.2 基本功能入门"></a>2.2 基本功能入门</h3><h4 id="2-2-1-基本函数绘制与计算"><a href="#2-2-1-基本函数绘制与计算" class="headerlink" title="2.2.1 基本函数绘制与计算"></a>2.2.1 基本函数绘制与计算</h4><p>新建一个绘图板。在第一栏中输入$f(x) = sin(x)$。可以得到下图:</p>
-<p><img data-src="https://pic2.superbed.cn/item/5cfbad28451253d178d94e4a.jpg" alt="sin函数"></p>
-<p>如何获取函数在某点的值呢？有三种方式:</p>
-<ul>
-<li><p>鼠标点击图形获取，这个最简单，但是也最不精确。</p>
-</li>
-<li><p>通过子栏输入获取：</p>
-</li>
-</ul>
-<p><img data-src="https://pic.superbed.cn/item/5cfbad2b451253d178d94e8a.jpg" alt="子栏获取"></p>
-<ul>
-<li>转换为表格获取，点击坐标面板的设置按钮，点击<strong>convert to table</strong>。得到下图:</li>
-</ul>
-<p><img data-src="https://pic3.superbed.cn/item/5cfbad2c451253d178d94ec5.jpg" alt="转换表格获取"></p>
-<p>  可在x轴中的任意位置插入<code>x</code>的值，它会自动给出结果。如我要知道$x=pi，f(x)$等于多少。</p>
-<p><img data-src="https://pic.superbed.cn/item/5cfbad2d451253d178d94f03.jpg" alt="pi值对应f(x)"></p>
-<p>另外，也可以增加列（增加其他函数），得到相同x值下的不同函数值:</p>
-<p><img data-src="https://pic3.superbed.cn/item/5cfbad2f451253d178d94f3b.jpg" alt="增加列"></p>
-<p>在得到不同的函数值的同时，也得到了增加的函数的散点图。如何修改绘图样式呢？长按$cos(x)$左边绿色的图标，得到下图：</p>
-<p><img data-src="https://pic.superbed.cn/item/5cfbad32451253d178d94f7e.jpg" alt="颜色更改"></p>
-<p>这里可以修改样式和颜色，具体的效果可以自己的尝试，我这里就把线也加上吧。</p>
-<p><img data-src="https://pic.superbed.cn/item/5cfbad34451253d178d94fb9.jpg" alt="更改样式"></p>
-<p><strong>额外补充一点，该网站支持的函数集合可通过下图查看</strong>：</p>
-<p><img data-src="https://pic1.superbed.cn/item/5cfbad37451253d178d94ffe.jpg" alt="支持函数"></p>
-<h4 id="2-2-2-文件夹"><a href="#2-2-2-文件夹" class="headerlink" title="2.2.2 文件夹"></a>2.2.2 文件夹</h4><p>当要绘制多个图形时，我们需要一种方式来管理多个图。好在<code>desmos</code>提供了文件夹管理方式，我们可以通过文件夹来一键隐藏/显示多个函数。使用方式如下:</p>
-<ol>
-<li>点击左上角的+号，新建一个文件夹</li>
-<li>书写任意表达式，通过拖拽的方式把书写的表达式放进文件夹中。</li>
-<li>点击文件夹坐标的图标就可以实现多个图形的同时隐藏和显示了</li>
-</ol>
-<h4 id="2-2-3-列表"><a href="#2-2-3-列表" class="headerlink" title="2.2.3 列表"></a>2.2.3 列表</h4><p>在<code>desmos</code>中，可定义列表来表达多个图形，定义方式如下:</p>
-<p><code>a = [1,2,3]</code></p>
-<p>也可以通过步长来定义</p>
-<p><code>a = [1...10]</code> 默认步长1</p>
-<p>或者<code>a=[0,5...100]</code>推导出步长为5</p>
-<p>然后可以像下图这样使用：</p>
-<p><img data-src="https://pic1.superbed.cn/item/5cfbad3a451253d178d95058.jpg" alt="列表使用1"></p>
-<p>或者也可以同时画多个点：</p>
-<p><img data-src="https://pic.superbed.cn/item/5cfbad3d451253d178d95096.jpg" alt="列表使用2"></p>
-<h4 id="2-2-4-滑动变量（slider"><a href="#2-2-4-滑动变量（slider" class="headerlink" title="2.2.4 滑动变量（slider)"></a>2.2.4 滑动变量（slider)</h4><p>在<code>desmos</code>中可定义滑动变量来绘制动态图像。</p>
-<p>定义一个滑动变量很简单，只要记住一个规则：不要使用常用数学符号,<code>x,y,t,r</code>等。然后再书写表达式desmos会自动提示是否生成滑动变量。如：</p>
-<p><img data-src="https://pic.superbed.cn/item/5cfbad43451253d178d95110.jpg" alt="slider变量"></p>
-<p>通过滑动滑杆或者点击播放，右侧的绘图区会绘制出动态图。（提示：点击播放后右侧有调速滑杆）。</p>
-<p>下面展示一个高级点的：</p>
-<p><img data-src="https://raw.githubusercontent.com/ravenxrz/BlogPic/master/img/007LxXtnly1g2ofycr6udg311s0jjk3z.gif" alt="动态切线"></p>
-<p>是不是感觉很好玩勒。</p>
-<h4 id="2-2-5-参数方程与极坐标"><a href="#2-2-5-参数方程与极坐标" class="headerlink" title="2.2.5 参数方程与极坐标"></a>2.2.5 参数方程与极坐标</h4><p><code>desmos</code>也是支持参数方程，例如我们利用参数方程绘制一个圆形:</p>
-<p><img data-src="https://pic.superbed.cn/item/5cfbad45451253d178d95147.jpg" alt="绘制圆"></p>
-<p>再看看极坐标</p>
-<p>在<code>desmos</code>中，极坐标以符号r和$\theta$表示，画个四叶草？？？</p>
-<p><img data-src="https://pic1.superbed.cn/item/5cfbad4b451253d178d951a6.jpg" alt="四叶草"></p>
-<p>相当简单是吧。</p>
-<h4 id="2-2-6-不等式"><a href="#2-2-6-不等式" class="headerlink" title="2.2.6 不等式"></a>2.2.6 不等式</h4><p>讲解不等式之前，先说说如何在<code>desmos</code>中限制定义域或者值域。通过在大括号{}之间添加限制条件即可。如下:</p>
-<p><img data-src="https://pic.superbed.cn/item/5cfbad4d451253d178d951ef.jpg" alt="范围限制"></p>
-<p>OK,知道了这一点，咱们再来看看使用不等式的使用方式。假设我要绘制一个这样的图形:</p>
-<p>$$<br>\left\{<br>\begin{array}{c}<br>x \lt 2    \\<br>0 \lt y \lt x -1<br>\end{array}<br>\right.<br>$$</p>
-<p>那么这样写就画出来啦。</p>
-<p><img data-src="https://pic.superbed.cn/item/5cfbad51451253d178d9523c.jpg" alt="不等式绘制"></p>
-<p>(ps:高中的时候有一类求解极大极小值就是需要画图来做吧)</p>
-<h4 id="2-2-7-积分"><a href="#2-2-7-积分" class="headerlink" title="2.2.7 积分"></a>2.2.7 积分</h4><p><code>desmos</code>支持积分计算，也支持变上（下）限函数。通过输入<code>int</code>自动添加积分符号，如：</p>
-<p><img data-src="https://pic.superbed.cn/item/5cfbad58451253d178d952cf.jpg" alt="积分计算"></p>
-<h2 id="3-结语"><a href="#3-结语" class="headerlink" title="3. 结语"></a>3. 结语</h2><p>嗯，<code>desmos</code>的基础入门就这样了吧，还有很多高级用法可以阅读它提供的模板和文档，当然也可观看<code>desmos</code>的官方教程。笔者觉得蛮好玩的就学习了一下，希望能够对你有所帮助。</p>
+        <h2 id="MemTableIterator"><a href="#MemTableIterator" class="headerlink" title="MemTableIterator"></a>MemTableIterator</h2><p>读这篇文章前，请先阅读 skiplist实现和memtable两篇文章。</p>
+<p>MemTableIteraotr是用来遍历MemTable的Iterator。</p>
+<h2 id="1-基本定义"><a href="#1-基本定义" class="headerlink" title="1. 基本定义"></a>1. 基本定义</h2><p>下面是它的代码，代码很短：</p>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br></pre></td><td class="code"><pre><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">MemTableIterator</span> :</span> <span class="keyword">public</span> Iterator &#123;</span><br><span class="line"> <span class="keyword">public</span>:</span><br><span class="line">  <span class="function"><span class="keyword">explicit</span> <span class="title">MemTableIterator</span><span class="params">(MemTable::Table* table)</span> : <span class="title">iter_</span><span class="params">(table)</span> </span>&#123;&#125;</span><br><span class="line"></span><br><span class="line">  MemTableIterator(<span class="keyword">const</span> MemTableIterator&amp;) = <span class="keyword">delete</span>;</span><br><span class="line">  MemTableIterator&amp; <span class="keyword">operator</span>=(<span class="keyword">const</span> MemTableIterator&amp;) = <span class="keyword">delete</span>;</span><br><span class="line"></span><br><span class="line">  ~MemTableIterator() <span class="keyword">override</span> = <span class="keyword">default</span>;</span><br><span class="line"></span><br><span class="line">  <span class="function"><span class="keyword">bool</span> <span class="title">Valid</span><span class="params">()</span> <span class="keyword">const</span> <span class="keyword">override</span> </span>&#123; <span class="keyword">return</span> iter_.Valid(); &#125;</span><br><span class="line">  <span class="function"><span class="keyword">void</span> <span class="title">Seek</span><span class="params">(<span class="keyword">const</span> Slice&amp; k)</span> <span class="keyword">override</span> </span>&#123; iter_.Seek(EncodeKey(&amp;tmp_, k)); &#125;</span><br><span class="line">  <span class="function"><span class="keyword">void</span> <span class="title">SeekToFirst</span><span class="params">()</span> <span class="keyword">override</span> </span>&#123; iter_.SeekToFirst(); &#125;</span><br><span class="line">  <span class="function"><span class="keyword">void</span> <span class="title">SeekToLast</span><span class="params">()</span> <span class="keyword">override</span> </span>&#123; iter_.SeekToLast(); &#125;</span><br><span class="line">  <span class="function"><span class="keyword">void</span> <span class="title">Next</span><span class="params">()</span> <span class="keyword">override</span> </span>&#123; iter_.Next(); &#125;</span><br><span class="line">  <span class="function"><span class="keyword">void</span> <span class="title">Prev</span><span class="params">()</span> <span class="keyword">override</span> </span>&#123; iter_.Prev(); &#125;</span><br><span class="line">  <span class="function">Slice <span class="title">key</span><span class="params">()</span> <span class="keyword">const</span> <span class="keyword">override</span> </span>&#123; <span class="keyword">return</span> GetLengthPrefixedSlice(iter_.key()); &#125;</span><br><span class="line">  <span class="function">Slice <span class="title">value</span><span class="params">()</span> <span class="keyword">const</span> <span class="keyword">override</span> </span>&#123;</span><br><span class="line">    Slice key_slice = GetLengthPrefixedSlice(iter_.key());</span><br><span class="line">    <span class="keyword">return</span> GetLengthPrefixedSlice(key_slice.data() + key_slice.<span class="built_in">size</span>());</span><br><span class="line">  &#125;</span><br><span class="line"></span><br><span class="line">  <span class="function">Status <span class="title">status</span><span class="params">()</span> <span class="keyword">const</span> <span class="keyword">override</span> </span>&#123; <span class="keyword">return</span> Status::OK(); &#125;</span><br><span class="line"></span><br><span class="line"> <span class="keyword">private</span>:</span><br><span class="line">  MemTable::Table::Iterator iter_;</span><br><span class="line">  <span class="built_in">std</span>::<span class="built_in">string</span> tmp_;  <span class="comment">// For passing to EncodeKey</span></span><br><span class="line">&#125;;</span><br></pre></td></tr></table></figure>
+
+<p>可以看到，MemTableIterator是对MemTable::Table::Iterator的简单封装，也就是说，真正的iterator是MemTable::Table::Iterator，</p>
+<p>MemTable::Table其实是SkipList的别名，所以最终就是对SkipList的Iterator的封装。所以要求对MemTable的SkipList实现有所了解。</p>
+<p>虽然MemTableIterator只是对SkipList的Iter的薄薄封装，但这里有两个地方特殊，那就是key和value。</p>
+<p>如果你之前阅读了本系列的ksiplist文章， 那应该知道skiplist中只有key没有value， key里面存放的东西就是本文开篇中给出的图。它既包含了key也包含了value。下图是iter中的key的布局：</p>
+<p>![](<span class="exturl" data-url="aHR0cHM6Ly9jZG4uanNkZWxpdnIubmV0L2doL3JhdmVueHJ6L1BpY0JlZC9pbWcvbGV2ZWxkYua6kOeggemYheivuy1jb3B5LW1lbXRhYmxl5o+S5YWl5LiA5LiqZW50cnk=" title="https://cdn.jsdelivr.net/gh/ravenxrz/PicBed/img/leveldb源码阅读-copy-memtable插入一个entry">https://cdn.jsdelivr.net/gh/ravenxrz/PicBed/img/leveldb源码阅读-copy-memtable插入一个entry<i class="fa fa-external-link"></i></span> (1).png)</p>
+<h2 id="2-key"><a href="#2-key" class="headerlink" title="2. key"></a>2. key</h2><figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"> <span class="function">Slice <span class="title">key</span><span class="params">()</span> <span class="keyword">const</span> <span class="keyword">override</span> </span>&#123; <span class="keyword">return</span> GetLengthPrefixedSlice(iter_.key()); &#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">static</span> Slice <span class="title">GetLengthPrefixedSlice</span><span class="params">(<span class="keyword">const</span> <span class="keyword">char</span>* data)</span> </span>&#123;</span><br><span class="line">  <span class="keyword">uint32_t</span> len;</span><br><span class="line">  <span class="keyword">const</span> <span class="keyword">char</span>* p = data;</span><br><span class="line">  p = GetVarint32Ptr(p, p + <span class="number">5</span>, &amp;len);  <span class="comment">// +5: we assume "p" is not corrupted</span></span><br><span class="line">  <span class="keyword">return</span> Slice(p, len);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>先获取internal key 的长度，然后得到Internal key。</p>
+<h2 id="3-value"><a href="#3-value" class="headerlink" title="3. value"></a>3. value</h2><figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="function">Slice <span class="title">value</span><span class="params">()</span> <span class="keyword">const</span> <span class="keyword">override</span> </span>&#123;</span><br><span class="line">  Slice key_slice = GetLengthPrefixedSlice(iter_.key());</span><br><span class="line">  <span class="keyword">return</span> GetLengthPrefixedSlice(key_slice.data() + key_slice.<span class="built_in">size</span>());</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>获取internal key后，给第二个GetLengthPrefixedSlice传入的参数</p>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">key_slice.data() + key_slice.<span class="built_in">size</span>()</span><br></pre></td></tr></table></figure>
+
+<p>是value size字段的首地址，所以这里返回的是实际的value。</p>
+<p><strong>到这里我们可以补充一条内容，MemTable中存放的key是整个MemTable key（包括internel key size 和 internal key), 但是对外部呈现的却是一个internal key。</strong></p>
 
     </div>
 
@@ -393,7 +311,7 @@
   </li>
   <li class="post-copyright-link">
     <strong>本文链接：</strong>
-    <a href="https://www.ravenxrz.ink/archives/27d14722.html" title="好玩的数学网站-Desmos">https://www.ravenxrz.ink/archives/27d14722.html</a>
+    <a href="https://www.ravenxrz.ink/archives/51540516.html" title="leveldb源码阅读记录-MemTableIterator">https://www.ravenxrz.ink/archives/51540516.html</a>
   </li>
   <li class="post-copyright-license">
     <strong>版权声明： </strong>本博客所有文章除特别声明外，均采用 <span class="exturl" data-url="aHR0cHM6Ly9jcmVhdGl2ZWNvbW1vbnMub3JnL2xpY2Vuc2VzL2J5LW5jLXNhLzQuMC8="><i class="fa fa-fw fa-creative-commons"></i>BY-NC-SA</span> 许可协议。转载请注明出处！
@@ -403,10 +321,6 @@
 
 
       <footer class="post-footer">
-          
-          <div class="post-tags">
-              <a href="/tags/Desmos/" rel="tag"><i class="fa fa-tag"></i> Desmos</a>
-          </div>
 
         
 
@@ -414,13 +328,10 @@
         
     <div class="post-nav">
       <div class="post-nav-item">
-    <a href="/archives/b1ec495.html" rel="prev" title="这些年，我所用过的精品软件（网站干货篇)">
-      <i class="fa fa-chevron-left"></i> 这些年，我所用过的精品软件（网站干货篇)
+    <a href="/archives/2b8370d3.html" rel="prev" title="leveldb源码阅读记录-Iterator-OverView">
+      <i class="fa fa-chevron-left"></i> leveldb源码阅读记录-Iterator-OverView
     </a></div>
-      <div class="post-nav-item">
-    <a href="/archives/a5232e28.html" rel="next" title="Linux内核学习踩坑日记-为你的主机加上Linux内核APi手册">
-      Linux内核学习踩坑日记-为你的主机加上Linux内核APi手册 <i class="fa fa-chevron-right"></i>
-    </a></div>
+      <div class="post-nav-item"></div>
     </div>
       </footer>
     
@@ -480,7 +391,7 @@
 
       <!--noindex-->
       <div class="post-toc-wrap sidebar-panel">
-          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#1-前言"><span class="nav-text">1. 前言</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#2-使用介绍"><span class="nav-text">2. 使用介绍</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#2-1-主界面功能介绍"><span class="nav-text">2.1 主界面功能介绍</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#2-2-基本功能入门"><span class="nav-text">2.2 基本功能入门</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#2-2-1-基本函数绘制与计算"><span class="nav-text">2.2.1 基本函数绘制与计算</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#2-2-2-文件夹"><span class="nav-text">2.2.2 文件夹</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#2-2-3-列表"><span class="nav-text">2.2.3 列表</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#2-2-4-滑动变量（slider"><span class="nav-text">2.2.4 滑动变量（slider)</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#2-2-5-参数方程与极坐标"><span class="nav-text">2.2.5 参数方程与极坐标</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#2-2-6-不等式"><span class="nav-text">2.2.6 不等式</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#2-2-7-积分"><span class="nav-text">2.2.7 积分</span></a></li></ol></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#3-结语"><span class="nav-text">3. 结语</span></a></li></ol></div>
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#MemTableIterator"><span class="nav-text">MemTableIterator</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#1-基本定义"><span class="nav-text">1. 基本定义</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#2-key"><span class="nav-text">2. key</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#3-value"><span class="nav-text">3. value</span></a></li></ol></div>
       </div>
       <!--/noindex-->
 
@@ -710,7 +621,7 @@
       quicklink({
         timeout : 3000,
         priority: true,
-        ignores : [uri => uri.includes('#'),uri => uri === 'https://www.ravenxrz.ink/archives/27d14722.html',]
+        ignores : [uri => uri.includes('#'),uri => uri === 'https://www.ravenxrz.ink/archives/51540516.html',]
       });
       });
   </script>
@@ -726,7 +637,7 @@ NexT.utils.loadComments(document.querySelector('#gitalk-container'), () => {
       repo        : 'BlogComment',
       owner       : 'ravenxrz',
       admin       : ['ravenxrz'],
-      id          : 'a4bab672435bb275272c9b7e1594a0eb',
+      id          : 'e6a08249deeb1ac650617159c48d71b2',
         language: '',
       distractionFreeMode: true
     });
