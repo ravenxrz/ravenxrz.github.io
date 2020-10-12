@@ -1,0 +1,785 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 4.2.1">
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+  <meta http-equiv="Cache-Control" content="no-transform">
+  <meta http-equiv="Cache-Control" content="no-siteapp">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+<link rel="stylesheet" href="//cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@5/css/all.min.css">
+  <link rel="stylesheet" href="//cdn.jsdelivr.net/npm/pace-js@1/themes/blue/pace-theme-minimal.css">
+  <script src="//cdn.jsdelivr.net/npm/pace-js@1/pace.min.js"></script>
+
+<script id="hexo-configurations">
+    var NexT = window.NexT || {};
+    var CONFIG = {"hostname":"www.ravenxrz.ink","root":"/","scheme":"Mist","version":"7.8.0","exturl":true,"sidebar":{"position":"left","display":"always","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":true,"show_result":true,"style":"flat"},"back2top":{"enable":true,"sidebar":false,"scrollpercent":true},"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":true,"lazyload":true,"pangu":true,"comments":{"style":"tabs","active":"gitalk","storage":true,"lazyload":true,"nav":null,"activeClass":"gitalk"},"algolia":{"hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":true,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},"motion":{"enable":false,"async":true,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},"path":"search.xml"};
+  </script>
+
+  <meta name="description" content="DBIterLeveldb数据库的MemTable和sstable文件的存储格式都是InternalKey(userkey, seq, type) &#x3D;&gt; uservalue。DBIter把同一个userkey在DB中的多条记录合并为一条，综合考虑了userkey的序号、删除标记、和写覆盖等等因素。DBIter只会把userkey最新（seq最大的就是最新的，相同userkey的老记录（seq">
+<meta property="og:type" content="article">
+<meta property="og:title" content="leveldb源码阅读记录-DBIter">
+<meta property="og:url" content="https://www.ravenxrz.ink/archives/f4c6f796.html">
+<meta property="og:site_name" content="Raven&#39;s Blog">
+<meta property="og:description" content="DBIterLeveldb数据库的MemTable和sstable文件的存储格式都是InternalKey(userkey, seq, type) &#x3D;&gt; uservalue。DBIter把同一个userkey在DB中的多条记录合并为一条，综合考虑了userkey的序号、删除标记、和写覆盖等等因素。DBIter只会把userkey最新（seq最大的就是最新的，相同userkey的老记录（seq">
+<meta property="og:locale" content="zh_CN">
+<meta property="article:published_time" content="2020-10-12T10:57:40.000Z">
+<meta property="article:modified_time" content="2020-10-12T10:58:49.108Z">
+<meta property="article:author" content="Raven">
+<meta property="article:tag" content="IT">
+<meta name="twitter:card" content="summary">
+
+<link rel="canonical" href="https://www.ravenxrz.ink/archives/f4c6f796.html">
+
+
+<script id="page-configurations">
+  // https://hexo.io/docs/variables.html
+  CONFIG.page = {
+    sidebar: "",
+    isHome : false,
+    isPost : true,
+    lang   : 'zh-CN'
+  };
+</script>
+
+  <title>leveldb源码阅读记录-DBIter | Raven's Blog</title>
+  
+
+
+
+
+
+
+  <noscript>
+  <style>
+  .use-motion .brand,
+  .use-motion .menu-item,
+  .sidebar-inner,
+  .use-motion .post-block,
+  .use-motion .pagination,
+  .use-motion .comments,
+  .use-motion .post-header,
+  .use-motion .post-body,
+  .use-motion .collection-header { opacity: initial; }
+
+  .use-motion .site-title,
+  .use-motion .site-subtitle {
+    opacity: initial;
+    top: initial;
+  }
+
+  .use-motion .logo-line-before i { left: initial; }
+  .use-motion .logo-line-after i { right: initial; }
+  </style>
+</noscript>
+
+<link rel="alternate" href="/atom.xml" title="Raven's Blog" type="application/atom+xml">
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage">
+  <div class="container">
+    <div class="headband"></div>
+
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切换导航栏">
+      <span class="toggle-line toggle-line-first"></span>
+      <span class="toggle-line toggle-line-middle"></span>
+      <span class="toggle-line toggle-line-last"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <span class="logo-line-before"><i></i></span>
+      <h1 class="site-title">Raven's Blog</h1>
+      <span class="logo-line-after"><i></i></span>
+    </a>
+      <p class="site-subtitle" itemprop="description">zhang.xingrui@foxmail.com</p>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger">
+        <i class="fa fa-search fa-fw fa-lg"></i>
+    </div>
+  </div>
+</div>
+
+
+
+
+<nav class="site-nav">
+  <ul id="menu" class="menu">
+        <li class="menu-item menu-item-home">
+
+    <a href="/" rel="section"><i class="fa fa-fw fa-fa fa-home"></i>首页</a>
+
+  </li>
+        <li class="menu-item menu-item-archives">
+
+    <a href="/archives/" rel="section"><i class="fa fa-fw fa-fa fa-archive"></i>归档<span class="badge">143</span></a>
+
+  </li>
+        <li class="menu-item menu-item-categories">
+
+    <a href="/categories/" rel="section"><i class="fa fa-fw fa-fa fa-th"></i>分类<span class="badge">19</span></a>
+
+  </li>
+        <li class="menu-item menu-item-tags">
+
+    <a href="/tags/" rel="section"><i class="fa fa-fw fa-fa fa-tags"></i>标签<span class="badge">114</span></a>
+
+  </li>
+        <li class="menu-item menu-item-about">
+
+    <a href="/about/" rel="section"><i class="fa fa-fw fa-fa fa-user"></i>关于</a>
+
+  </li>
+      <li class="menu-item menu-item-search">
+        <a role="button" class="popup-trigger"><i class="fa fa-search fa-fw"></i>搜索
+        </a>
+      </li>
+  </ul>
+</nav>
+
+
+
+  <div class="search-pop-overlay">
+    <div class="popup search-popup">
+        <div class="search-header">
+  <span class="search-icon">
+    <i class="fa fa-search"></i>
+  </span>
+  <div class="search-input-container">
+    <input autocomplete="off" autocapitalize="off"
+           placeholder="搜索..." spellcheck="false"
+           type="search" class="search-input">
+  </div>
+  <span class="popup-btn-close">
+    <i class="fa fa-times-circle"></i>
+  </span>
+</div>
+<div id="search-result">
+  <div id="no-result">
+    <i class="fa fa-spinner fa-pulse fa-5x fa-fw"></i>
+  </div>
+</div>
+
+    </div>
+  </div>
+
+</div>
+    </header>
+
+    
+  <div class="back-to-top">
+    <i class="fa fa-arrow-up"></i>
+    <span>0%</span>
+  </div>
+
+  <span class="exturl github-corner" data-url="aHR0cHM6Ly9naXRodWIuY29tL3JhdmVueHJ6" title="Follow me on GitHub" aria-label="Follow me on GitHub"><svg width="80" height="80" viewBox="0 0 250 250" aria-hidden="true"><path d="M0,0 L115,115 L130,115 L142,142 L250,250 L250,0 Z"></path><path d="M128.3,109.0 C113.8,99.7 119.0,89.6 119.0,89.6 C122.0,82.7 120.5,78.6 120.5,78.6 C119.2,72.0 123.4,76.3 123.4,76.3 C127.3,80.9 125.5,87.3 125.5,87.3 C122.9,97.6 130.6,101.9 134.4,103.2" fill="currentColor" style="transform-origin: 130px 106px;" class="octo-arm"></path><path d="M115.0,115.0 C114.9,115.1 118.7,116.5 119.8,115.4 L133.7,101.6 C136.9,99.2 139.9,98.4 142.2,98.6 C133.8,88.0 127.5,74.4 143.8,58.0 C148.5,53.4 154.0,51.2 159.7,51.0 C160.3,49.4 163.2,43.6 171.4,40.1 C171.4,40.1 176.1,42.5 178.8,56.2 C183.1,58.6 187.2,61.8 190.9,65.4 C194.5,69.0 197.7,73.2 200.1,77.6 C213.8,80.2 216.3,84.9 216.3,84.9 C212.7,93.1 206.9,96.0 205.4,96.6 C205.1,102.4 203.0,107.8 198.3,112.5 C181.9,128.9 168.3,122.5 157.7,114.1 C157.9,116.9 156.7,120.9 152.7,124.9 L141.0,136.5 C139.8,137.7 141.6,141.9 141.8,141.8 Z" fill="currentColor" class="octo-body"></path></svg></span>
+
+
+    <main class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          
+
+          <div class="content post posts-expand">
+            
+
+    
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="https://www.ravenxrz.ink/archives/f4c6f796.html">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="https://pic.downk.cc/item/5e907515504f4bcb04b6f798.jpg">
+      <meta itemprop="name" content="Raven">
+      <meta itemprop="description" content="分享技术，记录生活">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Raven's Blog">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          leveldb源码阅读记录-DBIter
+        </h1>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+              
+
+              <time title="创建时间：2020-10-12 18:57:40 / 修改时间：18:58:49" itemprop="dateCreated datePublished" datetime="2020-10-12T18:57:40+08:00">2020-10-12</time>
+            </span>
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              <span class="post-meta-item-text">分类于</span>
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/leveldb/" itemprop="url" rel="index"><span itemprop="name">leveldb</span></a>
+                </span>
+            </span>
+
+          
+            <span class="post-meta-item" title="阅读次数" id="busuanzi_container_page_pv" style="display: none;">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-fa fa-eye"></i>
+              </span>
+              <span class="post-meta-item-text">阅读次数：</span>
+              <span id="busuanzi_value_page_pv"></span>
+            </span>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+        <h1 id="DBIter"><a href="#DBIter" class="headerlink" title="DBIter"></a>DBIter</h1><p>Leveldb数据库的MemTable和sstable文件的存储格式都是InternalKey(userkey, seq, type) =&gt; uservalue。<br><strong>DBIter把同一个userkey在DB中的多条记录合并为一条，综合考虑了userkey的序号、删除标记、和写覆盖等等因素</strong>。DBIter只会把userkey最新（seq最大的就是最新的，相同userkey的老记录（seq较小的）不会让上层看到）的一条记录展现给用户，另外如果这条最新的记录是删除类型，则会跳过该记录，否则，遍历时会把已删除的key列举出来。</p>
+<a id="more"></a>
+
+<h2 id="1-创建DBIterator"><a href="#1-创建DBIterator" class="headerlink" title="1. 创建DBIterator"></a>1. 创建DBIterator</h2><figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><span class="line"><span class="function">Iterator* <span class="title">DBImpl::NewIterator</span><span class="params">(<span class="keyword">const</span> ReadOptions&amp; options)</span> </span>&#123;</span><br><span class="line">  SequenceNumber latest_snapshot;</span><br><span class="line">  <span class="keyword">uint32_t</span> seed;</span><br><span class="line">  Iterator* iter = NewInternalIterator(options, &amp;latest_snapshot, &amp;seed);</span><br><span class="line">  <span class="keyword">return</span> NewDBIterator(<span class="keyword">this</span>, user_comparator(), iter,</span><br><span class="line">                       (options.snapshot != <span class="literal">nullptr</span></span><br><span class="line">                            ? <span class="keyword">static_cast</span>&lt;<span class="keyword">const</span> SnapshotImpl*&gt;(options.snapshot)</span><br><span class="line">                                  -&gt;sequence_number()</span><br><span class="line">                            : latest_snapshot),</span><br><span class="line">                       seed);</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function">Iterator* <span class="title">NewDBIterator</span><span class="params">(DBImpl* db, <span class="keyword">const</span> Comparator* user_key_comparator,</span></span></span><br><span class="line"><span class="function"><span class="params">                        Iterator* internal_iter, SequenceNumber sequence,</span></span></span><br><span class="line"><span class="function"><span class="params">                        <span class="keyword">uint32_t</span> seed)</span> </span>&#123;</span><br><span class="line">  <span class="keyword">return</span> <span class="keyword">new</span> DBIter(db, user_key_comparator, internal_iter, sequence, seed);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h2 id="2-DBIterator的基本定义"><a href="#2-DBIterator的基本定义" class="headerlink" title="2. DBIterator的基本定义"></a>2. DBIterator的基本定义</h2><figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br></pre></td><td class="code"><pre><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">DBIter</span>:</span> <span class="keyword">public</span> Iterator &#123;</span><br><span class="line">  <span class="keyword">enum</span> Direction &#123;</span><br><span class="line">    kForward,</span><br><span class="line">    kReverse</span><br><span class="line">  &#125;;</span><br><span class="line"><span class="keyword">private</span>:</span><br><span class="line">  DBImpl* db_;</span><br><span class="line">  <span class="keyword">const</span> Comparator* <span class="keyword">const</span> user_comparator_;	<span class="comment">//比较iter间userkey</span></span><br><span class="line">  Iterator* <span class="keyword">const</span> iter_;				<span class="comment">// 是一个MergingIterator</span></span><br><span class="line">  SequenceNumber <span class="keyword">const</span> sequence_;		<span class="comment">// DBIter只能访问到比sequence_小的kv对，这就方便了老版本（快照）数据库的遍历</span></span><br><span class="line"></span><br><span class="line">  Status status_;</span><br><span class="line">  <span class="built_in">std</span>::<span class="built_in">string</span> saved_key_;     <span class="comment">//用于方向遍历 direction_==kReverse时才有效</span></span><br><span class="line">  <span class="built_in">std</span>::<span class="built_in">string</span> saved_value_;   <span class="comment">//用于反向遍历 direction_==kReverse时才有效</span></span><br><span class="line">  Direction direction_;</span><br><span class="line">  <span class="keyword">bool</span> valid_;</span><br><span class="line"></span><br><span class="line">  Random rnd_;</span><br><span class="line">  <span class="keyword">ssize_t</span> bytes_counter_;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>后面再说DBIter的作用，这里先介绍下sequence_的作用。</p>
+<h3 id="值得一提的sequence"><a href="#值得一提的sequence" class="headerlink" title="值得一提的sequence_"></a>值得一提的sequence_</h3><p>在创建DBIter时，我们将系统的一个snapshot的sequence_number传递给了DBIter：</p>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">return</span> NewDBIterator(<span class="keyword">this</span>, user_comparator(), iter,</span><br><span class="line">                     (options.snapshot != <span class="literal">nullptr</span>	<span class="comment">//!! 这里</span></span><br><span class="line">                          ? <span class="keyword">static_cast</span>&lt;<span class="keyword">const</span> SnapshotImpl*&gt;(options.snapshot)</span><br><span class="line">                                -&gt;sequence_number()		</span><br><span class="line">                          : latest_snapshot),</span><br><span class="line">                     seed);</span><br></pre></td></tr></table></figure>
+
+<p>那它代表什么含义？</p>
+<p>我们从一次WriteBatch出发，看看序列号是怎么使用及修改的。先给出结论图：</p>
+<p>![](<span class="exturl" data-url="aHR0cHM6Ly9jZG4uanNkZWxpdnIubmV0L2doL3JhdmVueHJ6L1BpY0JlZC9pbWcv57uY5Zu+5paH5Lu2LeesrA==" title="https://cdn.jsdelivr.net/gh/ravenxrz/PicBed/img/绘图文件-第">https://cdn.jsdelivr.net/gh/ravenxrz/PicBed/img/绘图文件-第<i class="fa fa-external-link"></i></span> 13 页.png)</p>
+<p><strong>我们知道一个WriteBatch对一次批量写操作的封装。</strong>先看看一个WriteBatch的结构：</p>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">LEVELDB_EXPORT</span> <span class="title">WriteBatch</span> &#123;</span></span><br><span class="line"> <span class="keyword">public</span>:</span><br><span class="line">  <span class="class"><span class="keyword">class</span> <span class="title">LEVELDB_EXPORT</span> <span class="title">Handler</span> &#123;</span></span><br><span class="line">   <span class="keyword">public</span>:</span><br><span class="line">    <span class="keyword">virtual</span> ~Handler();</span><br><span class="line">    <span class="function"><span class="keyword">virtual</span> <span class="keyword">void</span> <span class="title">Put</span><span class="params">(<span class="keyword">const</span> Slice&amp; key, <span class="keyword">const</span> Slice&amp; value)</span> </span>= <span class="number">0</span>;</span><br><span class="line">    <span class="function"><span class="keyword">virtual</span> <span class="keyword">void</span> <span class="title">Delete</span><span class="params">(<span class="keyword">const</span> Slice&amp; key)</span> </span>= <span class="number">0</span>;</span><br><span class="line">  &#125;;</span><br><span class="line"></span><br><span class="line">    ...</span><br><span class="line">    </span><br><span class="line">  WriteBatch();</span><br><span class="line"><span class="keyword">private</span>:</span><br><span class="line">  <span class="keyword">friend</span> <span class="class"><span class="keyword">class</span> <span class="title">WriteBatchInternal</span>;</span></span><br><span class="line"></span><br><span class="line">  <span class="built_in">std</span>::<span class="built_in">string</span> rep_;  <span class="comment">// See comment in write_batch.cc for the format of rep_</span></span><br><span class="line">&#125;;</span><br></pre></td></tr></table></figure>
+
+<p>其内部只有一个rep_的成员变量，其结构如下：</p>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// WriteBatch::rep_ :=</span></span><br><span class="line"><span class="comment">//    sequence: fixed64</span></span><br><span class="line"><span class="comment">//    count: fixed32</span></span><br><span class="line"><span class="comment">//    data: record[count]</span></span><br></pre></td></tr></table></figure>
+
+<p><strong>由8字节序列号，4字节count，和实际数据record数组组成。</strong></p>
+<p>![](<span class="exturl" data-url="aHR0cHM6Ly9jZG4uanNkZWxpdnIubmV0L2doL3JhdmVueHJ6L1BpY0JlZC9pbWcv57uY5Zu+5paH5Lu2LeesrA==" title="https://cdn.jsdelivr.net/gh/ravenxrz/PicBed/img/绘图文件-第">https://cdn.jsdelivr.net/gh/ravenxrz/PicBed/img/绘图文件-第<i class="fa fa-external-link"></i></span> 12 页.png)</p>
+<p>==一次Put操作：==</p>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">void</span> <span class="title">WriteBatch::Put</span><span class="params">(<span class="keyword">const</span> Slice&amp; key, <span class="keyword">const</span> Slice&amp; value)</span> </span>&#123;</span><br><span class="line">  WriteBatchInternal::SetCount(<span class="keyword">this</span>, WriteBatchInternal::Count(<span class="keyword">this</span>) + <span class="number">1</span>);</span><br><span class="line">  rep_.push_back(<span class="keyword">static_cast</span>&lt;<span class="keyword">char</span>&gt;(kTypeValue));</span><br><span class="line">  PutLengthPrefixedSlice(&amp;rep_, key);</span><br><span class="line">  PutLengthPrefixedSlice(&amp;rep_, value);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>Put操作很简单，设置count+1， 然后将key value append 到rep_末尾。</p>
+<p><strong>这里我们知道了count代表rep_中有效的kv pair数量。</strong></p>
+<p>有了batch，我们如何应用batch（即如何将batch写入到leveldb系统中？）。对于一次写，除了写入到Log中来保证持久性以外，我们首先做的就是将数据插入到memtable中。这个过程如下函数：</p>
+<p><strong>注意，这里终于要说到seequence_的意义了</strong></p>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="function">Status <span class="title">DBImpl::Write</span><span class="params">(<span class="keyword">const</span> WriteOptions&amp; options, WriteBatch* updates)</span> </span>&#123;</span><br><span class="line">	...</span><br><span class="line">	status = WriteBatchInternal::InsertInto(write_batch, mem_);</span><br><span class="line">	...</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"><span class="function">Status <span class="title">WriteBatchInternal::InsertInto</span><span class="params">(<span class="keyword">const</span> WriteBatch* b, MemTable* memtable)</span> </span>&#123;</span><br><span class="line">  MemTableInserter inserter;</span><br><span class="line">  inserter.sequence_ = WriteBatchInternal::Sequence(b);	<span class="comment">// !! 这里设置到了sequence number</span></span><br><span class="line">  inserter.mem_ = memtable;</span><br><span class="line">  <span class="keyword">return</span> b-&gt;Iterate(&amp;inserter);</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function">SequenceNumber <span class="title">WriteBatchInternal::Sequence</span><span class="params">(<span class="keyword">const</span> WriteBatch* b)</span> </span>&#123;</span><br><span class="line">  <span class="keyword">return</span> SequenceNumber(DecodeFixed64(b-&gt;rep_.data()));		<span class="comment">// 取出 batch的rep_的前8个字节作为sequence　number</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>现在在MemTableInserter中保存了一个 batch最开始的sequence number。（至于batch的sequence number是在哪儿初始化的，我们之后再说）。</p>
+<p>再回到问题，如何将batch中的多个kv pair应用到系统中？核心就在b-&gt;Iterate(&amp;inserter)中。</p>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br></pre></td><td class="code"><pre><span class="line"><span class="function">Status <span class="title">WriteBatch::Iterate</span><span class="params">(Handler* handler)</span> <span class="keyword">const</span> </span>&#123;</span><br><span class="line">  ...</span><br><span class="line">  <span class="keyword">while</span> (!input.empty()) &#123;</span><br><span class="line">      ...</span><br><span class="line">    <span class="keyword">switch</span> (tag) &#123;</span><br><span class="line">      <span class="keyword">case</span> kTypeValue:	<span class="comment">// 普通值</span></span><br><span class="line">        <span class="keyword">if</span> (GetLengthPrefixedSlice(&amp;input, &amp;key) &amp;&amp;</span><br><span class="line">            GetLengthPrefixedSlice(&amp;input, &amp;value)) &#123;</span><br><span class="line">          handler-&gt;Put(key, value);</span><br><span class="line">        &#125; <span class="keyword">else</span> &#123;</span><br><span class="line">          <span class="keyword">return</span> Status::Corruption(<span class="string">"bad WriteBatch Put"</span>);</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="keyword">break</span>;</span><br><span class="line">      <span class="keyword">case</span> kTypeDeletion:	<span class="comment">// 删除值</span></span><br><span class="line">        <span class="keyword">if</span> (GetLengthPrefixedSlice(&amp;input, &amp;key)) &#123;</span><br><span class="line">          handler-&gt;Delete(key);</span><br><span class="line">        &#125; <span class="keyword">else</span> &#123;</span><br><span class="line">          <span class="keyword">return</span> Status::Corruption(<span class="string">"bad WriteBatch Delete"</span>);</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="keyword">break</span>;</span><br><span class="line">      <span class="keyword">default</span>:</span><br><span class="line">        <span class="keyword">return</span> Status::Corruption(<span class="string">"unknown WriteBatch tag"</span>);</span><br><span class="line">    &#125;</span><br><span class="line">  &#125;</span><br><span class="line">  <span class="keyword">if</span> (found != WriteBatchInternal::Count(<span class="keyword">this</span>)) &#123;</span><br><span class="line">    <span class="keyword">return</span> Status::Corruption(<span class="string">"WriteBatch has wrong count"</span>);</span><br><span class="line">  &#125; <span class="keyword">else</span> &#123;</span><br><span class="line">    <span class="keyword">return</span> Status::OK();</span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>注意到这就是一个循环遍历batch中的各kv pair。然后调用handler-&gt;Put或handler-&gt;Delete来应用。而handler就是MemTableInserter：</p>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">void</span> <span class="title">Put</span><span class="params">(<span class="keyword">const</span> Slice&amp; key, <span class="keyword">const</span> Slice&amp; value)</span> <span class="keyword">override</span> </span>&#123;</span><br><span class="line">  mem_-&gt;Add(sequence_, kTypeValue, key, value);</span><br><span class="line">  sequence_++;	<span class="comment">// sequence的修改</span></span><br><span class="line">&#125;</span><br><span class="line"><span class="function"><span class="keyword">void</span> <span class="title">Delete</span><span class="params">(<span class="keyword">const</span> Slice&amp; key)</span> <span class="keyword">override</span> </span>&#123;</span><br><span class="line">  mem_-&gt;Add(sequence_, kTypeDeletion, key, Slice());</span><br><span class="line">  sequence_++; 	<span class="comment">// sequence的修改</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p><strong>从这里终于可以看出，每插入一对kv，就会递增一次sequence</strong></p>
+<p>现在还剩最后一个问题，batch的sequence number是如何初始化的？</p>
+<p>在WriteBatchInternal类中有个SetSequence函数：</p>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">void</span> <span class="title">WriteBatchInternal::SetSequence</span><span class="params">(WriteBatch* b, SequenceNumber seq)</span> </span>&#123;</span><br><span class="line">  EncodeFixed64(&amp;b-&gt;rep_[<span class="number">0</span>], seq);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>在这里，将rep_的前8个字节设置为这个batch的起始sequence。那谁调用的这个函数?</p>
+<p>在DBImpl::Wirte函数中：</p>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="function">Status <span class="title">DBImpl::Write</span><span class="params">(<span class="keyword">const</span> WriteOptions&amp; options, WriteBatch* updates)</span> </span>&#123;</span><br><span class="line">	...</span><br><span class="line">  <span class="comment">// May temporarily unlock and wait.</span></span><br><span class="line">  Status status = MakeRoomForWrite(updates == <span class="literal">nullptr</span>);</span><br><span class="line">  <span class="keyword">uint64_t</span> last_sequence = versions_-&gt;LastSequence();	<span class="comment">// !! sequence从version中获得</span></span><br><span class="line">  Writer* last_writer = &amp;w;</span><br><span class="line">  <span class="keyword">if</span> (status.ok() &amp;&amp; updates != <span class="literal">nullptr</span>) &#123;  <span class="comment">// nullptr batch is for compactions</span></span><br><span class="line">    WriteBatch* write_batch = BuildBatchGroup(&amp;last_writer);</span><br><span class="line">    WriteBatchInternal::SetSequence(write_batch, last_sequence + <span class="number">1</span>);	<span class="comment">// 注入sequence</span></span><br></pre></td></tr></table></figure>
+
+<p>当成这次batch的写入后，又会反过来更新version中的序列号：</p>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">last_sequence += WriteBatchInternal::Count(write_batch);	<span class="comment">// version版本号 = 旧版本号+此次写入的batch的kv数量</span></span><br><span class="line"></span><br><span class="line">...</span><br><span class="line"><span class="keyword">if</span> (write_batch == tmp_batch_) tmp_batch_-&gt;Clear();</span><br><span class="line"></span><br><span class="line">versions_-&gt;SetLastSequence(last_sequence);		<span class="comment">// 应用</span></span><br></pre></td></tr></table></figure>
+
+<p><strong>所以，究其根本，系统中插入的每对kv的序列号，最初是由当前系统version的序列号指定的，然后在后序插入的kv中逐渐递增。</strong></p>
+<p>有了上面对sequence的理解，我们就能更好的理解DBIter的作用了。</p>
+<h3 id="DBIter的作用（功能）"><a href="#DBIter的作用（功能）" class="headerlink" title="DBIter的作用（功能）"></a>DBIter的作用（功能）</h3><p><strong>iter_是由NewInternalIterator创建的一个MergingIterator</strong>，通过MergingIterator可以实现多个有序数据集合的归并操作。其中包含多个child iterator组成的集合。对MergingIterator的遍历会有序的遍历其child iterator中的每个元素。<br>因为<strong>iter_遍历的是数据库的每一条记录。它是以InternalKey(userkey, seq, type)为遍历粒度的，只要InternalKey中任意一个组成元素不同，MergingIterator就认为他们是不同的kv对。</strong><br>而<strong>DBIter是以userkey为遍历粒度的，只要记录的userkey相同，那么DBIter就认为他们是一条记录（不同版本），sqe越大代表该记录越新。每次迭代将跳到下一个不同userkey的记录，且==DBIter在遍历一个InternalKey时仅会检索InternalKey-&gt;seq 小于 DBIter创建时所初始化的seq号。==</strong>举个例子：</p>
+<p>![](<span class="exturl" data-url="aHR0cHM6Ly9jZG4uanNkZWxpdnIubmV0L2doL3JhdmVueHJ6L1BpY0JlZC9pbWcv57uY5Zu+5paH5Lu2LeesrA==" title="https://cdn.jsdelivr.net/gh/ravenxrz/PicBed/img/绘图文件-第">https://cdn.jsdelivr.net/gh/ravenxrz/PicBed/img/绘图文件-第<i class="fa fa-external-link"></i></span> 14 页 (1).png)</p>
+<p>上面表示了6个InternalKey，冒号前为user_key,冒号后为序列号。现假设创建DBIter时，所初始化的seq为2. 则DBIter在从前往后遍历时，将会直接跳过 key1:6,key1:5,key1:4 和key2:3.  只会从key2:2开始遍历。</p>
+<p>下面我们来分析DBIter的各个操作。</p>
+<h2 id="3-FindNextUserEntry"><a href="#3-FindNextUserEntry" class="headerlink" title="3.FindNextUserEntry"></a>3.FindNextUserEntry</h2><figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">void</span> <span class="title">DBIter::FindNextUserEntry</span><span class="params">(<span class="keyword">bool</span> skipping, <span class="built_in">std</span>::<span class="built_in">string</span>* skip)</span> </span>&#123;</span><br><span class="line">  <span class="comment">// Loop until we hit an acceptable entry to yield</span></span><br><span class="line">  assert(iter_-&gt;Valid());</span><br><span class="line">  assert(direction_ == kForward);</span><br><span class="line">  <span class="keyword">do</span> &#123;</span><br><span class="line">    ParsedInternalKey ikey;	</span><br><span class="line">    <span class="keyword">if</span> (ParseKey(&amp;ikey) &amp;&amp; ikey.sequence &lt;= sequence_) &#123;	<span class="comment">// 根据当前iter_的key封装成一个新ikey，同时要求ikey的序列号小于创建DBIter时传入的序列号</span></span><br><span class="line">      <span class="keyword">switch</span> (ikey.type) &#123;</span><br><span class="line">        <span class="keyword">case</span> kTypeDeletion:</span><br><span class="line">          <span class="comment">// Arrange to skip all upcoming entries for this key since</span></span><br><span class="line">          <span class="comment">// they are hidden by this deletion.</span></span><br><span class="line">          SaveKey(ikey.user_key, skip);		</span><br><span class="line">          skipping = <span class="literal">true</span>;		<span class="comment">// 如果当前ikey的类型是删除，将跳过整个 user_key = ikey.user_key()的nodes</span></span><br><span class="line">          <span class="keyword">break</span>;</span><br><span class="line">        <span class="keyword">case</span> kTypeValue:</span><br><span class="line">          <span class="keyword">if</span> (skipping &amp;&amp;	<span class="comment">// 跳过</span></span><br><span class="line">              user_comparator_-&gt;Compare(ikey.user_key, *skip) &lt;= <span class="number">0</span>) &#123;	<span class="comment">// 旧条目不再需要</span></span><br><span class="line">            <span class="comment">// Entry hidden</span></span><br><span class="line">          &#125; <span class="keyword">else</span> &#123;	<span class="comment">// 否则就是本 user_key 所在nodes中的最新节点</span></span><br><span class="line">            valid_ = <span class="literal">true</span>;</span><br><span class="line">            saved_key_.<span class="built_in">clear</span>();</span><br><span class="line">            <span class="keyword">return</span>;</span><br><span class="line">          &#125;</span><br><span class="line">          <span class="keyword">break</span>;</span><br><span class="line">      &#125;</span><br><span class="line">    &#125;</span><br><span class="line">    iter_-&gt;Next();	<span class="comment">// 定位到下一个</span></span><br><span class="line">  &#125; <span class="keyword">while</span> (iter_-&gt;Valid());</span><br><span class="line">  saved_key_.<span class="built_in">clear</span>();</span><br><span class="line">  valid_ = <span class="literal">false</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>用一个例子来解释这个函数的作用：</p>
+<p>![](<span class="exturl" data-url="aHR0cHM6Ly9jZG4uanNkZWxpdnIubmV0L2doL3JhdmVueHJ6L1BpY0JlZC9pbWcv57uY5Zu+5paH5Lu2LeesrA==" title="https://cdn.jsdelivr.net/gh/ravenxrz/PicBed/img/绘图文件-第">https://cdn.jsdelivr.net/gh/ravenxrz/PicBed/img/绘图文件-第<i class="fa fa-external-link"></i></span> 15 页 (2).png)</p>
+<p>上图中， 每个节点由3个字段组成，由冒号:分隔，第1个为user_key，第2个为版本号，第3个为节点类型（1代表普通值，0代表删除）。</p>
+<p>假设当前要遍历所有key，且iter_目前指向 key1:6:1. 则：</p>
+<ol>
+<li><p>iter往下走到key1:5:1, 由于key1::5:1的user_key = key1:6:1的user_key即：</p>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">if</span> (skipping &amp;&amp;	<span class="comment">// 跳过</span></span><br><span class="line">             user_comparator_-&gt;Compare(ikey.user_key, *skip) &lt;= <span class="number">0</span>) &#123;	<span class="comment">// 旧条目不再需要</span></span><br><span class="line">           <span class="comment">// Entry hidden</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>所以跳过这个节点。</p>
+</li>
+<li><p>iter往下走到key1:4:1, 由于key1::4:1的user_key = key1:6:1的user_key，所以跳过。</p>
+</li>
+<li><p>iter往下走到key2:3:0, 由于节点类型是0，删除节点。所以：</p>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">case</span> kTypeDeletion:</span><br><span class="line">          <span class="comment">// Arrange to skip all upcoming entries for this key since</span></span><br><span class="line">          <span class="comment">// they are hidden by this deletion.</span></span><br><span class="line">          SaveKey(ikey.user_key, skip);		</span><br><span class="line">          skipping = <span class="literal">true</span>;		<span class="comment">// 如果当前ikey的类型是删除，将跳过整个 user_key = ikey.user_key()的nodes</span></span><br><span class="line">          <span class="keyword">break</span>;</span><br></pre></td></tr></table></figure>
+
+<p>注意之类设置了skipping</p>
+</li>
+<li><p>iter往下走到key2:2:1，执行到：</p>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">if</span> (skipping &amp;&amp;	<span class="comment">// 跳过</span></span><br><span class="line">              user_comparator_-&gt;Compare(ikey.user_key, *skip) &lt;= <span class="number">0</span>) &#123;	<span class="comment">// 旧条目不再需要</span></span><br><span class="line">            <span class="comment">// Entry hidden</span></span><br><span class="line">          &#125;</span><br></pre></td></tr></table></figure>
+
+<p>所以跳过。</p>
+</li>
+<li><p>后面同理。</p>
+</li>
+</ol>
+<p>这次遍历的结果是，只得到了key:1:6:1(注意这是所有key1的节点中最新的节点)，所有key2都跳过了。</p>
+<h2 id="4-Seek"><a href="#4-Seek" class="headerlink" title="4.Seek"></a>4.Seek</h2><figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">void</span> <span class="title">DBIter::Seek</span><span class="params">(<span class="keyword">const</span> Slice&amp; target)</span> </span>&#123;</span><br><span class="line">  direction_ = kForward;</span><br><span class="line">   <span class="comment">// 首先在saved_key中封装一个internal key</span></span><br><span class="line">  ClearSavedValue();</span><br><span class="line">  saved_key_.<span class="built_in">clear</span>();</span><br><span class="line">  AppendInternalKey(&amp;saved_key_,</span><br><span class="line">                    ParsedInternalKey(target, sequence_, kValueTypeForSeek));</span><br><span class="line">   <span class="comment">// 注意之类的iter_是上一篇文章介绍过的InternalIterator.</span></span><br><span class="line">  iter_-&gt;Seek(saved_key_);	<span class="comment">// seek到合适位置</span></span><br><span class="line">  <span class="keyword">if</span> (iter_-&gt;Valid()) &#123;		<span class="comment">// 通过FindNextUserEntry找到当前最新key或者过滤掉已经被删除的key</span></span><br><span class="line">    FindNextUserEntry(<span class="literal">false</span>, &amp;saved_key_ <span class="comment">/* temporary storage */</span>);</span><br><span class="line">  &#125; <span class="keyword">else</span> &#123;</span><br><span class="line">    valid_ = <span class="literal">false</span>;</span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h2 id="5-Next"><a href="#5-Next" class="headerlink" title="5. Next"></a>5. Next</h2><figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">void</span> <span class="title">DBIter::Next</span><span class="params">()</span> </span>&#123;</span><br><span class="line">	...</span><br><span class="line">    <span class="comment">// Store in saved_key_ the current key so we skip it below.</span></span><br><span class="line">    SaveKey(ExtractUserKey(iter_-&gt;key()), &amp;saved_key_);	<span class="comment">// 为后序FindNextUserEntry函数中进行跳过无用节点做铺垫</span></span><br><span class="line"></span><br><span class="line">    <span class="comment">// iter_ is pointing to current key. We can now safely move to the next to</span></span><br><span class="line">    <span class="comment">// avoid checking current key.</span></span><br><span class="line">    iter_-&gt;Next();	<span class="comment">// 定位到下一个节点</span></span><br><span class="line">    <span class="keyword">if</span> (!iter_-&gt;Valid()) &#123;</span><br><span class="line">        valid_ = <span class="literal">false</span>;</span><br><span class="line">        saved_key_.<span class="built_in">clear</span>();</span><br><span class="line">        <span class="keyword">return</span>;</span><br><span class="line">    &#125;</span><br><span class="line">  </span><br><span class="line">  	FindNextUserEntry(<span class="literal">true</span>, &amp;saved_key_);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>还是用例子来说：</p>
+<p>![](<span class="exturl" data-url="aHR0cHM6Ly9jZG4uanNkZWxpdnIubmV0L2doL3JhdmVueHJ6L1BpY0JlZC9pbWcv57uY5Zu+5paH5Lu2LeesrA==" title="https://cdn.jsdelivr.net/gh/ravenxrz/PicBed/img/绘图文件-第">https://cdn.jsdelivr.net/gh/ravenxrz/PicBed/img/绘图文件-第<i class="fa fa-external-link"></i></span> 16 页.png)</p>
+<p>假设当前iter_ 指向 key0:8:1。则Next函数的工作如下：</p>
+<ol>
+<li>在saved_key_中保存 key0:8:1</li>
+<li>iter指向key0:7:1</li>
+<li>执行FindNextUserEntry<ol>
+<li>由于指定了FindNextUserEntry中的skipping为true，并且key0:7:1的user key = key0:8:1的user key，所以直接跳过key0:7:1。</li>
+<li>现在iter来到了key1:6:1，有效，直接返回。</li>
+</ol>
+</li>
+</ol>
+<h2 id="6-FindPrevUserEntry"><a href="#6-FindPrevUserEntry" class="headerlink" title="6. FindPrevUserEntry"></a>6. FindPrevUserEntry</h2><p>向前遍历和向后遍历基本类似，但是由于是越靠前越新，所以向前遍历时，需要多往前尝试，直到找到一个新的不同的user_key.</p>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">void</span> <span class="title">DBIter::FindPrevUserEntry</span><span class="params">()</span> </span>&#123;</span><br><span class="line">  assert(direction_ == kReverse);</span><br><span class="line"></span><br><span class="line">  ValueType value_type = kTypeDeletion;</span><br><span class="line">  <span class="keyword">if</span> (iter_-&gt;Valid()) &#123;</span><br><span class="line">    <span class="keyword">do</span> &#123;</span><br><span class="line">      ParsedInternalKey ikey;</span><br><span class="line">      <span class="keyword">if</span> (ParseKey(&amp;ikey) &amp;&amp; ikey.sequence &lt;= sequence_) &#123;</span><br><span class="line">        <span class="keyword">if</span> ((value_type != kTypeDeletion) &amp;&amp;		<span class="comment">// 不是删除节点</span></span><br><span class="line">            user_comparator_-&gt;Compare(ikey.user_key, saved_key_) &lt; <span class="number">0</span>) &#123;		<span class="comment">// 遇到了新user_key</span></span><br><span class="line">          <span class="comment">// We encountered a non-deleted value in entries for previous keys,</span></span><br><span class="line">          <span class="keyword">break</span>;</span><br><span class="line">        &#125;</span><br><span class="line">        value_type = ikey.type;</span><br><span class="line">        <span class="keyword">if</span> (value_type == kTypeDeletion) &#123;	<span class="comment">// 删除节点，清空saved_key和saved_value</span></span><br><span class="line">          saved_key_.<span class="built_in">clear</span>();</span><br><span class="line">          ClearSavedValue();</span><br><span class="line">        &#125; <span class="keyword">else</span> &#123;			<span class="comment">// 正常节点，保存saved_key和saved_value</span></span><br><span class="line">          Slice raw_value = iter_-&gt;value();</span><br><span class="line">          <span class="keyword">if</span> (saved_value_.capacity() &gt; raw_value.<span class="built_in">size</span>() + <span class="number">1048576</span>) &#123;</span><br><span class="line">            <span class="built_in">std</span>::<span class="built_in">string</span> empty;</span><br><span class="line">            swap(empty, saved_value_);</span><br><span class="line">          &#125;</span><br><span class="line">          SaveKey(ExtractUserKey(iter_-&gt;key()), &amp;saved_key_);</span><br><span class="line">          saved_value_.assign(raw_value.data(), raw_value.<span class="built_in">size</span>());</span><br><span class="line">        &#125;</span><br><span class="line">      &#125;</span><br><span class="line">      iter_-&gt;Prev();</span><br><span class="line">    &#125; <span class="keyword">while</span> (iter_-&gt;Valid());</span><br><span class="line">  &#125;</span><br><span class="line"></span><br><span class="line">  <span class="keyword">if</span> (value_type == kTypeDeletion) &#123;	<span class="comment">// 结束位置，无法再继续往前走</span></span><br><span class="line">    <span class="comment">// End</span></span><br><span class="line">    valid_ = <span class="literal">false</span>;</span><br><span class="line">    saved_key_.<span class="built_in">clear</span>();</span><br><span class="line">    ClearSavedValue();</span><br><span class="line">    direction_ = kForward;</span><br><span class="line">  &#125; <span class="keyword">else</span> &#123;		<span class="comment">// 正常情况走到这里</span></span><br><span class="line">    valid_ = <span class="literal">true</span>;</span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+
+
+<p>![](D:/坚果云同步/图库/绘图文件-第 17 页.png)</p>
+<p>假设当前iter指向 key1:4:1, 则FindPrevUserEntry的工作为：</p>
+<ol>
+<li><p>保存key1:4:1,</p>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">Slice raw_value = iter_-&gt;value();</span><br><span class="line">          <span class="keyword">if</span> (saved_value_.capacity() &gt; raw_value.<span class="built_in">size</span>() + <span class="number">1048576</span>) &#123;</span><br><span class="line">            <span class="built_in">std</span>::<span class="built_in">string</span> empty;</span><br><span class="line">            swap(empty, saved_value_);</span><br><span class="line">          &#125;</span><br><span class="line">          SaveKey(ExtractUserKey(iter_-&gt;key()), &amp;saved_key_);</span><br><span class="line">          saved_value_.assign(raw_value.data(), raw_value.<span class="built_in">size</span>());</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>iter指向key1:5:0，当前是删除节点，清空saved_key和saved_value:</p>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">if</span> (value_type == kTypeDeletion) &#123;	<span class="comment">// 删除节点，清空saved_key和saved_value</span></span><br><span class="line">          saved_key_.<span class="built_in">clear</span>();</span><br><span class="line">          ClearSavedValue();</span><br><span class="line">        &#125;</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>iter指向key1:6:1, 保存.</p>
+</li>
+<li><p>iter指向key0:7:1, 遇到不同user_key且不是删除几点,跳出：</p>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">if</span> ((value_type != kTypeDeletion) &amp;&amp;		<span class="comment">// 不是删除节点</span></span><br><span class="line">          user_comparator_-&gt;Compare(ikey.user_key, saved_key_) &lt; <span class="number">0</span>) &#123;		<span class="comment">// 遇到了新user_key</span></span><br><span class="line">        <span class="comment">// We encountered a non-deleted value in entries for previous keys,</span></span><br><span class="line">        <span class="keyword">break</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+</li>
+</ol>
+<p><strong>这样就从后往前遍历到当前user_key的最新版本。</strong></p>
+<h2 id="7-Prev"><a href="#7-Prev" class="headerlink" title="7. Prev"></a>7. Prev</h2><figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">void</span> <span class="title">DBIter::Prev</span><span class="params">()</span> </span>&#123;</span><br><span class="line">  assert(valid_);</span><br><span class="line"></span><br><span class="line">  <span class="keyword">if</span> (direction_ == kForward) &#123;  <span class="comment">// Switch directions?</span></span><br><span class="line">    <span class="comment">// iter_ is pointing at the current entry.  Scan backwards until</span></span><br><span class="line">    <span class="comment">// the key changes so we can use the normal reverse scanning code.</span></span><br><span class="line">    assert(iter_-&gt;Valid());  <span class="comment">// Otherwise valid_ would have been false</span></span><br><span class="line">    SaveKey(ExtractUserKey(iter_-&gt;key()), &amp;saved_key_);</span><br><span class="line">    <span class="keyword">while</span> (<span class="literal">true</span>) &#123;</span><br><span class="line">      iter_-&gt;Prev();</span><br><span class="line">      <span class="keyword">if</span> (!iter_-&gt;Valid()) &#123;</span><br><span class="line">        valid_ = <span class="literal">false</span>;</span><br><span class="line">        saved_key_.<span class="built_in">clear</span>();</span><br><span class="line">        ClearSavedValue();</span><br><span class="line">        <span class="keyword">return</span>;</span><br><span class="line">      &#125;</span><br><span class="line">      <span class="keyword">if</span> (user_comparator_-&gt;Compare(ExtractUserKey(iter_-&gt;key()), saved_key_) &lt;</span><br><span class="line">          <span class="number">0</span>) &#123;</span><br><span class="line">        <span class="keyword">break</span>;</span><br><span class="line">      &#125;</span><br><span class="line">    &#125;</span><br><span class="line">    direction_ = kReverse;</span><br><span class="line">  &#125;</span><br><span class="line"></span><br><span class="line">  FindPrevUserEntry();</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p><strong>注释说得很明白，首先从后往前遍历到和当前user_key不同的节点，设这个节点为节点k。然后通过FindPrevUserEntry找到节点k的最新版本。</strong></p>
+<h2 id="8-key-amp-value"><a href="#8-key-amp-value" class="headerlink" title="8. key &amp; value"></a>8. key &amp; value</h2><figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="function">Slice <span class="title">key</span><span class="params">()</span> <span class="keyword">const</span> <span class="keyword">override</span> </span>&#123;</span><br><span class="line">  assert(valid_);</span><br><span class="line">  <span class="keyword">return</span> (direction_ == kForward) ? ExtractUserKey(iter_-&gt;key()) : saved_key_;</span><br><span class="line">&#125;</span><br><span class="line"><span class="function">Slice <span class="title">value</span><span class="params">()</span> <span class="keyword">const</span> <span class="keyword">override</span> </span>&#123;</span><br><span class="line">  assert(valid_);</span><br><span class="line">  <span class="keyword">return</span> (direction_ == kForward) ? iter_-&gt;value() : saved_value_;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>这个很简单了，不过这里也终于解释了saved_key_，saved_value_已经direction变量的作用。因为在反向遍历时，会出现这种的情况：</p>
+<p>![](<span class="exturl" data-url="aHR0cHM6Ly9jZG4uanNkZWxpdnIubmV0L2doL3JhdmVueHJ6L1BpY0JlZC9pbWcv57uY5Zu+5paH5Lu2LeesrA==" title="https://cdn.jsdelivr.net/gh/ravenxrz/PicBed/img/绘图文件-第">https://cdn.jsdelivr.net/gh/ravenxrz/PicBed/img/绘图文件-第<i class="fa fa-external-link"></i></span> 18 页.png)</p>
+<p>反向遍历时，需要的key应该时key1:6:1, 但是iter_已经指向了key0:7:1。 正向遍历则不存在这个问题，所以DBIter使用了三个额外的变量(direction,saved_key,saved_value)来区分正向遍历和反向遍历。</p>
+<h2 id="9-ParseKey"><a href="#9-ParseKey" class="headerlink" title="9. ParseKey"></a>9. ParseKey</h2><p>看完前面的几个函数分析，其实已经能够了解DBIter的所有操作了，但是这里还要提一下ParseKey这个函数：</p>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">inline</span> <span class="keyword">bool</span> <span class="title">DBIter::ParseKey</span><span class="params">(ParsedInternalKey* ikey)</span> </span>&#123;</span><br><span class="line">  Slice k = iter_-&gt;key();</span><br><span class="line"></span><br><span class="line">  <span class="keyword">size_t</span> bytes_read = k.<span class="built_in">size</span>() + iter_-&gt;value().<span class="built_in">size</span>();</span><br><span class="line">  <span class="keyword">while</span> (bytes_until_read_sampling_ &lt; bytes_read) &#123;</span><br><span class="line">    bytes_until_read_sampling_ += RandomCompactionPeriod();</span><br><span class="line">    db_-&gt;RecordReadSample(k);</span><br><span class="line">  &#125;</span><br><span class="line">  assert(bytes_until_read_sampling_ &gt;= bytes_read);</span><br><span class="line">  bytes_until_read_sampling_ -= bytes_read;</span><br><span class="line"></span><br><span class="line">  <span class="keyword">if</span> (!ParseInternalKey(k, ikey)) &#123;</span><br><span class="line">    status_ = Status::Corruption(<span class="string">"corrupted internal key in DBIter"</span>);</span><br><span class="line">    <span class="keyword">return</span> <span class="literal">false</span>;</span><br><span class="line">  &#125; <span class="keyword">else</span> &#123;</span><br><span class="line">    <span class="keyword">return</span> <span class="literal">true</span>;</span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>ParseKey的主要职责从iter_-&gt;key()返回的string中解析出一个InternalKey出来，封装在ikey中。这部分很简单，我想说的是:</p>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">size_t</span> bytes_read = k.<span class="built_in">size</span>() + iter_-&gt;value().<span class="built_in">size</span>();</span><br><span class="line"><span class="keyword">while</span> (bytes_until_read_sampling_ &lt; bytes_read) &#123;</span><br><span class="line">  bytes_until_read_sampling_ += RandomCompactionPeriod();</span><br><span class="line">  db_-&gt;RecordReadSample(k);</span><br><span class="line">&#125;</span><br><span class="line">assert(bytes_until_read_sampling_ &gt;= bytes_read);</span><br><span class="line">bytes_until_read_sampling_ -= bytes_read;</span><br></pre></td></tr></table></figure>
+
+<p>这部分代码的意义是在 DBIter的scan过程中，对整个sstable进行compaction。当然这个compaction肯定有个执行间隔，这个间隔就是由bytes_until_read_sampling_来控制。它由一个随机数初始化：</p>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// Approximate gap in bytes between samples of data read during iteration.</span></span><br><span class="line"><span class="keyword">static</span> <span class="keyword">const</span> <span class="keyword">int</span> kReadBytesPeriod = <span class="number">1048576</span>;</span><br><span class="line"></span><br><span class="line">  <span class="comment">// Picks the number of bytes that can be read until a compaction is scheduled.</span></span><br><span class="line">  <span class="function"><span class="keyword">size_t</span> <span class="title">RandomCompactionPeriod</span><span class="params">()</span> </span>&#123;</span><br><span class="line">    <span class="keyword">return</span> rnd_.Uniform(<span class="number">2</span> * <span class="built_in">config</span>::kReadBytesPeriod);</span><br><span class="line">  &#125;</span><br></pre></td></tr></table></figure>
+
+<p>每次增加的间隔也是也是一个基于均匀分布的随机数。</p>
+<p>再看看db_-&gt;RecordReadSample(k);</p>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">void</span> <span class="title">DBImpl::RecordReadSample</span><span class="params">(Slice key)</span> </span>&#123;</span><br><span class="line">  <span class="function">MutexLock <span class="title">l</span><span class="params">(&amp;mutex_)</span></span>;</span><br><span class="line">  <span class="keyword">if</span> (versions_-&gt;current()-&gt;RecordReadSample(key)) &#123;</span><br><span class="line">    MaybeScheduleCompaction();</span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>MaybeScheduleCompaction是Compaction过程，详情参考Compaction章节，这里不赘述。重点看RecordReadSample_：</p>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">bool</span> <span class="title">Version::RecordReadSample</span><span class="params">(Slice internal_key)</span> </span>&#123;</span><br><span class="line">  ParsedInternalKey ikey;</span><br><span class="line">  <span class="keyword">if</span> (!ParseInternalKey(internal_key, &amp;ikey)) &#123;</span><br><span class="line">    <span class="keyword">return</span> <span class="literal">false</span>;</span><br><span class="line">  &#125;</span><br><span class="line"></span><br><span class="line">  <span class="class"><span class="keyword">struct</span> <span class="title">State</span> &#123;</span></span><br><span class="line">    GetStats stats;  <span class="comment">// Holds first matching file</span></span><br><span class="line">    <span class="keyword">int</span> matches;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">static</span> <span class="keyword">bool</span> <span class="title">Match</span><span class="params">(<span class="keyword">void</span>* arg, <span class="keyword">int</span> level, FileMetaData* f)</span> </span>&#123;</span><br><span class="line">      State* state = <span class="keyword">reinterpret_cast</span>&lt;State*&gt;(arg);</span><br><span class="line">      state-&gt;matches++;</span><br><span class="line">      <span class="keyword">if</span> (state-&gt;matches == <span class="number">1</span>) &#123;</span><br><span class="line">        <span class="comment">// Remember first match.</span></span><br><span class="line">        state-&gt;stats.seek_file = f;</span><br><span class="line">        state-&gt;stats.seek_file_level = level;</span><br><span class="line">      &#125;</span><br><span class="line">      <span class="comment">// We can stop iterating once we have a second match.</span></span><br><span class="line">      <span class="keyword">return</span> state-&gt;matches &lt; <span class="number">2</span>;</span><br><span class="line">    &#125;</span><br><span class="line">  &#125;;</span><br><span class="line"></span><br><span class="line">  State state;</span><br><span class="line">  state.matches = <span class="number">0</span>;</span><br><span class="line">  ForEachOverlapping(ikey.user_key, internal_key, &amp;state, &amp;State::Match);</span><br><span class="line"></span><br><span class="line">  <span class="comment">// Must have at least two matches since we want to merge across</span></span><br><span class="line">  <span class="comment">// files. But what if we have a single file that contains many</span></span><br><span class="line">  <span class="comment">// overwrites and deletions?  Should we have another mechanism for</span></span><br><span class="line">  <span class="comment">// finding such files?</span></span><br><span class="line">  <span class="keyword">if</span> (state.matches &gt;= <span class="number">2</span>) &#123;</span><br><span class="line">    <span class="comment">// 1MB cost is about 1 seek (see comment in Builder::Apply).</span></span><br><span class="line">    <span class="keyword">return</span> UpdateStats(state.stats);</span><br><span class="line">  &#125;</span><br><span class="line">  <span class="keyword">return</span> <span class="literal">false</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>这里是不是看着比较熟悉？整体框架和基于Seek的Compaction完全相同。只不过Match函数采用了matches次数来记录seek_file指针。</p>
+<p>一旦匹配到两次以上，就执行UpdateStats，在UpdateStats内部会对seek_file所指向的file的allowed_seek–。 当allowed_seek减到&lt;=0时，就可以设置用来触发seek compaction的标志了。</p>
+<h2 id="总结"><a href="#总结" class="headerlink" title="总结"></a>总结</h2><p>DBIter是对InternelIter的封装，两者针对的粒度不同。InternelIter以InternelKey为粒度，一个InternelKey由(user_key,sequence,type)组成，只要这三者有一个不同，InternelIter就认为它们是不同key。但对用户来说，只关心user_key是否相同，所以诞生了DBIter，用来在具有相同user_key的internelkey中，找到最新版本的那个并返回给用户。</p>
+<p>到这里，leveldb中的所有iterator都已介绍完毕。</p>
+
+    </div>
+
+    
+    
+    
+        <div class="reward-container">
+  <div>文章对你有帮助?打赏一下作者吧</div>
+  <button onclick="var qr = document.getElementById('qr'); qr.style.display = (qr.style.display === 'none') ? 'block' : 'none';">
+    打赏
+  </button>
+  <div id="qr" style="display: none;">
+      
+      <div style="display: inline-block;">
+        <img src="https://pic.downk.cc/item/5d064208451253d178a15b27.png" alt="Raven 微信支付">
+        <p>微信支付</p>
+      </div>
+      
+      <div style="display: inline-block;">
+        <img src="https://pic.downk.cc/item/5d0641c7451253d178a15376.png" alt="Raven 支付宝">
+        <p>支付宝</p>
+      </div>
+
+  </div>
+</div>
+
+        
+
+<div>
+<ul class="post-copyright">
+  <li class="post-copyright-author">
+    <strong>本文作者： </strong>Raven
+  </li>
+  <li class="post-copyright-link">
+    <strong>本文链接：</strong>
+    <a href="https://www.ravenxrz.ink/archives/f4c6f796.html" title="leveldb源码阅读记录-DBIter">https://www.ravenxrz.ink/archives/f4c6f796.html</a>
+  </li>
+  <li class="post-copyright-license">
+    <strong>版权声明： </strong>本博客所有文章除特别声明外，均采用 <span class="exturl" data-url="aHR0cHM6Ly9jcmVhdGl2ZWNvbW1vbnMub3JnL2xpY2Vuc2VzL2J5LW5jLXNhLzQuMC8="><i class="fa fa-fw fa-creative-commons"></i>BY-NC-SA</span> 许可协议。转载请注明出处！
+  </li>
+</ul>
+</div>
+
+
+      <footer class="post-footer">
+
+        
+
+
+        
+    <div class="post-nav">
+      <div class="post-nav-item">
+    <a href="/archives/615b88c9.html" rel="prev" title="leveldb源码阅读记录-InternalIterator">
+      <i class="fa fa-chevron-left"></i> leveldb源码阅读记录-InternalIterator
+    </a></div>
+      <div class="post-nav-item">
+    <a href="/archives/d753e372.html" rel="next" title="leveldb源码阅读记录-Put操作">
+      leveldb源码阅读记录-Put操作 <i class="fa fa-chevron-right"></i>
+    </a></div>
+    </div>
+      </footer>
+    
+  </article>
+  
+  
+  
+
+
+
+          </div>
+          
+    <div class="comments" id="gitalk-container"></div>
+
+<script>
+  window.addEventListener('tabs:register', () => {
+    let { activeClass } = CONFIG.comments;
+    if (CONFIG.comments.storage) {
+      activeClass = localStorage.getItem('comments_active') || activeClass;
+    }
+    if (activeClass) {
+      let activeTab = document.querySelector(`a[href="#comment-${activeClass}"]`);
+      if (activeTab) {
+        activeTab.click();
+      }
+    }
+  });
+  if (CONFIG.comments.storage) {
+    window.addEventListener('tabs:click', event => {
+      if (!event.target.matches('.tabs-comment .tab-content .tab-pane')) return;
+      let commentClass = event.target.classList[1];
+      localStorage.setItem('comments_active', commentClass);
+    });
+  }
+</script>
+
+        </div>
+          
+  
+  <div class="toggle sidebar-toggle">
+    <span class="toggle-line toggle-line-first"></span>
+    <span class="toggle-line toggle-line-middle"></span>
+    <span class="toggle-line toggle-line-last"></span>
+  </div>
+
+  <aside class="sidebar">
+    <div class="sidebar-inner">
+
+      <ul class="sidebar-nav motion-element">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          站点概览
+        </li>
+      </ul>
+
+      <!--noindex-->
+      <div class="post-toc-wrap sidebar-panel">
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#DBIter"><span class="nav-text">DBIter</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#1-创建DBIterator"><span class="nav-text">1. 创建DBIterator</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#2-DBIterator的基本定义"><span class="nav-text">2. DBIterator的基本定义</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#值得一提的sequence"><span class="nav-text">值得一提的sequence_</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#DBIter的作用（功能）"><span class="nav-text">DBIter的作用（功能）</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#3-FindNextUserEntry"><span class="nav-text">3.FindNextUserEntry</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#4-Seek"><span class="nav-text">4.Seek</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#5-Next"><span class="nav-text">5. Next</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#6-FindPrevUserEntry"><span class="nav-text">6. FindPrevUserEntry</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#7-Prev"><span class="nav-text">7. Prev</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#8-key-amp-value"><span class="nav-text">8. key &amp; value</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#9-ParseKey"><span class="nav-text">9. ParseKey</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#总结"><span class="nav-text">总结</span></a></li></ol></li></ol></div>
+      </div>
+      <!--/noindex-->
+
+      <div class="site-overview-wrap sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+    <img class="site-author-image" itemprop="image" alt="Raven"
+      src="https://pic.downk.cc/item/5e907515504f4bcb04b6f798.jpg">
+  <p class="site-author-name" itemprop="name">Raven</p>
+  <div class="site-description" itemprop="description">分享技术，记录生活</div>
+</div>
+<div class="site-state-wrap motion-element">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+          <a href="/archives/">
+        
+          <span class="site-state-item-count">143</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+            <a href="/categories/">
+          
+        <span class="site-state-item-count">19</span>
+        <span class="site-state-item-name">分类</span></a>
+      </div>
+      <div class="site-state-item site-state-tags">
+            <a href="/tags/">
+          
+        <span class="site-state-item-count">114</span>
+        <span class="site-state-item-name">标签</span></a>
+      </div>
+  </nav>
+</div>
+  <div class="links-of-author motion-element">
+      <span class="links-of-author-item">
+        <span class="exturl" data-url="aHR0cHM6Ly9naXRodWIuY29tL3JhdmVueHJ6" title="GitHub → https:&#x2F;&#x2F;github.com&#x2F;ravenxrz"><i class="fa fa-fw fa-fab fa-github"></i>GitHub</span>
+      </span>
+      <span class="links-of-author-item">
+        <span class="exturl" data-url="bWFpbHRvOnpoYWduLnhpbmdydWlAZm94bWFpbC5jb20=" title="E-Mail → mailto:zhagn.xingrui@foxmail.com"><i class="fa fa-fw fa-fa fa-envelope"></i>E-Mail</span>
+      </span>
+  </div>
+  <div class="cc-license motion-element" itemprop="license">
+    <span class="exturl cc-opacity" data-url="aHR0cHM6Ly9jcmVhdGl2ZWNvbW1vbnMub3JnL2xpY2Vuc2VzL2J5LW5jLXNhLzQuMC8="><img src="/images/cc-by-nc-sa.svg" alt="Creative Commons"></span>
+  </div>
+
+
+  <div class="links-of-blogroll motion-element">
+    <div class="links-of-blogroll-title">
+      <i class="fa fa-fw fa-fa fa-link"></i>
+      Links
+    </div>
+    <ul class="links-of-blogroll-list">
+        <li class="links-of-blogroll-item">
+          <a href="/resources" title="&#x2F;resources">我的资源</a>
+        </li>
+    </ul>
+  </div>
+
+      </div>
+
+    </div>
+  </aside>
+  <div id="sidebar-dimmer"></div>
+
+
+      </div>
+    </main>
+
+    <footer class="footer">
+      <div class="footer-inner">
+        
+
+        
+
+<div class="copyright">
+  
+  &copy; 2017 – 
+  <span itemprop="copyrightYear">2020</span>
+  <span class="with-love">
+    <i class="fa fa-fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">Raven</span>
+</div>
+  <div class="powered-by">由 <span class="exturl theme-link" data-url="aHR0cHM6Ly9oZXhvLmlv">Hexo</span> & <span class="exturl theme-link" data-url="aHR0cHM6Ly9taXN0LnRoZW1lLW5leHQub3Jn">NexT.Mist</span> 强力驱动
+  </div>
+
+        
+<div class="busuanzi-count">
+  <script async src="https://busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+    <span class="post-meta-item" id="busuanzi_container_site_uv" style="display: none;">
+      <span class="post-meta-item-icon">
+        <i class="fa fa-fa fa-user"></i>
+      </span>
+      <span class="site-uv" title="总访客量">
+        <span id="busuanzi_value_site_uv"></span>
+      </span>
+    </span>
+    <span class="post-meta-divider">|</span>
+    <span class="post-meta-item" id="busuanzi_container_site_pv" style="display: none;">
+      <span class="post-meta-item-icon">
+        <i class="fa fa-fa fa-eye"></i>
+      </span>
+      <span class="site-pv" title="总访问量">
+        <span id="busuanzi_value_site_pv"></span>
+      </span>
+    </span>
+</div>
+
+
+
+
+
+
+
+
+      </div>
+    </footer>
+  </div>
+
+  
+  <script src="//cdn.jsdelivr.net/npm/animejs@3.1.0/lib/anime.min.js"></script>
+  <script src="//cdn.jsdelivr.net/npm/medium-zoom@1/dist/medium-zoom.min.js"></script>
+  <script src="//cdn.jsdelivr.net/npm/lozad@1/dist/lozad.min.js"></script>
+  <script src="//cdn.jsdelivr.net/npm/pangu@4/dist/browser/pangu.min.js"></script>
+
+<script src="/js/utils.js"></script>
+
+
+<script src="/js/schemes/muse.js"></script>
+
+
+<script src="/js/next-boot.js"></script>
+
+
+
+
+  
+  <script>
+    (function(){
+      var bp = document.createElement('script');
+      var curProtocol = window.location.protocol.split(':')[0];
+      bp.src = (curProtocol === 'https') ? 'https://zz.bdstatic.com/linksubmit/push.js' : 'http://push.zhanzhang.baidu.com/push.js';
+      var s = document.getElementsByTagName("script")[0];
+      s.parentNode.insertBefore(bp, s);
+    })();
+  </script>
+
+
+
+
+  
+<script src="/js/local-search.js"></script>
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+  
+      
+
+<script>
+  if (typeof MathJax === 'undefined') {
+    window.MathJax = {
+      loader: {
+        source: {
+          '[tex]/amsCd': '[tex]/amscd',
+          '[tex]/AMScd': '[tex]/amscd'
+        }
+      },
+      tex: {
+        inlineMath: {'[+]': [['$', '$']]},
+        tags: 'ams'
+      },
+      options: {
+        renderActions: {
+          findScript: [10, doc => {
+            document.querySelectorAll('script[type^="math/tex"]').forEach(node => {
+              const display = !!node.type.match(/; *mode=display/);
+              const math = new doc.options.MathItem(node.textContent, doc.inputJax[0], display);
+              const text = document.createTextNode('');
+              node.parentNode.replaceChild(text, node);
+              math.start = {node: text, delim: '', n: 0};
+              math.end = {node: text, delim: '', n: 0};
+              doc.math.push(math);
+            });
+          }, '', false],
+          insertedScript: [200, () => {
+            document.querySelectorAll('mjx-container').forEach(node => {
+              let target = node.parentNode;
+              if (target.nodeName.toLowerCase() === 'li') {
+                target.parentNode.classList.add('has-jax');
+              }
+            });
+          }, '', false]
+        }
+      }
+    };
+    (function () {
+      var script = document.createElement('script');
+      script.src = '//cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js';
+      script.defer = true;
+      document.head.appendChild(script);
+    })();
+  } else {
+    MathJax.startup.document.state(0);
+    MathJax.texReset();
+    MathJax.typeset();
+  }
+</script>
+
+    
+
+  
+  <script src="//cdn.jsdelivr.net/npm/quicklink@1/dist/quicklink.umd.js"></script>
+  <script>
+      window.addEventListener('load', () => {
+      quicklink({
+        timeout : 3000,
+        priority: true,
+        ignores : [uri => uri.includes('#'),uri => uri === 'https://www.ravenxrz.ink/archives/f4c6f796.html',]
+      });
+      });
+  </script>
+
+<link rel="stylesheet" href="//cdn.jsdelivr.net/npm/gitalk@1/dist/gitalk.min.css">
+
+<script>
+NexT.utils.loadComments(document.querySelector('#gitalk-container'), () => {
+  NexT.utils.getScript('//cdn.jsdelivr.net/npm/gitalk@1/dist/gitalk.min.js', () => {
+    var gitalk = new Gitalk({
+      clientID    : 'b2fd373d2ca2e03e591e',
+      clientSecret: 'de4ab066908c1fbd32d3a45e091b3538761d685b',
+      repo        : 'BlogComment',
+      owner       : 'ravenxrz',
+      admin       : ['ravenxrz'],
+      id          : '9ce8c366d5c8a58eeec032d397a58d33',
+        language: '',
+      distractionFreeMode: true
+    });
+    gitalk.render('gitalk-container');
+  }, window.Gitalk);
+});
+</script>
+
+</body>
+</html>
