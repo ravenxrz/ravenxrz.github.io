@@ -24,22 +24,20 @@
     var CONFIG = {"hostname":"www.ravenxrz.ink","root":"/","scheme":"Mist","version":"7.8.0","exturl":true,"sidebar":{"position":"left","display":"always","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":true,"show_result":true,"style":"flat"},"back2top":{"enable":true,"sidebar":false,"scrollpercent":true},"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":true,"lazyload":true,"pangu":true,"comments":{"style":"tabs","active":"gitalk","storage":true,"lazyload":true,"nav":null,"activeClass":"gitalk"},"algolia":{"hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":true,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},"motion":{"enable":false,"async":true,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},"path":"search.xml"};
   </script>
 
-  <meta name="description" content="自从微博图床挂了后，就迁移到了Github上，但是Github的速度实在太慢，今天尝试了下腾讯OSS，免费送了6个月的存储，之后的收费也还是可接受范围内。所以就迁移到腾讯咯。 2019&#x2F;6&#x2F;8 Update没想到时隔两天，我又更换了图床，在评论区的“游客”建议下，我更换到了聚合图床（毕竟免费，虽然腾讯COS已经很便宜了），目前效果一样不错。 但是，我已经经历过两次图床迁移的痛苦了。picgo-mi">
+  <meta name="description" content="当我们不再使用leveldb时，会将 db 这个对象删除。 那在db的析构函数中会做哪些工作？ 123leveldb::DB *db; ...delete db;">
 <meta property="og:type" content="article">
-<meta property="og:title" content="201966-更换图床日志">
-<meta property="og:url" content="https://www.ravenxrz.ink/archives/d7efd3d0.html">
+<meta property="og:title" content="leveldb源码阅读记录-删除数据库对象操作">
+<meta property="og:url" content="https://www.ravenxrz.ink/archives/f6637d5f.html">
 <meta property="og:site_name" content="Raven&#39;s Blog">
-<meta property="og:description" content="自从微博图床挂了后，就迁移到了Github上，但是Github的速度实在太慢，今天尝试了下腾讯OSS，免费送了6个月的存储，之后的收费也还是可接受范围内。所以就迁移到腾讯咯。 2019&#x2F;6&#x2F;8 Update没想到时隔两天，我又更换了图床，在评论区的“游客”建议下，我更换到了聚合图床（毕竟免费，虽然腾讯COS已经很便宜了），目前效果一样不错。 但是，我已经经历过两次图床迁移的痛苦了。picgo-mi">
+<meta property="og:description" content="当我们不再使用leveldb时，会将 db 这个对象删除。 那在db的析构函数中会做哪些工作？ 123leveldb::DB *db; ...delete db;">
 <meta property="og:locale" content="zh_CN">
-<meta property="og:image" content="https://pic2.superbed.cn/item/5cfbb231451253d178d99557.jpg">
-<meta property="article:published_time" content="2019-07-06T05:58:02.000Z">
-<meta property="article:modified_time" content="2020-09-06T07:37:36.746Z">
+<meta property="article:published_time" content="2020-10-12T11:02:59.000Z">
+<meta property="article:modified_time" content="2020-10-13T07:27:31.190Z">
 <meta property="article:author" content="Raven">
-<meta property="article:tag" content="图床">
+<meta property="article:tag" content="IT">
 <meta name="twitter:card" content="summary">
-<meta name="twitter:image" content="https://pic2.superbed.cn/item/5cfbb231451253d178d99557.jpg">
 
-<link rel="canonical" href="https://www.ravenxrz.ink/archives/d7efd3d0.html">
+<link rel="canonical" href="https://www.ravenxrz.ink/archives/f6637d5f.html">
 
 
 <script id="page-configurations">
@@ -52,7 +50,7 @@
   };
 </script>
 
-  <title>201966-更换图床日志 | Raven's Blog</title>
+  <title>leveldb源码阅读记录-删除数据库对象操作 | Raven's Blog</title>
   
 
 
@@ -204,7 +202,7 @@
   
   
   <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
-    <link itemprop="mainEntityOfPage" href="https://www.ravenxrz.ink/archives/d7efd3d0.html">
+    <link itemprop="mainEntityOfPage" href="https://www.ravenxrz.ink/archives/f6637d5f.html">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
       <meta itemprop="image" content="https://pic.downk.cc/item/5e907515504f4bcb04b6f798.jpg">
@@ -217,7 +215,7 @@
     </span>
       <header class="post-header">
         <h1 class="post-title" itemprop="name headline">
-          201966-更换图床日志
+          leveldb源码阅读记录-删除数据库对象操作
         </h1>
 
         <div class="post-meta">
@@ -227,14 +225,14 @@
               </span>
               <span class="post-meta-item-text">发表于</span>
 
-              <time title="创建时间：2019-07-06 13:58:02" itemprop="dateCreated datePublished" datetime="2019-07-06T13:58:02+08:00">2019-07-06</time>
+              <time title="创建时间：2020-10-12 19:02:59" itemprop="dateCreated datePublished" datetime="2020-10-12T19:02:59+08:00">2020-10-12</time>
             </span>
               <span class="post-meta-item">
                 <span class="post-meta-item-icon">
                   <i class="fa fa-calendar-check-o"></i>
                 </span>
                 <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2020-09-06 15:37:36" itemprop="dateModified" datetime="2020-09-06T15:37:36+08:00">2020-09-06</time>
+                <time title="修改时间：2020-10-13 15:27:31" itemprop="dateModified" datetime="2020-10-13T15:27:31+08:00">2020-10-13</time>
               </span>
             <span class="post-meta-item">
               <span class="post-meta-item-icon">
@@ -242,7 +240,7 @@
               </span>
               <span class="post-meta-item-text">分类于</span>
                 <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/categories/%E6%9D%82%E6%96%87/" itemprop="url" rel="index"><span itemprop="name">杂文</span></a>
+                  <a href="/categories/leveldb/" itemprop="url" rel="index"><span itemprop="name">leveldb</span></a>
                 </span>
             </span>
 
@@ -264,33 +262,34 @@
     <div class="post-body" itemprop="articleBody">
 
       
-        <p>自从微博图床挂了后，就迁移到了Github上，但是Github的速度实在太慢，今天尝试了下腾讯OSS，免费送了6个月的存储，之后的收费也还是可接受范围内。所以就迁移到腾讯咯。</p>
-<h2 id="2019-6-8-Update"><a href="#2019-6-8-Update" class="headerlink" title="2019/6/8 Update"></a>2019/6/8 Update</h2><p>没想到时隔两天，我又更换了图床，在评论区的“游客”建议下，我更换到了聚合图床（毕竟免费，虽然腾讯COS已经很便宜了），目前效果一样不错。</p>
-<p>但是，我已经经历过两次图床迁移的痛苦了。picgo-migrate图床迁移插件还不够完善，有时候还不如我自己手动迁移。所以我觉得，自己动手撸一个迁移脚本。但是因为是赶制版本，所以肯定很简陋了。<br>同时只适合迁移到聚合图床上。</p>
-<p>下面就来说一下怎么用脚本迁移吧。</p>
+        <p>当我们不再使用leveldb时，会将 db 这个对象删除。 那在db的析构函数中会做哪些工作？</p>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">leveldb::DB *db;</span><br><span class="line"> ...</span><br><span class="line"><span class="keyword">delete</span> db;</span><br></pre></td></tr></table></figure>
+
 <a id="more"></a>
 
-<h2 id="1-从typecho中导出你的Markdown文章"><a href="#1-从typecho中导出你的Markdown文章" class="headerlink" title="1. 从typecho中导出你的Markdown文章"></a>1. 从typecho中导出你的Markdown文章</h2><p>参考:<span class="exturl" data-url="aHR0cDovL2p1Lm91dG9mbWVtb3J5LmNuL2VudHJ5LzMwNDI3NyVFRiVCQyU4QyVFOCVBRiVCNCVFNSVCRSU5NyVFNSVCRSU4OCVFOCVBRiVBNiVFNyVCQiU4NiVFNCVCQSU4NiVFRiVCQyU4QyVFOCVCRiU5OSVFOSU4NyU4QyVFNSVCMCVCMSVFNCVCOCU4RCVFOSU4NyU4RCVFNSVBNCU4RCVFOCVBRiVCNCVFNiU5OCU4RSVFMyU4MCU4Mg==" title="http://ju.outofmemory.cn/entry/304277%EF%BC%8C%E8%AF%B4%E5%BE%97%E5%BE%88%E8%AF%A6%E7%BB%86%E4%BA%86%EF%BC%8C%E8%BF%99%E9%87%8C%E5%B0%B1%E4%B8%8D%E9%87%8D%E5%A4%8D%E8%AF%B4%E6%98%8E%E3%80%82">http://ju.outofmemory.cn/entry/304277，说得很详细了，这里就不重复说明。<i class="fa fa-external-link"></i></span></p>
-<h2 id="2-获取聚合图床的API"><a href="#2-获取聚合图床的API" class="headerlink" title="2. 获取聚合图床的API"></a>2. 获取聚合图床的API</h2><p>注册聚合图床：<span class="exturl" data-url="aHR0cHM6Ly93d3cuc3VwZXJiZWQuY24v" title="https://www.superbed.cn/">https://www.superbed.cn<i class="fa fa-external-link"></i></span>，然后申请一天的免费会员，就可以获取api的token了。</p>
-<p>如图：</p>
-<p><img data-src="https://pic2.superbed.cn/item/5cfbb231451253d178d99557.jpg"></p>
-<h2 id="3-编写迁移脚本"><a href="#3-编写迁移脚本" class="headerlink" title="3. 编写迁移脚本"></a>3. 编写迁移脚本</h2><p>先给出脚本</p>
-<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> os</span><br><span class="line"><span class="keyword">import</span> glob</span><br><span class="line"><span class="keyword">import</span> re</span><br><span class="line"><span class="keyword">import</span> requests</span><br><span class="line"><span class="keyword">import</span> json</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">migrate_single_file</span>(<span class="params">file_path</span>):</span></span><br><span class="line">    <span class="comment"># step 1 读入content</span></span><br><span class="line">    <span class="keyword">with</span> open(file_path,<span class="string">&#x27;r&#x27;</span>,encoding=<span class="string">&#x27;UTF-8&#x27;</span>) <span class="keyword">as</span> f:</span><br><span class="line">        file_content = f.read()</span><br><span class="line"></span><br><span class="line">    <span class="comment"># 下行根据自己需要删除，我在使用typecho2md时，多了的字符串</span></span><br><span class="line">    file_content = file_content.replace(<span class="string">r&#x27;&#x27;</span>,<span class="string">&#x27;&#x27;</span>)</span><br><span class="line"></span><br><span class="line">    <span class="comment"># step2 通过捕获组获取所有图片链接</span></span><br><span class="line">    pattern = <span class="string">r&#x27;!\[.*\]\((https://typecho-blog.*?)\)&#x27;</span></span><br><span class="line">    img_urls = re.findall(pattern,file_content)</span><br><span class="line"></span><br><span class="line">    <span class="comment"># 定义一个列表用来装新的url，即新上传到的图床的url</span></span><br><span class="line">    new_img_ulrs = []</span><br><span class="line"></span><br><span class="line">    <span class="comment"># 配置上传json</span></span><br><span class="line">    url = <span class="string">&#x27;https://www.superbed.cn/upload&#x27;</span></span><br><span class="line">    data = &#123;<span class="string">&#x27;token&#x27;</span>:<span class="string">&#x27;xxxx&#x27;</span>,		<span class="comment"># 写你的token</span></span><br><span class="line">            <span class="string">&#x27;sync&#x27;</span>:<span class="string">&#x27;1&#x27;</span>,</span><br><span class="line">            <span class="string">&#x27;src&#x27;</span>: <span class="string">&#x27;&#x27;</span>,</span><br><span class="line">            <span class="string">&#x27;v&#x27;</span>:<span class="string">&#x27;2&#x27;</span></span><br><span class="line">            &#125;</span><br><span class="line"></span><br><span class="line">    <span class="comment"># step3 循环上传</span></span><br><span class="line">    <span class="keyword">try</span>:</span><br><span class="line">        <span class="keyword">for</span> img_url <span class="keyword">in</span> img_urls:</span><br><span class="line">            data[<span class="string">&#x27;src&#x27;</span>] = img_url</span><br><span class="line">            r = requests.post(url, data)</span><br><span class="line">            result = json.loads(r.text)</span><br><span class="line">            print(result)</span><br><span class="line">            <span class="keyword">if</span> result[<span class="string">&#x27;err&#x27;</span>] == <span class="number">0</span>:</span><br><span class="line">                new_img_ulrs.append(result[<span class="string">&#x27;url&#x27;</span>])</span><br><span class="line">    <span class="keyword">except</span>:</span><br><span class="line">        <span class="keyword">pass</span></span><br><span class="line"></span><br><span class="line">    <span class="comment"># step4 替换url</span></span><br><span class="line">    <span class="keyword">for</span> idx,url <span class="keyword">in</span> enumerate(img_urls):</span><br><span class="line">        file_content = file_content.replace(url,new_img_ulrs[idx])</span><br><span class="line"></span><br><span class="line">    <span class="comment"># print 替换后的结果</span></span><br><span class="line">    print(file_content)</span><br><span class="line"></span><br><span class="line">    <span class="comment"># 重新写入</span></span><br><span class="line">    dir = os.path.dirname(file_path)</span><br><span class="line">    base_name = os.path.basename(file_path).replace(<span class="string">r&quot;.md&quot;</span>,<span class="string">&#x27;&#x27;</span>)</span><br><span class="line">    new_file_name = os.path.join(dir,base_name+<span class="string">&#x27;_new.md&#x27;</span>)</span><br><span class="line"></span><br><span class="line">    <span class="keyword">with</span> open(new_file_name,<span class="string">&#x27;w&#x27;</span>,encoding=<span class="string">&#x27;UTF-8&#x27;</span>) <span class="keyword">as</span> f:</span><br><span class="line">        f.write(file_content)</span><br><span class="line">        </span><br><span class="line"> <span class="comment"># 需要迁移的目录</span></span><br><span class="line">DIR = <span class="string">r&#x27;C:\Users\Raven\Desktop\blog\blog&#x27;</span></span><br><span class="line"><span class="comment"># 找到所有md文件</span></span><br><span class="line">pattern = <span class="string">&#x27;*.md&#x27;</span></span><br><span class="line">files = glob.glob(os.path.join(DIR,pattern))</span><br><span class="line">print(files)</span><br><span class="line"></span><br><span class="line"><span class="comment"># 循环转</span></span><br><span class="line"><span class="keyword">for</span> file <span class="keyword">in</span> files:</span><br><span class="line">    migrate_single_file(file)</span><br></pre></td></tr></table></figure>
+<h2 id="1-db的析构函数"><a href="#1-db的析构函数" class="headerlink" title="1. db的析构函数"></a>1. db的析构函数</h2><figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br></pre></td><td class="code"><pre><span class="line">DBImpl::~DBImpl() &#123;</span><br><span class="line">  <span class="comment">// Wait for background work to finish.</span></span><br><span class="line">  <span class="comment">// 等待后台压缩工作结束</span></span><br><span class="line">  mutex_.Lock();</span><br><span class="line">  shutting_down_.store(<span class="literal">true</span>, <span class="built_in">std</span>::memory_order_release);</span><br><span class="line">  <span class="keyword">while</span> (background_compaction_scheduled_) &#123;</span><br><span class="line">    background_work_finished_signal_.Wait();</span><br><span class="line">  &#125;</span><br><span class="line">  mutex_.Unlock();</span><br><span class="line"></span><br><span class="line">    <span class="comment">// db_lock_是为了防止多个进程使用同一个leveldb而设力的lock， 在数据库目录下的 "LOCK"文件就是干这活的</span></span><br><span class="line">    <span class="comment">// 现在本进程已经不使用leveldb了，需要释放lock，让其它进程可以使用leveldb。</span></span><br><span class="line">  <span class="keyword">if</span> (db_lock_ != <span class="literal">nullptr</span>) &#123;</span><br><span class="line">    env_-&gt;UnlockFile(db_lock_);</span><br><span class="line">  &#125;</span><br><span class="line"></span><br><span class="line">    <span class="comment">// 删除版本</span></span><br><span class="line">  <span class="keyword">delete</span> versions_;</span><br><span class="line">    <span class="comment">// 解引用memtable</span></span><br><span class="line">  <span class="keyword">if</span> (mem_ != <span class="literal">nullptr</span>) mem_-&gt;Unref();</span><br><span class="line">  <span class="keyword">if</span> (imm_ != <span class="literal">nullptr</span>) imm_-&gt;Unref();</span><br><span class="line">    </span><br><span class="line">    <span class="comment">// 释放其它资源</span></span><br><span class="line">  <span class="keyword">delete</span> tmp_batch_;</span><br><span class="line">  <span class="keyword">delete</span> log_;</span><br><span class="line">  <span class="keyword">delete</span> logfile_;</span><br><span class="line">  <span class="keyword">delete</span> table_cache_;</span><br><span class="line"></span><br><span class="line">  <span class="keyword">if</span> (owns_info_log_) &#123;</span><br><span class="line">    <span class="keyword">delete</span> options_.info_log;</span><br><span class="line">  &#125;</span><br><span class="line">  <span class="keyword">if</span> (owns_cache_) &#123;</span><br><span class="line">    <span class="keyword">delete</span> options_.block_cache;</span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
 
-<p>需要注意的有几点：</p>
-<ul>
-<li><p><code>file_content = file_content.replace(r&#39;&#39;,&#39;&#39;)</code> 这行代码是因为我在导出markdown文件时，额外增添了``字符串，所以我把它删除了，自行决定需不需要删除</p>
-</li>
-<li><p>配置json:</p>
-<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">data = &#123;<span class="string">&#x27;token&#x27;</span>:<span class="string">&#x27;xxxx&#x27;</span>,		<span class="comment"># 写你的token</span></span><br><span class="line">           <span class="string">&#x27;sync&#x27;</span>:<span class="string">&#x27;1&#x27;</span>,</span><br><span class="line">           <span class="string">&#x27;src&#x27;</span>: <span class="string">&#x27;&#x27;</span>,</span><br><span class="line">           <span class="string">&#x27;v&#x27;</span>:<span class="string">&#x27;2&#x27;</span></span><br><span class="line">           &#125;</span><br></pre></td></tr></table></figure>
+<p>基本上这个函数都是在做资源释放，包括：</p>
+<ol>
+<li>等待compaction结束，强制开启<code>shutting_down_</code>， 后序compaction会监测这个变量，一旦它为true，就不会compaction了。也就是说当前的memtable不一定能完全dump到下层中。 但是后序重启Open leveldb时，可以从log文件中恢复。</li>
+<li>解文件锁，这个文件锁是用来保证同一时刻只有一个进程可以使用一个leveldb数据库。</li>
+<li>释放version_资源</li>
+<li>释放memtable</li>
+<li>释放其它资源</li>
+</ol>
+<h2 id="2-versions-析构"><a href="#2-versions-析构" class="headerlink" title="2. versions_析构"></a>2. versions_析构</h2><figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">VersionSet::~VersionSet() &#123;</span><br><span class="line">  current_-&gt;Unref();</span><br><span class="line">  assert(dummy_versions_.next_ == &amp;dummy_versions_);  <span class="comment">// List must be empty 必须保证所有保本都已经释放</span></span><br><span class="line">    <span class="comment">// 释放manifest相关资源</span></span><br><span class="line">  <span class="keyword">delete</span> descriptor_log_;</span><br><span class="line">  <span class="keyword">delete</span> descriptor_file_;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
 
-<p>修改token为你的token。</p>
-</li>
-<li><p>配置迁移目录：<code>DIR = r&#39;C:\Users\Raven\Desktop\blog\blog&#39;</code> 也就是你现在放置Markdown文件的目录。</p>
-</li>
-</ul>
-<p>迁移后的文档默认为源文档名后加后缀<code>_new</code>，如源文档<code>test_md.md</code>迁移后的文档名为<code>test_new.md</code>。</p>
-<p>ok，就酱了。两天迁移了两次图床，心塞。</p>
+<p>首先看 current_-&gt;Unref():</p>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">void</span> <span class="title">Version::Unref</span><span class="params">()</span> </span>&#123;</span><br><span class="line">  assert(<span class="keyword">this</span> != &amp;vset_-&gt;dummy_versions_);</span><br><span class="line">  assert(refs_ &gt;= <span class="number">1</span>);</span><br><span class="line">  --refs_;</span><br><span class="line">  <span class="keyword">if</span> (refs_ == <span class="number">0</span>) &#123;</span><br><span class="line">    <span class="keyword">delete</span> <span class="keyword">this</span>;</span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h3 id="1-version析构"><a href="#1-version析构" class="headerlink" title="1. version析构"></a>1. version析构</h3><p>接着是当前版本的析够：</p>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br></pre></td><td class="code"><pre><span class="line">Version::~Version() &#123;</span><br><span class="line">  assert(refs_ == <span class="number">0</span>);</span><br><span class="line"></span><br><span class="line">  <span class="comment">// Remove from linked list</span></span><br><span class="line">  prev_-&gt;next_ = next_;</span><br><span class="line">  next_-&gt;prev_ = prev_;</span><br><span class="line"></span><br><span class="line">  <span class="comment">// Drop references to files</span></span><br><span class="line">  <span class="keyword">for</span> (<span class="keyword">int</span> level = <span class="number">0</span>; level &lt; <span class="built_in">config</span>::kNumLevels; level++) &#123;</span><br><span class="line">    <span class="keyword">for</span> (<span class="keyword">size_t</span> i = <span class="number">0</span>; i &lt; files_[level].<span class="built_in">size</span>(); i++) &#123;</span><br><span class="line">      FileMetaData* f = files_[level][i];</span><br><span class="line">      assert(f-&gt;refs &gt; <span class="number">0</span>);</span><br><span class="line">      f-&gt;refs--;</span><br><span class="line">      <span class="keyword">if</span> (f-&gt;refs &lt;= <span class="number">0</span>) &#123;</span><br><span class="line">        <span class="keyword">delete</span> f;</span><br><span class="line">      &#125;</span><br><span class="line">    &#125;</span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>第一步从versionset中移除本版本，第二步释放所有 FileMeta 。</p>
+<h2 id="3-mem析构"><a href="#3-mem析构" class="headerlink" title="3. mem析构"></a>3. mem析构</h2><p>mem的析够比较简单了，当引用计数降低到0时，自动delete：</p>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// Drop reference count.  Delete if no more references exist.</span></span><br><span class="line"><span class="function"><span class="keyword">void</span> <span class="title">Unref</span><span class="params">()</span> </span>&#123;</span><br><span class="line">  --refs_;</span><br><span class="line">  assert(refs_ &gt;= <span class="number">0</span>);</span><br><span class="line">  <span class="keyword">if</span> (refs_ &lt;= <span class="number">0</span>) &#123;</span><br><span class="line">    <span class="keyword">delete</span> <span class="keyword">this</span>;</span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h2 id="4-总结"><a href="#4-总结" class="headerlink" title="4. 总结"></a>4. 总结</h2><p>db对象的删除，基本做的工作就是释放各个环节中设涉及到的资源，如version，memtable，cache。</p>
 
     </div>
 
@@ -326,7 +325,7 @@
   </li>
   <li class="post-copyright-link">
     <strong>本文链接：</strong>
-    <a href="https://www.ravenxrz.ink/archives/d7efd3d0.html" title="201966-更换图床日志">https://www.ravenxrz.ink/archives/d7efd3d0.html</a>
+    <a href="https://www.ravenxrz.ink/archives/f6637d5f.html" title="leveldb源码阅读记录-删除数据库对象操作">https://www.ravenxrz.ink/archives/f6637d5f.html</a>
   </li>
   <li class="post-copyright-license">
     <strong>版权声明： </strong>本博客所有文章除特别声明外，均采用 <span class="exturl" data-url="aHR0cHM6Ly9jcmVhdGl2ZWNvbW1vbnMub3JnL2xpY2Vuc2VzL2J5LW5jLXNhLzQuMC8="><i class="fa fa-fw fa-creative-commons"></i>BY-NC-SA</span> 许可协议。转载请注明出处！
@@ -336,10 +335,6 @@
 
 
       <footer class="post-footer">
-          
-          <div class="post-tags">
-              <a href="/tags/%E5%9B%BE%E5%BA%8A/" rel="tag"><i class="fa fa-tag"></i> 图床</a>
-          </div>
 
         
 
@@ -347,12 +342,12 @@
         
     <div class="post-nav">
       <div class="post-nav-item">
-    <a href="/archives/dd4a0f03.html" rel="prev" title="将latex书写的公式转为word可用公式">
-      <i class="fa fa-chevron-left"></i> 将latex书写的公式转为word可用公式
+    <a href="/archives/2f5e74df.html" rel="prev" title="leveldb源码阅读记录-Open操作">
+      <i class="fa fa-chevron-left"></i> leveldb源码阅读记录-Open操作
     </a></div>
       <div class="post-nav-item">
-    <a href="/archives/bcb78a81.html" rel="next" title="在Chrome中使用vim-Surfingkeys使用教程">
-      在Chrome中使用vim-Surfingkeys使用教程 <i class="fa fa-chevron-right"></i>
+    <a href="/archives/80e35e78.html" rel="next" title="leveldb源码阅读记录-各组件默认大小总结">
+      leveldb源码阅读记录-各组件默认大小总结 <i class="fa fa-chevron-right"></i>
     </a></div>
     </div>
       </footer>
@@ -413,7 +408,7 @@
 
       <!--noindex-->
       <div class="post-toc-wrap sidebar-panel">
-          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#2019-6-8-Update"><span class="nav-text">2019&#x2F;6&#x2F;8 Update</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#1-从typecho中导出你的Markdown文章"><span class="nav-text">1. 从typecho中导出你的Markdown文章</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#2-获取聚合图床的API"><span class="nav-text">2. 获取聚合图床的API</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#3-编写迁移脚本"><span class="nav-text">3. 编写迁移脚本</span></a></li></ol></div>
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#1-db的析构函数"><span class="nav-text">1. db的析构函数</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#2-versions-析构"><span class="nav-text">2. versions_析构</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#1-version析构"><span class="nav-text">1. version析构</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#3-mem析构"><span class="nav-text">3. mem析构</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#4-总结"><span class="nav-text">4. 总结</span></a></li></ol></div>
       </div>
       <!--/noindex-->
 
@@ -643,7 +638,7 @@
       quicklink({
         timeout : 3000,
         priority: true,
-        ignores : [uri => uri.includes('#'),uri => uri === 'https://www.ravenxrz.ink/archives/d7efd3d0.html',]
+        ignores : [uri => uri.includes('#'),uri => uri === 'https://www.ravenxrz.ink/archives/f6637d5f.html',]
       });
       });
   </script>
@@ -659,7 +654,7 @@ NexT.utils.loadComments(document.querySelector('#gitalk-container'), () => {
       repo        : 'BlogComment',
       owner       : 'ravenxrz',
       admin       : ['ravenxrz'],
-      id          : '795c267b215b1cce55eecf6c169910c3',
+      id          : '8c0b06d9d34831b10c70f8519978946a',
         language: '',
       distractionFreeMode: true
     });
