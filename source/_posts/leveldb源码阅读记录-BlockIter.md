@@ -10,11 +10,17 @@ tags:
 
 <!--more-->
 
+这篇文章我们一起来看看Block::Iter, 这个Iter顾名思义使用来访问一个block的Iter，block可以是sstable中的data block,或者index block。还记得data block的布局吗：
+
 一个data block由多条record组成，且内部采用了前缀压缩机制：
 
 ![](https://cdn.jsdelivr.net/gh/ravenxrz/PicBed/img/data_block_of_sstable.png)
 
 一条Record的layout如下：
+
+<img src="https://pic.downk.cc/item/5f854b911cd1bbb86b9e0d79.png" style="zoom:33%;" />
+
+data的layout如下：
 
 ![](https://pic.downk.cc/item/5f8444041cd1bbb86b061575.png)
 
@@ -23,7 +29,7 @@ ok，有了block的认识，再看Block::Iter就很简单了。
 ## 1. 基本定义
 
 ```c++
-class Block::Iter : public Iterator {
+lass Block::Iter : public Iterator {
  private:
   const Comparator* const comparator_;
   const char* const data_;       // underlying block contents 	底层块数据
@@ -117,7 +123,7 @@ Seek定位，看代码：
 
    上面由restart_[0] 到 restart\_[1]之间的区间，也即Record0 – Record 16就是一个区间。
 
-2. 找到这个区间后，线性搜索即可找到目标key。
+2. 找到这个区间后，线性搜索即可找到目标key。**（这也解释了为什么leveldb将一个重起点的区间设置成最大不能超过16个record）**
 
 简单看一下如何解析一条record：
 
@@ -275,4 +281,3 @@ static inline const char* DecodeEntry(const char* p, const char* limit,
 ## 7. 总结
 
 本文我们分析了Block::Iter的设计与实现。其实只是了解了它使用来访问Block的，那么掌握了Block的存储布局方式，就非常好理解了。重点函数是ParseNextKey，里面反解析了“前缀压缩机制”，拼装出最后的key，得到value。另外，由于一个block内的数据是有序的，所以可以通过 restart_point来二分查找，从而加速访问性能。
-

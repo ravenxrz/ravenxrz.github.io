@@ -575,6 +575,68 @@ Status TableCache::FindTable(uint64_t file_number, uint64_t file_size,
 
 <img src="https://cdn.jsdelivr.net/gh/ravenxrz/PicBed/img/绘图文件-第 7 页.png" style="zoom:67%;" />
 
+我们重点分析一下在cache中找不到handle的情况。
+
+第一步，根据file number新建随机访问文件：
+
+```c++
+std::string fname = TableFileName(dbname_, file_number);
+RandomAccessFile* file = nullptr;
+Table* table = nullptr;
+// 根据fname打开file
+s = env_->NewRandomAccessFile(fname, &file);
+```
+
+第二步，根据文件，打开Table（反序列化）：
+
+```c++
+Status Table::Open(const Options& options, RandomAccessFile* file,
+                   uint64_t size, Table** table) {
+  *table = nullptr;
+ 
+    // 解析footer
+  char footer_space[Footer::kEncodedLength];
+  Slice footer_input;
+  Status s = file->Read(size - Footer::kEncodedLength, Footer::kEncodedLength,
+                        &footer_input, footer_space);
+  if (!s.ok()) return s;
+
+  Footer footer;
+  s = footer.DecodeFrom(&footer_input);
+  if (!s.ok()) return s;
+
+   // 根据footer读取index block
+  // Read the index block
+  BlockContents index_block_contents;
+  ReadOptions opt;
+  if (options.paranoid_checks) {
+    opt.verify_checksums = true;
+  }
+  s = ReadBlock(file, opt, footer.index_handle(), &index_block_contents);
+
+    // 保存到rep中，方便后续InternalGet使用
+  if (s.ok()) {
+    // We've successfully read the footer and the index block: we're
+    // ready to serve requests.
+    Block* index_block = new Block(index_block_contents);
+    Rep* rep = new Table::Rep;
+    rep->options = options;
+    rep->file = file;
+    rep->metaindex_handle = footer.metaindex_handle();
+    rep->index_block = index_block;
+    rep->cache_id = (options.block_cache ? options.block_cache->NewId() : 0);
+    rep->filter_data = nullptr;
+    rep->filter = nullptr;
+    *table = new Table(rep);
+    (*table)->ReadMeta(footer);
+  }
+
+  return s;
+}
+```
+
+总体来说，如果在cache中找不到handle，就需要手动打开sstable（不包括data block部分），并反序列化成in-memory对象。
+
 ### 2. Get
 
 ```c++
@@ -607,7 +669,7 @@ Status Table::InternalGet(const ReadOptions& options, const Slice& k, void* arg,
   Iterator* iiter = rep_->index_block->NewIterator(rep_->options.comparator);
   iiter->Seek(k);
   if (iiter->Valid()) {
-      // 找到相关data block
+      // 根据index block找data block
     Slice handle_value = iiter->value();
     FilterBlockReader* filter = rep_->filter;
     BlockHandle handle;

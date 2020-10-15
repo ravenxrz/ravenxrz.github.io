@@ -221,6 +221,8 @@ void Version::ForEachOverlapping(Slice user_key, Slice internal_key, void* arg,
 
 实际的sstable来自cache（前提是开启了cache，否则依然是从文件系统中的文件中获取）。
 
+关于cache的分析，请看cache相关章节。
+
 ### 3. 总结：
 
 总结流程图如下：
