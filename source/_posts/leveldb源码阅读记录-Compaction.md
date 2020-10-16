@@ -1545,19 +1545,85 @@ ok，总结一下，花个流程图。
 
 3. 否则，执行真正的**compaction**。
 
+### Snapshot
+
+ok，知道了这些，现在一起来看看Snapshot是怎么实现与使用的。
+
+SnapshotList是一个双链表。 这和Cache的链表是完全相同的。
+
+![](https://pic.downk.cc/item/5f88ed491cd1bbb86b4e4e55.png)
+
+```c++
+class SnapshotList {
+ public:
+  SnapshotList() : head_(0) {
+    head_.prev_ = &head_;
+    head_.next_ = &head_;
+  }
+
+  bool empty() const { return head_.next_ == &head_; }
+  SnapshotImpl* oldest() const {
+    assert(!empty());
+    return head_.next_;
+  }
+  SnapshotImpl* newest() const {
+    assert(!empty());
+    return head_.prev_;
+  }
+
+  // Creates a SnapshotImpl and appends it to the end of the list.
+  SnapshotImpl* New(SequenceNumber sequence_number) {
+    assert(empty() || newest()->sequence_number_ <= sequence_number);
+
+    SnapshotImpl* snapshot = new SnapshotImpl(sequence_number);
+
+#if !defined(NDEBUG)
+    snapshot->list_ = this;
+#endif  // !defined(NDEBUG)
+    snapshot->next_ = &head_;
+    snapshot->prev_ = head_.prev_;
+    snapshot->prev_->next_ = snapshot;
+    snapshot->next_->prev_ = snapshot;
+    return snapshot;
+  }
+
+  // Removes a SnapshotImpl from this list.
+  //
+  // The snapshot must have been created by calling New() on this list.
+  //
+  // The snapshot pointer should not be const, because its memory is
+  // deallocated. However, that would force us to change DB::ReleaseSnapshot(),
+  // which is in the API, and currently takes a const Snapshot.
+  void Delete(const SnapshotImpl* snapshot) {
+#if !defined(NDEBUG)
+    assert(snapshot->list_ == this);
+#endif  // !defined(NDEBUG)
+    snapshot->prev_->next_ = snapshot->next_;
+    snapshot->next_->prev_ = snapshot->prev_;
+    delete snapshot;
+  }
+
+ private:
+  // Dummy head of doubly-linked list of snapshots
+  SnapshotImpl head_;
+};
+```
+
+好了，有了Snapshot的铺垫，我们来看看DoCompactionWork函数。
+
 ### DoCompactionWork
 
 ```c++
-
 Status DBImpl::DoCompactionWork(CompactionState* compact) {
 	
    ...
+    // 记录最老快照，只能删除比最老快照还老的数据，如何表示最老？用序列号，序列号越小代表数据越旧。
   if (snapshots_.empty()) {
     compact->smallest_snapshot = versions_->LastSequence();
   } else {
     compact->smallest_snapshot = snapshots_.oldest()->sequence_number();
   }
-   // 创建迭代器, 内部同过mergeiterator对本次要compaction的文件做“排序”（没有排序，只不过通过iter依次访问数据，得到的结果就是排序后的结果）
+   // 创建迭代器, 内部通过mergeiterator对本次要compaction的文件做“排序”（没有排序，只不过通过iter依次访问数据，得到的结果就是排序后的结果）
   Iterator* input = versions_->MakeInputIterator(compact->compaction);
 
   // Release mutex while we're actually doing the compaction work
@@ -1603,9 +1669,9 @@ Status DBImpl::DoCompactionWork(CompactionState* compact) {
       has_current_user_key = false;
       last_sequence_for_key = kMaxSequenceNumber;
     } else {		// 正常情况下走这里
-      if (!has_current_user_key ||		// 已经有了user_key?
+      if (!has_current_user_key ||		
           user_comparator()->Compare(ikey.user_key, Slice(current_user_key)) !=	
-              0) {		// 要分析的user_key是否和之前的user_key相同？
+              0) {		// 某个user_key第一次出现
         // First occurrence of this user key
         current_user_key.assign(ikey.user_key.data(), ikey.user_key.size());
         has_current_user_key = true;
@@ -1613,13 +1679,12 @@ Status DBImpl::DoCompactionWork(CompactionState* compact) {
         last_sequence_for_key = kMaxSequenceNumber;
       }
 
-      if (last_sequence_for_key <= compact->smallest_snapshot) {	//	进入这个判断，一定时是出现了重复key. 如果前一个序列号都已经比当前smallest_snapshot小了， 现在key的序列号肯定更小，也肯定小于smallest_snapshot，所以直接drop
+      if (last_sequence_for_key <= compact->smallest_snapshot) {	// 前一个key的序列号都小了，本key肯定更小，直接抛弃
         // Hidden by an newer entry for same user key
         drop = true;  // (A)
-      } else if (ikey.type == kTypeDeletion &&			
+      } else if (ikey.type == kTypeDeletion &&		// 前一个key还在snaphost内，本key虽然是离snapshot最近的key，但是本key是删除节点	
                  ikey.sequence <= compact->smallest_snapshot &&
-                 compact->compaction->IsBaseLevelForKey(ikey.user_key)) {
-      // 前一个key的序列号时大于smallest_snapshot，而当前key的序列号小于smallest_snapshot,说名当前key是距离smallest_snapshot最近的key，
+                 compact->compaction->IsBaseLevelForKey(ikey.user_key)) {	// 在是删除节点的同时，还必须保证本key一定是"最底层"的key（也就是更底层没有该key），否则删除这个key，更底层的key将被重新激活
           // !!!!!! 待完善
           // For this user key:
         // (1) there is no data in higher levels
@@ -1634,6 +1699,7 @@ Status DBImpl::DoCompactionWork(CompactionState* compact) {
       last_sequence_for_key = ikey.sequence;
     }
       
+      // 不需要drop的文件直接写入
     if (!drop) {		// 不需要删除，则写入到文件
       // Open output file if necessary
       if (compact->builder == nullptr) {
@@ -1752,12 +1818,23 @@ Iterator* VersionSet::MakeInputIterator(Compaction* c) {
 
 关于mergeiteraotr的具体实现，可参考 mergeitator。
 
-#### 2. 丢弃不需要的kv pairs（待完善）
+#### 2. 丢弃不需要的kv pairs
+
+最核心也是最难的代码在下面这一段，先看代码，后面将通过例子来说明这个函数。
 
 ```c++
- if (!has_current_user_key ||			// 已经有了user_key?
+    // 下面这里是关键！！
+    // Handle key/value, add to state, etc.
+    bool drop = false;
+    if (!ParseInternalKey(key, &ikey)) {
+      // Do not hide error keys
+      current_user_key.clear();
+      has_current_user_key = false;
+      last_sequence_for_key = kMaxSequenceNumber;
+    } else {		// 正常情况下走这里
+      if (!has_current_user_key ||		
           user_comparator()->Compare(ikey.user_key, Slice(current_user_key)) !=	
-              0) {					// 要分析的user_key是否和之前的user_key相同？
+              0) {		// 某个user_key第一次出现
         // First occurrence of this user key
         current_user_key.assign(ikey.user_key.data(), ikey.user_key.size());
         has_current_user_key = true;
@@ -1765,13 +1842,12 @@ Iterator* VersionSet::MakeInputIterator(Compaction* c) {
         last_sequence_for_key = kMaxSequenceNumber;
       }
 
-      if (last_sequence_for_key <= compact->smallest_snapshot) {	//	进入这个判断，一定时是出现了重复key. 如果前一个序列号都已经比当前smallest_snapshot小了， 现在key的序列号肯定更小，也肯定小于smallest_snapshot，所以直接drop
+      if (last_sequence_for_key <= compact->smallest_snapshot) {	// 前一个key的序列号都小了，本key肯定更小，直接抛弃
         // Hidden by an newer entry for same user key
         drop = true;  // (A)
-      } else if (ikey.type == kTypeDeletion &&			
+      } else if (ikey.type == kTypeDeletion &&		// 前一个key还在snaphost内，本key虽然是离snapshot最近的key，但是本key是删除节点	
                  ikey.sequence <= compact->smallest_snapshot &&
-                 compact->compaction->IsBaseLevelForKey(ikey.user_key)) {
-      // 前一个key的序列号大于smallest_snapshot，而当前key的序列号小于smallest_snapshot,说名当前key是距离smallest_snapshot最近的key，
+                 compact->compaction->IsBaseLevelForKey(ikey.user_key)) {	// 在是删除节点的同时，还必须保证本key一定是"最底层"的key（也就是更底层没有该key），否则删除这个key，更底层的key将被重新激活
           // !!!!!! 待完善
           // For this user key:
         // (1) there is no data in higher levels
@@ -1785,10 +1861,128 @@ Iterator* VersionSet::MakeInputIterator(Compaction* c) {
 
       last_sequence_for_key = ikey.sequence;
     }
-      
 ```
 
-这部分的第3个分支每看懂。后序补充。
+为了解释这个函数，看看下面这个图：
+
+![](https://pic.downk.cc/item/5f88ec9c1cd1bbb86b4e2c8e.png)
+
+
+
+每个上下箭头符号代表一个snapshot，前面说了我们不管比snapshot更新(newer)的数据，因为他们可能把snapshot内的数据给删除了。所以，这次compaction操作中，我们只能删除比snapshot更旧(older)的数据。上面的图从左到右数据从新到旧。 我们将以“最旧的snapshot”为分界线，比该snapshot更旧（右边）的数据才有可能被删除。所以id=3的key不能删除（因为它比snapshot新），id=2的kye不能删除，虽然它比snapshot旧，但是它是最旧里面最新的一个，我们需要保存这个key，id=1的key可以被删除。
+
+知道了这些，就可以慢慢分析代码了。
+
+第一次循环：
+
+```c++
+if (!has_current_user_key ||		
+          user_comparator()->Compare(ikey.user_key, Slice(current_user_key)) !=	
+              0) {		// 某个user_key第一次出现
+        // First occurrence of this user key
+        current_user_key.assign(ikey.user_key.data(), ikey.user_key.size());
+        has_current_user_key = true;
+          // 第一次出现的user_key不允许删除
+        last_sequence_for_key = kMaxSequenceNumber;
+      }
+```
+
+假设第一次运行，则current_user_key指向id=3的key，last_sequence_for_key=一个最大值。
+
+```c++
+ if (last_sequence_for_key <= compact->smallest_snapshot) {	// 前一个key的序列号都小了，本key肯定更小，直接抛弃
+        // Hidden by an newer entry for same user key
+        drop = true;  // (A)
+      }
+```
+
+这个if条件不满足。
+
+last_sequence_for_key 为id=3的key的序列号。
+
+第二次循环：
+
+由于id=2和id=3的key相同，所以直接进入：
+
+```c++
+ if (last_sequence_for_key <= compact->smallest_snapshot) {	// 前一个key的序列号都小了，本key肯定更小，直接抛弃
+        // Hidden by an newer entry for same user key
+        drop = true;  // (A)
+      }
+```
+
+由于此时的last_sequence_for_key是id=3的序列号，这个判断依然不满足。last_sequence_for_key 为id=2的key的序列号。
+
+第三次循环：
+
+由于id=1和id=3的key相同,last_sequence_for_key 为id=2的key的序列号。
+
+```c++
+ if (last_sequence_for_key <= compact->smallest_snapshot) {	// 前一个key的序列号都小了，本key肯定更小，直接抛弃
+        // Hidden by an newer entry for same user key
+        drop = true;  // (A)
+      }
+```
+
+此时满足，丢弃id=1的key。
+
+ok，到这里，相信你应该可以看到前两个判断了：
+
+```c++
+    bool drop = false;
+    if (!ParseInternalKey(key, &ikey)) {
+      // Do not hide error keys
+      current_user_key.clear();
+      has_current_user_key = false;
+      last_sequence_for_key = kMaxSequenceNumber;
+    } else {		// 正常情况下走这里
+      if (!has_current_user_key ||		
+          user_comparator()->Compare(ikey.user_key, Slice(current_user_key)) !=	
+              0) {		// 某个user_key第一次出现
+        // First occurrence of this user key
+        current_user_key.assign(ikey.user_key.data(), ikey.user_key.size());
+        has_current_user_key = true;
+          // 第一次出现的user_key不允许删除
+        last_sequence_for_key = kMaxSequenceNumber;
+      }
+```
+
+那还剩下一个判断：
+
+```c++
+else if (ikey.type == kTypeDeletion &&		// 前一个key还在snaphost内，本key虽然是离snapshot最近的key，但是本key是删除节点	
+                 ikey.sequence <= compact->smallest_snapshot &&
+                 compact->compaction->IsBaseLevelForKey(ikey.user_key)) {	// 在是删除节点的同时，还必须保证本key一定是"最底层"的key（也就是更底层没有该key），否则删除这个key，更底层的key将被重新激活
+          // !!!!!! 待完善
+          // For this user key:
+        // (1) there is no data in higher levels
+        // (2) data in lower levels will have larger sequence numbers
+        // (3) data in layers that are being compacted here and have
+        //     smaller sequence numbers will be dropped in the next
+        //     few iterations of this loop (by rule (A) above).
+        // Therefore this deletion marker is obsolete and can be dropped.
+        drop = true;
+      }
+```
+
+还是用图来解释：
+
+![](https://pic.downk.cc/item/5f88ec471cd1bbb86b4e1cc7.png)
+
+如果现在比最旧的snapshot还旧的第一个key(id=2)是一个删除操作。那这个是不是也该丢弃？（后面的key也该丢弃）。所以有了这个判断：
+
+```c++
+ikey.type == kTypeDeletion && 
+     ikey.sequence <= compact->smallest_snapshot
+```
+
+那这个判断是在做什么工作?
+
+```c++
+compact->compaction->IsBaseLevelForKey(ikey.user_key)
+```
+
+IsBaseLevelForKey函数保证更低层没有这个user_key, 也就是这个key在这个level已经是全局最旧的了。可以思考一下如果没有这个判断，我们旧把delete操作的节点删除了，那更低层的key是不是又复活了？显然我们不能让这个key重新复活。所以加了这个key。
 
 #### 3. 写入不需要drop的kv
 
