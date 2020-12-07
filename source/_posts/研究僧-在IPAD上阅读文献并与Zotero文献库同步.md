@@ -55,7 +55,7 @@ document.getElementById("spkj").style.height=document.getElementById("spkj").scr
 - [zotero PC端](https://www.zotero.org/)
 - zotero Chrome插件（和本文同步无关，可以不安装，但是你都安装zotero软件了，不安装这个插件那简直是浪费）
 - ZotFile 插件 for zotero（ZotFile插件安装说明见下文）
-  **链接：https://pan.baidu.com/s/1aKMs56HpMjRC_IbgGCWRGg  提取码：tzo5 。请勿安装官方版本，因为官网目前在PC到IPAD的同步上还有点问题，这个是我自己对官网稍作修改的版本，不放心安装的可自行查看源码:https://github.com/ravenxrz/zotfile**
+  **https://pan.baidu.com/s/1pD1JB8SYiIDwygZUmmGkgA 提取码:c5h4。请勿安装官方版本，因为官网目前在PC到IPAD的同步上还有点问题，这个是我自己对官网稍作修改的版本，不放心安装的可自行查看源码:https://github.com/ravenxrz/zotfile**
 
 - [坚果云 PC端](https://www.jianguoyun.com)
 - [坚果云 网页端（不需要安装，但是之后配置同步环境需要使用到）](https://www.jianguoyun.com)
