@@ -97,7 +97,7 @@ deploy:
   repo: 
     github: git@github.com:ravenxrz/ravenxrz.github.io.git,run-page #关联github仓库
     # coding: git@git.dev.tencent.com:ravenxrz/ravenxrz.coding.me.git,master
-    gitee: git@gitee.com:ravenxrz/ravenxrz.git
+    # gitee: git@gitee.com:ravenxrz/ravenxrz.git
 
 # 自定义
 # hexo-neat
