@@ -5,7 +5,7 @@ categories: 编程语言
 tags:
 ---
 
-偶尔在看别人的代码时，会遇到 `extern “C” `的关键字，一般来说有两种场景：
+偶尔在看别人的代码时，会遇到 `extern "C" `关键字，一般来说有两种场景：
 
 case 1:
 
@@ -21,7 +21,7 @@ extern "C" {
 #endif
 ```
 
-或者说：
+case 2:
 
 ```c
 extern "C" {
@@ -60,7 +60,7 @@ int main()
  g++ -c -o maincpp.o main.cpp
 ```
 
-在编写main.c文件：
+再编写main.c文件：
 
 ```c
 void g(){
@@ -154,7 +154,7 @@ g++ -c -o main.o main.cpp
 g++ -o main main.o c.o
 ```
 
-则一定会报：
+则一定会报如下错误：
 
 ```c++
 main.o: In function `main':
@@ -162,9 +162,9 @@ main.cpp:(.text+0x5): undefined reference to `f()'
 collect2: error: ld returned 1 exit status
 ```
 
-为什么找不到f(), 通过前面的 readelf 过程，你应该知道为什么了，因为g++在链接过程中，寻找的不是 `f()`, 而是 `_Z1fv`
+为什么找不到`f()`, 通过前面的 readelf 过程，你应该知道为什么了，因为g++在链接过程中，寻找的不是 `f()`, 而是 `_Z1fv`
 
-那该怎么解决？这就是 `extern "C"`关键字的作用了，通过添加 `extern "C"`关键字，告诉g++编译器，包含在 `extern “C”`中的函数，不要使用 name mangling 机制，直接寻找函数本体名字即可。
+那该怎么解决？这就是 `extern "C"`关键字的作用了，通过添加 `extern "C"`关键字，告诉g++编译器，链接包含在 `extern “C”`中的函数时，不使用 name mangling 机制，直接寻找函数本体名字即可。
 
 还是上面的例子，我们对 c.h 做点小修改：
 
@@ -197,4 +197,6 @@ gcc -c -o c.o c.c
 g++ -c -o main.o main.cpp
 g++ -o main main.o c.o
 ```
+
+现在就OK了。
 
