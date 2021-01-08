@@ -227,5 +227,28 @@ set easymotion
 
 ### 2. 问题2：时间校准
 
-windows和ubuntu的时间尽量保证一致，否则可能出现`warning: modification time in the future`类似的警告。 如何同步请自行百度了，这不影响使用。
+windows和ubuntu的时间尽量保证一致，否则可能出现`warning: modification time in the future`类似的警告。 
 
+具体修复同步问题，请参考：https://windowsreport.com/error-occurred-windows-synchronizing-time-windows-com/
+
+> 修复这个花了好长好长时间。。。
+
+时间服务器：
+
+ntp.sjtu.edu.cn 上海交通大学网络中心NTP服务器地址
+s1a.time.edu.cn 北京邮电大学
+s1b.time.edu.cn 清华大学
+s1c.time.edu.cn 北京大学
+s1d.time.edu.cn 东南大学
+s1e.time.edu.cn 清华大学
+s2a.time.edu.cn 清华大学
+s2b.time.edu.cn 清华大学
+s2c.time.edu.cn 北京邮电大学
+s2d.time.edu.cn 西南地区网络中心
+s2e.time.edu.cn 西北地区网络中心
+s2f.time.edu.cn 东北地区网络中心
+s2g.time.edu.cn 华东南地区网络中心
+s2h.time.edu.cn 四川大学网络管理中心
+s2j.time.edu.cn 大连理工大学网络中心
+s2k.time.edu.cn CERNET桂林主节点
+s2m.time.edu.cn 北京大学
