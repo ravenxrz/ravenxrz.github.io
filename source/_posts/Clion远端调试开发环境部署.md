@@ -235,20 +235,127 @@ windows和ubuntu的时间尽量保证一致，否则可能出现`warning: modifi
 
 时间服务器：
 
-ntp.sjtu.edu.cn 上海交通大学网络中心NTP服务器地址
+ntp.sjtu.edu.cn 上海交通大学网络中心 NTP 服务器地址
+
 s1a.time.edu.cn 北京邮电大学
+
 s1b.time.edu.cn 清华大学
+
 s1c.time.edu.cn 北京大学
+
 s1d.time.edu.cn 东南大学
+
 s1e.time.edu.cn 清华大学
+
 s2a.time.edu.cn 清华大学
+
 s2b.time.edu.cn 清华大学
+
 s2c.time.edu.cn 北京邮电大学
+
 s2d.time.edu.cn 西南地区网络中心
+
 s2e.time.edu.cn 西北地区网络中心
+
 s2f.time.edu.cn 东北地区网络中心
+
 s2g.time.edu.cn 华东南地区网络中心
+
 s2h.time.edu.cn 四川大学网络管理中心
+
 s2j.time.edu.cn 大连理工大学网络中心
-s2k.time.edu.cn CERNET桂林主节点
+
+s2k.time.edu.cn CERNET 桂林主节点
+
 s2m.time.edu.cn 北京大学
+
+## 5. 2021-01-10 WSL配置
+
+前面介绍的是基于虚拟机的配置，但是对于性能较差的电脑来说，开虚拟机有点“重”了，而且虚拟机也不是随着windows的开机而启动的。 于是我们可以改用wsl。wsl的具体安装可以参考微软官方给的链接。
+
+我的wsl选择的是ubuntu20. 默认安装后是没有sshd的，所以需要手动安装一下：
+
+```shell
+sudo apt install openssh-server
+```
+
+安装后，需要进行一点配置，改用root用户：
+
+```shell
+ssh-keygen -t dsa -f /etc/ssh/ssh_host_dsa_key
+ssh-keygen -t rsa -f /etc/ssh/ssh_host_rsa_key
+chmod 600 /etc/ssh/ssh_host_dsa_key
+chmod 600 /etc/ssh/ssh_host_rsa_key
+```
+
+同时修改 `/etc/ssh/sshd_config`配置：
+
+```shell
+PasswordAuthentication yes
+```
+
+最后启动服务：
+
+```shell
+service ssh start
+```
+
+查看是否启动成功：
+
+```shell
+service ssh status
+```
+
+如果出现 `ssh is running`则启动成功。
+
+到现在为止，可以如前面所示使用clion进行连接开发，但是有一个问题，那就是windows开机后，wsl虽然也开机，不过ssh服务没有自动启动。这该如何修复。 
+
+在某个路径下，创建一个脚本：
+
+```shell
+vim /home/raven/.my_script/start_sshd.sh
+```
+
+填入：
+
+```shell
+#!/bin/sh
+mkdir /run/sshd
+service ssh start
+```
+
+修改执行 start_sshd.sh 时，不需要root权限：
+
+```shell
+ sudo visudo
+```
+
+ 在打开的文件的末尾添加
+
+```
+你的用户名 ALL = (root) NOPASSWD: /home/raven/.my_script/start_sshd.sh
+```
+
+ok，wsl这边配置完成，还需要在windows下配置。
+
+打开任务计划程序：
+
+![image-20210110191930371](https://cdn.jsdelivr.net/gh/ravenxrz/PicBed/img/image-20210110191930371.png)
+
+创建基本任务：
+
+名称：start sshd service of wsl. 
+
+描述：无。
+
+选择当用户登陆时->启动程序：
+
+程序或脚本处填入：C:\Windows\System32\bash.exe。
+
+参数填入：-c "sudo /home/raven/.my_script/start_sshd.sh"
+
+![image-20210110192131898](https://cdn.jsdelivr.net/gh/ravenxrz/PicBed/img/image-20210110192131898.png)
+
+下一步，完成即可。
+
+下一次系统开机，wsl就会自动启动sshd服务，打开clion时，也就会自动连接。
