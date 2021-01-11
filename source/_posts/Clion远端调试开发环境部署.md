@@ -324,6 +324,12 @@ mkdir /run/sshd
 service ssh start
 ```
 
+添加可执行权限：
+
+```
+chmod +x /home/raven/.my_script/start_sshd.sh
+```
+
 修改执行 start_sshd.sh 时，不需要root权限：
 
 ```shell
