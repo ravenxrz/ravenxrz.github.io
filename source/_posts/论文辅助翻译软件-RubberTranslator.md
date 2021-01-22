@@ -109,7 +109,11 @@ RubberTranslation也支持历史记录，默认支持10条内的记录，可在�
 
 ![](https://cdn.jsdelivr.net/gh/ravenxrz/PicBed/img/image-20200515211515270.png)
 
-### 1.12 翻译接力
+### 1.12 对比模式
+
+![123](https://cdn.jsdelivr.net/gh/ravenxrz/PicBed/img/123.gif)
+
+### 1.13 翻译接力
 
 一直使用同一个翻译引擎时，可能会出现翻译失败的情况，在这种情况下，RubberTranslato会自动选择下一个翻译引擎进行翻译。
 
@@ -139,20 +143,52 @@ RubberTranslation也支持历史记录，默认支持10条内的记录，可在�
 
 **支持java正则表达式。**
 
-### 3. 历史记录数量设置
+### 3. 翻译文本批量导入
 
-可以设置历史记录的数量，历史记录并不会持久化到硬盘上，每次启动程序都会清空，所有历史记录都会保留在内存中，所以不建议将历史记录数量设置过大。
+如果你有大量词组需要导入，一条条输入是非常慢的，此时可以使用“批量导入”功能，如下：
 
-### 4. 自定义样式
+<img src="https://cdn.jsdelivr.net/gh/ravenxrz/PicBed/img/image-20210122095723696.png" alt="image-20210122095723696" style="zoom:67%;" />
+
+选中一个txt文件，这个txt文件存放的就是你的词组文件，具体格式为：
+
+```
+译文：替换为
+```
+
+每行一个词组。
+
+如：
+
+<img src="https://cdn.jsdelivr.net/gh/ravenxrz/PicBed/img/image-20210122095855003.png" alt="image-20210122095855003" style="zoom:50%;" />
+
+代表两个词组，将缓存线替换为cacheline, 将商店替换为store。
+
+另外，如果重复选择一个txt文件，添加可能会看到重复行，如：
+
+<img src="https://img.imgdb.cn/item/600a32133ffa7d37b3e4c0c6.png" alt="image-20210122100023609" style="zoom: 67%;" />
+
+**RubberTranslator只会选择其中一组保存。**
+
+### 4. 历史记录数量设置
+
+可以设置历史记录的数量，但注意历史记录在程序关闭后就会消失，每次重启应用都会重新记录历史。
+
+### 5. 自定义样式
 
 RubberTranslator支持自定义css样式。 如，设置护眼模式，更改字体大小的css：
 
 ```css
 #main {
+    /* 主模式 */
     -fx-font-size: 10pt;
 }
 
 #focus{
+    /* 专注模式 */
+}
+
+#compare{
+    /* 对比模式 */
 }
 
 .text-area {
@@ -174,7 +210,7 @@ RubberTranslator支持自定义css样式。 如，设置护眼模式，更改字
 
 https://docs.oracle.com/javafx/2/api/javafx/scene/doc-files/cssref.html
 
-### 5. OCR 百度和有道APi设置
+### 6. OCR 百度和有道APi设置
 
 [ocr,百度，有道配置](https://github.com/ravenxrz/RubberTranslator/wiki/OCR%EF%BC%8C%E7%99%BE%E5%BA%A6%E5%92%8C%E6%9C%89%E9%81%93%E9%85%8D%E7%BD%AE)
 
