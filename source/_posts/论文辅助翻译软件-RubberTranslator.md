@@ -212,7 +212,7 @@ https://docs.oracle.com/javafx/2/api/javafx/scene/doc-files/cssref.html
 
 ### 6. OCR 百度和有道APi设置
 
-[ocr,百度，有道配置](https://github.com/ravenxrz/RubberTranslator/wiki/OCR%EF%BC%8C%E7%99%BE%E5%BA%A6%E5%92%8C%E6%9C%89%E9%81%93%E9%85%8D%E7%BD%AE)
+[ocr,百度，有道配置](https://www.ravenxrz.ink/archives/2d8a0c3e.html)
 
 ## 3. 常见问题
 
@@ -232,7 +232,7 @@ https://docs.oracle.com/javafx/2/api/javafx/scene/doc-files/cssref.html
 
 ### 4. OCR、百度、有道翻译引擎无效？
 
-这三个功能需要用户自行配置App key & secret key。请参考：[ocr,百度，有道配置](https://github.com/ravenxrz/RubberTranslator/wiki/OCR%EF%BC%8C%E7%99%BE%E5%BA%A6%E5%92%8C%E6%9C%89%E9%81%93%E9%85%8D%E7%BD%AE)
+这三个功能需要用户自行配置App key & secret key。请参考：[ocr,百度，有道配置](https://www.ravenxrz.ink/archives/2d8a0c3e.html)
 
 ## 开源许可
 

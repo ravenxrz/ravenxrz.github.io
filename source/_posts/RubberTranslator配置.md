@@ -57,6 +57,14 @@ date: 2020-06-04 09:23:16
 
 ![image-20200516125159274](https://pic.downk.cc/item/5ed8489bc2a9a83be5978920.png)
 
+![](https://cdn.jsdelivr.net/gh/ravenxrz/PicBed/img/4.png)
+
+![](https://cdn.jsdelivr.net/gh/ravenxrz/PicBed/img/5.png)
+
+![](https://cdn.jsdelivr.net/gh/ravenxrz/PicBed/img/6.png)
+
+![](https://cdn.jsdelivr.net/gh/ravenxrz/PicBed/img/7.png)
+
 ![image-20200516125239579](https://pic.downk.cc/item/5ed848a3c2a9a83be597977e.png)
 
 开通完后，进入开发者信息，就会有APP ID 和密钥。复制两项到RubberTranslator中即可。
