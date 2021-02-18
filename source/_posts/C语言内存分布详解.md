@@ -90,7 +90,7 @@ i> 也就是说str1和str2指向的地址是完全相同的。而str3的首地�
 
 具体分布可见下图：
 
-![](https://ae01.alicdn.com/kf/Ha6fdbf70cbe14d68b95f49111655d7a44.jpg)
+![](https://cdn.jsdelivr.net/gh/ravenxrz/PicBed/img/Ha6fdbf70cbe14d68b95f49111655d7a44.jpg)
 
 ### 2.1 文本段
 

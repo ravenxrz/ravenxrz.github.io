@@ -117,14 +117,19 @@ ok，已经打包成功，试试安装吧（提示，又会有想不到的效果
 相信你通过双击安装，已经发现了问题，那就是安装后没有任何效果，没有windows-menu，没有windows快捷键，程序也没有运行启动。但是**控制面板已经找到安装程序了**。我一度以为是自己电脑环境的问题，最后发现在windows平台上还需加上几条命令才行：
 
 ```
-jpackage --name Non-modular-installer --input lib --main-class com.raven.App --main-jar Non-modular-packaging-demo.jar --vendor raven --win-dir-chooser --win-shortcut --win-menu-group "Non-modular-packaging" --win-menu
+jpackage --name Non-modular-installer --input lib --main-class com.raven.App --main-jar Non-modular-packaging-demo.jar --vendor raven --win-dir-chooser --win-shortcut --win-menu --win-menu-group "Non-modular-packaging" 
 ```
 
 解释：
 
 - --win-dir-chooser, 安装时添加“选择安装路路径”
+
 - --win-shortcut,安装后自动在桌面添加快捷键
+
 - --win-menu-group,启动该应用程序所在的菜单组(实测无效，但是必须有这条命令，没有--win-menu会报311错误)
+
+  **update 2021-2-18： –win-menu-group应该放在–win-menu之后，否则无效。**
+
 - --win-menu，添加到系统菜单中
 
 ![image-20200506091723697](https://cdn.jsdelivr.net/gh/ravenxrz/PicBed/img/image-20200506091723697.png)
@@ -234,7 +239,7 @@ jpackage --name "Modular-installer" --module-path classes;C:\Users\Raven\.m2\rep
 现在还会遇到的问题，在”非模块程序打包“下都已经作了说明，现在补全所有命令：
 
 ```shell
-jpackage --name "Modular-installer" --module-path classes;C:\Users\Raven\.m2\repository\org\openjfx\javafx-controls\14\javafx-controls-14-win.jar;C:\Users\Raven\.m2\repository\org\openjfx\javafx-base\14\javafx-base-14-win.jar;C:\Users\Raven\.m2\repository\org\openjfx\javafx-graphics\14\javafx-graphics-14-win.jar -m app/com.raven.App --vendor raven --win-dir-chooser --win-shortcut --win-menu-group "Modular-packaging" --win-menu
+jpackage --name "Modular-installer" --module-path classes;C:\Users\Raven\.m2\repository\org\openjfx\javafx-controls\14\javafx-controls-14-win.jar;C:\Users\Raven\.m2\repository\org\openjfx\javafx-base\14\javafx-base-14-win.jar;C:\Users\Raven\.m2\repository\org\openjfx\javafx-graphics\14\javafx-graphics-14-win.jar -m app/com.raven.App --vendor raven --win-dir-chooser --win-shortcut --win-menu --win-menu-group "Modular-packaging" 
 ```
 
 ### 2.2 通过jar包打包
@@ -250,7 +255,7 @@ jpackage --name "Modular-installer" --module-path classes;C:\Users\Raven\.m2\rep
 重新执行命令：
 
 ```shell
-jpackage --name "Modular-installer" --module-path Modular-packaging-demo-1.0-SNAPSHOT.jar;C:\Users\Raven\.m2\repository\org\openjfx\javafx-controls\14\javafx-controls-14-win.jar;C:\Users\Raven\.m2\repository\org\openjfx\javafx-base\14\javafx-base-14-win.jar;C:\Users\Raven\.m2\repository\org\openjfx\javafx-graphics\14\javafx-graphics-14-win.jar -m app/com.raven.App --vendor raven --win-dir-chooser --win-shortcut --win-menu-group "Modular-packaging" --win-menu
+jpackage --name "Modular-installer" --module-path Modular-packaging-demo-1.0-SNAPSHOT.jar;C:\Users\Raven\.m2\repository\org\openjfx\javafx-controls\14\javafx-controls-14-win.jar;C:\Users\Raven\.m2\repository\org\openjfx\javafx-base\14\javafx-base-14-win.jar;C:\Users\Raven\.m2\repository\org\openjfx\javafx-graphics\14\javafx-graphics-14-win.jar -m app/com.raven.App --vendor raven --win-dir-chooser --win-shortcut --win-menu --win-menu-group "Modular-packaging" 
 ```
 
 ### 2.3 打包成镜像（便携版）
