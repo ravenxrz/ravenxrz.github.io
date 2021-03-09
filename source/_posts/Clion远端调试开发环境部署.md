@@ -308,60 +308,7 @@ service ssh status
 
 如果出现 `ssh is running`则启动成功。
 
-到现在为止，可以如前面所示使用clion进行连接开发，但是有一个问题，那就是windows开机后，wsl虽然也开机，不过ssh服务没有自动启动。这该如何修复。 
+然后打开clion，按照如下图配置“
 
-在某个路径下，创建一个脚本：
 
-```shell
-vim /home/raven/.my_script/start_sshd.sh
-```
-
-填入：
-
-```shell
-#!/bin/sh
-mkdir /run/sshd
-service ssh start
-```
-
-添加可执行权限：
-
-```
-chmod +x /home/raven/.my_script/start_sshd.sh
-```
-
-修改执行 start_sshd.sh 时，不需要root权限：
-
-```shell
- sudo visudo
-```
-
- 在打开的文件的末尾添加
-
-```
-你的用户名 ALL = (root) NOPASSWD: /home/raven/.my_script/start_sshd.sh
-```
-
-ok，wsl这边配置完成，还需要在windows下配置。
-
-打开任务计划程序：
-
-![image-20210110191930371](https://cdn.jsdelivr.net/gh/ravenxrz/PicBed/img/image-20210110191930371.png)
-
-创建基本任务：
-
-名称：start sshd service of wsl. 
-
-描述：无。
-
-选择当用户登陆时->启动程序：
-
-程序或脚本处填入：C:\Windows\System32\bash.exe。
-
-参数填入：-c "sudo /home/raven/.my_script/start_sshd.sh"
-
-![image-20210110192131898](https://cdn.jsdelivr.net/gh/ravenxrz/PicBed/img/image-20210110192131898.png)
-
-下一步，完成即可。
-
-下一次系统开机，wsl就会自动启动sshd服务，打开clion时，也就会自动连接。
+![image-20210309221552707](https://cdn.jsdelivr.net/gh/ravenxrz/PicBed/img/image-20210309221552707.png)
