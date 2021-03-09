@@ -12,7 +12,7 @@ date: 2020-06-06 20:28:36
 
 ```shell
 # 备份源source.list
-sudo cp /etc/apt/source.list /etc/apt/source.list.bak
+sudo cp /etc/apt/sources.list /etc/apt/sources.list.bak
 # sed批量替换源地址
 sudo sed -i 's/^\(deb\|deb-src\) \([^ ]*\) \(.*\)/\1 http:\/\/mirrors.aliyun.com\/ubuntu \3/' /etc/apt/sources.list
 # update 生效
