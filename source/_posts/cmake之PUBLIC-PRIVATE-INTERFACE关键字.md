@@ -120,11 +120,11 @@ main.cpp是不会报错，但是hello.cpp会报错。因为自己吃的篮子中
 
 理解了 `target_include_directories`中的 `PUBLIC，PRIVATE, INTERFACE`， 再来理解 `target_link_libraries`就很简单了。只用记住有两个篮子，一个装给自己用，一个装给别人用即可。
 
-依然以一个例子来说明，目录结果如下:
+依然以一个例子来说明，目录结构如下:
 
 ![image-20210330210016843](https://cdn.jsdelivr.net/gh/ravenxrz/PicBed/img/image-20210330210016843.png)
 
-各文件内容如下：
+各文件内容：
 
 ```c++
 // hello.h
