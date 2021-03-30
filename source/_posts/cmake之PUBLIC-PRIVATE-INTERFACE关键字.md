@@ -118,7 +118,7 @@ main.cpp是不会报错，但是hello.cpp会报错。因为自己吃的篮子中
 
 > 另外，细心的读者可能会发现，在CMakeLists.txt的最后一句`target_link_libraries(main hello)`没有指定关键字，这里补充一下`target_link_libraries`默认为``PUBLIC`, 为了避免和`target_include_directories`混淆，所以没写。
 
-理解了 `target_include_directories`中的``PUBLIC，PRIVATE, INTERFACE`，再来理解 `target_link_libraries`就很简单了。只用记住有两个篮子，一个装给自己用，一个装给别人用即可。
+理解了 `target_include_directories`中的 `PUBLIC，PRIVATE, INTERFACE`， 再来理解 `target_link_libraries`就很简单了。只用记住有两个篮子，一个装给自己用，一个装给别人用即可。
 
 依然以一个例子来说明，目录结果如下:
 
