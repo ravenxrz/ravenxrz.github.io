@@ -5,6 +5,9 @@ abbrlink: b2082466
 date: 2020-10-12 17:00:00
 tags:
 ---
+10.leveldb源码阅读记录-SSTable
+
+[toc]
 
 上文中，我们介绍了Version和Manifest，这篇文章将介绍leveldb的核心--SStable。
 
@@ -68,7 +71,7 @@ H
 
 即：
 
-![img](https://bean-li.github.io/assets/LevelDB/sstable_format.png)
+![img](https://cdn.jsdelivr.net/gh/ravenxrz/PicBed/img/sstable_format.png)
 
 首先SSTtable文件不是固定长度的，从上图中也可以看出，文件的内容要能够自解释，就需要有在固定位置有一定数据结构，顺藤摸瓜，理顺文件的内容。
 
@@ -78,7 +81,7 @@ H
 
 Footer的长度是固定的，因此对于SSTable文件的最后 sizeof(Footer)字节就是存放的Footer信息。 Footer固定48B，如下图所示：
 
-![img](https://bean-li.github.io/assets/LevelDB/footer-format.png)
+![img](https://cdn.jsdelivr.net/gh/ravenxrz/PicBed/img/footer-format.png)
 
 ```c++
 metaindex_handle: char[p];      // Block handle for metaindex
@@ -306,7 +309,7 @@ void TableBuilder::WriteBlock(BlockBuilder* block, BlockHandle* handle) {
 
 data N bytes <= 4k(图少写个=)
 
-<img src="../../../图库/datablock格式.png" style="zoom: 33%;" />
+![datablock格式](https://cdn.jsdelivr.net/gh/ravenxrz/PicBed/img/datablock格式1.png)
 
 最后，调用==TableBuilder::WriteRawBlock==
 
@@ -432,7 +435,7 @@ void BlockBuilder::Add(const Slice& key, const Slice& value) {
 
 从上面的代码中，我们可以知道datablock里面一个key value pair的数据格式为：
 
-![](https://pic.downk.cc/item/5f8444041cd1bbb86b061575.png)
+![137960002a18f2362555e](https://cdn.jsdelivr.net/gh/ravenxrz/PicBed/img/137960002a18f2362555e.jpg)
 
 ## 4. Index Block
 
@@ -1005,21 +1008,13 @@ void FilterBlockBuilder::StartBlock(uint64_t block_offset) {
  uint64_t filter_index = (block_offset / kFilterBase);	// 计算当前offset所在位置的数据的filter index，入 block_offset=3k,则filter_indx=1
 ```
 
-```
-　filter_offsets_.size() 返回的是当前整个sstable的filter 个数
-```
-
-所以：
-
-```c++
-while (filter_index > filter_offsets_.size()) {
-    GenerateFilter();
-  }
-```
+实际上并不是简单这样理解，看下面的分析。
 
 ##### 1. how
 
-假设（注意我说的是假设）GenerateFilter一次处理2kb数据，filter_offsets\_.size() 会+1，则上面的代码即将data按照2kb分一个filter来处理。但是实际上==GenerateFilter==的处理方式并不是按2kbf分块处理为，但可确定是，GenerateFilter函数内部，每进行一轮计算，filter_offsets_.size()会+1.
+假设（注意我说的是假设）GenerateFilter一次处理2kb数据，filter_offsets\_.size() 会+1，则上面的代码即将data按照2kb分一个filter来处理。但是实际上==GenerateFilter==的处理方式并不是按2kbf分块处理的。
+
+**而是第一块Filter包含了自上次 StartBLock 以来，后续的所有的 AddKey 调用所有的 keys的 Filter结果。后续的所有块的大小都是0。（这句话非常绕，需要好好理解，后续以源码和例子来解释）。**
 
 下面看看GenerateFilter的源码：
 
@@ -1029,11 +1024,13 @@ void FilterBlockBuilder::GenerateFilter() {
   const size_t num_keys = start_.size();
   if (num_keys == 0) {
     // Fast path if there are no keys for this filter
+    // 后续所有的filter的大小都是0， 只用在filter_offset_中记录相同的位置。
     filter_offsets_.push_back(result_.size());
     return;
   }
 
-    // 通过start_和key_将 所有添加的key加入到tmp_keys_中。
+  // 第一个filter块，使用所有的keys_
+  // 通过start_和key_将 所有添加的key加入到tmp_keys_中。
   // Make list of keys from flattened key structure
   start_.push_back(keys_.size());  // Simplify length computation
   tmp_keys_.resize(num_keys);
@@ -1070,7 +1067,7 @@ void FilterBlockBuilder::GenerateFilter() {
     // 根据前面说所，可推得start_.size()为当前Add进来的key的个数
   const size_t num_keys = start_.size();
   if (num_keys == 0) {
-     // 只增加filter_offsets_的size，没有生成新的filter
+     // 后续所有的filter的大小都是0， 只用在filter_offset_中记录相同的位置。
     // Fast path if there are no keys for this filter
     filter_offsets_.push_back(result_.size());
     return;
@@ -1105,7 +1102,7 @@ void FilterBlockBuilder::GenerateFilter() {
   }
 ```
 
-<img src="https://pic.downk.cc/item/5f7184db160a154a670fe620.png" style="zoom: 33%;" />
+<img src="https://cdn.jsdelivr.net/gh/ravenxrz/PicBed/img/1385d00007c1895116295.png" style="zoom:33%;" />
 
 
 
@@ -1170,7 +1167,7 @@ void TableBuilder::Add(const Slice& key, const Slice& value) {
 
 #### 5. 生成filter的调用流程图
 
-![leveldb源码阅读-copy-第 3 页](https://cdn.jsdelivr.net/gh/ravenxrz/PicBed/img/leveldb源码阅读-copy-第 3 页.png)
+![21314512](https://cdn.jsdelivr.net/gh/ravenxrz/PicBed/img/21314512.png)
 
 #### 6. KeyMayMatch
 
