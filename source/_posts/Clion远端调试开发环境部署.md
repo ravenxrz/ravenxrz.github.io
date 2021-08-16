@@ -1,9 +1,11 @@
+```
 ---
 title: Clion远端调试开发环境部署
 date: 2020-12-23 11:24:56
 categories: 杂文
 tags:
 ---
+```
 
 从来没用过JetBrains家的Remote Development, 今天体验了一波，效果非常好。这里说一下如何配置，以及一些问题的解决方式。
 
