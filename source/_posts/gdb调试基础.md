@@ -1,5 +1,5 @@
 ---
-title: gdb调试基础
+title: gdb调试详解
 categories: Linux
 tags: gdb
 abbrlink: 37784c45
@@ -425,15 +425,106 @@ ok, gdb的简单使用就到这里了.
 
 好吧，这个我并不知道如何用gdb实现， 改用 objdump -d 命令即可实现。
 
-## 3. 额外推荐
+## 3. 输出log
+
+如何你想要导出gdb的输出， 那么可以采用log功能。
+
+1. set logging [on/off] 设置log开关， 默认导出的log文件名为 gdb.txt
+2. set logging file file_name. 改变log文件名
+3. set logging overwrite [on/off] 默认gdb采用append方式，使用overwrite可以每次覆盖写。
+4. show logging 显示当前logging设置
+
+## 4. 多线程调试
+
+多线程的调试一直都是难点，好在gdb对多线程的调试也有良好的支持。核心命令为 `thread`
+
+给个最简单的测试程序：
+
+```c++
+/**
+ * @file gdb 多线程调试
+ */
+#include <pthread.h>
+#include <unistd.h>
+
+long long a = 0;
+long long b = 0;
+
+void* func1(void *arg)
+{
+	while (1)
+	{
+		a++;
+		sleep(1);
+	}
+}
+
+void* func2(void *arg)
+{
+	while (1)
+	{
+		b++;
+		sleep(1);
+	}
+}
+
+int main()
+{
+	pthread_t t1, t2;
+	pthread_create(&t1, NULL, func1, NULL);
+	pthread_create(&t2, NULL, func2, NULL);
+	pthread_join(t1, NULL);
+	pthread_join(t2, NULL);
+	return 0;
+}
+```
+
+现在编译后并采用gdb加载后。可以使用以下一些命令：
+
+采用 `info thread` 查看当前有哪些线程：
+
+![image-20210821210347301](https://pic.imgdb.cn/item/6120fa244907e2d39c160aae.png)
+
+
+
+可以看到现在启动了3个线程，线程的id分别1 2 3.  另外注意有个叫 LWP的东西。 LWP全称为 Light weight process ， 也就是线程的别称。 Frame下面描述的时对应线程目前所处的函数栈。线程id前的\*代表的时当前正在debug的线程。 **注意当一个线程停止下来的时候，所有线程也会停止。不过当我们采用诸如 `next, finish, continue`指令调试一个线程时，其余线程也会同时运行。**
+
+采用 `thread [id]` 切换线程。 如 `thread 2`，将会切换到线程2. 
+
+通过`thread name xxx`为当前线程设置名字。 
+
+通过 `thread find xxx` 找到某个线程，支持正则表达式。
+
+通过 `thread apply [ID][all]  COMMAND` 来为某个或者所有线程，执行某个命令。如，针对上述程序，可以采用 `thread apply all bt`查看所有线程的调用栈。
+
+![](https://pic.imgdb.cn/item/6120fc004907e2d39c19dcf7.jpg)
+
+或者针对某个线程watch. `thread apply 2 watch a > 10` 
+
+或者break: `break xxx thread 2` 来设置断点。
+
+最后， 有时候想要停止其他线程，只对当前线程进行调试， 可以采用 `set shcduler-locking on` 更多的参数，可以看下面的解释。
+
+> ```
+> set scheduler-locking mode
+> ```
+>
+> Set the scheduler locking mode. If it is `off`, then there is no locking and any thread may run at any time. If `on`, then only the current thread may run when the inferior is resumed. The `step` mode optimizes for single-stepping. It stops other threads from "seizing the prompt" by preempting the current thread while you are stepping. Other threads will only rarely (or never) get a chance to run when you step. They are more likely to run when you `next' over a function call, and they are completely free to run when you use commands like `continue', `until', or `finish'. However, unless another thread hits a breakpoint during its timeslice, they will never steal the GDB prompt away from the thread that you are debugging.
+>
+> ```
+> show scheduler-locking
+> ```
+>
+> Display the current scheduler locking mode.
+
+## 5. 额外推荐
 
 cgdb: gdb的包装， 默认打开了源代码试图，而且采用了vim模式查看源代码，熟悉vim和gdb的可以试试。
 
 gdbgui: 这个还不错, 采用browser进行调试,比只使用gdb还是好多了.
 
-## 4. 参考
+## 6. 参考
 
 - [gdb command in Linux with examples - GeeksforGeeks](https://www.geeksforgeeks.org/gdb-command-in-linux-with-examples/)
 - [gdb中x的用法_lxy的专栏-CSDN博客_gdb x](https://blog.csdn.net/baidu_24256693/article/details/47298513)
-- [GDB常用命令与技巧（超好用的图形化gdbgui）_Likes的博客-CSDN博客_gdbgui](https://blog.csdn.net/songchuwang1868/article/details/86132281)
-
+- [GDB常用命令与技巧（超好用的图形化gdbgui）_Likes的博客-CSDN博客_gdbgui](https://blog.csdn.net/songchuwang1868/article/details/86132281)---
