@@ -2,8 +2,8 @@
 title: CMU-15445-proj1
 abbrlink: 8983c10b
 date: 2021-10-06 18:44:23
-categories:
-tags:CMU15445
+categories: CMU15445
+tags:
 ---
 
 ## 1. 要求
@@ -80,11 +80,11 @@ LRUReplacer相对简单，只要是刷过leetcode的[LRU缓存机制](https://le
 
 ok, 至此所有关键的数据结构都已经理清，剩下的就是数据处理逻辑了，以一张图来看：
 
-![](C:\Users\Raven\Desktop\结构图.svg)
+
 
 frame状态图：
 
-![frame状态图-bufferpool-状态机 (1)](https://cdn.jsdelivr.net/gh/ravenxrz/PicBed/img/frame状态图-bufferpool-状态机 (1).svg)
+
 
 1. free -> Pin: 从free_list中获取一个frame
 
