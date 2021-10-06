@@ -80,11 +80,11 @@ LRUReplacer相对简单，只要是刷过leetcode的[LRU缓存机制](https://le
 
 ok, 至此所有关键的数据结构都已经理清，剩下的就是数据处理逻辑了，以一张图来看：
 
-
+![结构图](https://cdn.jsdelivr.net/gh/ravenxrz/PicBed/img/结构图-1.svg)
 
 frame状态图：
 
-
+![frame状态图-bufferpool-状态机](https://cdn.jsdelivr.net/gh/ravenxrz/PicBed/img/frame状态图-bufferpool-状态机-1.svg)
 
 1. free -> Pin: 从free_list中获取一个frame
 
