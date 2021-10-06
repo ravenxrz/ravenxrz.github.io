@@ -1,8 +1,9 @@
 ---
 title: cmake之PUBLIC|PRIVATE|INTERFACE关键字
-date: 2021-03-30 20:22:19
 categories: 编程语言
 tags: cmake
+abbrlink: e40194d1
+date: 2021-03-30 20:22:19
 ---
 
 近期重学CMake，为后续的开发做点准备。遇到`PUBLIC|PRIVATE和INTERFACE`三个关键字不是很理解，搜索了一些资料，最后发现这篇文章说得比较浅显易懂。
