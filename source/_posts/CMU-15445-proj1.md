@@ -51,7 +51,7 @@ make buffer_pool_manager_test -j
 
 ## 2. 题解（不含任何代码）
 
-这里遵守CMU5445y要求，不会公开任何代码。只记录解题思路和坑点。
+这里遵守课程要求，不会公开任何代码。只记录解题思路和坑点。
 
 ### 1. LRUReplacer
 
@@ -95,7 +95,7 @@ frame状态图：
 
 核心部分至此结束，**下面说明一些坑点**：
 
-1. NewPage时，不要从disk中ReadData()。 NewPage的作用仅仅是让disk分配一个空白page，得到一个page\_id, 将这个page\_id返回给上游。 如果此时调用ReadData(), disk上的文件对应page id处的page实际上还未分配，此时会报 `I/O error reading past end of file`错误。
+1. NewPage时，不要从disk中ReadData()。 NewPage的作用仅仅是让disk分配一个page\_id, 将这个page\_id返回给上游。 如果此时调用ReadData(), disk上的文件对应page id处的page实际上还未分配，此时会报 `I/O error reading past end of file`错误。
 
 2. dirty位的处理：在UnpinPage的参数中，可以设置对应page id的dirty flag。 然而并不是简单的调用 `page->is_drity_ = dirty`. 正确的应该是 `page->is_drity_ |= dirty`.  
 
