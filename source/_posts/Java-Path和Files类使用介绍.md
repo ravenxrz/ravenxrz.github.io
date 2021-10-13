@@ -1,13 +1,3 @@
----
-title: Java Path和Files类使用介绍
-abbrlink: c932cb39
-date: 2020-03-05 10:53:17
-tags: 
-    - java
-    - Path和Files
-categories: 编程语言
----
-
 文本转载自: [Java NIO之拥抱Path和Files](https://segmentfault.com/a/1190000014901038)
 
 加上整理了些 《Java核心技术卷2 -- 高级特性》第2章.
