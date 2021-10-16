@@ -1,6 +1,6 @@
 ---
 title: 这些年，我所用过的精品Chrome插件（插件干货篇）
-categories: 知识理论
+categories: 杂文
 toc: true
 abbrlink: 5cb17766
 date: 2018-10-25 13:59:26

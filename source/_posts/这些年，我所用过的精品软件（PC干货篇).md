@@ -1,6 +1,6 @@
 ---
 title: 这些年，我所用过的精品软件（PC干货篇)
-categories: 知识理论
+categories: 杂文
 toc: true
 abbrlink: a014e5e9
 date: 2018-10-25 13:59:29
