@@ -9,27 +9,23 @@ tags:
 
 从这个proj开始，难度上升了很多个档次，做起来明显吃力。
 
-proj2要求实现一个线程安全的B+  tree。收货满满：
-
-1. 以前写的数据结构都是在内存上跑的，从未写过能够写到外存数据结构。
-2. 没写过B+树，最多写到了B树。
-3. 线程安全
+proj2要求实现一个线程安全的B+  tree。收货满满。
 
 <!--more-->
 
 ## 1. 要求
 
-proj2的checkpoint1要求实现B+ tree的节点class，包括internal page和leaf page，以及它们的公共父类parent page。之后再次基础上实现B+ tree的insert和point search。
+proj2的checkpoint1要求实现B+ tree的节点class，包括internal page和leaf page，以及它们的公共父类parent page。之后在此基础上实现B+ tree的insert和point search。
 
 点这里查看[详细要求](https://15445.courses.cs.cmu.edu/fall2020/project2/)。
 
 ## 2. 题解
 
-虽然我之前说过所有projects都不会透漏代码，但是结合我的做题体验来说，我是参考了不少博文和代码才做出来的。所以本文除了记录坑点外，也会贴部分关键的代码或伪代码。对于才开始做的朋友来说，checkpoint1肯定是无从下手的，如果按照课程的assignment从上向下写的话，首先是要完成parent page相关的两个文件，这两个文件相对简单，因为都是一些get/set操作。下一个要做的是internal page，里面贴了很多函数以及相应的注释。但是光看到这些是没法做出来的。比如下面这个函数：
+虽然我之前说过所有projects都不会透漏代码，但是结合我的做题体验来说，我是参考了不少博文和代码才做出来的。所以本文除了记录坑点外，也会贴部分关键的代码或伪代码。对于才开始做的朋友来说，`checkpoint1`肯定是无从下手的，因为他只是提供了一些函数和注释，不明白具体该做什么。比如下面这个函数：
 
 ![image-20211020163441531](https://cdn.jsdelivr.net/gh/ravenxrz/PicBed/img/image-20211020163441531.png)
 
-如果没有做完整个proj，起手就写它的话，我是不知道如何下手的。建议阅读下整个public的函数作用，leaf page同理，然后从b_plus_tree.h/cpp入手。
+如果没有做完整个proj，起手就写它的话，我是不知道如何下手的。建议阅读下整个`public`的函数作用，`leaf page`同理，然后从`b_plus_tree.h/cpp`入手。
 
 ok， 建议说完，额外推荐一些学习资料，主要是B+树相关：
 
@@ -85,17 +81,17 @@ bool BPlusTreePage::IsRootPage() const { return this->parent_page_id_ == INVALID
 
 ### 2.2 B+ tree internal Page
 
-internal page作用为route，value的个数=max\_size, key的个数=max\_size - 1。 所以key的索引应该从1号位置开始。主要说一下我认为在Checkpoint1中需要实现的重点函数：
+internal page作用为route，value的个数=max\_size, key的个数=max\_size - 1。 所以`key`的索引应该从1号位置开始。主要说一下我认为在`Checkpoint1`中需要实现的重点函数：
 
 1. `ValueIndex`表示在`array`数组中找到 `array[i].second == 传入的value`的 `i`， 由于value不是有序的，所以目前只能线性扫描
 
 2. `Lookup` 表示在`array`数组中找到最大的一个K，这个K满足足`K<=key`，然后返回这个K的对应V。 采用 **二分查找**即可。 
 
-3. `PopulateNewRoot`表示`this`指针所代表的的节点为root节点，且目前`size=0`, 这个函数要做的工作是设置root节点的左孩子和右孩子分别为`old_value`和`new_value`
+3. `PopulateNewRoot`表示`this`指针所代表的的节点为`root`节点，且目前`size=0`, 这个函数要做的工作是设置`root`节点的左孩子和右孩子分别为`old_value`和`new_value`
 
 4. `InsertNodeAfter`这个没什么好说的，在`old_value`后面插入`new_key`和`new_value`
 
-5. `MoveHalfTo`,  这个函数将在后续实现B+ tree的插入分裂时使用，初看这个函数不知道如何移动，是移动this node的前半段数据，还是移动this node的后半段数据？ 所以当时我是参考了别人代码，最后知道了是将`this node`的后半段数据移动到`recipient`中。参考代码如下：
+5. `MoveHalfTo`,  这个函数将在后续实现B+ tree的插入分裂时使用，初看这个函数不知道如何移动，是移动`this node`的前半段数据，还是移动`this node`的后半段数据？ 所以当时我是参考了别人代码，最后知道了是将`this node`的后半段数据移动到`recipient`中。参考代码如下：
 
    ```c++
    /*
@@ -118,7 +114,7 @@ internal page作用为route，value的个数=max\_size, key的个数=max\_size -
    }
    ```
 
-6. CopyXXXFrom相关函数，这几个函数主要从拷贝一份数据到this node。 只不过要注意的是，拷贝key value的同时，还需要更改value所代表的的节点的`parent_page_id为this->page_id`。 如`CopyLastFrom`函数的参考代码实现：
+6. CopyXXXFrom相关函数，这几个函数主要从拷贝一份数据到`this node`。 只不过要注意的是，拷贝key value的同时，还需要更改value所代表的的节点的`parent_page_id为this->page_id`。 如`CopyLastFrom`函数的参考代码实现：
 
    ```c++
    /* Append an entry at the end.
@@ -154,7 +150,7 @@ B+ tree的点查询还是相对简单的，贴一下书中提到的伪代码：
 
 <img src="https://cdn.jsdelivr.net/gh/ravenxrz/PicBed/img/image-20211020171734980.png" alt="image-20211020171734980" style="zoom:50%;" />
 
-为了实现Search，实现 `FindLeafPage` 函数后，`GetValue`函数就非常简单了。
+为了实现`Search（GetValue)`，需要实现`FindLeafPage`, 实现 `FindLeafPage` 函数后，`GetValue`函数就非常简单了。
 
 这里贴一个实现:
 
@@ -182,7 +178,7 @@ bool BPLUSTREE_TYPE::GetValue(const KeyType &key, std::vector<ValueType> *result
 }
 ```
 
-最后就是checkpoint1的重头戏，实现`insert`函数，因为`insert`设计到分裂，所以要实现以下函数：
+最后就是`checkpoint1`的重头戏，实现`insert`函数，因为`insert`涉及到分裂，所以要实现以下函数：
 
 1. `StartNewTree`如果当前tree还是空的，则调用本函数，生成root节点。
 2. `InsertIntoLeaf`，如果当前tree非空，则将key,value插入到叶节点。
@@ -222,7 +218,7 @@ Split函数：
 
 ![image-20211020172533942](https://cdn.jsdelivr.net/gh/ravenxrz/PicBed/img/image-20211020172533942.png)
 
-Split时，叶节点和内部节点需要单独处理。
+**Split时，叶节点和内部节点需要单独处理。**
 
 最后是`InsertIntoParent`， `InsertIntoParent`是一个递归函数。关键点：
 
@@ -251,7 +247,7 @@ Split时，叶节点和内部节点需要单独处理。
 
 [2,3]这个节点是不可能分裂出去的。
 
-此时你可能要为，要求`internal_max_size` 不能小于3，即必须>=4不就可以了吗。这个不行，因为官方提供的测试用例中，有一句：
+此时你可能要问，强制要求`internal_max_size` 不能小于3，即必须>=4不就可以了吗。这个不行，因为官方提供的测试用例中，有一句：
 
 ![image-20211020173208103](https://cdn.jsdelivr.net/gh/ravenxrz/PicBed/img/image-20211020173208103.png)
 
@@ -263,7 +259,7 @@ Split时，叶节点和内部节点需要单独处理。
 #define INTERNAL_PAGE_SIZE ((PAGE_SIZE - INTERNAL_PAGE_HEADER_SIZE) / (sizeof(MappingType)))
 ```
 
-所以如果当插入第`max_size + 1`个元素时，实际上是插入到下一个page去了。
+所以当插入第`max_size + 1`个元素时，实际上是插入到下一个`page`去了。
 
 那该怎么处理？两种方案：
 
@@ -273,12 +269,12 @@ Split时，叶节点和内部节点需要单独处理。
 这里采用方案2，修改下宏定义即可：
 
 ```c++
-#define INTERNAL_PAGE_SIZE ((PAGE_SIZE - INTERNAL_PAGE_HEADER_SIZE) / (sizeof(MappingType))) - 1
+#define INTERNAL_PAGE_SIZE (((PAGE_SIZE - INTERNAL_PAGE_HEADER_SIZE) / (sizeof(MappingType))) - 1)
 ```
 
 ## 3. 其它坑
 
-如果一切梳理，至此你可以通过本地print测试，并绘制出自己的B+ tree。 但是可能提交到 `gradescope` 上只能得到20分。 在`memory_test`上会丢失10分。
+如果一切梳理，至此你可以通过本地`print test`，通过`dot file`和`graphviz`绘制出自己的B+ tree。 但是可能提交到 `gradescope` 上只能得到20分。 在`memory_test`上会丢失10分。
 
 原因大概率是是因为 `buffer_pool_manger`这个类有点问题，即使顺利通过了proj1，也是有可能有问题。常见问题有两个：
 
