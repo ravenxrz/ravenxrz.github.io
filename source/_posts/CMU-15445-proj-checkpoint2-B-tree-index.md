@@ -1,5 +1,5 @@
 ---
-title: CMU-15445-proj-checkpoint2(B+ tree index)
+title: CMU-15445-proj2-checkpoint2(B+ tree index)
 date: 2021-10-23 21:53:14
 categories: CMU15445
 tags:
@@ -43,7 +43,7 @@ checkpoint2 是在 checkpoint1的基础上，实现B+树的删除、迭代器和
 
    > Note: 如果一直递归到了root节点，由于root节点没有左右兄弟，则需要将root节点合并到孩子节点中。
 
-写完后，可尝试通过``b_plus_tree_delete_test`测试，**最好自己多写一些大规模数据量的测试，同时将`tree`的`internal node`和`leaf node`的最小`size`设置得尽量小（我是直接设置的3,3），因为这样可以造成更多的分裂，合并。**
+写完后，可尝试是否能通过 `b_plus_tree_delete_test` 测试， **最好自己多写一些大规模数据量的测试，同时将`tree`的`internal node`和`leaf node`的最小`size`设置得尽量小（我是直接设置的3,3），因为这样可以造成更多的分裂，合并。**
 
 ### 2.2 Index iterator
 
@@ -53,17 +53,17 @@ checkpoint2 是在 checkpoint1的基础上，实现B+树的删除、迭代器和
 2. Begin(key), 这个相当于先seek
 3. end()
 
-而且index iterator中，也只有少量几个函数。核心逻辑为先定位到合适的`leaf node`，然后可以使用一个索引游标`idx`，记录当前的位置，如果`idx`达到一个`node`（假设为node i)的最大`size`时，更新游标到下一个node i+1，同时释放`node i`。
+而index iterator中，也只有少量几个函数。核心逻辑为先定位到合适的`leaf node`，然后可以使用一个索引游标`idx`，记录当前的位置，如果`idx`达到一个`node`（假设为`node i`)的最大`size`时，更新游标到下一个`node i+1`，同时释放`node i`。
 
-至于 end()函数的设计，我的做法是 end() 是将当前索引到的 `node` 设定为 `nullptr`。
+至于 end()函数的设计，我的做法是 end() 是将当前索引到的 `node` 指针设定为 `nullptr`。
 
 ### 2.3 并发index
 
-如果B+树的单线程实现时proj2的一个学习点，那么第二个点就是并发访问如果该如何加锁了。 最简单的方式是采用 “大锁”的方式， 对全局定义一个 `latch`, 然后针对 `Search`, `Insert`和 `Delete`操作上 `latch`, 这样能够保证，同一个时刻只有一个线程在做操作。 不过这样的代价就是B+树的性能过低。 
+针对这个问题，最简单的方式是采用 “大锁”的方式， 对全局定义一个 `latch`, 然后针对 `Search`, `Insert`和 `Delete`操作上 `latch`, 这样能够保证同一个时刻只有一个线程在做操作。 不过这样的代价就是B+树的性能过低。 
 
 > 我的建议是，先上大锁，然后查看是否能通过并发测试。
 >
-> 我的经历是：通过了之前单线程下的默认所有测试，但是上大锁时并发测试居然没有过，所以强烈建议自己多写几个单线程下的测试，尽量做到较大数据量和 Internal page和 leaf page的min size较小。如果一切通过了，再考虑细粒度锁。
+> 我在写时，B+树完成delete操作后通过了单线程下的所有默认测试，但是上大锁时并发测试居然没有过，所以强烈建议自己多写几个单线程下的测试，尽量做到较大数据量和 Internal page和 leaf page 的 min size较小。如果一切通过了，再考虑细粒度锁。
 
 那如何提高性能？ 使用 **latch crabbing**. 详细可以参考讲义ppt和教材的914页。这里只贴一下官方的一个简单描述：
 
@@ -71,13 +71,13 @@ checkpoint2 是在 checkpoint1的基础上，实现B+树的删除、迭代器和
 - `Insert`: Starting with root page, grab write (**W**) latch on child. Once child is locked, check if it is safe, in this case, not full. If child is safe, release **all** locks on ancestors.
 - `Delete`: Starting with root page, grab write (**W**) latch on child. Once child is locked, check if it is safe, in this case, at least half-full. (NOTE: for root page, we need to check with different standards) If child is safe, release **all** locks on ancestors.
 
-那 `Insert`操作来说， 既然在寻找到叶节点的过程中，可能存在加锁和释放锁，那肯定需要一个数据结构来存放之前已经加过锁的page， 这个数据结构存放在`Transcation`这个类中的`page_set_`, 如下图：
+拿 `Insert`操作来说， 既然在寻找到叶节点的过程中，可能存在加锁和释放锁，那肯定需要一个数据结构来存放之前已经加过锁的page， 这个数据结构存放在`Transcation`这个类中的`page_set_`, 如下图：
 
 <img src="https://cdn.jsdelivr.net/gh/ravenxrz/PicBed/img/image-20211024171605862.png" alt="image-20211024171605862" style="zoom:50%;" />
 
 *`delte_page_set_`是给删除操作使用的*
 
-具体实现过程中，核心函数为 `FindLeafPage`， 在这个函数中，需要实现所有的加锁和释放锁过程，并把还未释放锁的 祖先节点们收集起来放到 `page_set_`中。这个实现中，核心问题为在从root节点到leaf节点的遍历过程中，什么时候能够释放祖先节点的锁？那就是判定当前所处的节点，是否`safe`。 什么是safe？不同的节点，有不同的的定义。我的`insert safe_checker`代码如下，注意`safe_checker`的实现与你之前的`Insert`操作和`Delete`操作强相关，所以我也不是标准答案：
+具体实现过程中，核心函数为 `FindLeafPage`， 在这个函数中，需要实现所有的加锁和释放锁过程，并把还未释放锁的 祖先节点们收集起来放到 `page_set_`中。问题是在从root节点到leaf节点的遍历过程中，什么时候能够释放祖先节点的锁？那就是判定当前所处的节点，是否`safe`。 什么是`safe`？不同的节点，有不同的的定义。我的`insert safe_checker`代码如下，注意`safe_checker`的实现与你之前的`Insert`操作和`Delete`操作强相关，所以我也不是标准答案：
 
 <img src="https://cdn.jsdelivr.net/gh/ravenxrz/PicBed/img/image-20211024172045696.png" alt="image-20211024172045696" style="zoom:50%;" />
 
@@ -95,7 +95,7 @@ checkpoint2 是在 checkpoint1的基础上，实现B+树的删除、迭代器和
 
 上面是整个寻找过程中的加锁，下面再说说具体实现insert和delete过程中，有哪些需要注意的地方：
 
-1. root id的访问问题。由于root id是会在多个线程被访问，且可能被修改。所以首先要保证root id的访问修改是原子且对其它线程是可见的。这里可以通过一个`mutex`来保证(其实最好的做法个人是使用原子变量，但是不方便修改其他地方，所以采用了mutex)。但除此之外还是可能会存在问题，举个例子：当前root id=10， 存在thread 1执行查询操作， thread 2执行插入操作。 thread 2先被调度，但是在thread 2执行完前，切换到了thread 1，此时thread 1拿到root id=10的page，但是还未加上读锁。 此时线程再次切换到thread 2， 而thread 2由于插入操作，造成了原本 root id =10的根节点分裂，生成一个新的根节点，更新root id=11，现在thread 2执行完成，线程切换到thread 1， thread 1还是拿着旧的root id=10的page，加上读锁后执行后续search操作，此时的Search是错误的，因为不是从真正的根节点root id=11的page开始搜索。 那该如何解决？
+1. root id的访问问题。由于root id是会在多个线程被访问，且可能被修改。所以首先要保证root id的访问修改是原子且对其它线程是可见的。这里可以通过一个`mutex`来保证(其实最好的做法个人是使用原子变量，但是不方便修改代码中已经默认写好的其他地方，所以采用了mutex)。但除此之外还是可能会存在问题，举个例子：当前root id=10， 存在thread 1执行查询操作， thread 2执行插入操作。 thread 2先被调度，但是在thread 2执行到一半时，切换到了thread 1，此时thread 1拿到root id=10的page，但是还未加上读锁。 此时线程再次切换到thread 2， 而thread 2由于插入操作，造成了原本 root id =10的根节点分裂，生成一个新的根节点，更新root id=11，现在thread 2执行完成，线程切换到thread 1， thread 1还是拿着旧的root id=10的page，加上读锁后执行后续search操作，此时的Search是错误的，因为不是从真正的根节点root id=11的page开始搜索。 那这个该如何解决？
 
    1. 我个人的做法是，首先记录一次`root` id为`old_root_id`，并获取page加上读锁后，再次比对 `old_root_id`是否等于当前的 `root_id`, 如果等于，则进行后操作，如果不等于，则释放page的锁，重试本次操作。这部分代码如下：
 
@@ -150,7 +150,7 @@ checkpoint2 是在 checkpoint1的基础上，实现B+树的删除、迭代器和
 
 ## 4. 全测试文件
 
-默认本地的测试用例是非常简单的，很不方便调试，再加入知乎大佬给的群后，群文件有人抓取了gradescope的全测试用例，这里给出所有相关用例，辅助读者调试：
+默认本地的测试用例是非常简单的，很不方便调试，在加入知乎大佬给的群后，群文件有人抓取了gradescope的全测试用例，这里给出所有的相关用例，辅助读者调试：
 
 1. `grading_b_plus_tree_checkpoint_2_sequential_test.cpp`
 
@@ -1263,12 +1263,12 @@ checkpoint2 是在 checkpoint1的基础上，实现B+树的删除、迭代器和
 
 ## 5. 总结
 
-整个proj2原本计划两三天搞定，没想到在参考博文代码的基础上，checkpoint1就两天整，checkpoint2又是2天半，前前后后差不多一个星期就没了。实验过程中还是非常有收获的，比如以前从没写过B+树，更没写过会和disk交互的数据结构（以前所有学的数据结构都在内存中），对于并发的调试也多少有了点经验（这里感谢师兄的帮助，不然我当前有个bug可能真找不出来）。
+整个proj2原本计划两三天搞定，没想到在参考博文代码的基础上，checkpoint1就两天整，checkpoint2又是2天半，前前后后差不多一个星期就没了。实验过程中还是非常有收获的，比如以前从没写过B+树，更没写过会和disk交互的数据结构（以前所有学的数据结构都在内存中），对于并发的调试也多少有了点经验（这里感谢师兄的帮助与建议）。
 
 额外给一点debug的建议：
 
-1. 充分利用好能够绘制出来的 dot file,来可视化B+树
-2. 在多线程调试时，尽量找到最小的引起错误的数据量和线程数。 比如我在测试MixTest时，最开始的数据量是`1000*10`（操作数据量是1000， 操作线程数是10）， 后来降到了 `20*2`, 然后录通过 dot file 可视化推导出问题大致所在，最后通过一定的printf打印log，最终找到了bug。
+1. 充分利用好能够绘制出来的 dot file来可视化B+树
+2. 在多线程调试时，尽量找到最小的引起错误的数据量和线程数。 比如我在测试MixTest时，最开始的数据量是`1000*10`（操作数据量是1000， 操作线程数是10）， 后来降到了 `20*2`, 然后通过 dot file 可视化推导出问题大致所在，最后通过一定的printf打印log，最终找到了bug。
 3. 多线程下发生错误时，可以尝试先使用大锁查看测试是否通过，再降低锁的粒度。如果大锁测试通过，小锁出现问题，那可能是加锁位置出现问题，此时采用gdb多线程调试其实意义不一定大，反而通过LOG分析更为有效。
 
 最后，记录下checkpoint2满分：
