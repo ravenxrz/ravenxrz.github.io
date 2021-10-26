@@ -99,48 +99,48 @@ checkpoint2 是在 checkpoint1的基础上，实现B+树的删除、迭代器和
 
    1. 我个人的做法是，首先记录一次`root` id为`old_root_id`，并获取page加上读锁后，再次比对 `old_root_id`是否等于当前的 `root_id`, 如果等于，则进行后操作，如果不等于，则释放page的锁，重试本次操作。这部分代码如下：
 
-      ```c++
-      Page *BPLUSTREE_TYPE::FindLeafPageLock(const KeyType &key, OperationType op_type, Transaction *transaction) {
-        /* 保存旧root page id */
-        root_page_id_lck_.lock();
-        int old_root_page_id = root_page_id_;
+ ```c++
+Page *BPLUSTREE_TYPE::FindLeafPageLock(const KeyType &key, OperationType op_type, Transaction *transaction) {
+    /* 保存旧root page id */
+    root_page_id_lck_.lock();
+    int old_root_page_id = root_page_id_;
+    root_page_id_lck_.unlock();
+    /* 获取page，然后加锁，再double check root page id是否改变 */
+    Page *cur_page = buffer_pool_manager_->FetchPage(old_root_page_id);
+    if (op_type == OperationType::SEARCH) {
+        cur_page->RLatch();
+    } else {
+        cur_page->WLatch();
+    }
+    /* 获取锁后，查看当前root_page_id是否和old_root_page_id相同 */
+    root_page_id_lck_.lock();
+    if (old_root_page_id != root_page_id_) {
+        /* 由于其它线程的插入或者删除，造成了root_page 发生修改，所以现在需要重试 */
+        buffer_pool_manager_->UnpinPage(cur_page->GetPageId(), false);
         root_page_id_lck_.unlock();
-        /* 获取page，然后加锁，再double check root page id是否改变 */
-        Page *cur_page = buffer_pool_manager_->FetchPage(old_root_page_id);
         if (op_type == OperationType::SEARCH) {
-          cur_page->RLatch();
-        } else {
-          cur_page->WLatch();
-        }
-        /* 获取锁后，查看当前root_page_id是否和old_root_page_id相同 */
-        root_page_id_lck_.lock();
-        if (old_root_page_id != root_page_id_) {
-          /* 由于其它线程的插入或者删除，造成了root_page 发生修改，所以现在需要重试 */
-          buffer_pool_manager_->UnpinPage(cur_page->GetPageId(), false);
-          root_page_id_lck_.unlock();
-          if (op_type == OperationType::SEARCH) {
             cur_page->RUnlatch();
-          } else {
+        } else {
             cur_page->WUnlatch();
-          }
-          return nullptr;		// 返回nullptr，让调用者重试
         }
-        root_page_id_lck_.unlock();
-        ...
-        }
-      ```
+        return nullptr;		// 返回nullptr，让调用者重试
+    }
+    root_page_id_lck_.unlock();
+    ...
+}
+ ```
 
-      在调用`FindLeafPageLock`的地方，这样写：
+  在调用`FindLeafPageLock`的地方，这样写：
 
-      ```c++
-        /* find the leaf page that may contain the key */
-        LeafPage *leaf_page = nullptr;
-        while ((leaf_page = reinterpret_cast<LeafPage *>(FindLeafPageLock(key, OperationType::DELETE, transaction))) ==
-               nullptr) {
-        }
-      ```
+```c++
+/* find the leaf page that may contain the key */
+LeafPage *leaf_page = nullptr;
+while ((leaf_page = reinterpret_cast<LeafPage *>(FindLeafPageLock(key, OperationType::DELETE, transaction))) ==
+       nullptr) {
+}
+```
 
-      **另一种做法是增加虚拟节点，所有操作应该首先获取虚拟节点，再获取root节点，这样可以将对root节点操作和其它节点的操作统一起来，应该是一种更为精简优雅的做法，也是推荐的做法。**
+ **另一种做法是增加虚拟节点，所有操作应该首先获取虚拟节点，再获取root节点，这样可以将对root节点操作和其它节点的操作统一起来，应该是一种更为精简优雅的做法，也是推荐的做法。**
 
    2. 删除操作时，兄弟节点也应该加锁！考虑如下场景：
 

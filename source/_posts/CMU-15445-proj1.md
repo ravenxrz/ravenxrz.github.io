@@ -10,7 +10,7 @@ tags:
 
 原文要求参考：https://15445.courses.cs.cmu.edu/fall2020/project1/
 
-这是cmu15445的第一个proj的，目标是实现一个简单的buffer pool。具体来看，整个proj需要实现两个类：一个LRUReplacer和一个BufferPoolManager。
+这是cmu15445的第一个proj，目标是实现一个简单的buffer pool。具体来看，整个proj需要实现两个类：一个LRUReplacer和一个BufferPoolManager。
 
 <!--more-->
 
