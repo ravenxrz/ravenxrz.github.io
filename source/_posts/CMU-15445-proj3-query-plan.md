@@ -301,7 +301,7 @@ void NestedLoopJoinExecutor::FetchAllTuples() {
       right_tuples.push_back(right_tuple);
     }
   }
-  /* now we fetch all tuples in left and right table, it's time to combine them */
+  /* now we have fetched all tuples in left and right table, it's time to combine them */
   /* assume left table is smaller */
   for (const Tuple &left : left_tuples) {
     for (const Tuple &right : right_tuples) {
@@ -384,9 +384,9 @@ SELECT * FROM A JOIN B ON A.a = B.a	# 一个condition
 SELECT *FROM A FROM B ON A.a = B.a AND A.b = B.b # 两个condition
 ```
 
-因为这里两个condition。
+因为这里有两个condition。
 
-下面是我的实现代码, 我的做法依然是，先获取所有tuples保存在一个vector中，后期上层调用Next接口时，直接从vector中pop即可。
+下面是我的实现代码, 我的做法依然是先获取所有tuples保存在一个vector中，当上层调用Next接口时，直接从vector中pop即可。
 
 ```c++
 void NestIndexJoinExecutor::FetchAllTuples() {
