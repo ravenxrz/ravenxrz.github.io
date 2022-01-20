@@ -19,8 +19,8 @@ tags:
 
 详细要求如下：
 
-- Task 1: 实现一个 System Catalog:  Catalog为数据库的核心数据结构之一，描述着数据库内部表和索引的元数据，存储着数据库中 有哪些table， 每个table的schema是怎么样的，每个table有哪些index， index有哪些原数据等等。
-- Task 2: 实现多个执行器，包括：Sequential Scan, Index Scan,  Insert, Update, Nested Loop Join, Index nested  loop join， Aggregation， Limit.
+- Task 1: 实现一个 System Catalog:  Catalog为数据库的核心数据结构之一，描述着数据库内部表和索引的元数据，存储着数据库中 有哪些table， 每个table的schema是怎么样的，每个table有哪些index， index有哪些元数据等等。
+- Task 2: 实现多个执行器，包括：Sequential Scan, Index Scan,  Insert, Update,Delete， Nested Loop Join, Index nested  loop join， Aggregation， Limit.
 
 总体来说，本实验难度比proj1高，比proj2低。
 
@@ -109,13 +109,13 @@ Task2要求实现多个执行器，涉及到的header file如下：
 
 个人建议，在开始写代码前，详细阅读 executor_test.cpp 对应的测试。特别关注以下几个类或结构：
 
-1. **AbstractExpression及其派生类**，可以说不理解这个继承家族，后面的实验室没发做的， 当然这个继承关系也让我深刻体会到了OOP编程方式的灵魂与恶心（是的，这OOP让人阅读起来非常的不方便）。
+1. **AbstractExpression及其派生类**，可以说不理解这个继承家族，后面的task没法做， 当然这个继承关系也让我深刻体会到了OOP编程方式的灵魂与恶心（是的，这OOP让人阅读起来非常的不方便）。
 
    **尤其关注 ComparisonExpression 和 ColumnValueExpression**
 
 2. 每一种Executor对应了一个Plan，每个Plan都需要仔细关注。
 
-3. 每种Executor都可能存在predicate， 这是用来过滤(想想Where clause)或者JOIN用（想想 JOIN ON XXX)
+3. 每种Executor都可能存在predicate， 这是用来过滤(想想WHERE clause)或者JOIN用（想想 JOIN ON XXX)
 
 4. 每种Executor都有一个OutputSchema，我们从table中拿到的tuple都是全字段的，在executor往上pass tuple的时候，需要按照OutputSchema来提取需要的字段，这个提取操作需要用到 **Expression**， 所以Expression的理解是重中之重。
 
@@ -131,7 +131,7 @@ bustub通过 ExecutionEngine + ExecutorFactory 来完成Executor的执行。
 SELECT colA, colB FROM test_1 WHERE colA < 500
 ```
 
-顺序Scan，这个Executor是最接近的tuple的Executor之一（另一个是Index SCAN），它的作用是从table中获取tuples。获取方式是通过顺序扫描全表，这里的核心数据结构是 **TableIterator**, 通过该迭代器可以可以遍历全表，然后通过 predicate 过滤掉需要的tuple。
+顺序Scan，这个Executor是最接近的table的Executor之一（另一个是Index SCAN），它的作用是从table中获取tuples。获取方式是通过顺序扫描全表，这里的核心数据结构是 **TableIterator**, 通过该迭代器可以可以遍历全表，然后通过 predicate 过滤掉需要的tuple。
 
 这个Exectuor是所有Executor中最为简单的一个，所以这里不贴出代码，同学可以自行思考如何实现，我要提到的是如何从tuple中按照output schema提出需要的字段。代码如下：
 
@@ -232,7 +232,7 @@ bool UpdateExecutor::Next([[maybe_unused]] Tuple *tuple, RID *rid) {
     }
     /*  */
     for (IndexInfo *idx_info : index_infos_) {
-      /* Update=Delete old + Insert new */
+      /* Update= Delete old + Insert new */
       pending_tuple =
           pending_tuple.KeyFromTuple(table_info_->schema_, idx_info->key_schema_, idx_info->index_->GetKeyAttrs());
       updated_tuple =
@@ -253,7 +253,7 @@ bool UpdateExecutor::Next([[maybe_unused]] Tuple *tuple, RID *rid) {
 DELETE FROM test_1 WHERE colA < 50
 ```
 
-和前面的操作都类似，通过child executor得到都需要删除的tuple，然后在table和index中执行删除即可。
+和前面的操作都类似，通过child executor得到需要删除的tuples，然后在table和index中执行删除即可。
 
 ```c++
 bool DeleteExecutor::Next([[maybe_unused]] Tuple *tuple, RID *rid) {
@@ -279,9 +279,9 @@ bool DeleteExecutor::Next([[maybe_unused]] Tuple *tuple, RID *rid) {
 SELECT test_1.colA, test_1.colB, test_2.col1, test_2.col3 FROM test_1 JOIN test_2 ON test_1.colA = test_2.col1 AND test_1.colA < 50
 ```
 
-这里的难点是涉及到两个table，如何把两个table给连接起来。其实依然还是那个核心Expression类， 通过EvalateJoin接口即可。
+这里的难点是涉及到两个table的处理，如何把两个table给连接起来。其实依然还是那个核心Expression类， 通过EvaluateJoin接口即可。
 
-我个人的实现思路为，在Init时，就把所有最终的tuple组装保存好，上层在Next时，只用从container中pop一个tuple即可。
+我个人的实现思路为，在Init时就把所有最终的tuple组装保存好，上层在调用Next时，只用从container中pop一个tuple即可。
 
 我的实现如下：
 
@@ -345,7 +345,7 @@ SELECT test_1.colA, test_1.colB, test_2.col1, test_2.col3 FROM test_1 JOIN test_
 
 不过在join时，inner table采用index寻找对应匹配的tuple。
 
-如何理解该plan？ outer table通过某种scan方式拿到一个tuple后，将这个tuple转化为inner table的index的一个key，然后用这个key去index中寻找对应匹配的tuple rid， 并根据这个rid到table中获取最终的tuple，最后将outer tuple和inner tuple结合在一起即可。
+如何理解该executor？ outer table通过某种scan方式拿到一个tuple后，将这个tuple转化为inner table的index的一个key，然后用这个key去index中寻找对应匹配的tuple rid， 并根据这个rid到table中获取最终的tuple，最后将outer tuple和inner tuple结合在一起即可。
 
 问题的难点在于如何生成用于索引index的probe key？要做到这部分，需要充分理解 KeyFromTuple 这个函数的三个参数的含义：
 
@@ -368,22 +368,20 @@ tuple.KeyFromTuple(schema, key_schema, key_attrs)
 
 **理解了这个函数，现在我们可以从plan_ 中获取OuterTableSchema，也可以从index中获取index key schema，唯独最重要的 key_attrs 不知道如何获取。**
 
- **这个关键信息隐藏在 predicate中， predicate是一个ComparisonExpression， 它含有两个children expression。其中按照约定，第0个child是左表达式，而作表达式按照约定是outer table的 ColumnExpression, 在ColumnExpression中，隐藏着这个Column在其Schema中的索引位置，可以通过这个索引位置来构造 key_attr.**
+ **这个关键信息隐藏在 predicate中， predicate是一个ComparisonExpression， 它含有两个children expression。其中按照约定，第0个child是左表达式，而左表达式按照约定是outer table的 ColumnExpression, 在ColumnExpression中，隐藏着这个Column在其Schema中的索引位置，可以通过这个索引位置来构造 key_attr.**
 
-
-
-不过可以看出，使用这种方式，要基于一定的假设（如第0个child是左表达式），同时这种实现方式也只能针对 JOIN ON 一个condition，不能有多个condition。举例来说：
+不过可以看出，使用这种方式，要基于一定的假设（如第0个child是左表达式），同时这种实现方式也只能处理 JOIN ON 一个condition的情况，不能有多个condition。举例来说：
 
 可以满足：
 
 ```sql
-SELECT * FROM A JOIN B ON A.a = B.a
+SELECT * FROM A JOIN B ON A.a = B.a	# 一个condition
 ```
 
 但是不能满足：
 
 ```sql
-SELECT *FROM A FROM B ON A.a = B.a AND A.b = B.b
+SELECT *FROM A FROM B ON A.a = B.a AND A.b = B.b # 两个condition
 ```
 
 因为这里两个condition。
@@ -415,7 +413,7 @@ void NestIndexJoinExecutor::FetchAllTuples() {
 
   /* build probe keys */
   const ColumnValueExpression *outter_table_probe_key_column = dynamic_cast<const ColumnValueExpression *>(
-      plan_->Predicate()->GetChildAt(0)); /* NOTE: assume child 0 is outter table's column */
+      plan_->Predicate()->GetChildAt(0)); /* NOTE: assume child 0 is a outter table's column */
   while (outter_executor_->Next(&outter_tuple, &outter_rid)) {
     outter_tuples.push_back(outter_tuple);
     Tuple probe_key_tuple = outter_tuple.KeyFromTuple(*plan_->OuterTableSchema(), inner_idx_info_->key_schema_,
@@ -423,7 +421,7 @@ void NestIndexJoinExecutor::FetchAllTuples() {
     index_probe_keys.push_back(probe_key_tuple);
   }
 
-  /* fetch tuple from inner table by probe key, then combine inner tuple and outtuple to form the final tuple */
+  /* fetch tuple from inner table by probe key, then combine inner tuple and outer tuple to form the final tuple */
   for (size_t i = 0; i < index_probe_keys.size(); i++) {
     result_rids.clear();
     idx->ScanKey(index_probe_keys[i], &result_rids, exec_ctx_->GetTransaction());
@@ -461,9 +459,9 @@ bool NestIndexJoinExecutor::Next(Tuple *tuple, RID *rid) {
 
 ### 7. AGGREGATION
 
-aggregation实现聚合操作，如 对某一列执行 SUM, MAX, MIN, COUNT 等， 同时需要考虑group by和having子句。
+aggregation实现聚合操作，如对某一列执行 SUM, MAX, MIN, COUNT 等， 同时需要考虑group by和having子句。
 
-要实现aggregation，需要使用到hashtable，将属于同一个分类的tuples聚合到一起，然后使用 aggregation 操作（如SUM），对这类tuples进行计算。
+要实现aggregation，需要使用到hashtable，将属于同一个分类的tuples聚集到一起，然后使用 aggregation 操作（如SUM），对这类tuples进行计算。
 
 现在的问题是，**如何分类？**
 
@@ -471,7 +469,7 @@ group by用于分类，属于相同group的，存放在一个hash bucket中。�
 
 **如何计算？**
 
-详细阅读 **SimpleAggregationHashTable** 类代码即可。
+详细计算接口请阅读 **SimpleAggregationHashTable** 类代码。
 
 我个人的实现如下：
 
@@ -539,7 +537,7 @@ bool AggregationExecutor::Next(Tuple *tuple, RID *rid) {
 
 ### 8. LIMIT
 
-LIMIT是限定最后输出的tuple数量，内部实现为采用一定的offset，每隔offset，则pop out一次tuple。非常简单，个人实现如下：
+LIMIT是限定最后输出的tuple数量，内部实现为采offset，每隔offset，则pop out一次tuple。非常简单，个人实现如下：
 
 ```c++
 bool LimitExecutor::Next(Tuple *tuple, RID *rid) {
@@ -559,7 +557,7 @@ bool LimitExecutor::Next(Tuple *tuple, RID *rid) {
 
 ## 3. 测试文件
 
-这里贴一下群里面用的测试文件，这个文件能通过，则最后提交到 gradescope 上也能通过：
+这里贴一下群里面用的测试文件，这些文件能通过，则最后提交到 gradescope 上也能通过：
 
 ### 1. gradding_catalog_test.cpp
 
@@ -1518,7 +1516,7 @@ TEST_F(GradingExecutorTest, IntegratedTest) {
 
 ## 4. 总结
 
- proj3相对简单，涉及到的内容是如何在database中执行各种操作，**如SELECT, INSERT, UPDATE, DELETE, JOIN, LIMIT 等**。处理模型采用Iterator Model（不过其实内部实现上并没有完全遵守，iterator model的优点在于可以pipleline，但实现起来很多操作都是pipeline breaker）。
+ proj3相对简单，涉及到的内容是如何在database中执行各种操作，**如SELECT, INSERT, UPDATE, DELETE, JOIN, LIMIT 等**。处理模型采用Iterator Model（不过其实内部实现上并没有完全遵守，iterator model的优点在于可以pipeline，但实现起来很多操作都是pipeline breaker）。
 
  下一个project终于到了最感兴趣的并发控制，加油早点做完。
 
