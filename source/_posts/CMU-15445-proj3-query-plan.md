@@ -335,7 +335,7 @@ bool NestedLoopJoinExecutor::Next(Tuple *tuple, RID *rid) {
 
 ```
 
-### INDEX NESTED LOOP JOIN
+### 7. INDEX NESTED LOOP JOIN
 
 实现类似如下操作：
 
@@ -457,7 +457,7 @@ bool NestIndexJoinExecutor::Next(Tuple *tuple, RID *rid) {
 
 ```
 
-### 7. AGGREGATION
+### 8. AGGREGATION
 
 aggregation实现聚合操作，如对某一列执行 SUM, MAX, MIN, COUNT 等， 同时需要考虑group by和having子句。
 
@@ -535,7 +535,7 @@ bool AggregationExecutor::Next(Tuple *tuple, RID *rid) {
 }
 ```
 
-### 8. LIMIT
+### 9. LIMIT
 
 LIMIT是限定最后输出的tuple数量，内部实现为采offset，每隔offset，则pop out一次tuple。非常简单，个人实现如下：
 
