@@ -1,5 +1,5 @@
 ---
-title: CMU-15445-proj3(QueryPlan)
+title: CMU-15445-proj3(QueryExecutor)
 date: 2022-01-20 15:54:14
 categories: CMU15445
 tags:
@@ -9,7 +9,7 @@ tags:
 
 ## 0. 前言 & 要求
 
-断更了3个月，终于忙完了毕设，现在开始补课。文本为 CMU15445 - Proj3 的题解 。Proj3 为QueryPlan，要求实现多个 executors，从而达到以下操作：
+断更了3个月，终于忙完了毕设，现在开始补课。文本为 CMU15445 - Proj3 的题解 。Proj3 为QueryExecutor，要求实现多个 executors，从而达到以下操作：
 
 - **Access Methods:** Sequential Scans, Index Scans (with your B+Tree from [Project #2](https://15445.courses.cs.cmu.edu/fall2020/project2))
 - **Modifications:** Inserts, Updates, Deletes
