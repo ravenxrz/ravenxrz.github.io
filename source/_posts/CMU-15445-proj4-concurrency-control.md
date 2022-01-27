@@ -60,7 +60,7 @@ Task1要求实现一个 Lock Manager，并且支持不同的隔离级别（对pr
 
 ![cmu15445-proj4-hashmap](https://cdn.JsDelivr.net/gh/ravenxrz/PicBed/img/cmu15445-proj4-hashmap.svg)
 
-`lock_table_` 是一个 RID->list 的映射，也就说每个rid对应到一个加速队列， 队列中中存放的是当前已经获取到锁的事务请求（包括事务号和加锁类型）。
+`lock_table_` 是一个 RID->list 的映射，也就说每个rid对应到一个加锁队列， 队列中中存放的是当前已经获取到锁的事务请求（包括事务号和加锁类型）。
 
 ###  LockShared
 
@@ -83,7 +83,7 @@ Task1要求实现一个 Lock Manager，并且支持不同的隔离级别（对pr
 
    这是为了预防上面两种txn饿死。 
 
-6. 成功获取到锁，将本txn加入到rid的加锁队列，同时在更新txn的SharedLockSet。
+6. 成功获取到锁，将本txn加入到rid的加锁队列，同时更新txn的SharedLockSet。
 
 下面是具体实现：
 
@@ -129,7 +129,7 @@ bool LockManager::LockShared(Transaction *txn, const RID &rid) {
   req_queue.waitting_set_.erase(lck_req);
   req_queue.request_queue_.push_back(lck_req);
 
-  /* now we get the shareed lock, put it into txn's shared lock set  */
+  /* now we get the shared lock, put it into txn's shared lock set  */
   txn->GetSharedLockSet()->emplace(rid);
   return true;
 }
@@ -196,7 +196,7 @@ bool LockManager::LockExclusive(Transaction *txn, const RID &rid) {
   req_queue.waitting_set_.erase(lck_req);
   req_queue.request_queue_.push_back(lck_req);
 
-  /* now we get the shareed lock, put it into txn's shared lock set  */
+  /* now we get the shared lock, put it into txn's shared lock set  */
   txn->GetExclusiveLockSet()->emplace(rid);
   txn->SetState(TransactionState::GROWING);
 
@@ -282,7 +282,7 @@ bool LockManager::Unlock(Transaction *txn, const RID &rid) {
   /* change txn state to shrinking if txn isolation is "RR"! */
   if (txn->GetState() != TransactionState::ABORTED && txn->GetState() != TransactionState::COMMITTED) {
     if (txn->GetIsolationLevel() ==
-        IsolationLevel::REPEATABLE_READ) { /* RR mode unlocks all locks until txn ends, so no other locks can be get */
+        IsolationLevel::REPEATABLE_READ) { /* RR unlocks all locks until txn ends, so no other locks can be get */
       txn->SetState(TransactionState::SHRINKING);
     }
   }
@@ -609,7 +609,6 @@ bool InsertExecutor::Next([[maybe_unused]] Tuple *tuple, RID *rid) {
   for (const auto &pending_inserted_tuple : pending_inserted_tuples) {
     /* do insert */
     /* NOTE: function "InsertTuple" maintains the write set which is used to rollback  */
-
     if (!table_meta_->table_->InsertTuple(pending_inserted_tuple, &inserted_rid, exec_ctx_->GetTransaction())) {
       return false;
     }
