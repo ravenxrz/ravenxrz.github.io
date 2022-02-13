@@ -175,7 +175,7 @@ type Master struct {
 
 Master的主流程非常简单，有worker request来，则分发一定的task，有worker完成了任务，根据一定条件转换状态。
 
-1. 请求相关
+1.请求相关
 
 ```go
 // Your code here -- RPC handlers for the worker to call.
@@ -196,10 +196,9 @@ func (m *Master) RequestTask(meaningless *struct{} /* not use */, task *Task) er
 }
 ```
 
- 	2. task完成相关
+2.task完成相关
 
 ```go
-
 func (m *Master) MapTaskDone(arg *MapTaskDoneArg, meaningless *struct{}) error {
 	m.mu.Lock()
 	defer m.mu.Unlock()
