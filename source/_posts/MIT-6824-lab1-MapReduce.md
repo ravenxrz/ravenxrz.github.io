@@ -210,7 +210,7 @@ func (m *Master) MapTaskDone(arg *MapTaskDoneArg, meaningless *struct{}) error {
 	}
 	// check whether the mapper is assumed timeout/die
 	if arg.TaskId >= len(m.mapTasks) || m.mapTasks[arg.TaskId].TaskState != IN_PROGRESS {
-		msg := fmt.Sprintf("task id error or task has completed, task id:%v, task state:%v", arg.TaskId, m.mapTasks[arg.TaskId].TaskState)
+		msg := fmt.Sprintf("task id error or task has wrong task state which should be IN_PROGRESS, task id:%v, task state:%v", arg.TaskId, m.mapTasks[arg.TaskId].TaskState)
 		// log.Panic(msg)
 		log.Println(msg)
 		return fmt.Errorf(msg)
@@ -260,7 +260,7 @@ func (m *Master) ReduceTaskDone(arg *ReduceTaskDoneArg, meaningless *struct{}) e
 	for i := 0; i < len(m.reduceTasks); i++ {
 		if m.reduceTasks[i].TaskId == arg.TaskId {
 			if m.reduceTasks[i].TaskState != IN_PROGRESS {
-				msg := fmt.Sprintf("task has wrong taskstate, task id:%v, task state:%v", arg.TaskId, m.mapTasks[arg.TaskId].TaskState)
+				msg := fmt.Sprintf("task has wrong task state which should be IN_PROGRESS, task id:%v, task state:%v", arg.TaskId, m.mapTasks[arg.TaskId].TaskState)
 				// log.Panic(msg)
 				log.Println(msg)
 				return fmt.Errorf(msg)
