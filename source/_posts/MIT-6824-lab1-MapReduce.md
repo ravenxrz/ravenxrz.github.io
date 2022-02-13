@@ -196,6 +196,8 @@ func (m *Master) RequestTask(meaningless *struct{} /* not use */, task *Task) er
 }
 ```
 
+
+
 2.task完成相关
 
 ```go
@@ -209,7 +211,9 @@ func (m *Master) MapTaskDone(arg *MapTaskDoneArg, meaningless *struct{}) error {
 	// check whether the mapper is assumed timeout/die
 	if arg.TaskId >= len(m.mapTasks) || m.mapTasks[arg.TaskId].TaskState != IN_PROGRESS {
 		msg := fmt.Sprintf("task id error or task has completed, task id:%v, task state:%v", arg.TaskId, m.mapTasks[arg.TaskId].TaskState)
-		log.Panic(msg)
+		// log.Panic(msg)
+		log.Println(msg)
+		return fmt.Errorf(msg)
 	}
 
 	// Split intermidate FileNames
@@ -218,7 +222,7 @@ func (m *Master) MapTaskDone(arg *MapTaskDoneArg, meaningless *struct{}) error {
 		if fileName == "" {
 			log.Panic("MapTaskDone: intermediate filename should not be empty")
 		}
-        partitionStr := string(fileName[len(fileName)-1])  // TODO: is there any better way to convert a char to int?
+		partitionStr := string(fileName[len(fileName)-1]) // TODO: is there any better way to convert a char to int?
 		partitionId, err := strconv.Atoi(partitionStr)
 		if err != nil {
 			log.Fatalf("convert string %v to int failed", partitionStr)
@@ -239,7 +243,6 @@ func (m *Master) MapTaskDone(arg *MapTaskDoneArg, meaningless *struct{}) error {
 		}
 		log.Println("all map tasks have been completed")
 		m.execState = REDUCE_PHASE
-        // all intermediate files have been generated, so we can create reduce tasks now
 		m.createReduceTask()
 	}
 	return nil
@@ -257,7 +260,10 @@ func (m *Master) ReduceTaskDone(arg *ReduceTaskDoneArg, meaningless *struct{}) e
 	for i := 0; i < len(m.reduceTasks); i++ {
 		if m.reduceTasks[i].TaskId == arg.TaskId {
 			if m.reduceTasks[i].TaskState != IN_PROGRESS {
-				log.Panic("task state is wrong, which should be `IN_PROGRESS`, task id:", arg.TaskId)
+				msg := fmt.Sprintf("task id error or task has completed, task id:%v, task state:%v", arg.TaskId, m.mapTasks[arg.TaskId].TaskState)
+				// log.Panic(msg)
+				log.Println(msg)
+				return fmt.Errorf(msg)
 			}
 			taskIdx = i
 			break
@@ -277,7 +283,9 @@ func (m *Master) ReduceTaskDone(arg *ReduceTaskDoneArg, meaningless *struct{}) e
 		m.execState = COMPLETE_ALL
 	}
 	return nil
+
 }
+
 ```
 
 另外，master需要检测worker是否超时，这里我单独开了一个协程。
