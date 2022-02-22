@@ -30,7 +30,7 @@ tags:
 
 ## 1. 实现
 
-raft实现是比较复杂度，不管是其算法逻辑，还是在具体实现的难debug，不过好在**raft paper figure 2**给出了算法的详细描述。lab2A的所有实现，都参考自paper的figure:
+raft实现是相对复杂的，不过好在**raft paper figure 2**给出了算法的详细描述。lab2A的所有实现，都参考自paper的figure:
 
 <img src="https://cdn.jsdelivr.net/gh/ravenxrz/PicBed/img/image-20220222145423023.png" alt="image-20220222145423023" style="zoom:50%;" />
 
@@ -97,7 +97,7 @@ type Raft struct {
 
 #### electionTimer
 
-每个follower和candidate在定时器到时候，会重新开启一轮选举（对于follow来说，需要先转化为candidate）， 如果在定时器还没到达时间内，收到了来自leader的心跳信息，需要重置定时器时间，重新开始定时。 另外，为了避免 **split vote** 反复发生，对每个raft instance来说，需要采用随机化定时器超时时间。
+每个follower和candidate在定时器到时候，会重新开启一轮选举（对于follow来说，需要先转化为candidate）， 如果在定时器还未超时内，收到了来自leader的心跳信息，需要重置定时器时间，重新开始定时。 另外，为了避免 **split vote** 反复发生，对每个raft instance来说，需要采用随机化定时器超时时间。
 
 ok，**第一个问题是，如何在定时器还没有到达时间时，重置定时器时间？**官方的推荐做法时是使用 `time.Sleep`来实现，根据这一个提示，我的做法是：假设总超时时间为1s， 单次sleep的时间设定为200ms，如果睡眠了5次没有收到任何leader的心跳信息，则发起选举，否则重置睡眠时间。
 
@@ -147,7 +147,7 @@ for {
  The real electiontimeout = baseElectionTimeout + rand.Int(minRandDis, maxRandDis)
 ```
 
-具体设定参数如下：
+具体参数设定如下：
 
 ```go
 const baseElectionTimeout = 80 // ms, this this as network latency
@@ -313,7 +313,7 @@ func (rf *Raft) fireElection() {
 
 之所以做得相对复杂的原因在于，fireElection无需等待所有发起rpc请求的go routine都返回后，再做核算。只用收集到一半以上的票数后，就可以立即转变为leader。
 
-这里 发起 RequestVote RPC的routine代码如下：
+发起 RequestVote RPC的routine代码如下：
 
 ```go
 func (rf *Raft) doSendRequestVote(args *RequestVoteArgs, ch chan<- RequestVoteReply) {
@@ -342,7 +342,7 @@ func (rf *Raft) doSendRequestVote(args *RequestVoteArgs, ch chan<- RequestVoteRe
 }
 ```
 
-这里采用了原子变量的方式来确定何时需要关闭通道，最后一个收到回复的routine负责关闭。
+这里采用了原子变量的方式来确定何时需要关闭通道—最后一个收到回复的routine负责关闭。
 
 collection routine如下：
 
@@ -378,7 +378,7 @@ func (rf *Raft) doReceiveRequestVoteReply(replyCh <-chan RequestVoteReply, done 
 }
 ```
 
-采用了 sync.Once来保证一旦收到半数以上的票后，只用反馈一次给外层routine。
+采用 sync.Once来保证一旦收到半数以上的票后，只用反馈一次给外层routine。
 
 最后还有一个注意点为：
 
@@ -393,9 +393,9 @@ if curTerm != rf.currentTerm || rf.role != CANDIDATE {
 ```
 为什么这里要做curTerm的二次检验？因为有可能外层routine还没有收到来自collection routine的返回信息（通过done通道），此时electionTimer再次超时，发起了第二次选举，只有最新的currentTerm能够用于状态转换。
 
-### RequestVote接收端
+### RequestVote handler
 
-看完了发送端，再看RPC的接收端
+看完了发送端，再看RPC handler
 
 ```go
 func (rf *Raft) RequestVote(args *RequestVoteArgs, reply *RequestVoteReply) {
@@ -525,7 +525,7 @@ func (rf *Raft) doSendAppendEntires(waitGroup *sync.WaitGroup, replies []AppendE
 }
 ```
 
-注意点和选举类似，包含 currentTerm check. 和选举不同的时，这里采用了waitGroup等待所有rpc相应完成后，才继续处理后续逻辑。
+注意点和选举类似，包含 currentTerm check. 和选举不同的是，这里采用waitGroup等待所有子routines（发起rpc）完成后，才继续处理后续逻辑。
 
 ### AppendEntires实现
 
@@ -562,7 +562,7 @@ func (rf *Raft) AppendEntries(args *AppendEntriesArg, reply *AppendEntriesReply)
 }
 ```
 
-这里最终的是，注意状态转换也就是下面三行：
+注意状态转换：
 
 ```go
 	if rf.role != FOLLOWER {
@@ -576,18 +576,18 @@ func (rf *Raft) AppendEntries(args *AppendEntriesArg, reply *AppendEntriesReply)
 
 paper中提到对于所有SVR：
 
-If RPC request or response contains term T > currentTerm: set currentTerm = T, convert to follower (§5.1). 除此外，还应该将voteFor设置为nil，因为已经进入到新的一轮term
+- If RPC request or response contains term T > currentTerm: set currentTerm = T, convert to follower (§5.1). 除此外，还应该将voteFor设置为nil(我设置为-1），因为已经进入到新的一轮term
 
 ## 3. 其它
 
-1. 关于测试：第一次跑通后，并不一定是真的pass了。 最后跑超过10次。
+1. 关于测试：第一次跑通后，并不一定是真的pass了。 最好跑超过10次(实际上我跑了100次，最后发现go的test包会超时，超10分钟后自动crash，并打印所有routine的堆栈，一度让我以为我的实现有什么bug)。
 
 ```shell
 go test -race -run 2A -count 10
 ```
 
-2. 另外，在我实现过程fireElection函数中，其实我非常纠结什么时候关闭通道，因为对每个for循环都加入了 rf.killed 检测后，关闭通道会变得非常麻烦，所以后来 我直接放弃了在每个for循环中对 `rf.killed`的检测, 再来关闭channel会变得相对简洁。
-3. 结合1和2后，会发现在通过log来debug时，有可能出现下一轮测试的日志中，出现上一轮测试的日志。这是因为上一轮go routine还没有完全关闭的情况下，下一轮又开始了。
+2. 另外，在我实现过程fireElection函数中，其实我非常纠结什么时候关闭通道，因为对每个for循环都加入了 rf.killed 检测后，关闭通道会变得非常麻烦，所以后来 我直接放弃了在每个for循环中对 `rf.killed`的检测, 现在关闭channel会变得简单很多。
+3. 结合1和2点，会发现在通过log来debug时，有可能出现下一轮测试的日志中，出现上一轮测试的日志。这是因为上一轮go routine还没有完全关闭的情况下，下一轮又开始了。
 4. 每个RPC请求是一定会返回的，要么正常，要么超时，所以不用担心channel或者waitGroup卡死，造成go routine一直在后台不退出，除非在RPC handler中，故意不返回，但这是不可能的。
 
 ## 4. 总结
