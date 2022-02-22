@@ -488,7 +488,6 @@ func (rf *Raft) fireAppendEntiresRPC() {
 		}
 		if rf.currentTerm < maxTermFromRsp {
 			rf.currentTerm = maxTermFromRsp
-			rf.changeRoleTo(FOLLOWER)
 		}
 		rf.mu.Unlock()
 	}()
@@ -496,7 +495,6 @@ func (rf *Raft) fireAppendEntiresRPC() {
 
 func (rf *Raft) doSendAppendEntires(waitGroup *sync.WaitGroup, replies []AppendEntriesReply) {
 	rf.mu.Lock()
-	defer rf.mu.Unlock()
 	prevLogTerm := -1
 	if len(rf.log) >= 2 {
 		prevLogTerm = rf.log[len(rf.log)-2].Term // NOTE: maybe a bug
@@ -509,6 +507,7 @@ func (rf *Raft) doSendAppendEntires(waitGroup *sync.WaitGroup, replies []AppendE
 		Entries:      make([]LogEntry, 0),
 		LeaderCommit: rf.commitIndex,
 	}
+    rf.mu.Unlock()
 
 	for i := 0; i < len(rf.peers); i++ {
 		// if rf.killed() {
