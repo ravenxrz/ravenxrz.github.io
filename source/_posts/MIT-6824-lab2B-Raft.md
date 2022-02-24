@@ -39,11 +39,11 @@ tags:
 
 整个通信流程图如下：
 
-![lab2b](https://cdn.JsDelivr.net/gh/ravenxrz/PicBed/img/lab2b.svg)
+![lab2b-2](https://cdn.JsDelivr.net/gh/ravenxrz/PicBed/img/lab2b-2.svg)
 
-一次命令的提交，至少需要两轮心跳，才能保证所有service的运行状态相同（如果只用保证最终状态相同，也就是不用保证副本apply log，则一次心跳即可）。
+一次命令的提交，至少需要两个阶段，才能保证所有service的运行状态相同。
 
-先说第一轮心跳：
+先说阶段1：
 
 1. client发起请求到leader的上层服务
 2. 上层服务通过raft暴露的Start接口，将命令发送给raft， raft将命令打包为log entry，append到log中
@@ -52,7 +52,7 @@ tags:
 5. leader收到半数以上的响应后，标记log为committed，并apply到service
 6. service至此可以响应给client。
 
-再说下一轮心跳，为什么需要这一轮心跳，因为上一轮只能保证leader侧的log committed，其他svr并不知道刚才接收的log是否已经被提交，所以需要下一轮心跳，将leader认为的commitIndex传递给其他svrs。
+再说下一阶段，因为上一阶段只能保证leader侧的log committed，其他svr并不知道刚才接收的log是否已经被提交，所以需要阶段2，将leader认为的commitIndex传递给其他svrs。
 
 7. leader将commitIndex等信息传递给其他svr
 8. 其他svr更新自己的commitIndex，响应给leader，并开始apply log
@@ -116,18 +116,26 @@ leader心跳到时后，派生成两类线程，上图右侧的routine表示用�
 fireAppendEntires函数如下：
 
 ```go
-func (rf *Raft) fireAppendEntires() {
+func (rf *Raft) fireAppendEntires(fromHeartBeatTimer bool) {
 	rf.mu.Lock()
+	if fromHeartBeatTimer && rf.hBStopByCommitOp {
+		rf.mu.Unlock()
+		return
+	}
 	pendingCommitIndex := len(rf.log) - 1
+	curTerm := rf.currentTerm
 	rf.mu.Unlock()
 	// use the same trick in `fireElection`
 	ch := make(chan AppendEntriesReplyInCh)
 	// send requests
-	go rf.doSendAppendEntires(ch, pendingCommitIndex)
+	go rf.doSendAppendEntires(ch, curTerm, pendingCommitIndex)
 	// receive
-	go rf.doReceiveAppendEntries(ch, pendingCommitIndex)
+	go rf.doReceiveAppendEntries(ch, curTerm, pendingCommitIndex)
 }
+
 ```
+
+忽略参数和hBStopByCommitOp相关逻辑，后文会提到。
 
 额外注意这里的 **pendingCommitIndex**。我们必须记录当前发起心跳时，当时需要commit的log长度，因为在进行心跳的过程中，log的长度是可能被修改的。
 
@@ -140,18 +148,26 @@ func (rf *Raft) fireAppendEntires() {
 3. 最后一个发送rpc的routine，负责关闭channel
 
 ```go
-func (rf *Raft) doSendAppendEntires(replyCh chan AppendEntriesReplyInCh, pendingCommitIndex int) {
+func (rf *Raft) doSendAppendEntires(replyCh chan AppendEntriesReplyInCh, curTerm, pendingCommitIndex int) {
 	rf.mu.Lock()
 	defer rf.mu.Unlock()
-	var chanCloseCnt int = 0
+	var sendRpcNum int = 0 // use this to determine when to close channel
 	// for debug
-	curTerm := rf.currentTerm
-	curRole := rf.role
+	// curTerm := rf.currentTerm
+	// curRole := rf.role
 
 	for i := 0; i < len(rf.peers) && rf.role == LEADER; i++ {
 		if i == rf.me {
 			continue
 		}
+		if rf.currentTerm != curTerm {
+			sendRpcNum++ // plus 1 so that we can close channel
+			if sendRpcNum == len(rf.peers)-1 {
+				close(replyCh)
+			}
+			continue
+		}
+
 		prevLogTerm := -1
 		prevLogIndex := -1
 		var entries []LogEntry
@@ -159,10 +175,17 @@ func (rf *Raft) doSendAppendEntires(replyCh chan AppendEntriesReplyInCh, pending
 			DPrintf("[%d] log len:%d, nextIndex[%d]=%d\n", rf.me, len(rf.log), i, rf.nextIndex[i])
 			prevLogTerm = rf.log[rf.nextIndex[i]-1].Term
 			prevLogIndex = rf.nextIndex[i] - 1
+		} else if rf.nextIndex[i] < 0 && pendingCommitIndex >= 0 { // NOTE: Fix bug: if svr becomes leader, set all nextIndex to -1, then accepted new logs, and then doSendAppendEntries
+			rf.nextIndex[i] = 0
 		}
+
 		if rf.nextIndex[i] >= 0 {
+			// for debug
+			if rf.nextIndex[i] > pendingCommitIndex+1 {
+				log.Panicf("rf.nextIndex[i]=%d is large than pendingCommitIndex=%d", rf.nextIndex[i], pendingCommitIndex)
+			}
 			entries = make([]LogEntry, 0) // do a copy
-			entries = append(entries, rf.log[rf.nextIndex[i]:]...)
+			entries = append(entries, rf.log[rf.nextIndex[i]:pendingCommitIndex+1]...)
 		}
 
 		args := &AppendEntriesArg{
@@ -173,33 +196,32 @@ func (rf *Raft) doSendAppendEntires(replyCh chan AppendEntriesReplyInCh, pending
 			Entries:      entries,
 			LeaderCommit: rf.commitIndex,
 		}
-		DPrintf("[%d.%d.%d] --> [%d] sendAppendEntires, total log len:%d, args:%+v\n", rf.me, rf.role, rf.currentTerm, i, len(rf.log), args)
+		DPrintf("[%d.%d.%d] --> [%d] sendAppendEntires, total log len:%d, args:%+v, nextIndex[%d]=%d\n", rf.me, rf.role, rf.currentTerm, i, len(rf.log), args, i, rf.nextIndex[i])
 		go func(svrId int) {
 			var reply AppendEntriesReply
-			cnt := 0
 			rf.sendAppendEntires(svrId, args, &reply)
-			DPrintf("[%d.%d.%d] --> [%d] AppendEntries Done, reply:%+v\n", rf.me, curRole, curTerm, svrId, reply)
+			// DPrintf("[%d.%d.%d] --> [%d] AppendEntries Done, reply:%+v\n", rf.me, curRole, curTerm, svrId, reply)
 
 			rf.mu.Lock()
-			chanCloseCnt++
-			cnt = chanCloseCnt
+			sendRpcNum++
+			cnt := sendRpcNum
 			if rf.role == LEADER {
 				rf.mu.Unlock()
-				replyCh <- AppendEntriesReplyInCh{
+				replyCh <- AppendEntriesReplyInCh{ // TODO: maybe a bug, what if close opeartion(below) is ahead of this channel because no one accpets msg from this channel
 					AppendEntriesReply: reply,
 					svrId:              svrId,
 				}
 			} else {
 				rf.mu.Unlock()
 			}
-
 			if cnt == len(rf.peers)-1 {
 				close(replyCh)
-				DPrintf("[%d.%d.%d] SendAppendEntries close reply channel\n", rf.me, curRole, curTerm)
+				// DPrintf("[%d.%d.%d] SendAppendEntries close reply channel\n", rf.me, curRole, curTerm)
 			}
 		}(i)
 	}
 }
+
 ```
 
 这里最重要的是如何打包参数，特别是如何确定发送log的长度，以及要注意，**由于本lab所有svr都跑在同一个机器的同一个进程中, 再打包log entries时，最好做一次全拷贝，而不要用引用**
@@ -211,19 +233,16 @@ func (rf *Raft) doSendAppendEntires(replyCh chan AppendEntriesReplyInCh, pending
 接收端的工作流程为：
 
 1. 一旦收到rpc响应，更新 nextIndex. 
-2. 一旦收到半数以上的票（这个过程有多次），更新commitIndex，并开始apply log（这个过程只有一次）。
+2. 一旦收到半数以上的票（这个过程有多次），更新commitIndex，并开始apply log（这个过程只有一次），同时立即进入阶段2，进入阶段2后，立即尝试关闭heartBeatTimer（不一定真的能立即关闭），避免阶段2的AppendEntries和心跳发送AppendEntries同时进行，否则有一个关于RPC字节数统计的单元测试无法通过。
 
 代码如下：
 
 ```go
-func (rf *Raft) doReceiveAppendEntries(replyCh <-chan AppendEntriesReplyInCh, pendingCommitIndex int) {
-	var once sync.Once
+func (rf *Raft) doReceiveAppendEntries(replyCh <-chan AppendEntriesReplyInCh, curTerm, pendingCommitIndex int) {
+	var succOne sync.Once
+	// var failOne sync.Once
 	successCnt := 1
-	curTerm := 0
-
-	rf.mu.Lock()
-	curTerm = rf.currentTerm
-	rf.mu.Unlock()
+	failCnt := 0
 
 	for {
 		reply, ok := <-replyCh
@@ -232,7 +251,7 @@ func (rf *Raft) doReceiveAppendEntries(replyCh <-chan AppendEntriesReplyInCh, pe
 		}
 
 		rf.mu.Lock()
-		if curTerm != rf.currentTerm || rf.role != LEADER {
+		if curTerm != rf.currentTerm || rf.role != LEADER || rf.killed() {
 			rf.mu.Unlock()
 			// return
 			continue // if we return now, replyCh will block some routines
@@ -250,27 +269,79 @@ func (rf *Raft) doReceiveAppendEntries(replyCh <-chan AppendEntriesReplyInCh, pe
 			continue
 		}
 		// update nextIndex and matchIndex
-		rf.updateNextIndex(reply)
+		rf.updateNextIndex(reply, pendingCommitIndex)
 		if reply.Success {
 			successCnt++
+		} else {
+			failCnt++
 		}
-		rf.mu.Unlock()
 
 		if 2*successCnt > len(rf.peers) {
-			once.Do(func() {
-				rf.mu.Lock()
-				rf.commitIndex = pendingCommitIndex
-				DPrintf("[%d.%d.%d] get majority of appendentries rsp, change committedIndex to %d\n", rf.me, rf.role, rf.currentTerm, pendingCommitIndex)
-				// notify applier
-				rf.committedChangeCond.Broadcast()
-				rf.mu.Unlock()
+			succOne.Do(func() {
+				rf.hBStopByCommitOp = false // force to reset preempByCommit so that heartBeatTimer can send msg
+				if curTerm != rf.currentTerm || rf.role != LEADER || rf.killed() {
+					// return
+					return
+				}
+				if rf.commitIndex != pendingCommitIndex {
+					rf.commitIndex = pendingCommitIndex
+					DPrintf("[%d.%d.%d] get majority of appendentries rsp, change committedIndex to %d\n", rf.me, rf.role, rf.currentTerm, pendingCommitIndex)
+					// notify applier
+					rf.committedChangeCond.Broadcast()
+					rf.hBStopByCommitOp = true
+					rf.mu.Unlock()
+					// fire next turn AppendEntries to tell others to commit
+					rf.fireAppendEntires(false)
+					rf.mu.Lock() // TODO:lock followed unlock immediately, how to fix this? use `go rf.fireAppendEntires` is another way, but launch a new goroutine is costly too
+				}
 			})
+		} else if 2*failCnt > len(rf.peers) && rf.hBStopByCommitOp {
+			//
+			// unlikely,
+			// actually, it's unnecessary to execute code below
+			// now that leader `commit opeartion` failed, which means leader is separeted from others.
+            // so we can assume that leader will convert to follower in the further(when rejoin to the network), therefore no heartbeat is needed right now
+			// comment those code is much better because it reduce the num of useless heartbeat
+			//
+			// failOne.Do(func() {
+			// 	rf.mu.Lock()
+			// 	defer rf.mu.Lock()
+			// 	rf.preempByCommit = false // force to turn on heartBeatTimer
+			// })
+			DPrintf("[%d] commit operation failed, can't get majority rsp\n", rf.me)
 		}
+		rf.mu.Unlock()
 	}
 }
+
 ```
 
 关于如何updateNextIndex和如何apply下文再说。
+
+这里的上半部分逻辑其实很好理解，无非是一些额外检查，然后更新一些index，最难理解的是 `hBStopByCommitOp` 变量，这个变量是用来避免 once.Do中的 `rf.fireAppendEntires(false)` 与心跳中的 `rf.fireAppendEntires(true)` 同时进行（不过不能精确保证，可能最开始还是会存在同时进行，但是最多一轮这样的同时进行）。这个检测在 `fireAppendEntries`中：
+
+```go
+func (rf *Raft) fireAppendEntires(fromHeartBeatTimer bool) {
+	rf.mu.Lock()
+	if fromHeartBeatTimer && rf.hBStopByCommitOp { 
+		rf.mu.Unlock()
+		return
+	}
+	...
+}
+```
+
+另外，最后有一大段的注释所在分支，其实是为了避免 once.Do 中的 `fireAppendEntries` 无法收到大多数的成功响应，这样无法重置`hBStopByCommitOp=false`，导致心跳停止，出现问题。但其实，这一点我通过另一个位置处的重置来解决，那就是当一个svr转变为leader的时候：
+
+```go
+func (rf *Raft) changeRoleTo(role RaftRole) {
+	...
+	if role == LEADER {
+		rf.resetNextIndex()
+		rf.hBStopByCommitOp = false // force to turn on heartbeatTimer
+	}
+}
+```
 
 #### svr侧
 
@@ -440,7 +511,7 @@ func (rf *Raft) AppendEntries(args *AppendEntriesArg, reply *AppendEntriesReply)
 #### leader侧
 
 ```go
-func (rf *Raft) updateNextIndex(reply AppendEntriesReplyInCh) {
+func (rf *Raft) updateNextIndex(reply AppendEntriesReplyInCh, pendingCommitIndex int) {
 	if !reply.Success {
 		if reply.XTerm == 0 && reply.XLen == 0 { // success = false, and both equal to 0, assume this is a timeout
 			DPrintf("[%d] --> [%d], reply unsuccess timeout\n", rf.me, reply.svrId)
@@ -464,22 +535,24 @@ func (rf *Raft) updateNextIndex(reply AppendEntriesReplyInCh) {
 					rf.nextIndex[reply.svrId] = i
 					i++
 				}
-				DPrintf("[%d.%d.%d] --> [%d] reply unsuccess(case 2), set nextIdx=%d\n", rf.me, rf.role, rf.currentTerm, reply.svrId, rf.nextIndex[reply.svrId])
+				DPrintf("[%d.%d.%d] --> [%d] reply unsuccess(case 2, XTerm == log.Term), set nextIdx=%d\n", rf.me, rf.role, rf.currentTerm, reply.svrId, rf.nextIndex[reply.svrId])
 			} else {
 				rf.nextIndex[reply.svrId] = i
-				DPrintf("[%d.%d.%d] --> [%d] reply unsuccess(case 1), set nextIdx=%d\n", rf.me, rf.role, rf.currentTerm, reply.svrId, rf.nextIndex[reply.svrId])
+				DPrintf("[%d.%d.%d] --> [%d] reply unsuccess(case 1, XTerm != log.Term), set nextIdx=%d\n", rf.me, rf.role, rf.currentTerm, reply.svrId, rf.nextIndex[reply.svrId])
 			}
 		}
+		// for debug
+		// if rf.nextIndex[reply.svrId] <= rf.matchIndex[reply.svrId] {
+		// 	log.Panicf("[%d] nextIndex[%d]=%d, matchIndex[%d]=%d", rf.me, reply.svrId, rf.nextIndex[reply.svrId], reply.svrId, rf.matchIndex[reply.svrId])
+		// }
 		// rf.nextIndex[reply.svrId]-- // NOTE: old scheme
 	} else {
-		rf.nextIndex[reply.svrId] = len(rf.log)
-		rf.matchIndex[reply.svrId] = rf.nextIndex[reply.svrId] - 1 
+		rf.nextIndex[reply.svrId] = pendingCommitIndex + 1
+		rf.matchIndex[reply.svrId] = rf.nextIndex[reply.svrId] - 1 // NOTE: maybe a bug here
+		DPrintf("[%d] matchIndex[%d]=%d, nextIndex[%d]=%d\n", rf.me, reply.svrId, rf.matchIndex[reply.svrId], reply.svrId, rf.nextIndex[reply.svrId])
 	}
 }
-
 ```
-
-
 
 ### 4. 如何apply log， 如何通知service已经commit了log
 
@@ -499,8 +572,8 @@ func (rf *Raft) applier() {
 			rf.committedChangeCond.Wait()
 		}
 		commitIndex = rf.commitIndex
-		rf.mu.Unlock()
 		if rf.killed() {
+			rf.mu.Unlock()
 			break
 		}
 		rf.lastAppliedIndex++
@@ -511,9 +584,11 @@ func (rf *Raft) applier() {
 				Command:      rf.log[rf.lastAppliedIndex].Command,
 				CommandIndex: rf.lastAppliedIndex + 1, // raft's log id starts from 0, but service starts from 1, so fix it by plus 1
 			}
+			// DPrintf("[%d] appiler feeds command, command idx:%d\n", rf.me, rf.lastAppliedIndex)
 			rf.lastAppliedIndex++
 		}
 		rf.lastAppliedIndex-- // back one step
+		rf.mu.Unlock()        // NOTE: another solution is put the lock inside for loop in order to avoid being blocked by applyCh, but we assume service will accept data immediately here
 	}
 }
 ```
@@ -536,7 +611,7 @@ lab2B的单元测试更多，也更复杂，特别是涉及到网络分区后，
    grep -E "0\.4\." out  # 这里的4代表leader role。
    ```
 
-3. 将单元测试修改得更容易分析，比如我在实现得过程中，测试 **TestBackup2B** 耗费了非常久， 因为它是随机生成命令，且每次append log数量有50个，非常难比较每个svr的log差别。于是我自己重新手写了一个简化版：
+3. 将单元测试修改得更容易分析，比如我在实现得过程中，测试 **TestBackup2B** 耗费了非常久， 因为它是随机生成命令，且每次append log数量有50个，非常难比较每个svr的log差别。于是我自己改写了一个简化版：
 
    ```go
    func TestSimpleBackup2B(t *testing.T) {
@@ -628,8 +703,11 @@ lab2B的单元测试更多，也更复杂，特别是涉及到网络分区后，
 
    这样分析过简单很多。
 
-   ## 5. 总结
+## 5. 总结
 
-   通过lab2B，能够对log replication有个更细节上了解，特别是对如何解决 log不一致问题，以及如何加速这个过程有了深刻理解。
+通过lab2B，能够对log replication有个更底层了解，特别是对如何解决 log不一致问题，以及如何加速这个过程有了深刻理解。
 
-   
+至此，lab2B通过：
+
+![image-20220224194848472](https://cdn.JsDelivr.net/gh/ravenxrz/PicBed/img/image-20220224194848472.png)
+

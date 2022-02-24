@@ -395,6 +395,10 @@ if curTerm != rf.currentTerm || rf.role != CANDIDATE {
 ```
 为什么这里要做curTerm的二次检验？因为有可能外层routine还没有收到来自collection routine的返回信息（通过done通道），此时electionTimer再次超时，发起了第二次选举，只有最新的currentTerm能够用于状态转换。
 
+> 后期更新，实际上这里的done通道多余了，直接在collection routine执行 fireElection中的后续逻辑即可。后期的逻辑图如下：
+>
+> ![raft_fireElectoin.excalidraw](https://cdn.JsDelivr.net/gh/ravenxrz/PicBed/img/raft_fireElectoin.excalidraw.png)
+
 ### RequestVote handler
 
 看完了发送端，再看RPC handler
