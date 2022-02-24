@@ -235,7 +235,7 @@ func (rf *Raft) doSendAppendEntires(replyCh chan AppendEntriesReplyInCh, curTerm
 接收端的工作流程为：
 
 1. 一旦收到rpc响应，更新 nextIndex. 
-2. 一旦收到半数以上的票（这个过程有多次），更新commitIndex，并开始apply log（这个过程只有一次），同时立即进入阶段2，进入阶段2后，立即尝试关闭heartBeatTimer（不一定真的能立即关闭），避免阶段2的AppendEntries和心跳发送AppendEntries同时进行，否则有一个关于RPC字节数统计的单元测试无法通过。
+2. 一旦收到半数以上的成功响应（这个过程有多次，比如有5个svr，获取到3个成功响应即为半数，但实际还可能又第4个和第5个响应），更新commitIndex，并开始apply log（这个过程只能有一次），同时立即进入阶段2，进入阶段2后，立即尝试关闭heartBeatTimer（不一定真的能立即关闭），避免阶段2的AppendEntries和心跳发送AppendEntries同时进行，否则有一个关于RPC字节数统计的单元测试无法通过。
 
 代码如下：
 
