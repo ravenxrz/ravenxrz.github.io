@@ -203,17 +203,20 @@ func (rf *Raft) doSendAppendEntires(replyCh chan AppendEntriesReplyInCh, curTerm
 			// DPrintf("[%d.%d.%d] --> [%d] AppendEntries Done, reply:%+v\n", rf.me, curRole, curTerm, svrId, reply)
 
 			rf.mu.Lock()
-			sendRpcNum++
-			cnt := sendRpcNum
 			if rf.role == LEADER {
 				rf.mu.Unlock()
-				replyCh <- AppendEntriesReplyInCh{ // TODO: maybe a bug, what if close opeartion(below) is ahead of this channel because no one accpets msg from this channel
+				replyCh <- AppendEntriesReplyInCh{
 					AppendEntriesReply: reply,
 					svrId:              svrId,
 				}
+				rf.mu.Lock()
+				sendRpcNum++ // NOTE:sendPrcNum++ here to prevent close opeartion(below) was executed ahead of replyCh channel due to no one accpet reply
 			} else {
-				rf.mu.Unlock()
+				sendRpcNum++
 			}
+			cnt := sendRpcNum
+			rf.mu.Unlock()
+
 			if cnt == len(rf.peers)-1 {
 				close(replyCh)
 				// DPrintf("[%d.%d.%d] SendAppendEntries close reply channel\n", rf.me, curRole, curTerm)
@@ -221,7 +224,6 @@ func (rf *Raft) doSendAppendEntires(replyCh chan AppendEntriesReplyInCh, curTerm
 		}(i)
 	}
 }
-
 ```
 
 这里最重要的是如何打包参数，特别是如何确定发送log的长度，以及要注意，**由于本lab所有svr都跑在同一个机器的同一个进程中, 再打包log entries时，最好做一次全拷贝，而不要用引用**
