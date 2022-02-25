@@ -82,11 +82,11 @@ func (rf *Raft) readPersist(data []byte) {
 
 ```
 
-再说再哪些地方需要做persist？
+再说哪些地方需要做persist.
 
-显然就是之前提到的三个变量被修改的地方，只是说不一定需要每次修改都立即persist，可以做batch persist。 
+显然是之前提到的三个变量被修改的地方，只是不一定每次修改都需要立即persist，可以做batch persist。 
 
-简单说一下我个人的实现， 我为Raft结构体添加了 `pendingPersist` 变量，用于表示当前是否需要做persist，然后封装了对以上3个变量的Set方法，然后对pendingPersist的setter也做一层包装，如下：
+简单说一下我个人的实现， 我为Raft结构体添加了 `pendingPersist` 变量，用于表示当前是否需要做persist，然后封装了对以上3个变量的Set方法，接着对pendingPersist的setter也做一层包装，如下：
 
 ```go
 // NOTE: must be guarded by rf.mu
@@ -208,61 +208,41 @@ func (rf *Raft) doReceiveRequestVoteReply(curTerm int, replyCh <-chan RequestVot
 这里我是采用了一个专用后台线程，每隔一段时间就去扫描一次。代码如下：
 
 ```go
-func (rf *Raft) doReceiveRequestVoteReply(curTerm int, replyCh <-chan RequestVoteReply) {
-	var once sync.Once
-	voteNum := 1
-	maxTermFromRsp := 0
-	// batch persist
-	defer func() {
-		rf.mu.Lock()
-		if rf.pendingPersist {
-			rf.persist()
-			rf.pendingPersist = false
-		}
-		rf.mu.Unlock()
-	}()
-
+func (rf *Raft) leaderCommitIndexChecker() {
+	DPrintf("[%d] leaderCommitIndexChecker start...\n", rf.me)
 	for {
-		// if rf.killed() {
-		// 	close(done) // actually we don't need this, now that rf is killed, blocked routines will be reclaimed by GC or OS
-		// 	return
-		// }
-		reply, ok := <-replyCh
-		if !ok {
-			return
+		time.Sleep(commitCheckerTimeout * time.Millisecond)
+		rf.mu.Lock()
+		for rf.role != LEADER && !rf.killed() {
+			rf.roleChangeCond.Wait()
 		}
-		if reply.Term > maxTermFromRsp {
-			maxTermFromRsp = reply.Term
+		if rf.killed() {
+			rf.mu.Unlock()
+			break
 		}
-		if reply.VoteGranted { // no mutex needed, `done chanel` will sync `*voteNum` and `maxTermFromRsp` for us
-			voteNum++
-			if 2*voteNum > len(rf.peers) {
-				once.Do(func() { // we can't break loop because we need to receive all data from the channel, otherwise some goroutine will be blocked forever
-					// update if need
-					rf.mu.Lock()
-					// double check whether curTerm is the same with rf.currentTerm to avoid while executing `RequestVote`, the candidate had started a new election
-					if curTerm != rf.currentTerm || rf.role != CANDIDATE || rf.killed() {
-						rf.mu.Unlock()
-						return
-					}
-					if rf.currentTerm < maxTermFromRsp {
-						rf.setNewTerm(maxTermFromRsp)
-						rf.changeRoleTo(FOLLOWER)
-						rf.mu.Unlock()
-						return
-					}
-					if voteNum*2 > len(rf.peers) {
-						rf.changeRoleTo(LEADER)
-						DPrintf("[%d.%d.%d] becomes leader, log len:%d log content:%v \n", rf.me, rf.role, rf.currentTerm, len(rf.log), rf.log)
-						// fmt.Fprintf(os.Stderr, "[%d.%d.%d] becomes leader\n", rf.me, rf.role, rf.currentTerm)
-						// NOTE: leader routine
-					}
-					rf.mu.Unlock()
-				})
+		// do check
+		matchIndexCopy := make([]int, 0)
+		matchIndexCopy = append(matchIndexCopy, rf.matchIndex...)
+		sort.Ints(matchIndexCopy)
+		startNidx := len(rf.peers) / 2
+		// for debug
+		if startNidx < 1 {
+			log.Panicf("len of rf.peers is less than 3")
+		}
+		startN := matchIndexCopy[startNidx]
+		endN := matchIndexCopy[startNidx-1]
+		for N := startN; N >= endN; N-- {
+			if N > rf.commitIndex && rf.log[N].Term == rf.currentTerm {
+				DPrintf("[%d] leaderCommitIndexChecker found N=%d, commitIndex=%d\n", rf.me, N, rf.commitIndex)
+				rf.commitIndex = N
+				rf.committedChangeCond.Broadcast()
+				break
 			}
 		}
+		rf.mu.Unlock()
 	}
 }
+
 ```
 
 不过就目前来说，并没有真正触发这个规则。
