@@ -242,7 +242,6 @@ func (rf *Raft) leaderCommitIndexChecker() {
 		rf.mu.Unlock()
 	}
 }
-
 ```
 
 不过就目前来说，并没有真正触发这个规则。
