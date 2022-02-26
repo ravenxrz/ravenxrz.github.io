@@ -162,11 +162,10 @@ func (rf *Raft) doReceiveRequestVoteReply(curTerm int, replyCh <-chan RequestVot
 		if reply.Term > maxTermFromRsp {
 			maxTermFromRsp = reply.Term
 		}
-		if reply.VoteGranted { // no mutex needed, `done chanel` will sync `*voteNum` and `maxTermFromRsp` for us
+		if reply.VoteGranted { 
 			voteNum++
 			if 2*voteNum > len(rf.peers) {
-				once.Do(func() { // we can't break loop because we need to receive all data from the channel, otherwise some goroutine will be blocked forever
-					// update if need
+				once.Do(func() {
 					rf.mu.Lock()
 					// double check whether curTerm is the same with rf.currentTerm to avoid while executing `RequestVote`, the candidate had started a new election
 					if curTerm != rf.currentTerm || rf.role != CANDIDATE || rf.killed() {
@@ -182,8 +181,6 @@ func (rf *Raft) doReceiveRequestVoteReply(curTerm int, replyCh <-chan RequestVot
 					if voteNum*2 > len(rf.peers) {
 						rf.changeRoleTo(LEADER)
 						DPrintf("[%d.%d.%d] becomes leader, log len:%d log content:%v \n", rf.me, rf.role, rf.currentTerm, len(rf.log), rf.log)
-						// fmt.Fprintf(os.Stderr, "[%d.%d.%d] becomes leader\n", rf.me, rf.role, rf.currentTerm)
-						// NOTE: leader routine
 					}
 					rf.mu.Unlock()
 				})
