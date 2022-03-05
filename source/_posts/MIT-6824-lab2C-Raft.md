@@ -95,13 +95,10 @@ func (rf *Raft) setNewTerm(arg interface{}) {
 	if !ok {
 		log.Panicf("call setNewTerm failed, invalid type: %+v", arg)
 	}
-	if term != rf.currentTerm {
-		rf.currentTerm = term
-		DPrintf("[%d.%d.%d] set new term\n", rf.me, rf.role, rf.currentTerm)
-		rf.votedFor = -1
-		DPrintf("[%d.%d.%d] reset vote\n", rf.me, rf.role, rf.currentTerm)
-		rf.pendingPersist = true
-	}
+	rf.currentTerm = term
+	DPrintf("[%d.%d.%d] set new term\n", rf.me, rf.role, rf.currentTerm)
+	rf.votedFor = -1
+	DPrintf("[%d.%d.%d] reset vote to -1 \n", rf.me, rf.role, rf.currentTerm)
 }
 
 // NOTE: must be guarded by rf.mu
@@ -110,10 +107,7 @@ func (rf *Raft) setVoteFor(arg interface{}) {
 	if !ok {
 		log.Panicf("call setVoteFor failed, invalid type: %+v", arg)
 	}
-	if rf.votedFor != voteFor {
-		rf.votedFor = voteFor
-		rf.pendingPersist = true
-	}
+	rf.votedFor = voteFor
 }
 
 // NOTE: must be guarded by rf.mu
@@ -123,14 +117,12 @@ func (rf *Raft) setLog(arg interface{}) {
 		log.Panicf("call setLog failed, invalid type: %+v", arg)
 	}
 	rf.log = logVal
-	rf.pendingPersist = true
 }
 
 func (rf *Raft) turnOnPendingPersist(setter func(val interface{}), val interface{}) {
 	rf.pendingPersist = true
 	setter(val)
 }
-
 ```
 
 接着，只用在适当函数的结尾处判定 `pendingPersist` 然后做 persist即可，之所以在函数结尾处，是为了一定程度上的batch，如 `doReceiveRequestVoteReply` :
