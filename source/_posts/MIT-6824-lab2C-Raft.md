@@ -129,17 +129,19 @@ func (rf *Raft) turnOnPendingPersist(setter func(val interface{}), val interface
 
 ```go
 func (rf *Raft) doReceiveRequestVoteReply(curTerm int, replyCh <-chan RequestVoteReply) {
-	var once sync.Once
 	voteNum := 1
+	unVoteNum := 1
+	var voteOnce sync.Once
+	var unVoteOnce sync.Once
 	maxTermFromRsp := 0
 	// batch persist
 	defer func() {
-		rf.mu.Lock()
+		rf.mu.Lock(rf.me, "doReceiveRequestVoteReply")
 		if rf.pendingPersist {
 			rf.persist()
 			rf.pendingPersist = false
 		}
-		rf.mu.Unlock()
+		rf.mu.Unlock(rf.me, "doReceiveRequestVoteReply")
 	}()
 
 	for {
@@ -157,24 +159,36 @@ func (rf *Raft) doReceiveRequestVoteReply(curTerm int, replyCh <-chan RequestVot
 		if reply.VoteGranted { 
 			voteNum++
 			if 2*voteNum > len(rf.peers) {
-				once.Do(func() {
-					rf.mu.Lock()
+				voteOnce.Do(func() { // we can't break loop because we need to receive all data from the channel, otherwise some goroutine will be blocked forever
+					// update if need
+					rf.mu.Lock(rf.me, "doReceiveRequestVoteReply.once")
 					// double check whether curTerm is the same with rf.currentTerm to avoid while executing `RequestVote`, the candidate had started a new election
 					if curTerm != rf.currentTerm || rf.role != CANDIDATE || rf.killed() {
-						rf.mu.Unlock()
+						rf.mu.Unlock(rf.me, "doReceiveRequestVoteReply.once")
 						return
 					}
 					if rf.currentTerm < maxTermFromRsp {
-						rf.turnOnPendingPersist(rf.setNewTerm, maxTermFromRsp) 
+						rf.turnOnPendingPersist(rf.setNewTerm, maxTermFromRsp)
 						rf.changeRoleTo(FOLLOWER)
-						rf.mu.Unlock()
+						rf.mu.Unlock(rf.me, "doReceiveRequestVoteReply.once")
 						return
 					}
-					if voteNum*2 > len(rf.peers) {
-						rf.changeRoleTo(LEADER)
-						DPrintf("[%d.%d.%d] becomes leader, log len:%d log content:%v \n", rf.me, rf.role, rf.currentTerm, len(rf.log), rf.log)
+					rf.changeRoleTo(LEADER)
+					DPrintf("[%d.%d.%d] becomes leader, log len:%d log content:%v \n", rf.me, rf.role, rf.currentTerm, len(rf.log), rf.log)
+					rf.mu.Unlock(rf.me, "doReceiveRequestVoteReply.once")
+				})
+			}
+		} else {
+			unVoteNum++
+			if 2*unVoteNum >= len(rf.peers) {
+				unVoteOnce.Do(func() {
+					rf.mu.Lock(rf.me, "doReceiveRequestVoteReply.unVote")
+					if curTerm != rf.currentTerm || rf.role != CANDIDATE || rf.killed() {
+						rf.mu.Unlock(rf.me, "doReceiveRequestVoteReply.unVote")
+						return
 					}
-					rf.mu.Unlock()
+					rf.changeRoleTo(FOLLOWER)
+					rf.mu.Unlock(rf.me, "doReceiveRequestVoteReply.unVote")
 				})
 			}
 		}
