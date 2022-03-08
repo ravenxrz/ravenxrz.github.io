@@ -473,7 +473,7 @@ func (rf *Raft) doReceiveAppendEntries(replyCh <-chan AppendEntriesReplyInCh, cu
 				}
 			} else {
 				succOne.Do(func() {
-					rf.hBStopByCommitOp = false // force to reset preempByCommit so that heartBeatTimer can send msg
+					rf.hBStopByCommitOp = false
 					if curTerm != rf.currentTerm || rf.role != LEADER || rf.killed() ||
 						rf.commitIndex >= pendingCommitIndex || // exclude later heartbeat commit first
 						rf.log[pendingCommitIndex].Term != curTerm { // NOTE:!!!! raft paper figure 8 prevention, we can't commit log entry from previous term!!!!
@@ -505,7 +505,7 @@ if curTerm != rf.currentTerm || rf.role != LEADER || rf.killed() {
 }
 ```
 
-然后是 leader角色退位的第一种情况， 如果收到的rpc响应的term比自身还高，需要主动退位：
+然后是 leader角色退位的第一种情况， 如果**收到的rpc响应的term比自身还高，需要主动退位**：
 
 ```go
 if reply.Term > rf.currentTerm {
@@ -522,7 +522,7 @@ if reply.Term > rf.currentTerm {
 }
 ```
 
-先看如果收到半数以上的成功响应, 尝试commitLog:
+先看如果**收到半数以上的成功响应,** 尝试commitLog:
 
 ```go
 	succOne.Do(func() {
@@ -544,11 +544,13 @@ if reply.Term > rf.currentTerm {
     rf.log[pendingCommitIndex].Term != curTerm // NOTE:!!!! raft paper figure 8 prevention, we can't commit log entry from previous term!!!!
 ```
 
-第一个判断用于预防旧rpc的pendingCommitIndex影响最新的commitIndex， 我们应该注意到，对于commitIndex来说，只能增长，不能回退。
+第一个判断用于**预防旧rpc的pendingCommitIndex影响最新的commitIndex**， 我们应该注意到，对于commitIndex来说，只能增长，不能回退。
 
-第二判定用于解决 raft paper figure 8的所提到的问题，即leader要commit的log entry，这个log entry的Term一定要和当前的curTerm相同，否则不予提交（具体原因请看paper）。
+第二判定用于解决 raft paper figure 8的所提到的问题，即leader要commit的log entry，这个log entry的Term一定要和当前的curTerm相同，否则不予提交（原因如下图)。
 
-然而正是因为第二个判断可能导致一些log永远不被提交，比如当前curTerm一直接收不到命令，也就无法发起rpc，更无法收到rpc的响应。所以才多了如下的代码：
+<img src="C:\Users\Raven\AppData\Roaming\Typora\typora-user-images\image-20220308092751973.png" alt="image-20220308092751973" style="zoom:80%;" />
+
+然而正是因为第二个判断**可能导致一些log永远不被提交**，比如当前curTerm一直接收不到命令，也就无法发起rpc，更无法收到rpc的响应。所以才多了如下的代码：
 
 ```go
 if successCnt == len(rf.peers) { // all svrs hold the logs precedeing(contains) `pendingCommitIndex`
@@ -592,12 +594,22 @@ func (rf *Raft) commitLog(pendingCommitIndex int) {
 1. commit，应该立即通知上层服务，即代码中的 `notify applier`注释。关于该部分看后文。
 2. 立即发起第二次rpc，通知其他svr可以commit上一轮rpc拷贝的logs。
 
-关于发送端还有两个重点：
+**最后是角色退位的第二种情况，如果收不到半数以上的票，应当退位，因为这很可能是因为发生了网络分区，而自己在minority分区中：**
+
+```go
+// seems like I lost the leader relationship (maybe network partition, or maybe I am sole now)
+if curTerm == rf.currentTerm && rf.role == LEADER && !rf.killed() {
+    DPrintf("[%d] commit operation failed, can't get majority rsp\n", rf.me)
+    rf.changeRoleTo(FOLLOWER) // consider to execute only once?
+}
+```
+
+**现在关于发送端还有两个重点：**
 
 1. 如何apply？
 2. 如何快速updateNextIndex?
 
-我们先谈第一个，第二个需要涉及到接收端。
+我们先谈第一个点，第二个需要涉及到接收端。
 
 对于第一个问题，我的做法是开一个单独的线程来做, 这里的重点是如何确定要apply哪一段log？ 这里需要用到rf中的 lastAppliedIndex 字段了。
 
@@ -645,7 +657,7 @@ func (rf *Raft) applier() {
 
 ```
 
-另外，注意的加锁解锁区间，应该避免在apply channel时还持有锁，在lab3是肯呢个造成死锁的。
+另外，注意的加锁解锁区间，应该避免在apply channel时还持有锁，在lab3是会造成死锁的。
 
 ### 2.4 接收端
 
@@ -776,7 +788,6 @@ func (rf *Raft) updateNextIndex(reply AppendEntriesReplyInCh, pendingCommitIndex
 			DPrintf("[%d.%d.%d] --> [%d], reply unsuccess timeout\n", rf.me, rf.role, rf.currentTerm, reply.svrId)
 			return
 		}
-		oldNextIndex := rf.nextIndex[reply.svrId]
 		if reply.XTerm == -1 {
 			rf.nextIndex[reply.svrId] = reply.XLen
 			DPrintf("[%d.%d.%d] --> [%d] reply unsuccess(remote log is too short), set nextIdx=%d\n", rf.me, rf.role, rf.currentTerm, reply.svrId, rf.nextIndex[reply.svrId])
@@ -804,16 +815,6 @@ func (rf *Raft) updateNextIndex(reply AppendEntriesReplyInCh, pendingCommitIndex
 		if rf.nextIndex[reply.svrId] <= rf.matchIndex[reply.svrId] {
 			rf.nextIndex[reply.svrId] = rf.matchIndex[reply.svrId] + 1
 		}
-		// for debug
-		// if oldNextIndex < rf.nextIndex[reply.svrId] {
-		// 	log.Panicf("[%d.%d.%d] we can only backward nextIndex, but old value is (%d), cur value is (%d)\n", rf.me, rf.role, rf.currentTerm, oldNextIndex, rf.nextIndex[reply.svrId])
-		// }
-		// if rf.nextIndex[reply.svrId] <= rf.commitIndex {
-		// 	log.Panicf("[%d.%d.%d] next value(%d) is less than than commitIndex (%d)\n", rf.me, rf.role, rf.currentTerm, rf.nextIndex[reply.svrId], rf.commitIndex)
-		// }
-		// if rf.nextIndex[reply.svrId] <= rf.matchIndex[reply.svrId] {
-		// 	log.Panicf("[%d.%d.%d] next value(%d) is less than matchIndex[%d]=(%d)\n", rf.me, rf.role, rf.currentTerm, rf.nextIndex[reply.svrId], rf.matchIndex[reply.svrId], reply.svrId)
-		// }
 		// rf.nextIndex[reply.svrId]-- // NOTE: old scheme
 	} else {
 		rf.nextIndex[reply.svrId] = pendingCommitIndex + 1

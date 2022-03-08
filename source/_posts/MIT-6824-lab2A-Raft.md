@@ -30,7 +30,7 @@ tags:
 
 ## 1. 实现
 
-**！！！下面所有代码均为lab2A中的代码，在后期lab2B和lab2C中会逐渐更改, 这里不是最终实现 ！！！**
+**本文并非最终实现，最终实现在[这里](https://ravenxrz.ink/archives/d16f195.html)**
 
 raft实现是相对复杂的，不过好在**raft paper figure 2**给出了算法的详细描述。lab2A的所有实现，都参考自paper的figure:
 

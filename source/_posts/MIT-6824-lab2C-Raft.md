@@ -19,6 +19,8 @@ tags:
 
 ## 1. 实现
 
+**本文并非最终实现，最终实现在[这里](https://ravenxrz.ink/archives/d16f195.html)**
+
 根据raft paper figure 2提到的需要持久化的状态只有3个。如下图：
 
 ![image-20220225115450978](https://cdn.JsDelivr.net/gh/ravenxrz/PicBed/img/image-20220225115450978.png)
