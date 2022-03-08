@@ -32,10 +32,10 @@ tags:
 1. Clerk发起请求时，向谁发起？
 2. 如果Clerk发送到的svr不是leader，Clerk该如何反应？
 3. leader服务器收到Clerk的请求后，提交给raft后，就死等该命令被committed吗？如果此时网络分区了该怎么办？
-4. 同样leader收到请求，提交给raft后，如果刚才提交的命令丢失了（因为网络分区又愈合，被其他leader将刚才提交的给raft的log覆盖了），该如何处理？
+4. leader收到请求，提交给raft后，如果刚才提交的命令丢失了（因为网络分区又愈合，被其他leader将刚才提交的给raft的log覆盖了），该如何处理？
 5. 对于Put/Append等写相关命令来说，不能重复执行，如何去除重复执行？
 6. raft commit log后，通过applyChannel反馈给kvraft， kvraft根据log entry执行相应command，执行完后应该通知给rpc handler，再由rpc handler通知clerk。 kvraft执行完command，如何执行通知给那个rpc handler？ 因为在同一时刻中，可能存在多个rpc handler的实体（即多个clerk并发请求的情况）
-7. leader再收到apply响应后，立即向clerk回复，但是如果这个回复包在网络中丢失了，该如何处理？
+7. leader收到apply响应后，立即向clerk回复，但是如果这个回复包在网络中丢失了，该如何处理？
 8. ...
 
 现在让我们先从client(clerk)开始，因为它相对简单。
@@ -175,7 +175,7 @@ func (ck *Clerk) changeLeader() int32 {
 
 #### 2.1.2 PutAppend操作
 
-PutAppend操作和Get操作的处理基本完全一致性，不在赘述。
+PutAppend操作和Get操作的处理基本完全一致性，不再赘述。
 
 ```go
 func (ck *Clerk) PutAppend(key string, value string, op string) {
@@ -224,7 +224,7 @@ func (ck *Clerk) PutAppend(key string, value string, op string) {
 
 #### 2.1.3 操作码唯一
 
-前文说过，每个Client发起的请求需要有一个唯一标识，我的实现是通过 ClientId + OpId 来保证。OpId比较直观，保证其原子单调递增即可。那么ClientId得到？
+前文说过，每个Client发起的请求需要有一个唯一标识，我的实现是通过 ClientId + OpId 来保证。OpId比较直观，保证其原子单调递增即可。那么ClientId该如何得到？
 
 这里我采用的方式是记录MakeClerk时的时间戳。如下：
 
@@ -250,7 +250,7 @@ func MakeClerk(servers []*labrpc.ClientEnd) *Clerk {
 }
 ```
 
-虽然这样写在真实的分布式环境下肯定是不对的，但我相信在真实的环境下，每个client肯定也可以通过某种方式得到其唯一的id。（或IP，或谋者分布式的uniq id算法）。
+虽然这样写在真实的分布式环境下肯定是不对的，但我相信在真实的环境下，每个client肯定也可以通过某种方式得到其唯一的id。（或IP，或某种分布式的uniq id算法）。
 
 ### 2.2 服务器端实现
 
@@ -272,7 +272,7 @@ func MakeClerk(servers []*labrpc.ClientEnd) *Clerk {
 
 假设有svr{0,1,2}，0最开始为leader，但提交了命令[1,2,3]后，网络发生了分区，{0}单独作为一个分区，此时client继续发送了[4,5]两个命令，rpc handler会分别在[4,5]两个log index上建立通道，当网络愈合后，{1,2}分区中的leader会同步自己的log, 此时0的log被截断，只剩[1,2,3]。之后新的client发送新的[4,5]命令。那么刚才已经在旧的[4,5]上建立通道，该如何处理这种冲突？
 
-我的做法是，立即通知旧rpc handler，然后新的[4,5]命令接管旧通道。
+我的做法是，立即通知旧rpc handler，然后新的[4,5] rpc hanlder命令接管旧通道。
 
 ok，理论说了一大堆，现在看代码：
 
@@ -332,7 +332,7 @@ type InternalReply struct {
 
 PutAppend handler的工作分为两部分：
 
-1. 检查当前提交的请求命名，是否曾经已经执行过，如果已经执行过，那么直接响应
+1. 检查当前提交的请求命令，是否曾经已经执行过，如果已经执行过，那么直接响应
 2. 如果没有执行过，需要提交到raft，然后等待执行，并响应。 注意这里的超时处理。
 
 ```go
@@ -417,7 +417,7 @@ func (kv *KVServer) PutAppend(args *PutAppendArgs, reply *InternalReply) {
 }
 ```
 
-这里比较迷惑的是一下几行代码：
+这里比较迷惑的是以下几行代码：
 
 ```go
 DPrintf("[%d] PutAppend, more than 1 command at the same idx(%d)\n", kv.me, idx)
