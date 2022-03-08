@@ -854,7 +854,7 @@ func (rf *Raft) resetNextIndex() {
 
 ### 2.5 持久化
 
-持久化相对简单，且不涉及到raft的核心，关于Snapshot会在lab3中讲解。
+持久化相对简单，不算是lab2的核心，关于Snapshot会在lab3中讲解。
 
 这里直接看旧博文 [lab2C](https://ravenxrz.ink/archives/5fad6910.html)
 
