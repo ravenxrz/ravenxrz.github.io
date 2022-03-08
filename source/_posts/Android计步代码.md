@@ -7,8 +7,8 @@ date: 2017-05-11 13:58:04
 tags: 手机计步
 ---
 
+## 前言
 
-##前言
 > Android端计步代码，经测试较为精准。使用了计步传感器（耗能低，准确度高）和加速度传感器（适用度广，基本上各个手机上都有这个传感器），**代码中牵涉到数据的操作，数据库我使用的是GreenDao，相关代码就不贴了，因为配置一下就好了，毕竟重在计步嘛**
 
 主要使用到的技术：
@@ -25,8 +25,9 @@ tags: 手机计步
 
 实物不好拍摄，就直接录了个GIF，实际用着还是不错的。
 
-##废话不多说，直接上代码
-```
+## 废话不多说，直接上代码
+
+```java
 public class StepService extends Service implements SensorEventListener {
 
     //TAG
@@ -463,8 +464,10 @@ public class StepService extends Service implements SensorEventListener {
     }
 }
 ```
-##代码分析
-#####onCreate
+## 代码分析
+
+### onCreate
+
 ```
 
     @Override
@@ -486,7 +489,8 @@ public class StepService extends Service implements SensorEventListener {
 ```
 代码上写得很简单明了，即：**初始广播，获取传感器类型，开始计时，以及初始化日期**
 
-####初始化广播
+### 初始化广播
+
 ```
  /**
      * 注册广播
@@ -550,7 +554,8 @@ public class StepService extends Service implements SensorEventListener {
 ```
 在这段代码里，主要是**监听用户手机状态的改变**，根据状态的改变进行不同的操作，如“用户关机时，将当前步数进行保存”、“当到达凌晨0点时需要进行新的一天的数据库更新”等等。**别忘了注销Receiver**哦
 
-####获取传感器
+### 获取传感器
+
 ```
  /**
      * 获取传感器实例
@@ -683,7 +688,7 @@ public class StepService extends Service implements SensorEventListener {
 - 另外
 ```sendMessage```和```setNotification```分别为更新UI界面和更新通知栏。
 
-##写在最后
-> 因为写这个功能的时候参看了不少代码，而且时间较为久了，参看了不少博文，忘了具体的博主了，这里就感谢所有博主了。ok，上课去了。
+## 写在最后
 
+> 因为写这个功能的时候参看了不少代码，而且时间较为久了，参看了不少博文，忘了具体的博主了，这里就感谢所有博主了。ok，上课去了。
 
