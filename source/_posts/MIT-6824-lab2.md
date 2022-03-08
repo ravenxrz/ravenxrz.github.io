@@ -21,8 +21,8 @@ tags:
 
 1. **拥有leader身份**的上层服务通过 **Start** 接口将要执行的命令传入到leader raft 中，Raft收到lib后，将其保存在内部的log中(log entry)
 2. leader raft lib将收到的log entry通过网络发送到各个副本中，各个副本 **通过一定的验证** 后，给leader raft应答成功拷贝log的消息回复
-3. leader raft在收到 **超过一半（包括自己)**的成功拷贝消息后，可以认为这个log entry已经被“安全”拷贝，于是**可以向上层应答第1步发来的命令(log entry)已经成功commit**， 与此同时发送commit消息给各个副本
-4. 各个副本收到raft发来commit消息，根据commit消息，将第2步收到的log entry标记为committed，同时也可以**向上层应答该log entry已经成功commit**。
+3. leader raft在收到 **超过一半（包括自己)**的成功拷贝消息后，可以认为这个log entry已经被“安全”拷贝，于是**向上层应答第1步发来的命令(log entry)已经成功commit**， 与此同时发送commit消息给各个副本
+4. 各个副本收到raft发来commit消息，根据commit消息，将第2步收到的log entry标记为committed，同时也**向上层应答该log entry已经成功commit**。
 
 ![raft框架](https://cdn.JsDelivr.net/gh/ravenxrz/PicBed/img/raft框架.svg)
 
@@ -49,9 +49,9 @@ raft的基本工作流非常简单，但是其底层的细节问题有非常多�
 
 ### 2.1 三个状态
 
-所有的svr都可能有三个状态 {leader, candidate, follower}。 所有svr最开始的状态都是follower，每个svr都有一个选举定时器，当定时器到时，follower可转换为candidate，并开始向其他svr宣告，自己想要称为leader，看其他svr是否统一，如果candiate能够收到超过一半的投票，那么它就可以转为leader。 
+所有的svr都可能有三个状态 {leader, candidate, follower}。 所有svr最开始的状态都是follower，每个svr都有一个选举定时器，当定时器到时，follower可转换为candidate，并开始向其他svr宣告自己想要称为leader，看其他svr是否统一，如果candiate能够收到超过一半的投票，那么它就可以转为leader。 
 
-![](https://cdn.jsdelivr.net/gh/ravenxrz/PicBed/img/raft状态转换.svg)
+![raft状态转换图](https://cdn.JsDelivr.net/gh/ravenxrz/PicBed/img/raft状态转换图.svg)
 
 **只有leader可以接收上层传来的命令。**
 
@@ -59,7 +59,7 @@ raft的基本工作流非常简单，但是其底层的细节问题有非常多�
 
 #### 2.2.1 发送端
 
-选举的起点在于选举定时器到时，然后转化身份并发起 **RequestVote** RPC请求。 另外要注意的是选举定时器是可以被Reset并重启开始计时的，**另外选举过程也可被其他同时参与选举的candidate或者leader所中断的**。
+选举的起点在于选举定时器到时，然后转化身份并发起 **RequestVote** RPC请求。 另外要注意的是选举定时器是可以被Reset并重启开始计时的，**选举过程也可被其他同时参与选举的candidate或者leader所中断的**。
 
 先说小问题，如何实现一个可被Reset的定时器？通过time.Sleep + 定期检测是否超时实现。如下代码, 设定一个定时总时长，并设置一个打盹时间(小于总时长)，每次仅睡眠一个打盹时间，然后检查当前所剩的总时长（总时长可被在其他地方设定，也就是Reset）。
 
@@ -99,7 +99,7 @@ func (rf *Raft) electionTimer() {
 
 再说如何发起RequestVote RPC，已经如何接受RPC的响应？
 
-发起RequesetVote很简单，**关键在于对于不同的响应结果该如何处理**。同时还应该关注到，**由于网络延迟的存在，一个candidate可能同时发起了多伦RequestVote**，我们只能对最新一轮RequestVote做出反应，丢失所有旧的请求。
+发起RequesetVote很简单，**关键在于对于不同的响应结果该如何处理**。同时还应该关注到，**由于网络延迟的存在，一个candidate可能同时发起了多伦RequestVote**，我们只能对最新一轮RequestVote做出反应，丢弃所有旧的请求。
 
 这部分我所采用的处理逻辑图如下：
 
@@ -223,7 +223,7 @@ func (rf *Raft) doReceiveRequestVoteReply(curTerm int, replyCh <-chan RequestVot
 
 1. follower：收到RequestVote，需要做一定log的校验（log at least up-to-date rule) ，看应该投同意票还是反对票.  一种投反对票的情况是我已经给其它svr投票了，而新来请求的term并不比我的curTerm高，此时我应该投反对票。另一种是对方的term比我的term低，此时也应该是反对票
 2. candidate: 收到ReuqestVote，说明在一个短时间内，同时有两个及以上的candidate存在（包括自己），如果对方的term大于我的term，那么我应该放弃继续请求，转变为follower，然后回到 follower 角色的处理逻辑。
-3. leader：收到RequestVote，说明我发送的心跳信息，对方并没有收到，所以它的选举计时器到了，这或许是网络不稳定，又或许是网络分区又愈合。对于leader来说，和candidate的处理情况类似，如果对方的term比我高，那么我应该放弃leader角色，转为follower。但有如果对方的term和我相等，如果我通过一定的检验后，决定要为它投票，此时我也应该放弃leader角色，转为follower。
+3. leader：收到RequestVote，说明我发送的心跳信息，对方并没有收到，所以它的选举计时器到了，这或许是网络不稳定，又或许是网络分区又愈合。对于leader来说，和candidate的处理情况类似，如果对方的term比我高，那么我应该放弃leader角色，转为follower。但有如果对方的term和我相等，且我决定要为它投票，此时我也应该放弃leader角色，转为follower。
 
 这部分的代码如下：
 
@@ -290,11 +290,11 @@ func (rf *Raft) RequestVote(args *RequestVoteArgs, reply *RequestVoteReply) {
 
 心跳是raft中最为复杂的部分，因为它承担了两个工作：1. 保证自己的leader身份不丢失；**2. log replica**。
 
-如果只是为了保证leader身份不丢失，那么将是比较简单的，定期发送心跳，对方收到心跳后，Reset选举定时器即可。但是如果包含了log replica相对来说就比较难以实现了。下面重点说说log replica的过程。
+如果只是为了保证leader身份不丢失，那么是比较简单的，定期发送心跳，对方收到心跳后，Reset选举定时器即可。但是如果包含了log replica，相对来说就比较难以实现了。下面重点说说log replica的过程。
 
 #### 2.3 发送端
 
-采用了选举时相同的trick。
+采用了和选举时相同的trick。
 
 ![raft_fireAppendEntries.excalidraw](https://cdn.JsDelivr.net/gh/ravenxrz/PicBed/img/raft_fireAppendEntries.excalidraw.svg)
 
@@ -388,10 +388,8 @@ func (rf *Raft) doSendAppendEntries(replyCh chan AppendEntriesReplyInCh, curTerm
 					svrId:              svrId,
 				}
 				rf.mu.Lock(rf.me, "doSendAppendEntries1")
-				sendRpcNum++ // NOTE: sendPrcNum++ here to prevent close opeartion(below) was executed ahead of replyCh channel due to no one accpet reply
-			} else {
-				sendRpcNum++
 			}
+			sendRpcNum++ // NOTE: sendPrcNum++ here to prevent close opeartion(below) was executed ahead of replyCh channel due to no one accpet reply
 			cnt := sendRpcNum
 			rf.mu.Unlock(rf.me, "doSendAppendEntries1")
 
@@ -436,48 +434,42 @@ func (rf *Raft) doReceiveAppendEntries(replyCh <-chan AppendEntriesReplyInCh, cu
 		}
 
 		rf.mu.Lock(rf.me, "doReceiveAppendEntries1")
-		if curTerm != rf.currentTerm || rf.role != LEADER || rf.killed() {
-			rf.mu.Unlock(rf.me, "doReceiveAppendEntries1")
-			// return
-			continue // if we return now, replyCh will block some routines
-		}
-
 		if reply.Term > rf.currentTerm {
 			DPrintf("[%d.%d.%d] --> [%d] , remote term %d is large than me \n", rf.me, rf.role, rf.currentTerm, reply.svrId, reply.Term)
-			// for debug
-			if reply.Success {
-				log.Panicf("reply.Term is large	than me, but reply.Success is true")
-			}
 			rf.turnOnPendingPersist(rf.setNewTerm, reply.Term)
-
 			rf.changeRoleTo(FOLLOWER) // someone's term is large than me, so give up leader role and change to follower
+			rf.mu.Unlock(rf.me, "doReceiveAppendEntries1")
+			continue
+		}
+
+		// discard stale rsp 
+		if curTerm != rf.currentTerm || rf.role != LEADER || rf.killed() {
 			rf.mu.Unlock(rf.me, "doReceiveAppendEntries1")
 			continue
 		}
 		// update nextIndex and matchIndex
 		rf.updateNextIndex(reply, pendingCommitIndex)
+
 		if reply.Success {
 			successCnt++
 		} else if requestTimeOut(reply) {
 			timeOutCnt++
 		}
-
 		if 2*successCnt > len(rf.peers) {
 			if successCnt == len(rf.peers) { // all svrs hold the logs precedeing(contains) `pendingCommitIndex`
 				// NOTE: this branch is used to handle the scenario that receive `rf.log[pendingCommitIndex].Term < curTerm`
 				// but no curTerm log entry anymore, which will cause the logs precedeing pendingCommitIndex never be
 				// committed and client will  timeout
-				if curTerm == rf.currentTerm && rf.role == LEADER && !rf.killed() && rf.commitIndex < pendingCommitIndex {
+				if rf.commitIndex < pendingCommitIndex {
 					DPrintf("[%d] [%v] all svrs hold the log precedeing(contain) index %d\n", rf.me, nowTime, pendingCommitIndex)
 					rf.commitLog(pendingCommitIndex)
 				}
+				// }
 			} else {
 				succOne.Do(func() {
-					rf.hBStopByCommitOp = false
-					if curTerm != rf.currentTerm || rf.role != LEADER || rf.killed() ||
-						rf.commitIndex >= pendingCommitIndex || // exclude later heartbeat commit first
+					rf.hBStopByCommitOp = false                // force to reset preempByCommit so that heartBeatTimer can send msg
+					if rf.commitIndex >= pendingCommitIndex || // exclude later heartbeat commit first
 						rf.log[pendingCommitIndex].Term != curTerm { // NOTE:!!!! raft paper figure 8 prevention, we can't commit log entry from previous term!!!!
-						// return
 						return
 					}
 					rf.commitLog(pendingCommitIndex)
@@ -522,7 +514,7 @@ if reply.Term > rf.currentTerm {
 }
 ```
 
-先看如果**收到半数以上的成功响应,** 尝试commitLog:
+如果**收到半数以上的成功响应,** 则可尝试commitLog:
 
 ```go
 	succOne.Do(func() {
@@ -661,7 +653,13 @@ func (rf *Raft) applier() {
 
 ### 2.4 接收端
 
-接收端的逻辑不算复杂，只用照着 raft paper figure 2写下来即可。重点是关于 updateNextIndex 快速回退的部分，不过这部分会后文讲解。
+接收端的逻辑不算复杂，只用照着 raft paper figure 2写下来即可。重点是关于 **updateNextIndex 快速回退的**部分，不过这部分会后文讲解。下面我们依然代入三种角色来看如何处理这个handle:
+
+1. follower：收到该信息，需要重置自己的选举定时器，同时通过一定的验证后，截取拷贝传递进来的log，根据传递进来的commitIndex，更新自己的commitIndex，并唤醒applier，apply log。
+2. candidate：和follower类似，收到信息后，需要放弃自己的candidate角色，然后转入follower角色处理逻辑
+3. leader：收到该信息，说明网络曾经发生过分区，现在愈合后，网络中至少存在两个leader，如果对方的term大于我，我需要放弃leader角色，然后传入follower角色，如果对方的term小于我，将我自己的term传递给他，让他放弃leader角色。
+
+下面是整个代码：
 
 ```go
 func (rf *Raft) AppendEntries(args *AppendEntriesArg, reply *AppendEntriesReply) {
@@ -768,15 +766,17 @@ func (rf *Raft) AppendEntries(args *AppendEntriesArg, reply *AppendEntriesReply)
 
 为了实现快速updateNextIndex, 这里采用了课堂中的方案。
 
-Follower在回复Leader的AppendEntries消息中，携带3个额外的信息，来加速日志的恢复。这里的三个信息是指：
+Follower在回复Leader的AppendEntries消息中，需要携带3个额外的信息，来加速日志的恢复。这里的三个信息是指：
 
 - XLen: 如果follower的log长度不够长，在PrevLogIndex处没有log，则设置XLen为当前的log长度。
-- XTerm, 如果follower在PrevLogIndex处的Term不等于PrevLogTerm，设置该Xterm为follower在PrewvLogIndex处的Term。 
+- XTerm, 如果follower在PrevLogIndex处的Term不等于PrevLogTerm，设置该Xterm为follower在PrevLogIndex处的Term。 
 - XIndex：如果follower在PrevLogIndex处的Term不等于PrevLogTerm，记录该位置的Term，并向前回溯，找到第一次出现该Term的log Index， 设置该Index = XIndex。
+
 当leader拿到这三个消息后：
-- XLen不为空，设置设置nextIndex=Xlen
--  XTerm不为空，且XIndex处的log Term ! = XTerm，设置nextIndex = XIndex 
--  XTerm不为空，且Xindex处的log Term == XTerm，从XIndex位置处向后查询，找到最后一个出现XTerm的位置Index，设置nextIndex = Index + 1
+
+- XLen不为空，设置nextIndex=Xlen
+- XTerm不为空，且XIndex处的log Term ! = XTerm，设置nextIndex = XIndex 
+- XTerm不为空，且Xindex处的log Term == XTerm，从XIndex位置处向后查询，找到最后一个出现XTerm的位置Index，设置nextIndex = Index + 1
 
 代码实现：
 
@@ -832,7 +832,7 @@ if rf.nextIndex[reply.svrId] <= rf.matchIndex[reply.svrId] {
 }
 ```
 
-这是为了避免收到旧的响应消息（但是term 依然等于 curTerm）时， nextIndex 回退过度（不能低于 matchIndex])。
+这是为了避免**收到旧的响应消息（但是term 依然等于 curTerm）时**， nextIndex 回退过度（不能低于 matchIndex])。
 
 最后一个没有提到的问题是，nextIndex的初始化在哪里 ？
 
