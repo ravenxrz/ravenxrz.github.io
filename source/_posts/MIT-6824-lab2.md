@@ -320,7 +320,9 @@ func (rf *Raft) fireAppendEntries(fromHeartBeatTimer bool) {
 
 ##### 发起RPC
 
-当发起RPC用于log复制时，最重要的是，我们应该复制哪一段log？每次都全量发送log显然是不合适的，在raft中有一个 **nextIndex[]** 数组，用于存放给每个svr发送log时的log起点位置。 但需要注意的是，发起rpc这个过程同样是可能同时进行多轮的，当下一轮发起时，解决的log内容可能就和前一轮不同了。所以我们依然需要记录发起rpc时的term，当收到rpc响应时，只有最新的term才可以做处理。除了term外，还应该保存发起rpc时的log长度，用于后续commitIndex更新。
+当发起RPC用于log复制时，最重要的是，我们**应该复制哪一段log？**每次都全量发送log显然是不合适的，在raft中有一个 **nextIndex[]** 数组，用于存放给每个svr发送log时的log起点位置。 但需要注意的是，发起rpc这个过程同样是可能同时进行多轮的，当下一轮发起时，解决的log内容可能就和前一轮不同了。所以我们依然需要记录发起rpc时的term，当收到rpc响应时，只有最新的term才可以做处理。除了term外，还应该**保存发起rpc时的log长度，用于后续commitIndex更新。**
+
+**当收到的超时的rpc数量超过总svr数量的一半时，我们有理由相信自己已经被网络隔离开，此时应当退位**。
 
 这部分代码如下：
 
@@ -328,7 +330,9 @@ func (rf *Raft) fireAppendEntries(fromHeartBeatTimer bool) {
 func (rf *Raft) doSendAppendEntries(replyCh chan AppendEntriesReplyInCh, curTerm, pendingCommitIndex int) {
 	rf.mu.Lock(rf.me, "doSendAppendEntries")
 	defer rf.mu.Unlock(rf.me, "doSendAppendEntries")
-	var sendRpcNum int = 0 // use this to determine when to close channel
+	var sendRpcNum int32 = 0 // use this to determine when to close channel
+	var timeoutCnt int32 = 0
+	var timeoutOnce sync.Once
 	// for debug
 	// curTerm := rf.currentTerm
 	curRole := rf.role
@@ -339,11 +343,8 @@ func (rf *Raft) doSendAppendEntries(replyCh chan AppendEntriesReplyInCh, curTerm
 			continue
 		}
 		if rf.currentTerm != curTerm {
-			sendRpcNum++ // plus 1 so that we can close channel
-			if sendRpcNum == len(rf.peers)-1 {
-				close(replyCh)
-			}
-			continue
+			close(replyCh) // close channel to exit Collection(receive) routine
+			break
 		}
 
 		prevLogTerm := -1
@@ -377,23 +378,35 @@ func (rf *Raft) doSendAppendEntries(replyCh chan AppendEntriesReplyInCh, curTerm
 		DPrintf("[%d.%d.%d] [%v] --> [%d] sendAppendEntries, total log len:%d, args:%+v, nextIndex[%d]=%d, pendingCommitIndex=%d\n", rf.me, rf.role, rf.currentTerm, nowTime, i, len(rf.log), args, i, rf.nextIndex[i], pendingCommitIndex)
 		go func(svrId int) {
 			var reply AppendEntriesReply
-			rf.sendAppendEntries(svrId, args, &reply)
+			ok := rf.sendAppendEntries(svrId, args, &reply)
 			DPrintf("[%d.%d.%d] [%v] --> [%d] AppendEntries Done, reply:%+v\n", rf.me, curRole, curTerm, nowTime, svrId, reply)
-
-			rf.mu.Lock(rf.me, "doSendAppendEntries1")
-			if rf.role == LEADER {
-				rf.mu.Unlock(rf.me, "doSendAppendEntries1")
-				replyCh <- AppendEntriesReplyInCh{
-					AppendEntriesReply: reply,
-					svrId:              svrId,
-				}
+			if ok {
 				rf.mu.Lock(rf.me, "doSendAppendEntries1")
+				if !rf.killed() {
+					rf.mu.Unlock(rf.me, "doSendAppendEntries1")
+					replyCh <- AppendEntriesReplyInCh{
+						AppendEntriesReply: reply,
+						svrId:              svrId,
+					}
+					rf.mu.Lock(rf.me, "doSendAppendEntries1")
+				}
+				rf.mu.Unlock(rf.me, "doSendAppendEntries1")
+			} else {
+				DPrintf("[%d] timeout\n", rf.me)
+				if 2*atomic.AddInt32(&timeoutCnt, 1) > int32(len(rf.peers)) {
+					timeoutOnce.Do(func() {
+						rf.mu.Lock(rf.me, "doSendAppendEntries1")
+						// seems like I lost the leader relationship (maybe network partition, or maybe I am sole now)
+						if curTerm == rf.currentTerm && rf.role == LEADER && !rf.killed() {
+							DPrintf("[%d] commit operation failed, can't get majority rsp\n", rf.me)
+							rf.changeRoleTo(FOLLOWER) // consider to execute only once?
+						}
+						rf.mu.Unlock(rf.me, "doSendAppendEntries1")
+					})
+				}
 			}
-			sendRpcNum++ // NOTE: sendPrcNum++ here to prevent close opeartion(below) was executed ahead of replyCh channel due to no one accpet reply
-			cnt := sendRpcNum
-			rf.mu.Unlock(rf.me, "doSendAppendEntries1")
-
-			if cnt == len(rf.peers)-1 {
+			cnt := atomic.AddInt32(&sendRpcNum, 1) // NOTE: sendPrcNum++ here to prevent close opeartion(below) was executed ahead of replyCh channel due to no one accpet reply
+			if int(cnt) == len(rf.peers)-1 {
 				close(replyCh)
 				// DPrintf("[%d.%d.%d] SendAppendEntries close reply channel\n", rf.me, curRole, curTerm)
 			}
@@ -414,7 +427,6 @@ func (rf *Raft) doReceiveAppendEntries(replyCh <-chan AppendEntriesReplyInCh, cu
 	var succOne sync.Once
 	// var failOne sync.Once
 	successCnt := 1
-	timeOutCnt := 0 // subset of unsuccessful reply
 	// for debug
 	nowTime := time.Now().UnixNano()
 
@@ -442,18 +454,17 @@ func (rf *Raft) doReceiveAppendEntries(replyCh <-chan AppendEntriesReplyInCh, cu
 			continue
 		}
 
-		// discard stale rsp 
+		// NOTE:update nextIndex and matchIndex even though the reply is stale data
+		rf.updateNextIndex(reply, pendingCommitIndex)
+
+		// discard stale rsp
 		if curTerm != rf.currentTerm || rf.role != LEADER || rf.killed() {
 			rf.mu.Unlock(rf.me, "doReceiveAppendEntries1")
 			continue
 		}
-		// update nextIndex and matchIndex
-		rf.updateNextIndex(reply, pendingCommitIndex)
 
 		if reply.Success {
 			successCnt++
-		} else if requestTimeOut(reply) {
-			timeOutCnt++
 		}
 		if 2*successCnt > len(rf.peers) {
 			if successCnt == len(rf.peers) { // all svrs hold the logs precedeing(contains) `pendingCommitIndex`
@@ -475,29 +486,13 @@ func (rf *Raft) doReceiveAppendEntries(replyCh <-chan AppendEntriesReplyInCh, cu
 					rf.commitLog(pendingCommitIndex)
 				})
 			}
-		} else if 2*timeOutCnt > len(rf.peers) {
-			// seems like I lost the leader relationship (maybe network partition, or maybe I am sole now)
-			if curTerm == rf.currentTerm && rf.role == LEADER && !rf.killed() {
-				DPrintf("[%d] commit operation failed, can't get majority rsp\n", rf.me)
-				rf.changeRoleTo(FOLLOWER) // consider to execute only once?
-			}
 		}
 		rf.mu.Unlock(rf.me, "doReceiveAppendEntries1")
 	}
 }
 ```
 
-首先是常规的最新term判定，拦截旧RPC响应：
-
-```go
-if curTerm != rf.currentTerm || rf.role != LEADER || rf.killed() {
-    rf.mu.Unlock(rf.me, "doReceiveAppendEntries1")
-    // return
-    continue // if we return now, replyCh will block some routines
-}
-```
-
-然后是 leader角色退位的第一种情况， 如果**收到的rpc响应的term比自身还高，需要主动退位**：
+首先是 leader角色退位， 如果**收到的rpc响应的term比自身还高，需要主动退位**：
 
 ```go
 if reply.Term > rf.currentTerm {
@@ -511,6 +506,18 @@ if reply.Term > rf.currentTerm {
     rf.changeRoleTo(FOLLOWER) // someone's term is large than me, so give up leader role and change to follower
     rf.mu.Unlock(rf.me, "doReceiveAppendEntries1")
     continue
+}
+```
+
+接着**可能需要更新nextInde**x, 关于nextIndex的更新，看后文。
+
+然后是最新的term判定，拦截旧RPC响应，*为什么拦截不在updateNextIndex之前？这里其实是一个对网络不稳定时的一个优化。可以忽略。*
+
+```go
+if curTerm != rf.currentTerm || rf.role != LEADER || rf.killed() {
+    rf.mu.Unlock(rf.me, "doReceiveAppendEntries1")
+    // return
+    continue // if we return now, replyCh will block some routines
 }
 ```
 
@@ -585,16 +592,6 @@ func (rf *Raft) commitLog(pendingCommitIndex int) {
 
 1. commit，应该立即通知上层服务，即代码中的 `notify applier`注释。关于该部分看后文。
 2. 立即发起第二次rpc，通知其他svr可以commit上一轮rpc拷贝的logs。
-
-**最后是角色退位的第二种情况，如果收不到半数以上的票，应当退位，因为这很可能是因为发生了网络分区，而自己在minority分区中：**
-
-```go
-// seems like I lost the leader relationship (maybe network partition, or maybe I am sole now)
-if curTerm == rf.currentTerm && rf.role == LEADER && !rf.killed() {
-    DPrintf("[%d] commit operation failed, can't get majority rsp\n", rf.me)
-    rf.changeRoleTo(FOLLOWER) // consider to execute only once?
-}
-```
 
 **现在关于发送端还有两个重点：**
 
@@ -834,9 +831,9 @@ if rf.nextIndex[reply.svrId] <= rf.matchIndex[reply.svrId] {
 
 这是为了避免**收到旧的响应消息（但是term 依然等于 curTerm）时**， nextIndex 回退过度（不能低于 matchIndex])。
 
-最后一个没有提到的问题是，nextIndex的初始化在哪里 ？
+最后一个没有提到的问题是，**nextIndex的初始化在哪里 ？**
 
-当每个svr变为leader时，都会对nextIndex初始化：
+当每个svr变为leader时，都会对nextIndex初始化， 初始化为matchIndex的后一位即可。
 
 ```go
 // NOTE: must be guarded by rf.mu
@@ -846,7 +843,7 @@ func (rf *Raft) resetNextIndex() {
 		log.Panicf("[%d.%d.%d] non-leader role raft can't resetNextIndex", rf.me, rf.role, rf.currentTerm)
 	}
 	for i := 0; i < len(rf.peers); i++ {
-		rf.nextIndex[i] = len(rf.log)
+		rf.nextIndex[i] = rf.matchIndex[i] + 1
 	}
 	DPrintf("[%d.%d.%d] reset all nextIndex to %d", rf.me, rf.role, rf.currentTerm, len(rf.log)-1)
 }
