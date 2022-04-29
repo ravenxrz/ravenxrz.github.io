@@ -280,39 +280,8 @@ if rf.nextIndex[i] <= rf.vlog.LastIncludedIndex {
 
 1. 修改心跳计时器线程唤醒逻辑。如下：
 
-   ```go
-   func (rf *Raft) heartBeatTimer() {
-   	DPrintf("[%d] heartBeat start...\n", rf.me)
-   	// timerId := time.Now().Unix()
-   	ticker := time.NewTicker(heartBeatTimeout * time.Millisecond)
-   	for {
-   		rf.mu.Lock(rf.me, "heartBeatTimer")
-   		for rf.role != LEADER && !rf.killed() {
-   			rf.roleChangeCond.Wait()
-   		}
-   		rf.mu.Unlock(rf.me, "heartBeatTimer")
-   		if rf.killed() {
-   			break
-   		}
+   目前可通过ticker或者通过通道强制唤醒。 添加通道强制唤醒的目的是为了加速心跳过程。比如leader收到了大多数follower发来成功接收新的log entry，此时需要再向各follower发起请求来更新commitIndex。如果采用通道唤醒可以做到立即发送，而不需要等到一轮心跳时间。该优化的具体做法，可查看 lab3B 文章。
    
-   		select {
-   		case <-ticker.C:
-   			DPrintf("heartBeatTimer is wakeed up by ticker")
-   		case <-rf.hBChan:
-   			DPrintf("heartBeatTimer is wakeed up by rf.hBChan")
-   		}
-   
-   		// time.Sleep(heartBeatTimeout * time.Millisecond)
-   		// fire
-   		DPrintf("[%d] fireAppendEntriesRPC\n", rf.me)
-   		rf.fireAppendEntries()
-   	}
-   	// DPrintf("[hb id %d] exits\n", timerId)
-   }
-   ```
-
-   目前可通过ticker或者通过通道强制唤醒。 添加通道强制唤醒的目的是为了加速心跳过程。比如leader收到了大多数follower发来成功接收新的log entry，此时需要再向各follower发起请求来更新commitIndex。如果采用通道唤醒可以做到立即发送，而不需要等到一轮心跳时间。
-
 2. 针对nextIndex的快速回退优化，之前的系列文章中，采用了nextIndex快速回退的方法，但是在更新nextIndex后需要再等待一轮心跳时间，现在改为，一旦nextIndex被更新，立即发起AppendEntries，而不用等到一轮心跳时间。
 
    ```go
