@@ -1,5 +1,5 @@
 ---
-title: MIT-6824-lab3-Snapshot/Log Compaction
+title: MIT-6824-lab3B-Snapshot/Log Compaction
 categories: MIT6824
 date: 2022-04-29 22:10:31
 tags:
@@ -14,6 +14,8 @@ tags:
 实验整体要求和 mit6824 2021 lab2D部分相同。不过需要完成service层的snapshot逻辑。
 
 原本以为完成了raft（lab2D）后此处相对简单，不过依然花费了不少时间。
+
+<!--more-->
 
 ## 1. 实现
 
