@@ -136,7 +136,7 @@ lastAppliedIndex用于预防apply旧的CommandIndex。（感觉这种逻辑放�
 
 #### 1. RPC handler死等处理
 
-rpc handler不能死等，因为log是可能不被committed的，已Get操作为例：
+rpc handler不能死等，因为log是可能不被committed的，以Get操作为例：
 
 ```go
 ...
@@ -179,11 +179,11 @@ select {
 这里的逻辑分为两部分：
 
 1. 为Start的log index建立通道，但是可能会遇到在同一个log index上建立相同的通道，这种情况说明旧log index处的log已经被替换掉，无需对它做处理
-2. 等待在replyCh上，并添加了超时等待机制，一旦超时，直接返回。这类遗留下了replyChan，如果未来raft commit此条log并上传至service，而service将通过log index回传给rpc handler，而rpc handler已经因为timeout退出，所以service通过log index channel回传时，也需要超时检测。
+2. 等待在replyCh上，并添加了超时等待机制，一旦超时，直接返回。这里遗留下了replyChan，如果未来raft commit此条log并上传至service，而service将通过log index log回传给rpc handler，而rpc handler已经因为timeout退出，所以service通过log index channel回传时，也需要超时检测。
 
 #### 2. service log index channel处理
 
-当service收到raft log commit消息（即applyMsg后），需要找到指定reply channel回传给rpc，并在最后删除此reply channel。此部分逻辑如下，唯一需要注意的时，对于通过reply channel的回传，我也添加了超时检测。
+当service收到raft log commit消息（即applyMsg后），需要找到指定reply channel回传给rpc，并在最后删除此log index channel。此部分逻辑如下，唯一需要注意的是，对于通过log index channel的回传，我也添加了超时检测。
 
 ```
 kv.mu.Lock()
