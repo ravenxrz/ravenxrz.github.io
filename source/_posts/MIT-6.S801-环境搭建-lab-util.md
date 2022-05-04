@@ -1,6 +1,6 @@
 ---
-title: MIT-6.s801
-categories: MIT6.S801-环境搭建-lab-util
+title: MIT6.S801-环境搭建-lab-util
+categories: MIT-6.s801
 date: 2022-05-04 22:10:31
 tags:
 ---
