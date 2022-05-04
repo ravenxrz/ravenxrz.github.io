@@ -27,7 +27,7 @@ tags:
 
    在xv6中，这些参数放置于 `trapframe` 中，第0个参数放置于a0，第1个参数放置于a1,以此类推。 具体放置过程由  `trampoline.S`来操作。
 
-   <img src="C:\Users\Raven\AppData\Roaming\Typora\typora-user-images\image-20220504215901737.png" alt="image-20220504215901737" style="zoom:50%;" />
+   <img src="https://pic.imgdb.cn/item/627293d70947543129e6ecc2.jpg" alt="image-20220504215901737" style="zoom:50%;" />
 
 2. 内核如何拿取这些参数？
 
