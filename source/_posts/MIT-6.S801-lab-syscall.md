@@ -35,14 +35,14 @@ tags:
 
    - argint, 获取整数
    - argaddr, 获取地址
-   - addgstr，获取字符创
+   - addgstr，获取字符串
    - ...
 
-3. 传递给内核的参数，内核直接使用？
+3. 传递给内核的参数，内核是直接使用？
 
    这是不行的，比如用户程序直接传递一个指针给内核使用，而该指针可能是invalid的，那么kernel在使用过程过程中，会出现问题。另外，用户程序的指针采用虚拟地址，虚拟地址到物理地址过程中依赖页表(page table), 而用户程序的page table和 kernel所采用的的page table是不同的。所以也不能直接使用。
 
-   **用户程序传递给内核的数据，或者内核的数据返回给用户程序，需要拷贝一份**。 xv6中，采用copyinstr来实现这类拷贝。
+   **用户程序传递给内核的数据，或者内核的数据返回给用户程序，需要拷贝一份**。 xv6中，采用`copyinstr`来实现这类拷贝。
 
 **搞懂这些后，来看看如何添加一个系统调用。**
 
@@ -153,13 +153,13 @@ int trace(int);
 
 然后在 `usys.pl` 中添加：
 
-```
+```perl
 entry("trace");
 ```
 
 在`syscall.h`中添加系统调用号：
 
-```
+```c
 #define SYS_trace   22
 ```
 
@@ -219,7 +219,7 @@ static char *syscall_names[] = {
 };
 ```
 
-trace的实现实际上就是为proc添加一个trace的mask，所以为proc结构体添加一个mask：
+trace的实现实际上就是为proc添加一个trace的mask，所以可为proc结构体添加一个 `trace_mask `变量：
 
 ```C
 struct proc {
@@ -248,7 +248,7 @@ sys_trace(void)
 除此外，lab要求整个祖父链需要继承该mask，所以还需要修改fork：
 
 ```
-// fork function
+// in fork function
 // copy trace mask 
 np->trace_mask = p->trace_mask;
 ```
@@ -289,7 +289,7 @@ syscall(void)
 
 ### 1. 活动进程数
 
-在xv6中，全局数组`proc[NPROC]`保存了最大可运行的内存，每个数组元素都是一个进程，其中的state表明当前进程的活动状态。所以可写出如下代码来获取活动进程数：
+在xv6中，全局数组`proc[NPROC]`保存了可运行的所有进程，每个数组元素都是一个进程，每个进程的state表明当前进程的活动状态。所以可写出如下代码来获取活动进程数：
 
 ```c
 int
@@ -311,7 +311,6 @@ used_proc_num(void)
 这部分就更难看出一点，在xv6中，采用freelist的方式保存可用内存，每一个list node都是一个page，一个PAGE为4K。所以可写出如下代码：
 
 ```c
-
 int
 free_mem_bytes() {
   struct run *r;
@@ -331,7 +330,7 @@ free_mem_bytes() {
 
 ## 4. 其他
 
-给一份clang-format，帮助格式化。
+xv6的代码格式应该是基于Mozilla， 这里给一份我用的clang-format，帮助格式化。
 
 ```
 ---
@@ -346,6 +345,6 @@ SortIncludes: 'false'
 ...
 ```
 
-## 4. 总结
+## 5. 总结
 
 总体来说，本lab不算难。但能够帮助我们理解用户程序陷入内核，从内核返回的过程，知道了添加系统调用其实是个很简单的工作。
