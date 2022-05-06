@@ -11,6 +11,9 @@ tags:
 
 很久没更新博文，这一个月除了忙着论文，也抽空学了下neovim。在各类ide和vscode中用vim插件已经过了3 4年，常见vim操作已经烂熟于心。一直觉得纯vim/nvim很难用，即使配上插件也难以适用到平日的开发工作。 直到看到[油管大佬](https://www.youtube.com/watch?v=ctH-a-1eUME&list=PLhoH5vyxr6Qq41NFL4GvhFp-WLd5xzIzZ)的视频，重燃些许兴趣，一路跟着配置，感觉neovim已经完全具备常用的开发功能。至少目前的配置效果让我决定先使用neovim做一两个小项目。
 
+> 2022/5/6 更新：
+> 用neovim写了点lab，总体感受不错，特别是golang写起来比较舒适。对于c/cpp项目，如果clangd能够能索引所有文件，那么使用效果非常不错。但是对于部分引用库缺失的情况下，clangd lsp分析不行，无法实现跳转和比较好的补全效果(这种情况改用gtags会更好一些)。 所以目前个人感觉依然是能用vscode的情况仍然是使用vscode，在某些特殊情景下，neovim会更好，比如无法使用vscode的ssh remove development时，neovim可以说是最好的选择，或者只是改改脚本等。 目前，我也将自己的vscode配置得更vim-like, 几乎不用鼠标就可以完成所有操作，所以效率上和vim也差不多。
+
 **本文算是一个对neovim配置的总结篇**
 
 <!--more-->
