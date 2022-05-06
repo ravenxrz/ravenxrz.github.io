@@ -30,11 +30,11 @@ void WriteBatch::Delete(const Slice& key) {
 }
 ```
 
-首先加入一个 `kTypeDeletion`标记，这个标记用于表明本次操作是一次对key的删除操作。 后面将整个key封装到rep_中。  而`PutLengthPrefixedSlice`我们也在[编码](https://www.ravenxrz.ink/archives/8f115521.html)中讲过了，仅仅是将一个字符串的长度和字符串本身编码在一起。
+首先加入一个 `kTypeDeletion`标记，这个标记用于表明本次操作是一次对key的删除操作。 后面将整个key封装到rep_中。  而`PutLengthPrefixedSlice`我们也在[编码](https://ravenxrz.github.io/archives/8f115521.html)中讲过了，仅仅是将一个字符串的长度和字符串本身编码在一起。
 
 ## 2. 为什么要这样做 & 为什么可以这样做？
 
 为什么要这样做？ leveldb是一种随机写友好的数据库，如果我们每次Delete都去找到原数据（原数据可能存在多层sstable中）再删除，这样的效率非常低。严重影响写性能。
 
-为什么可以这样做？ leveldb是有新旧数据分层的概念的， 在低层的(level0)数据始终比高层(level 1-6)的数据新。当然了，memtable中的数据又会比sstable中的数据新。所以当插入一条删除记录，它肯定是最新的，位于低层，leveldb在后序的读取操作中，也是由低层到高层的读取，一旦读取到删除标志就意味着更高层的数据都是无效的了。这一点在做[DBIter](https://www.ravenxrz.ink/archives/f4c6f796.html)的分析时也说过。
+为什么可以这样做？ leveldb是有新旧数据分层的概念的， 在低层的(level0)数据始终比高层(level 1-6)的数据新。当然了，memtable中的数据又会比sstable中的数据新。所以当插入一条删除记录，它肯定是最新的，位于低层，leveldb在后序的读取操作中，也是由低层到高层的读取，一旦读取到删除标志就意味着更高层的数据都是无效的了。这一点在做[DBIter](https://ravenxrz.github.io/archives/f4c6f796.html)的分析时也说过。
 

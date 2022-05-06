@@ -8,8 +8,8 @@ date: 2020-07-21 14:14:03
 
 csapp lab系列：
 
-- [Csapp\-Datalab 详解](https://www.ravenxrz.ink/archives/2d758396.html)
-- [Csapp-Bomblab 题解](https://www.ravenxrz.ink/archives/7915569e.html)
+- [Csapp\-Datalab 详解](https://ravenxrz.github.io/archives/2d758396.html)
+- [Csapp-Bomblab 题解](https://ravenxrz.github.io/archives/7915569e.html)
 
 本次lab: Attacklab
 
@@ -21,7 +21,7 @@ csapp lab系列：
 
 ## 0. 背景知识
 
-1. 程序的内存分布,,内存分布https://www.ravenxrz.ink/archives/2567fa35.html
+1. 程序的内存分布,,内存分布https://ravenxrz.github.io/archives/2567fa35.html
 2. 函数调用的过程, 主要要知道call和ret指令各自的工作. 
 3. gdb调试,objdump反汇编
 4. Buffer Overflow以及常用的阻止buffer overflow的方法

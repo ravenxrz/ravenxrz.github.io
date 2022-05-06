@@ -16,7 +16,7 @@ log文件是用来保证写入的持久性的。当用户向系统发出write请
 
 leveldb在内存中的数据结构是memtable，显然memtable是无法保证数据的持久性，因为系统一旦掉电，数据就丢失了，所以leveldb使用了log file来保证数据的持久性。log file具有only append的特点，写入速度快。
 
-我们曾在[整体架构](https://www.ravenxrz.ink/archives/1a545f48.html)中提到过log的结构，这里再说一下：
+我们曾在[整体架构](https://ravenxrz.github.io/archives/1a545f48.html)中提到过log的结构，这里再说一下：
 
 leveldb存放的是key-value对，因为键值和value值的长度是可变的，因此，每一笔记录都必须有个**length**字段来表明当前记录的长度。 当然了，leveldb为了校验数据的一致性，同时会计算**checksum**，作为记录的一个字段.
 

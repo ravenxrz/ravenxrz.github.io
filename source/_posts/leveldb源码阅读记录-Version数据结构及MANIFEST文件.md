@@ -79,7 +79,7 @@ struct FileMetaData {
 };
 ```
 
-各字段都在注释中解释，我们可以得到一个信息，在SSTable中存放的是key是InternalKey， 对应了 [MemTable](https://www.ravenxrz.ink/archives/aba77258.html) 文章中说的Key类型。
+各字段都在注释中解释，我们可以得到一个信息，在SSTable中存放的是key是InternalKey， 对应了 [MemTable](https://ravenxrz.github.io/archives/aba77258.html) 文章中说的Key类型。
 
 ## 3. Version结构
 

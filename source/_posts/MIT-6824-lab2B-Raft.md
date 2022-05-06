@@ -21,7 +21,7 @@ tags:
 
 ## 1. 问题
 
-**本文并非最终实现，最终实现在[这里](https://ravenxrz.ink/archives/d16f195.html)**
+**本文并非最终实现，最终实现在[这里](https://ravenxrz.github.io/archives/d16f195.html)**
 
 要实现lab2B，至少需要思考如下问题：
 

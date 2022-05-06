@@ -47,7 +47,7 @@ make buffer_pool_manager_test -j
 ./test/buffer_pool_manager_test 
 ```
 
-全测试需要去：https://www.gradescope.com/courses/195440， 具体请参考 [这里](https://ravenxrz.ink/archives/1b7fd99d.html)
+全测试需要去：https://www.gradescope.com/courses/195440， 具体请参考 [这里](https://ravenxrz.github.io/archives/1b7fd99d.html)
 
 ## 2. 题解（不含任何代码）
 

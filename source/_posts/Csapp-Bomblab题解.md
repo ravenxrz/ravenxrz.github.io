@@ -8,7 +8,7 @@ date: 2020-06-21 23:06:10
 
 今天继续学习csapp.
 
-前一个lab: [Csapp-Datalab 详解 ](https://www.ravenxrz.ink/archives/2d758396.html)
+前一个lab: [Csapp-Datalab 详解 ](https://ravenxrz.github.io/archives/2d758396.html)
 
 本次lab, bomblab.
 
@@ -18,7 +18,7 @@ date: 2020-06-21 23:06:10
 
 做完整个实验, **学生可以学会如何使用gdb, 能够看懂 gcc所编译出来的汇编代码. 掌握阅读汇编代码的能力.**
 
-gdb的使用可参考: [gdb 调试基础 ](https://www.ravenxrz.ink/archives/37784c45.html)
+gdb的使用可参考: [gdb 调试基础 ](https://ravenxrz.github.io/archives/37784c45.html)
 
 **本次解释, 均已代码注释+图形解释.**
 

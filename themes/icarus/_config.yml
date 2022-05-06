@@ -185,7 +185,7 @@ widgets:
         position: left
         # Links to be shown in the links widget
         links:
-            myresources: 'https://www.ravenxrz.ink/resources'
+            myresources: 'https://ravenxrz.github.io/resources'
             superbed: 'https://www.superbed.cn/'
             regex101: 'https://regex101.com'
             runoob: 'https://c.runoob.com'
