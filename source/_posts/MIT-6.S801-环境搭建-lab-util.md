@@ -67,6 +67,22 @@ $
 
 **ctrl+A+x.**
 
+#### 如何调试？
+
+开启两个窗口：
+
+窗口1：
+
+```
+make CPUS=1 qemu-gdb		// 单核运行
+```
+
+窗口2:
+
+```
+gdb-multiarch			// 一定要用gdb-multiarch, 否则无法挂上去
+```
+
 ## 2. lab util
 
 第一个lab几乎就是用来熟悉环境的。包含如下几个tasks：
