@@ -13,7 +13,7 @@ tags:
 
 1. 写一个页表打印函数 vmprint, 打印多级页表的pte。
 2. 修改xv 6内核，让每个进程都都持有一个内核页表。
-3. 修改xv 6内核，让进程在陷入内核后的之后中，无需根据 user page table来解引用进程内存空间地址。
+3. 修改xv 6内核，让进程在陷入内核后，无需根据 user page table来解引用进程用户空间地址。
 
 <!--more-->
 
@@ -25,7 +25,7 @@ tags:
 
  在risck v中，使用了三级页表。地址翻译过程如下：
 
-<img src="C:\Users\Raven\AppData\Roaming\Typora\typora-user-images\image-20220508125420181.png" alt="image-20220508125420181" style="zoom:50%;" />
+<img src="https://pic.imgdb.cn/item/6277ce3909475431294ef32e.jpg" alt="image-20220508125420181" style="zoom:50%;" />
 
 虚拟地址中只会使用末尾39 bits来做VA（虚拟地址）到PA（物理地址）的映射，其中末尾12 bit作为4KB的page。其余9 bit分别作为VPN用于所以该级别的page table。对于每个page table entry(PTE)，占用8  bytes，但是至使用了末尾的54 bit。 其中末尾10 bit作为perm flag，高44 bit为下一级页表的地址。
 
@@ -68,13 +68,13 @@ walk(pagetable_t pagetable, uint64 va, int alloc)
 
 ### 2. xv 6内核地址空间
 
-下图展示了xv 6内核的地址空间，最底层 0~0x02000000-1 并未使用。 低于0x80000000（即KERNBASE）的地址主要是一些device的映射，如VIRTIO disk用于磁盘读写。KERNBASE~PHYSTOP才会实际映射到RAM，或者说物理地址中。值得注意的是，整个内核的映射（除了PHYSTOP之上）到物理地址的映射为一一映射，这简化了OS开发。在PHYSTOP之上为一些内核栈映射，这些内核栈将提供给不同的进程陷入内核执行时来使用，另外每个kstack都配套了一个guard page，该page并不会实际映射到物理内存中，而是作为栈溢出的保护，避免不同进程在执行过程中访问到其他栈。最顶部 trampoline，本lab不用关心。
+下图展示了xv 6内核的地址空间，最底层 0\~0x02000000-1 并未使用。 低于0x80000000（即KERNBASE）的地址主要是一些device的映射，如VIRTIO disk用于磁盘读写。KERNBASE\~PHYSTOP才会实际映射到RAM，或者说物理地址中。值得注意的是，整个内核的映射（除了PHYSTOP之上）到物理地址的映射为一一映射，这简化了OS开发。在PHYSTOP之上为一些内核栈映射，这些内核栈将提供给不同的进程陷入内核执行时来使用，另外每个kstack都配套了一个guard page，该page并不会实际映射到物理内存中，而是作为栈溢出的保护，避免不同进程在执行过程中访问到其他栈。最顶部 trampoline，本lab不用关心。
 
-<img src="C:\Users\Raven\AppData\Roaming\Typora\typora-user-images\image-20220508131437202.png" alt="image-20220508131437202" style="zoom:50%;" />
+<img src="https://pic.imgdb.cn/item/6277ce800947543129504076.jpg" alt="image-20220508131437202" style="zoom:50%;" />
 
 ### 3. xv 6用户进程地址空间
 
-和内核地址不同，用户进程地址空间从0开始编码。最下面为文本段，而后为data端，stack/heap以及trap frame和tramepoline。这里主要关注stack内部的内容。当调用exec系统调用时，我们会传入要执行的程序名，程序运行所需参数。exec通过ELF加载必要的segment后，会分配该进程需要的用户栈，然后向栈中写入程序运行的参数信息。
+和内核地址不同，用户进程地址空间从0开始编址。最下面为文本段，而后为data段，stack/heap以及trap frame和tramepoline。这里主要关注stack内部的内容。当调用exec系统调用时，我们会传入要执行的程序名，程序运行所需参数。exec通过ELF加载必要的segment后，会分配该进程需要的用户栈，然后向栈中写入程序运行的参数信息。
 
 <img src="https://cdn.JsDelivr.net/gh/ravenxrz/PicBed/img/image-20220508130849006.png" alt="image-20220508130849006" style="zoom:50%;" />
 
@@ -157,7 +157,7 @@ vmprint(pagetable_t pagetable)
 
 ### 2. A kernel page table per process
 
-这个task为每个进程copy一份kernel page table，完成scheduler调度进程时的页表切换设置。
+这个task为每个进程copy一份kernel page table，然后完成scheduler调度进程时的页表切换设置。
 
 首先为 proc 结构体添加一个kernel page table：
 
@@ -277,7 +277,7 @@ proc_kpagetable(struct proc* p)
 }
 ```
 
-由于做了kstack的初始化，固定了kstack的虚拟地址，原来的kstack初始化代码不再需要，原来的初始化地方为 `proc_init`:
+由于做了kstack的初始化，固定了kstack的虚拟地址，原来的kstack初始化代码不再需要，所以修改 `proc_init`:
 
 ```c
 void
@@ -342,7 +342,7 @@ kvminit(pagetable_t pagetable)
 
 注意这里移除了对CLINT的映射，不取消之后运行os时会出现问题。该映射仅需要给全局的kernel page table映射即可。原因暂时未知，因为对该部分映射的功能还未知。
 
-修改这部分后，原来的kvminit对全局的kernel page table初始化旧被取消了，所以我们需要将该部分还原：
+修改这部分后，原来的kvminit对全局的kernel page table初始化就被取消了，所以我们需要将该部分还原：
 
 ```c
 /**
@@ -386,7 +386,7 @@ main()
  }
 ```
 
-现在就完成了对process kernel page table的添加，但是还需要在恰当的地方执行释放
+现在完成了对process kernel page table的添加，但是还需要在恰当的地方执行释放。
 
 修改freeproc：
 
@@ -419,7 +419,7 @@ freeproc(struct proc* p)
 }
 ```
 
-这里的`kfreepagetable`函数实现为：
+`kfreepagetable`函数实现为：
 
 ```c
 void
@@ -443,7 +443,7 @@ proc_kfreepagetable(pagetable_t pagetable, uint64 sz)
 
 取消各类地址的映射，释放kstack物理内存和page table所占内存。
 
-至此，完成了kernel page table的添加与释放，但是还未将其应用起来，所以修改 `scheduler`:
+至此，完成了kernel page table的添加与释放，但是还未将其应用起来，修改 `scheduler`:
 
 ```c
 // Per-CPU process scheduler.
@@ -514,7 +514,7 @@ load_kpgtbl(pagetable_t pagetable)
 
 **至于为什么需要在switch前切换页表，将在本小结末尾做详细分析。**
 
-如果没有可以切换的进程，需要使用全局的kernel page table. 即这部分代码：
+如果没有可以切换的进程，需要使用全局的kernel page table. 即：
 
 ```c
     // TODO: 也许应该将这部分移动到上面的 if(found == 0), 但是暂时未知该处作用，所以重开分支
@@ -591,7 +591,7 @@ swtch:
         ret				// 设置pc寄存器到ra，即forkret函数，跳转到forkret函数执行
 ```
 
-为什么0(a1)指向forkret？ 首先明白 a1寄存器其实就是 &p->context 地址。 也就是说0(a1)再取p->context.ra的值，p->context.ra的初始化在exec函数中的末尾：
+为什么0(a1)指向forkret？ 首先明白 a1寄存器其实就是 &p->context 地址。 也就是说0(a1)在取p->context.ra的值，p->context.ra的初始化在exec函数中的末尾：
 
 ```c
   // Set up new context to start executing at forkret,
