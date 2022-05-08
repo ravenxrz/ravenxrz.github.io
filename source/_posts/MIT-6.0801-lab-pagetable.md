@@ -611,12 +611,12 @@ swtch:
 
 #### 切换回内核时是否需要重新加载全局内核页表？
 
-我发现网络上几乎所有人的解答都在如下代码中添加切换回内核页表的代码，即schedulerhan's函数中：
-<img src="C:\Users\Raven\AppData\Roaming\Typora\typora-user-images\image-20220508205520001.png" alt="image-20220508205520001" style="zoom:67%;" />
+我发现网络上几乎所有人的解答都在如下代码中添加切换回内核页表的代码，即scheduler函数中：
+<img src="https://pic.imgdb.cn/item/6277d769094754312979e5f6.jpg" alt="image-20220508205520001" style="zoom:67%;" />
 
 但实际上我个人在实现时并没有做这个操作，个人觉得没有必要。首先要明白系统哪里返回到switch之后的指令？这部分其实来自 `sched`函数：
 
-<img src="C:\Users\Raven\AppData\Roaming\Typora\typora-user-images\image-20220508204719959.png" alt="image-20220508204719959" style="zoom: 67%;" />
+<img src="https://pic.imgdb.cn/item/6277d77509475431297a1309.jpg" alt="image-20220508204719959" style="zoom: 67%;" />
 
 其实也就是从cpu stack中恢复寄存器组。注意，到此为止没有修改过 `satp`寄存器的值，也就没有切换内核页表。回到问题本身，为什么没有必要切换到全局内核页表，因为当前进程内核页表本身就是一个全局内核页表的副本，只不过新增了一个kernel stack（task 3中将进一步修改）。所以内核的地址空间映射均有，也就没有必要执行切换了。
 
@@ -630,7 +630,7 @@ swtch:
 
 该函数的最后会执行该操作。
 
-<img src="C:\Users\Raven\AppData\Roaming\Typora\typora-user-images\image-20220508205241942.png" alt="image-20220508205241942" style="zoom:67%;" />
+<img src="https://pic.imgdb.cn/item/6277d78509475431297a6316.jpg" alt="image-20220508205241942" style="zoom:67%;" />
 
 ### 3. Simplify `copyin/copyinstr` 
 
@@ -701,7 +701,7 @@ copyinstr(pagetable_t pagetable, char* dst, uint64 srcva, uint64 max)
 
 **先看 `userinit` 函数：**
 
-<img src="C:\Users\Raven\AppData\Roaming\Typora\typora-user-images\image-20220508211648436.png" alt="image-20220508211648436" style="zoom:67%;" />
+<img src="https://pic.imgdb.cn/item/6277d79209475431297aa19e.jpg" alt="image-20220508211648436" style="zoom:67%;" />
 
 ```c
 // Load the user initcode into address 0 of pagetable,
@@ -771,7 +771,7 @@ copy_u2k_ptbl(pagetable_t user, pagetable_t ken, uint64 sz)
 
 sbrk为系统内存的扩展或收缩函数。内部依赖 `growproc`  函数，而 `growproc`又依赖 `ukvmalloc`(个人实现)和 `uvmdealloc`函数：
 
-<img src="C:\Users\Raven\AppData\Roaming\Typora\typora-user-images\image-20220508214034560.png" alt="image-20220508214034560" style="zoom:50%;" />
+<img src="https://pic.imgdb.cn/item/6277d7a209475431297aec5e.jpg" alt="image-20220508214034560" style="zoom:50%;" />
 
 **这里要注意，用户虚存地址不能超过 PLIC，否则会和kernel page table重叠。** 所以添加了第一框出的判定。
 
