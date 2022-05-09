@@ -1,5 +1,5 @@
 ---
-title: MIT6.S081-环境搭建-pagetable
+title: MIT6.S081-pagetable
 categories: MIT-6.S081
 date: 2022-05-08 22:10:31
 tags:
