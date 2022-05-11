@@ -83,6 +83,9 @@ make CPUS=1 qemu-gdb		// 单核运行
 gdb-multiarch			// 一定要用gdb-multiarch, 否则无法挂上去
 ```
 
+> 2022-5-11 update
+在后面的lab中gdb-multiarch也不行，从这个仓库的release页面下载: https://github.com/riscv-collab/riscv-gnu-toolchain, **riscv64-elf-xxx**文件即可
+
 ## 2. lab util
 
 第一个lab几乎就是用来熟悉环境的。包含如下几个tasks：
