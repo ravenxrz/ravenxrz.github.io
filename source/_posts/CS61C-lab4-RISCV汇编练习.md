@@ -15,7 +15,7 @@ tags:
 2. [CS61C-RISCV汇编参考card](https://inst.eecs.berkeley.edu/~cs61c/sp21/resources-pdfs/riscvcard.pdf)
 3. [MIT-6.004-RISCV汇编参考card](https://6004.mit.edu/web/_static/silvina-test/resources/references/6004_isa_reference.pdf)
 
-本lab的各要求为: [点这里](https://inst.eecs.berkeley.edu/~cs61c/sp20/labs/lab04/#exercise-1-familiarizing-yourself-with-venus)
+本lab的要求为: [点这里](https://inst.eecs.berkeley.edu/~cs61c/sp20/labs/lab04/#exercise-1-familiarizing-yourself-with-venus)
 
 实验采用的模拟器为 [venus](https://venus.cs61c.org/)
 
@@ -401,7 +401,7 @@ malloc:
 
 ![image-20220511180657392](https://cdn.JsDelivr.net/gh/ravenxrz/PicBed/img/image-20220511180657392.png)
 
-**其中的Saver列指明了我们在哪里需要保存些什么寄存器**，比如 `s开头一系列寄存器和sp`需要在callee中保存，而 `t开头的寄存器和ra`需要在caller中保存。**保持这种 calling convention是非常重要的**，能够得到更好的可读的汇编，而不是滥用各类寄存器，到头来折磨的是自己。
+**其中的Saver列指明了我们在哪里需要保存些什么寄存器**，比如 `s开头一系列寄存器和sp`需要在callee中保存，而 `t开头的寄存器和ra`需要在caller中保存。**保持这种 calling convention是非常重要的**，能够得到更好的可读的汇编，而不是滥用各类寄存器，到头备受折磨。
 
 ## 总结
 
