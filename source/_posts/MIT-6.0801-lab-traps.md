@@ -160,7 +160,7 @@ uservec:
 
 这里的代码非常重要，有几个重要的问题先说明：
 
-**1.ecall到uservec时，页表仍然为user page table，user page table为什么可以执行supervisor模式下的代码呢？**
+**1.ecall到uservec时，页表仍然为user page table，使用user page table后，CPU为什么可以执行supervisor模式下的代码呢？**
 
 回忆user process的page table layout和kernel page table layout：
 
@@ -179,7 +179,7 @@ uservec:
 csrrw a0, sscratch, a0		# sscratch保存的是TRAPFRAME地址
 ```
 
-这里的代码就是使得a0指向trapframe的地址。之后就可使用 `sd` 相关指令保存寄存器。
+这里的代码使得a0指向trapframe的地址。之后就可使用 `sd` 相关指令保存寄存器。
 
 **3. 如何恢复到内核状态?**
 
@@ -199,11 +199,11 @@ csrw satp, t1		# 切换内核页表
 sfence.vma zero, zero
 ```
 
-这部分代码即在恢复内核状态，注释写得非常清楚，这里仅强调下为什么切换了页表，指令仍然可以正常执行。原理还是一样，因为内核页表和用户进程页表的顶端 trampoline page 映射地址完全相同，所以且切换页表不影响执行。
+这部分代码即在恢复内核状态，注释写得非常清楚，仅强调下为什么切换了页表，指令仍然可以正常执行。原理还是一样，因为内核页表和用户进程页表的顶端 trampoline page 映射地址完全相同，所以且切换页表不影响执行。
 
 #### 2. usertrap
 
-来到usertrap后，就相对简单了，因为都C代码。
+来到usertrap后，就相对简单了，因为都是C代码。
 
 ```c
 //
@@ -259,11 +259,9 @@ usertrap(void)
 }
 ```
 
-之后就会到syscall，syscall的内容前面的syscall lab已经非常熟悉，这里略过。注意这里在syscall之前需要开启中断。
+之后就会到syscall，syscall的内容，做过前面的syscall lab就非常熟悉了，略过如何添加syscall。注意这里在syscall之前需要开启中断。
 
 #### 3. usertrapret
-
-
 
 ```c
 //
@@ -695,5 +693,5 @@ sys_return(void)
 
 ## 3. 总结
 
-本次lab和trap相关，学习了操作系统中trap中的概念，并以系统调用学习了整个trap流程，如何从用户空间陷入内核，如何从内核空间回到用户空间。掌握了函数调用stack frame的概念，学习了riscv汇编。
+本次lab和trap相关，学习了操作系统中trap的概念，并以write系统调用为例学习了整个trap流程，包括如何从用户空间陷入内核，如何从内核空间回到用户空间。掌握了函数调用stack frame的概念，学习了riscv汇编。
 
