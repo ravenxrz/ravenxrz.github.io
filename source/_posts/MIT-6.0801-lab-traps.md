@@ -391,8 +391,12 @@ userret:
 至此，整个trap流程分析完毕。掌握如下流程后，本lab非常简单。
 
 
+## 2. 内联汇编
 
-## 2. 题解
+在本lab中会有内敛汇编相关的知识，虽然不了解也能完成这个lab，不过还是建议学习下。
+具体可参考： [这里](https://xr1s.me/2018/04/02/gnu-extension-extended-asm)
+
+## 3. 题解
 
 ### 1. RISC-V assembly 
 
@@ -691,7 +695,7 @@ sys_return(void)
 
 至此完成本次lab。执行 `alarmtest` 验证是否成功， 执行`usertest`验证是否有影响其他功能。
 
-## 3. 总结
+## 4. 总结
 
 本次lab和trap相关，学习了操作系统中trap的概念，并以write系统调用为例学习了整个trap流程，包括如何从用户空间陷入内核，如何从内核空间回到用户空间。掌握了函数调用stack frame的概念，学习了riscv汇编。
 
