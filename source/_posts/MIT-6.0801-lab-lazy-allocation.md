@@ -164,7 +164,7 @@ sys_sbrk(void)
 
 我个人的处理时，对于负数场景，立即释放内存，去雄安映射。
 
-第二条已经在 `Lazy allocation` 小节中处理。
+第二条和倒数第二条和最后一条已经在 `Lazy allocation` 小节中处理。
 
 第三条 `Handle the parent-to-child memory copy in fork() correctly`
 
