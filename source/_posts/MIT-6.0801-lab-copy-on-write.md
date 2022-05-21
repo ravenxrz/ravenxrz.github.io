@@ -209,7 +209,7 @@ free\_memory = pa\_end - pa\_start - ref\_array - padding
 $$
 代入后，可求得：
 $$
-ref\_arry = (pa\_end - pa\_start) / 1025
+ref\_array = (pa\_end - pa\_start) / 1025
 $$
 这里直接向下取整，代表对padding的处理。
 
@@ -266,7 +266,6 @@ kfree(void *pa)
     panic("kfree");
 
   acquire(&kmem.lock);
-  // set ref cnt to 0
   int idx = ((uint64)pa - (uint64)avail_mem_start) / PGSIZE;
   if(pg_ref_arr[idx] != 0) {
     release(&kmem.lock);
@@ -312,7 +311,7 @@ kalloc(void)
 
 可能有同学会问，为什么需要单独处理 `copyout`， 而不是用page fault handler统一处理，因为此时处于内核空间，采用的是内核页表，对于 `dstva`的读写，并不会引起page fault。另外，即使引起了page fault，也不会采用`usertrap`处理，而是使用`kerneltrap`处理。所以此处需要单独做处理。
 
-<img src="C:\Users\Raven\AppData\Roaming\Typora\typora-user-images\image-20220521221358727.png" alt="image-20220521221358727" style="zoom:67%;" />
+<img src="https://cdn.JsDelivr.net/gh/ravenxrz/PicBed/img/image-20220521221358727.png" alt="image-20220521221358727" style="zoom:67%;" />
 
 ## 3. 总结
 
