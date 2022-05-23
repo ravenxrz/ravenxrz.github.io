@@ -573,7 +573,7 @@ swtch:
         sd s10, 96(a0)
         sd s11, 104(a0)
 
-        ld ra, 0(a1)        // exec调用后，ra存放的是forkret函数地址
+        ld ra, 0(a1)        // allocproc 调用后，ra存放的是forkret函数地址
         ld sp, 8(a1)
         ld s0, 16(a1)
         ld s1, 24(a1)
@@ -591,7 +591,7 @@ swtch:
         ret				// 设置pc寄存器到ra，即forkret函数，跳转到forkret函数执行
 ```
 
-另外，注意到对 p->context 的初始化在 exec 调用中
+另外，注意到对 p->context 的初始化在 allocproc 调用中
 
 ```c
   // Set up new context to start executing at forkret,
@@ -601,7 +601,7 @@ swtch:
   p->context.sp = p->kstack + PGSIZE;
 ```
 
-p->context.sp初始化为p->kstack+PGSIZE，即指向进程内核栈的栈底（栈是从内存地址由上往下push), 而在上面的汇编中，加载了该值到sp寄存器中。那什么时候会使用到sp寄存器？其实就在上述p->context.ra地址处，对于exec调用后，ra将保存为的是 forkret 函数的首行指令：
+p->context.sp初始化为p->kstack+PGSIZE，即指向进程内核栈的栈底（栈是从内存地址由上往下push), 而在上面的汇编中，加载了该值到sp寄存器中。那什么时候会使用到sp寄存器？其实就在上述p->context.ra地址处，对于 allocproc 调用后，ra将保存 forkret 函数的首行指令：
 
 ![image-20220508203941573](https://cdn.JsDelivr.net/gh/ravenxrz/PicBed/img/image-20220508203941573.png)
 
