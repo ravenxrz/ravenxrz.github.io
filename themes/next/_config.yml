@@ -882,16 +882,16 @@ vendors:
   _internal: lib
 
   # Internal version: 3.1.0
-  anime: //raw.githubusercontent.com/juliangarnier/anime/master/lib/anime.min.js
+  anime: //unpkg.com/animejs@3.1.0/lib/anime.min.js
   # anime:
 
   # Internal version: 5.13.0
-  fontawesome: //cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@5/css/all.min.css
+  fontawesome: //unpkg.com/@fortawesome/fontawesome-free@5/css/all.min.css
   # fontawesome: //cdnjs.cloudflare.com/ajax/libs/font-awesome/5.13.0/css/all.min.css
   # fontawesome:
 
   # MathJax
-  mathjax: //cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js
+  mathjax: //unpkg.com/mathjax@3/es5/tex-mml-chtml.js
   # mathjax:
 
   # KaTeX
@@ -908,7 +908,7 @@ vendors:
   # pjax:
 
   # FancyBox
-  jquery: //cdn.jsdelivr.net/npm/jquery@3/dist/jquery.min.js
+  jquery: //unpkg.com/jquery@3/dist/jquery.min.js
   # fancybox: //cdn.jsdelivr.net/gh/fancyapps/fancybox@3/dist/jquery.fancybox.min.js
   # fancybox_css: //cdn.jsdelivr.net/gh/fancyapps/fancybox@3/dist/jquery.fancybox.min.css
   # jquery:
@@ -916,21 +916,21 @@ vendors:
   # fancybox_css:
 
   # Medium-zoom
-  mediumzoom: //cdn.jsdelivr.net/npm/medium-zoom@1/dist/medium-zoom.min.js
+  mediumzoom: //unpkg.com/medium-zoom@1/dist/medium-zoom.min.js
   # mediumzoom:
 
   # Lazyload
-  lazyload: //cdn.jsdelivr.net/npm/lozad@1/dist/lozad.min.js
+  lazyload: //unpkg.com/lozad@1/dist/lozad.min.js
   # lazyload: //cdnjs.cloudflare.com/ajax/libs/lozad.js/1.14.0/lozad.min.js
   # lazyload:
 
   # Pangu
-  pangu: //cdn.jsdelivr.net/npm/pangu@4/dist/browser/pangu.min.js
+  pangu: //unpkg.com/pangu@4/dist/browser/pangu.min.js
   # pangu: //cdnjs.cloudflare.com/ajax/libs/pangu/4.0.7/pangu.min.js
   # pangu:
 
   # Quicklink
-  quicklink: //cdn.jsdelivr.net/npm/quicklink@1/dist/quicklink.umd.js
+  quicklink: //unpkg.com/quicklink@1/dist/quicklink.umd.js
   # quicklink:
 
   # DisqusJS
@@ -945,34 +945,34 @@ vendors:
   valine:
 
   # Gitalk
-  gitalk_js: //cdn.jsdelivr.net/npm/gitalk@1/dist/gitalk.min.js
-  gitalk_css: //cdn.jsdelivr.net/npm/gitalk@1/dist/gitalk.min.css
+  gitalk_js: //unpkg.com/gitalk@1/dist/gitalk.min.js
+  gitalk_css: //unpkg.com/gitalk@1/dist/gitalk.min.css
   # gitalk_js:
   # gitalk_css:
 
   # Algolia Search
   # algolia_search: //cdn.jsdelivr.net/npm/algoliasearch@4/dist/algoliasearch-lite.umd.js
-  instant_search: //cdn.jsdelivr.net/npm/instantsearch.js@4/dist/instantsearch.production.min.js
+  instant_search: //unpkg.com/instantsearch.js@4/dist/instantsearch.production.min.js
   algolia_search:
   # instant_search:
 
   # Mermaid
-  mermaid: //cdn.jsdelivr.net/npm/mermaid@8/dist/mermaid.min.js
+  mermaid: //unpkg.com/mermaid@8/dist/mermaid.min.js
   # mermaid: //cdnjs.cloudflare.com/ajax/libs/mermaid/8.4.8/mermaid.min.js
   # mermaid:
 
   # Internal version: 1.2.1
-  velocity: //cdn.jsdelivr.net/npm/velocity-animate@1/velocity.min.js
+  velocity: //unpkg.com/velocity-animate@1/velocity.min.js
   # velocity: //cdnjs.cloudflare.com/ajax/libs/velocity/1.2.1/velocity.min.js
-  velocity_ui: //cdn.jsdelivr.net/npm/velocity-animate@1/velocity.ui.min.js
+  velocity_ui: //unpkg.com/velocity-animate@1/velocity.ui.min.js
   # velocity_ui: //cdnjs.cloudflare.com/ajax/libs/velocity/1.2.1/velocity.ui.min.js
   # velocity:
   # velocity_ui:
 
   # Internal version: 1.0.2
-  pace: //cdn.jsdelivr.net/npm/pace-js@1/pace.min.js
+  pace: //unpkg.com/pace-js@1/pace.min.js
   # pace: //cdnjs.cloudflare.com/ajax/libs/pace/1.0.2/pace.min.js
-  pace_css: //cdn.jsdelivr.net/npm/pace-js@1/themes/blue/pace-theme-minimal.css
+  pace_css: //unpkg.com/pace-js@1/themes/blue/pace-theme-minimal.css
   # pace_css: //cdnjs.cloudflare.com/ajax/libs/pace/1.0.2/themes/blue/pace-theme-minimal.min.css
   # pace:
   # pace_css:
