@@ -210,7 +210,7 @@ barrier()
     // wakeup all threads
     pthread_cond_broadcast(&bstate.barrier_cond);
   } else { // other threads
-    while(bstate.round != old_round + 1) {  // 避免操作系统意外唤醒线程
+    while(bstate.round != old_round + 1) {  // 避免操作系统意外唤醒线程, 比如其他进程向本进程发送信号
       pthread_cond_wait(&bstate.barrier_cond, &bstate.barrier_mutex); 
     }
   }
