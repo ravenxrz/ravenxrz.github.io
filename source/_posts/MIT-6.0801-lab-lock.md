@@ -124,7 +124,7 @@ struct
 } kmem[NCPU]; // kmem free list per CPU
 ```
 
-并完成响应**初始化**：
+并完成相应**初始化**：
 
 ```c
 /**
@@ -324,7 +324,7 @@ int steal_mem(int cur_cpuid)
 }
 ```
 
-这里的代码工作为，向后逐个查询其它cpu，如果其他cpu有freelist，则偷取它的一半内存。
+这里的代码工作为，向后逐个查询其它cpu，如果其他cpu freelist 有空闲内存，则偷取它的一半内存。
 
 有一个注意点：在 `steal_mem`的第一行中，执行了 ` release(&kmem[cur_cpuid].lock);`即释放了当前cpuid的lock，为什么需要释放？查看下面这张图：
 
@@ -435,21 +435,21 @@ int steal_mem(int cur_cpuid)
 
 如上是大体思路，具体实现需要思考如下问题：
 
-1. 每个buffer cache entry属于那个hash table bucket？
+1. 每个buffer cache entry属于哪个hash table bucket？
 
    通过要访问的`blockno`来计算，即 `bucketid = blockno % BUCKET_NUM`， `BUCKET_NUM`为hash table的有效bucket个数，为什么说是有效bucket个数，看问题2.
 
-2. 如何初始化hash table，即最开始的buffer cache entry是如何挂接到hash table上？
+2. 如何初始化hash table，即最开始的buffer cache entry该如何挂接到hash table上？
 
    最初的buffer cache entry是没有 `blockno`信息的，如何将最初的 buffer cache entry挂接到 `hash table` 上？有两种做法：
 
-   1. 懒挂接，等到上层发起 `bread`请求时，找到还没有`blockno`信息的 `buffer cache  entry`，挂接到 `hash table`上。 这种做法比较直观，但实现起来容易出现bug。（需要拷贝 buffer cache entry的底层分配方式，xv6采用数组的方式分配，所以还要单独考虑对该数组的访问，这样就要设计对逻辑层面的hash table访问，和对物理层面的array访问）
+   1. 懒挂接，等到上层发起 `bread`请求时，找到还没有`blockno`信息的 `buffer cache  entry`，挂接到 `hash table`上。 这种做法比较直观，但实现起来容易出现bug。（需要考虑 buffer cache entry的底层分配方式，xv6采用数组的方式分配，所以还要单独考虑对该数组的访问，这样涉及不仅对逻辑层面的hash table访问，还要对物理层面的array访问）
 
-   2. 初始化时直接挂接，由于初始化的时候每个buffer cache entry都没有 `blockno`信息，不能随意挂接，我才用的trick是，为hash table多分配的一个 bucket， 这个bucket只在初始化的时候使用，用于挂接还没有 `blockno`信息的buffer cache entry.如下图：
+   2. 初始化时直接挂接，由于初始化的时候每个buffer cache entry都没有 `blockno`信息，不能随意挂接，我采用的trick是，为hash table多分配的一个 bucket， 这个bucket只在初始化的时候使用，用于挂接还没有 `blockno`信息的buffer cache entry.如下图：
 
       ![hash table-多余一个bucket-2](https://raw.githubusercontent.com/ravenxrz/PicBed/master/img/hash%20table-%E5%A4%9A%E4%BD%99%E4%B8%80%E4%B8%AAbucket-2.svg)
 
-3. 没有双向链表，如何采用lru？这里的做法改用了 time-stamp 的lru方式。每次释放 buffer cache entry时，更新其当前的 time (或者称为tick)字段为系统的时钟，之后按照tick大小来采用lru算法。 缺点是，每次都需要遍历所有buffer cache entry，时间更长，不过xv6中，buffer cache entry的个数仅为30个，所以速度还是很快的。
+3. 没有双向链表，如何采用lru？这里改用了 time-stamp 的lru方式。每次释放 buffer cache entry时，更新其当前的 time (或者称为tick)字段为系统的时钟，之后按照tick大小来采用lru算法。 缺点是，每次都需要遍历所有buffer cache entry，时间更长，不过xv6中，buffer cache entry的个数仅为30个，所以速度还是很快的。
 
 4. bucket内的一个buffer cache entry可能需要移动到另一个bucket中，这个移动必须是原子的。**为什么会出现移动？**因为在lru剔除的时候，可能找到的被剔除的buffer cache entry在bucket0中，但是当前请求的blockno定位到了bucket1中，此时需要将bucket0中的buffer cache entry移动到bucket1中。
 
@@ -737,7 +737,7 @@ find_free_buf(int *free_bkt_id) {
   }
 ```
 
-`free_bkt_id`为找到的free buf所在bucket id， `nbkt_id`为目标blockno所对应的bucket id。所以加了if以避免重复加锁。接着又做了一次检查，这是因为在`bget`开始的搜索中，**虽然未找到目标buffer cache entry, 但是这之间优于没有一直持有 `nbkt_id`的lock，所以可能其他进程插入了这个目标buffer cache entry。** 如果当前进程不做检查，又插入一个具有相同dev和blockno的buffer cache entry，会造成同一份disk block在buffer cache中有两份缓存。**这违背了前面提到的invariant：一个disk block在buffer cache中只有一份。**
+`free_bkt_id`为找到的free buf所在bucket id， `nbkt_id`为目标blockno所对应的bucket id。所以加了if以避免重复加锁。接着又做了一次检查，这是因为在`bget`开始的搜索中，**在未找到目标buffer cache entry后，会释放`nbkt_id`的lock, 这时其他进程获取该lock并插入目标buffer cache entry。** 如果当前进程不做检查，又插入一个具有相同dev和blockno的buffer cache entry，会造成同一份disk block在buffer cache中有两份缓存。**这违背了前面提到的invariant：一个disk block在buffer cache中只有一份。**
 
 一个示意图如下：
 
@@ -823,7 +823,7 @@ P2相反，持有黄色bucket锁，尝试获取红色bucket锁，以将黄色buf
 
 所以加上bucket 大锁，保证不出现这个场景。
 
-**但是大锁又再次降低了并发。**，真实场景上，采用 `try_lock` 加`retry`的是个更好的做法，这样移动操作也可以并发执行，进一步提升并发。
+**但是大锁又再次降低了并发。** 在实际开发中，采用 `try_lock` 和`retry`策略是个更好的做法，这样移动操作也可以并发执行，进一步提升并发。
 
 至此，完成所有task，测试结果如下：
 
