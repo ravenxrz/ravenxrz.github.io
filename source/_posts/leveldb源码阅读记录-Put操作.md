@@ -158,7 +158,7 @@ Status DBImpl::Write(const WriteOptions& options, WriteBatch* updates) {
 
 ## 流程图
 
-<img src="https://cdn.jsdelivr.net/gh/ravenxrz/PicBed/img/绘图文件-Put流程.png" style="zoom: 33%;" />
+<img src="https://ravenxrz-blog.oss-cn-chengdu.aliyuncs.com/img/github_img/绘图文件-Put流程.png" style="zoom: 33%;" />
 
 ## 2.  MakeRoomForWrite
 

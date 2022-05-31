@@ -52,13 +52,13 @@ Task1要求实现一个 Lock Manager，并且支持不同的隔离级别（对pr
 
 除此外，还需要了解什么是 2 Phase-Lock, 一个2 Phase-Lock 的示意图如下：
 
-![image-20220127172155885](https://cdn.JsDelivr.net/gh/ravenxrz/PicBed/img/image-20220127172155885.png)
+![image-20220127172155885](https://ravenxrz-blog.oss-cn-chengdu.aliyuncs.com/img/github_img/image-20220127172155885.png)
 
 >  也就是说，一旦一个txn开始unlock，那它就进入到了 SHRINKING 阶段，不能再获取锁。
 
 下图为LockManager维护的加锁内部数据结构 `lock_table_`。
 
-![cmu15445-proj4-hashmap](https://cdn.JsDelivr.net/gh/ravenxrz/PicBed/img/cmu15445-proj4-hashmap.svg)
+![cmu15445-proj4-hashmap](https://ravenxrz-blog.oss-cn-chengdu.aliyuncs.com/img/github_img/cmu15445-proj4-hashmap.svg)
 
 `lock_table_` 是一个 RID->list 的映射，也就说每个rid对应到一个加锁队列， 队列中中存放的是当前已经获取到锁的事务请求（包括事务号和加锁类型）。
 
@@ -149,7 +149,7 @@ bool LockManager::LockShared(Transaction *txn, const RID &rid) {
 
 所以在我的实现中，`lock_table_` 为：
 
-![image-20220127204334231](https://cdn.JsDelivr.net/gh/ravenxrz/PicBed/img/image-20220127204334231.png)
+![image-20220127204334231](https://ravenxrz-blog.oss-cn-chengdu.aliyuncs.com/img/github_img/image-20220127204334231.png)
 
 当某个txn想要获取lock时，首先加入到waitting_set 中，只有真正获取到锁时，才加入到 request_queue_中， 加入 waitting_set的目的主要是为了防止发生写饥饿，也是为了后面upgrade更容易实现而准备。
 

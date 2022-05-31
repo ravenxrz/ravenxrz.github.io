@@ -39,7 +39,7 @@ tags:
 
 整个通信流程图如下：
 
-![lab2b-2](https://cdn.JsDelivr.net/gh/ravenxrz/PicBed/img/lab2b-2.svg)
+![lab2b-2](https://ravenxrz-blog.oss-cn-chengdu.aliyuncs.com/img/github_img/lab2b-2.svg)
 
 一次命令的提交，至少需要两个阶段，才能保证所有service的运行状态相同。
 
@@ -109,7 +109,7 @@ leader通过 **AppendEntries** RPC将新log传递给其他log，然后等待半�
 
 这里我采用了和Lab2A中的 **fireElection** 类似的trick。如下图：
 
-![raft_fireAppendEntries.excalidraw](https://cdn.JsDelivr.net/gh/ravenxrz/PicBed/img/raft_fireAppendEntries.excalidraw.svg)
+![raft_fireAppendEntries.excalidraw](https://ravenxrz-blog.oss-cn-chengdu.aliyuncs.com/img/github_img/raft_fireAppendEntries.excalidraw.svg)
 
 leader心跳到时后，派生成两类线程，上图右侧的routine表示用于给其他svr发送rpc的线程，左侧collection routine用于接收发送线程的reply。 两者之间通信采用channel。
 
@@ -711,5 +711,5 @@ lab2B的单元测试更多，也更复杂，特别是涉及到网络分区后，
 
 至此，lab2B通过：
 
-![image-20220224194848472](https://cdn.JsDelivr.net/gh/ravenxrz/PicBed/img/image-20220224194848472.png)
+![image-20220224194848472](https://ravenxrz-blog.oss-cn-chengdu.aliyuncs.com/img/github_img/image-20220224194848472.png)
 

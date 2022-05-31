@@ -21,7 +21,7 @@ tags:
 
 首先依然是贴出整部分的逻辑架构图：
 
-![image-20220308144908922](https://cdn.JsDelivr.net/gh/ravenxrz/PicBed/img/image-20220308144908922.png)
+![image-20220308144908922](https://ravenxrz-blog.oss-cn-chengdu.aliyuncs.com/img/github_img/image-20220308144908922.png)
 
 从上面图可以看出，如果raft已经完成了log compaction部分，现在要完成的工作包括如下几个：
 
@@ -42,7 +42,7 @@ tags:
 
 3. service 收到raft的commitLog消息后，消息回传给service RPC handler问题处理。 我曾经在lab3A文章中说到为每个rpc进来兵团通过raft.Start后的log的index建立一个通道（看下面的处理过程图），然后当service收到该log的commit消息后（raft通过applyChan回传上来的)，再通过该通道回传到rpc handler中。虽然整体思想没问题，但是也有非常多的坑：
 
-   ![kvraft中的问题-lab3B-2](https://cdn.JsDelivr.net/gh/ravenxrz/PicBed/img/kvraft中的问题-lab3B-2.svg)
+   ![kvraft中的问题-lab3B-2](https://ravenxrz-blog.oss-cn-chengdu.aliyuncs.com/img/github_img/kvraft中的问题-lab3B-2.svg)
 
    1. 不同rpc handler可能在相同的log index上建立通道，如何处理这种情况？ 这种情景发生再网络分区又愈合后，raft的log被愈合后网络的leader替换了。
    2. rpc handler不能无限等待在该通道上，因为这条log很可能不会被commit，所以应该设定一定的超时检测机制。这里又分为两种情况：

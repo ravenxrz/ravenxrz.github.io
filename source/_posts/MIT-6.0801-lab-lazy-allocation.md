@@ -37,7 +37,7 @@ tags:
 
 page fault属于exception。所以在xv6中，可在 `usertrap` 函数中做识别处理。那如何区分page fault和其它exception呢？在ricsv中， `scause`寄存器保存了出现trap的原因，具体见下表：
 
-![image-20220517124439957](https://cdn.JsDelivr.net/gh/ravenxrz/PicBed/img/image-20220517124439957.png)
+![image-20220517124439957](https://ravenxrz-blog.oss-cn-chengdu.aliyuncs.com/img/github_img/image-20220517124439957.png)
 
 **可以看到13和15都和page fault相关。**
 
@@ -83,7 +83,7 @@ sys_sbrk(void)
 
 首先要增加page fault处理，该处理在 `usertrap` 函数中：
 
-<img src="https://cdn.JsDelivr.net/gh/ravenxrz/PicBed/img/image-20220517124610135.png" alt="image-20220517124610135" style="zoom:67%;" />
+<img src="https://ravenxrz-blog.oss-cn-chengdu.aliyuncs.com/img/github_img/image-20220517124610135.png" alt="image-20220517124610135" style="zoom:67%;" />
 
 `page_fault_handler`的实现如下：
 
@@ -118,7 +118,7 @@ page_fault_handler(struct proc* p)
 
 另外，还需要修改 `uvmunmap`函数：
 
-<img src="https://cdn.JsDelivr.net/gh/ravenxrz/PicBed/img/image-20220517124933887.png" alt="image-20220517124933887" style="zoom:67%;" />
+<img src="https://ravenxrz-blog.oss-cn-chengdu.aliyuncs.com/img/github_img/image-20220517124933887.png" alt="image-20220517124933887" style="zoom:67%;" />
 
 以`uvmunmap`将在进程销毁时调用，当进程销毁时，其有效va（由proc->sz表示）范围内可能存在一些未分配的页。即 pte 的 `PTE_V`并不有效。这是正常逻辑，不再需要`panic`。
 
@@ -170,7 +170,7 @@ sys_sbrk(void)
 
 修改 `uvmcopy`函数：
 
-<img src="https://cdn.JsDelivr.net/gh/ravenxrz/PicBed/img/image-20220517125610949.png" alt="image-20220517125610949" style="zoom:67%;" />
+<img src="https://ravenxrz-blog.oss-cn-chengdu.aliyuncs.com/img/github_img/image-20220517125610949.png" alt="image-20220517125610949" style="zoom:67%;" />
 
 第四条 `Handle the case in which a process passes a valid address from sbrk() to a system call such as read or write, but the memory for that address has not yet been allocated.`
 
@@ -180,12 +180,12 @@ sys_sbrk(void)
 
 来到 `copyin` 函数，添加代码：
 
-<img src="https://cdn.JsDelivr.net/gh/ravenxrz/PicBed/img/image-20220517125952256.png" alt="image-20220517125952256" style="zoom:67%;" />
+<img src="https://ravenxrz-blog.oss-cn-chengdu.aliyuncs.com/img/github_img/image-20220517125952256.png" alt="image-20220517125952256" style="zoom:67%;" />
 
 这是因为 `srcva` 所代表的用户进程虚拟地址所在页，可能并不分配和映射， `walkaddr`无法找到对应页， 返回的 `pa0`将为0，对于这种情况，需要做一次 lazy allocation. 
 
 同理，修改 `copyout` 函数：
-<img src="https://cdn.JsDelivr.net/gh/ravenxrz/PicBed/img/image-20220517130159684.png" alt="image-20220517130159684" style="zoom:67%;" />
+<img src="https://ravenxrz-blog.oss-cn-chengdu.aliyuncs.com/img/github_img/image-20220517130159684.png" alt="image-20220517130159684" style="zoom:67%;" />
 
 最后运行 `lazytests`  和 `usertests` ，检验是否全部通过。
 

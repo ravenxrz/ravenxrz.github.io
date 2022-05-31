@@ -22,7 +22,7 @@ tags:
 
 做task 1前，弄懂xv6的线程切换原理即可。下面贴出xv6的线程切换outline：
 
-![image-20220524141615397](https://cdn.JsDelivr.net/gh/ravenxrz/PicBed/img/image-20220524141615397.png)
+![image-20220524141615397](https://ravenxrz-blog.oss-cn-chengdu.aliyuncs.com/img/github_img/image-20220524141615397.png)
 
 假设当前shell因为需要等待I/O或者因为定时器中断来临，内核决定切换shell进程到cat进程，则过程大体如下：
 
@@ -111,13 +111,13 @@ struct thread {
 
 **接着修改 `thread_create`函数：**
 
-<img src="https://cdn.JsDelivr.net/gh/ravenxrz/PicBed/img/image-20220524142551467.png" alt="image-20220524142551467" style="zoom:50%;" />
+<img src="https://ravenxrz-blog.oss-cn-chengdu.aliyuncs.com/img/github_img/image-20220524142551467.png" alt="image-20220524142551467" style="zoom:50%;" />
 
 设置 `ra`寄存器为 func 函数指针所指向的地址，方便之后线程调度时，调度到 func 处执行。另外设置 thread 自己的执行 stack。 唯一要注意的是，执行stack是从高地址往低地址push，所以 `sp = (uint64)(t->stack + STACK_SIZE)`
 
 **然后修改 `thread_schedule` 函数：**
 
-<img src="https://cdn.JsDelivr.net/gh/ravenxrz/PicBed/img/image-20220524142817525.png" alt="image-20220524142817525" style="zoom:67%;" />
+<img src="https://ravenxrz-blog.oss-cn-chengdu.aliyuncs.com/img/github_img/image-20220524142817525.png" alt="image-20220524142817525" style="zoom:67%;" />
 
 **最后添加汇编, 其实是copy的kernel thread switch代码, ;)  **
 
@@ -160,7 +160,7 @@ thread_switch:
 
 **caller-registers和callee-registers内容如下：**
 
-![image-20220524143344114](https://cdn.JsDelivr.net/gh/ravenxrz/PicBed/img/image-20220524143344114.png)
+![image-20220524143344114](https://ravenxrz-blog.oss-cn-chengdu.aliyuncs.com/img/github_img/image-20220524143344114.png)
 
 ### 2. Using threads
 
@@ -183,7 +183,7 @@ pthread_mutex_t locks[NBUCKET];
 
 最后修改 `put`和 `get`函数即可：
 
-<img src="https://cdn.JsDelivr.net/gh/ravenxrz/PicBed/img/image-20220524143824414.png" alt="image-20220524143824414" style="zoom:67%;" />
+<img src="https://ravenxrz-blog.oss-cn-chengdu.aliyuncs.com/img/github_img/image-20220524143824414.png" alt="image-20220524143824414" style="zoom:67%;" />
 
 ### 3. Barrier
 

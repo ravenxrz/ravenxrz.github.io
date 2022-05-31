@@ -23,7 +23,7 @@ tags:
 
 让我们不要一下陷入各种细节，思考下整个系统的的架构，下图是官网给出的架构图：
 
-![image-20220308144908922](https://cdn.JsDelivr.net/gh/ravenxrz/PicBed/img/image-20220308144908922.png)
+![image-20220308144908922](https://ravenxrz-blog.oss-cn-chengdu.aliyuncs.com/img/github_img/image-20220308144908922.png)
 
 对于lab3A来说，不用关注任何和持久化相关的问题。
 
@@ -256,7 +256,7 @@ func MakeClerk(servers []*labrpc.ClientEnd) *Clerk {
 
 相比客户端来说，服务器端要考虑的问题就比较多了。下图描述了svr的工作流，以及需要处理到的问题：
 
-![kvraft中的问题-2](https://cdn.JsDelivr.net/gh/ravenxrz/PicBed/img/kvraft中的问题-2.svg)
+![kvraft中的问题-2](https://ravenxrz-blog.oss-cn-chengdu.aliyuncs.com/img/github_img/kvraft中的问题-2.svg)
 
 **上图中的”收到commit“步骤由单独线程处理**
 
@@ -268,7 +268,7 @@ func MakeClerk(servers []*labrpc.ClientEnd) *Clerk {
 
 第四个问题，紧接第三个问题，**如果多个rpc handler尝试在同一log index上建立通道，该如何处理**？首先要理解的是，什么样的情况下，多个rpc handler会在同一个log index上建立通道？
 
-![kvraft对同一个log_index建立通道可能会遇到的问题](https://cdn.JsDelivr.net/gh/ravenxrz/PicBed/img/kvraft对同一个log_index建立通道可能会遇到的问题.svg)
+![kvraft对同一个log_index建立通道可能会遇到的问题](https://ravenxrz-blog.oss-cn-chengdu.aliyuncs.com/img/github_img/kvraft对同一个log_index建立通道可能会遇到的问题.svg)
 
 假设有svr{0,1,2}，0最开始为leader，但提交了命令[1,2,3]后，网络发生了分区，{0}单独作为一个分区，此时client继续发送了[4,5]两个命令，rpc handler会分别在[4,5]两个log index上建立通道，当网络愈合后，{1,2}分区中的leader会同步自己的log, 此时0的log被截断，只剩[1,2,3]。之后新的client发送新的[4,5]命令。那么刚才已经在旧的[4,5]上建立通道，该如何处理这种冲突？
 

@@ -23,7 +23,7 @@ tags:
 
 根据raft paper figure 2提到的需要持久化的状态只有3个。如下图：
 
-![image-20220225115450978](https://cdn.JsDelivr.net/gh/ravenxrz/PicBed/img/image-20220225115450978.png)
+![image-20220225115450978](https://ravenxrz-blog.oss-cn-chengdu.aliyuncs.com/img/github_img/image-20220225115450978.png)
 
 所以只用在适当的地方做持久化即可。
 
@@ -208,7 +208,7 @@ func (rf *Raft) doReceiveRequestVoteReply(curTerm int, replyCh <-chan RequestVot
 
 在raft paper figure2中还存在这样一段话：
 
-![image-20220225124200638](https://cdn.JsDelivr.net/gh/ravenxrz/PicBed/img/image-20220225124200638.png)
+![image-20220225124200638](https://ravenxrz-blog.oss-cn-chengdu.aliyuncs.com/img/github_img/image-20220225124200638.png)
 
 这里我是采用了一个专用后台线程，每隔一段时间就去扫描一次。代码如下：
 

@@ -122,11 +122,11 @@ ok，有了两个知识点，思考一下如何对待前台进程和后台进程
 
 显然，第二种统一处理更容易理解，维护。当然，writeup其实给出了一种解决方案：
 
-![image-20200805133536133](https://cdn.jsdelivr.net/gh/ravenxrz/PicBed/img/image-20200805133536133.png)
+![image-20200805133536133](https://ravenxrz-blog.oss-cn-chengdu.aliyuncs.com/img/github_img/image-20200805133536133.png)
 
 另外一个问题就是，**信号的转发**。
 
-![image-20200805133902911](https://cdn.jsdelivr.net/gh/ravenxrz/PicBed/img/image-20200805133902911.png)
+![image-20200805133902911](https://ravenxrz-blog.oss-cn-chengdu.aliyuncs.com/img/github_img/image-20200805133902911.png)
 
 这里要解决的是，后台进程不应该接收到Ctrl-C所引发的信号。
 

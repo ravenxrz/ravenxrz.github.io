@@ -211,11 +211,11 @@ Version::~Version() {
 
 首先可以看到，Builder是在 LogAndApply和Recover中被调用的：
 
-<img src="https://cdn.jsdelivr.net/gh/ravenxrz/PicBed/img/image-20200917210900575.png" alt="image-20200917210900575" style="zoom:50%;" />
+<img src="https://ravenxrz-blog.oss-cn-chengdu.aliyuncs.com/img/github_img/image-20200917210900575.png" alt="image-20200917210900575" style="zoom:50%;" />
 
 重点看一下LogAndApply
 
-<img src="https://cdn.jsdelivr.net/gh/ravenxrz/PicBed/img/image-20200917210931871.png" alt="image-20200917210931871" style="zoom:50%;" />
+<img src="https://ravenxrz-blog.oss-cn-chengdu.aliyuncs.com/img/github_img/image-20200917210931871.png" alt="image-20200917210931871" style="zoom:50%;" />
 
 可以看到，一共有4个函数调用了LogAndApply，DB打开时，其余3个都是和Compaction相关。
 
@@ -247,7 +247,7 @@ Version::~Version() {
 
 RemoveFile函数调用，有两个函数caller:
 
-![image-20201006194127291](https://cdn.jsdelivr.net/gh/ravenxrz/PicBed/img/image-20201006194127291.png)
+![image-20201006194127291](https://ravenxrz-blog.oss-cn-chengdu.aliyuncs.com/img/github_img/image-20201006194127291.png)
 
 AddInputDeletions， 在常规compaction中，加入所有选中了的compaction文件。
 
@@ -311,7 +311,7 @@ new_files_在==**AddFile**==中增加：‘
 
 AddFile被下图中的3各函数call：
 
-![image-20201006194516231](https://cdn.jsdelivr.net/gh/ravenxrz/PicBed/img/image-20201006194516231.png)
+![image-20201006194516231](https://ravenxrz-blog.oss-cn-chengdu.aliyuncs.com/img/github_img/image-20201006194516231.png)
 
 WriteLevel0Table中是memtable dump 到level0所生成的新文件。
 
@@ -647,7 +647,7 @@ base_存放的是当前系统版本，我们的目标是使用当前versionedit+
 
 有了对upper_bound的理解+ added_files内部是有序的前提，就不难理解这个循环了。画个图：
 
-<img src="https://cdn.jsdelivr.net/gh/ravenxrz/PicBed/img/leveldb源码阅读-copy-第 29 页.png" style="zoom:33%;" />
+<img src="https://ravenxrz-blog.oss-cn-chengdu.aliyuncs.com/img/github_img/leveldb源码阅读-copy-第 29 页.png" style="zoom:33%;" />
 
 
 

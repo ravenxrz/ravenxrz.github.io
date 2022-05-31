@@ -148,7 +148,7 @@ SkipList<Key, Comparator>::FindGreaterOrEqual(const Key& key,
 
 举个例子：
 
-![](https://cdn.jsdelivr.net/gh/ravenxrz/PicBed/img/image-20200909215139172.png)
+![](https://ravenxrz-blog.oss-cn-chengdu.aliyuncs.com/img/github_img/image-20200909215139172.png)
 
 现在一共有4层，level0,1,2,3. 最下面为level0. , 则prev数组的有效长度为4(实际上都为kmaxHeight),假设要插入87, 图中红色虚线为要插入时所经过的路线，prev数组的作用就是保存这些路线。 比如 prev[0] 代表的是level0层的86， prev[1]代表的是level1层的71,以此类推。
 

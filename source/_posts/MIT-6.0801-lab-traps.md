@@ -68,7 +68,7 @@ Traps可以理解成一种事件，这个事件会使得CPU临时保存当前执
 
 下图展示了一个write系统调用的流程：
 
-![trap过程-系统调用为例](https://cdn.JsDelivr.net/gh/ravenxrz/PicBed/img/trap过程-系统调用为例.svg)
+![trap过程-系统调用为例](https://ravenxrz-blog.oss-cn-chengdu.aliyuncs.com/img/github_img/trap过程-系统调用为例.svg)
 
 #### 1. uservec
 
@@ -164,7 +164,7 @@ uservec:
 
 回忆user process的page table layout和kernel page table layout：
 
-![image-20220508130849006](https://cdn.jsdelivr.net/gh/ravenxrz/PicBed/img/image-20220508130849006.png)
+![image-20220508130849006](https://ravenxrz-blog.oss-cn-chengdu.aliyuncs.com/img/github_img/image-20220508130849006.png)
 
 ![image-20220508131437202](https://pic.imgdb.cn/item/6277ce800947543129504076.jpg)
 
@@ -481,7 +481,7 @@ printf("x=%d y=%d", 3);
 
 要完成这个task，需要了解调用stack frame的过程，*这部分其实csapp课程说得非常仔细*。函数调用stack frame如下图：
 
-![函数调用栈-详细](https://cdn.JsDelivr.net/gh/ravenxrz/PicBed/img/函数调用栈-详细.svg)
+![函数调用栈-详细](https://ravenxrz-blog.oss-cn-chengdu.aliyuncs.com/img/github_img/函数调用栈-详细.svg)
 
 1. 每个函数调用栈开始都会保存一个 `return address`, 表示退出该stack frame时，pc应该设置到哪儿，本task实际上就是打印每个stack frame的return address。
 2. 接着会保存一个frame pointer(fp), 表明上一个stack frame bottom address。 我们利用fp 寄存器在不同stack frame之间切换。
@@ -511,11 +511,11 @@ backtrace()
 
 在 `sys_sleep` 添加backtrace：
 
-<img src="https://cdn.JsDelivr.net/gh/ravenxrz/PicBed/img/image-20220513113844145.png" alt="image-20220513113844145" style="zoom:67%;" />
+<img src="https://ravenxrz-blog.oss-cn-chengdu.aliyuncs.com/img/github_img/image-20220513113844145.png" alt="image-20220513113844145" style="zoom:67%;" />
 
 启动qemu，执行 `bttest`，或者三行地址，退出qemu，执行 `addr2line -e kernel/kernel`，然后粘贴刚才的三行地址，输出
 
-![image-20220513114010492](https://cdn.JsDelivr.net/gh/ravenxrz/PicBed/img/image-20220513114010492.png)
+![image-20220513114010492](https://ravenxrz-blog.oss-cn-chengdu.aliyuncs.com/img/github_img/image-20220513114010492.png)
 
 说明通过。
 

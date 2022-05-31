@@ -25,7 +25,7 @@ tags:
 
 首先要把整个过程理清楚，下图贴出了raft原paper对log compaction示例图。
 
-<img src="https://cdn.JsDelivr.net/gh/ravenxrz/PicBed/img/image-20220420154100621.png" alt="image-20220420154100621" style="zoom: 67%;" />
+<img src="https://ravenxrz-blog.oss-cn-chengdu.aliyuncs.com/img/github_img/image-20220420154100621.png" alt="image-20220420154100621" style="zoom: 67%;" />
 
 某个时刻，由raft的上层服务向raft发起Log Compaction请求，这个请求会带上log需要压缩到哪个地方参数（index）, 另外还会发送service的状态数据`snapshot`，当raft收到该请求后，根据index将log做裁剪，并保留被裁剪部分的最后一个log entry的相关信息，即 `last included index` 和 `last included term`. 另外，还需持久化上层service状态（snapshot）和raft此时的状态，用于后续的重启恢复。当svr重启后，service可通过读取snapshot恢复至发起Log Compaction请求时的状态，*最后重放raft log恢复至系统关机前的状态（此部分还未验证，待lab3做完后更新）*。
 

@@ -24,7 +24,7 @@ tags:
 
 LevelDB 作为存储系统，数据记录的存储介质包括内存以及磁盘文件，当 LevelDB 运行了一段时间，此时我们给 LevelDB 进行透视拍照，会看到如下一番景象，这也就是 LevelDB 的结构图。
 
-![image-20210223202631155](https://cdn.jsdelivr.net/gh/ravenxrz/PicBed/img/image-20210223202631155.png)从图中可以看出，构成 LevelDB 静态结构的包括六个主要部分：内存中的 **MemTable** 和 **Immutable MemTable** 以及磁盘上的几种主要文件：**Current文件**，**Manifest文件**，**log文件**以及 **SSTable 文件**。当然，LevelDB 除了这六个主要部分还有一些辅助的文件，但是以上六个文件和数据结构是 LevelDB 的主体构成元素。
+![image-20210223202631155](https://ravenxrz-blog.oss-cn-chengdu.aliyuncs.com/img/github_img/image-20210223202631155.png)从图中可以看出，构成 LevelDB 静态结构的包括六个主要部分：内存中的 **MemTable** 和 **Immutable MemTable** 以及磁盘上的几种主要文件：**Current文件**，**Manifest文件**，**log文件**以及 **SSTable 文件**。当然，LevelDB 除了这六个主要部分还有一些辅助的文件，但是以上六个文件和数据结构是 LevelDB 的主体构成元素。
 
 当应用写入一条Key:Value记录的时候，LevelDb会先往log文件里写入，成功后将记录插进Memtable中，这样基本就算完成了写入操作，因为一次写入操作只涉及一次磁盘顺序写和一次内存写入，所以这是为何说LevelDb写入速度极快的主要原因。
 
@@ -36,7 +36,7 @@ SSTable 中的文件(后缀为.sst)是 key 有序的，就是说在文件中小 
 
 SSTable 中的某个文件属于特定层级，而且其存储的记录是 key 有序的，那么必然有文件中的最小 key 和最大 key，这是非常重要的信息，LevelDB 应该记下这些信息。**manifest** 就是干这个的，它记载了 SSTable 各个文件的管理信息，比如属于哪个 level，文件名称叫啥，最小 key 和最大 key 各自是多少。下图是 manifest 所存储内容的示意：
 
-![Manifest存储示意图](https://cdn.jsdelivr.net/gh/ravenxrz/PicBed/img/leveldb-02-02.png)
+![Manifest存储示意图](https://ravenxrz-blog.oss-cn-chengdu.aliyuncs.com/img/github_img/leveldb-02-02.png)
 
 图中只显示了两个文件（manifest 会记载所有 SSTable 文件的这些信息），即 level 0 的 Test1.sst 和 Test2.sst 文件，同时记载了这些文件各自对应的 key 范围，比如 Test1.sst 的 key 范围是 “abc” 到 “hello”，而文件 Test2.sst 的 key 范围是 “bbc” 到 “world”，可以看出两者的 key 范围是有重叠的。
 
@@ -50,11 +50,11 @@ log 文件在 LevelDB 中的主要作用是系统故障恢复时，能够保证�
 
 LevelDB 对于一个 log 文件，会把它切割成以 32K 为单位的物理 Block，每次读取以一个 Block 作为基本读取单位，下图展示的 log 文件由3个 Block 构成，所以从物理布局来讲，一个 log 文件就是由连续的 32K 大小 Block 构成的。
 
-![log文件布局](https://cdn.jsdelivr.net/gh/ravenxrz/PicBed/img/leveldb-02-03.png)
+![log文件布局](https://ravenxrz-blog.oss-cn-chengdu.aliyuncs.com/img/github_img/leveldb-02-03.png)
 
 log 文件中的数据是以 block 为单位组织，写日志时，处于一致性考虑并没有按 block 单位写，每次更新均对 log 文件进行 IO，每次更新写入作为一个 record，每条 record 的结构如下图所示：
 
-![记录结构](https://cdn.jsdelivr.net/gh/ravenxrz/PicBed/img/leveldb-02-04.png)
+![记录结构](https://ravenxrz-blog.oss-cn-chengdu.aliyuncs.com/img/github_img/leveldb-02-04.png)
 
 `checksum` 记录的是 “type” 和 “data” 字段的CRC校验，为了避免处理不完整或者是被破坏的数据，当 LevelDB 读取记录数据时候会对数据进行校验，如果发现和存储的 checksum 相同，说明数据完整无破坏，可以继续后续流程。
 
@@ -72,13 +72,13 @@ log 文件中的数据是以 block 为单位组织，写日志时，处于一致
 
 LevelDB 不同层级有很多 SSTable 文件（以后缀.sst为特征），所有 .sst 文件内部布局都是一样的。上节介绍 log 文件是物理分块的，SSTable也一样会将文件划分为固定大小的物理存储块，但是两者逻辑布局大不相同，根本原因是：log文件中的记录是 Key 无序的，即先后记录的 key 大小没有明确大小关系，而 .sst 文件内部则是根据记录的 Key 由小到大排列的。
 
-![.sst文件的分块结构](https://cdn.jsdelivr.net/gh/ravenxrz/PicBed/img/leveldb-02-05.png)
+![.sst文件的分块结构](https://ravenxrz-blog.oss-cn-chengdu.aliyuncs.com/img/github_img/leveldb-02-05.png)
 
 上图展示了一个 .sst 文件的物理划分结构，同 log 文件一样，也是划分为固定大小的存储块，每个 Block 分为三个部分：**数据存储区**，**Type 区**用于标识数据存储区是否采用了数据压缩算法（Snappy压缩或者无压缩），**CRC校验**则是数据校验码，用于判别数据在生成和传输中是否出错。
 
 以上是.sst的物理布局，下面介绍.sst文件的逻辑布局，所谓逻辑布局，就是说尽管大家都是物理块，但是每一块存储什么内容，内部又有什么结构等。下图展示了.sst文件的内部逻辑解释。
 
-![逻辑布局](https://cdn.jsdelivr.net/gh/ravenxrz/PicBed/img/leveldb-02-06.png)
+![逻辑布局](https://ravenxrz-blog.oss-cn-chengdu.aliyuncs.com/img/github_img/leveldb-02-06.png)
 
 从上图可以看出，从大的方面，可以将 .sst文 件划分为**数据存储区**和**数据管理区**，数据存储区存放实际的 key\-value 数据，数据管理区则提供一些索引指针等管理数据，目的是更快速便捷的查找相应的记录。两个区域都是在上述的分块基础上的，就是说文件的前面若干块实际存储 KV 数据，后面数据管理区存储管理数据。管理数据又分为四种不同类型：**Meta Block**，**MetaBlock 索引**和**数据索引块**以及一个**文件尾部块**。
 
@@ -90,13 +90,13 @@ LevelDB 不同层级有很多 SSTable 文件（以后缀.sst为特征），所�
 
 footer 的结构如下图所示：
 
-![Footer](https://cdn.jsdelivr.net/gh/ravenxrz/PicBed/img/leveldb-02-07.png)
+![Footer](https://ravenxrz-blog.oss-cn-chengdu.aliyuncs.com/img/github_img/leveldb-02-07.png)
 
 `metaindex_block_handle` 指出了 metaindex block 的起始位置和大小；`index_block_handle` 指出了 index Block 的起始地址和大小；这两个字段可以理解为索引的索引，是为了正确读出索引值而设立的；为达到固定的长度，添加 `padding_bytes`。最后有8个字节的 `magic` 校验。
 
 下图是数据索引块的内部结构示意图：
 
-![数据索引](https://cdn.jsdelivr.net/gh/ravenxrz/PicBed/img/leveldb-02-08.png)
+![数据索引](https://ravenxrz-blog.oss-cn-chengdu.aliyuncs.com/img/github_img/leveldb-02-08.png)
 
 Data Block 内的 KV 记录是按照 key 由小到大排列的，数据索引区的每条记录是对某个 Data Block 建立的索引信息，每条索引信息包含三个内容。以上图所示的数据块 i 的索引 index i 来说：
 
@@ -108,7 +108,7 @@ Data Block 内的 KV 记录是按照 key 由小到大排列的，数据索引区
 
 上面主要介绍的是数据管理区的内部结构，下图是数据区的一个 Block 的数据部分布局。
 
-![](https://cdn.jsdelivr.net/gh/ravenxrz/PicBed/img/leveldb-02-09.png)
+![](https://ravenxrz-blog.oss-cn-chengdu.aliyuncs.com/img/github_img/leveldb-02-09.png)
 
 从图中可以看出，其内部也分为两个部分，前面是一个个 KV 记录，其顺序是根据 key 值由小到大排列的，在Block尾部则是一些“重启点”（Restart Point），其实是一些指针，指出 Block 内容中的一些记录位置。
 
@@ -116,7 +116,7 @@ Data Block 内的 KV 记录是按照 key 由小到大排列的，数据索引区
 
 其中记录的格式如下所示：
 
-![记录格式](https://cdn.jsdelivr.net/gh/ravenxrz/PicBed/img/leveldb-02-10.png)
+![记录格式](https://ravenxrz-blog.oss-cn-chengdu.aliyuncs.com/img/github_img/leveldb-02-10.png)
 
 每个记录包含5个字段：
 
@@ -162,7 +162,7 @@ LevelDB 包含其中两种 compaction 模式：minor 和 major。所谓 **minor 
 
 Minor compaction 的目的是当内存中的 memtable 大小到了一定值时，将内容保存到磁盘文件中。其机理如下图所示：
 
-![Minor compaction](https://cdn.jsdelivr.net/gh/ravenxrz/PicBed/img/leveldb-02-12.png)
+![Minor compaction](https://ravenxrz-blog.oss-cn-chengdu.aliyuncs.com/img/github_img/leveldb-02-12.png)
 
 当 memtable 数量到了一定程度会转换为 immutable memtable，此时不能往其中写入记录，只能从中读取KV内容。之前介绍过，immutable memtable 其实是一个多层级队列SkipList，其中的记录是根据 key 有序排列的。所以这个 minor compaction 实现起来也很简单，就是按照 immutable memtable 中记录由小到大遍历，并依次写入一个 level 0 的新建 SSTable 文件中，写完后建立文件的 index 数据，这样就完成了一次minor compaction。
 
@@ -182,7 +182,7 @@ LevelDB 在选定某个 level 进行 compaction 后，还要选择是具体哪�
 
 下图所示的是合并过程：
 
-![SSTable compaction](https://cdn.jsdelivr.net/gh/ravenxrz/PicBed/img/leveldb-02-13.png)
+![SSTable compaction](https://ravenxrz-blog.oss-cn-chengdu.aliyuncs.com/img/github_img/leveldb-02-13.png)
 
 major compaction 的过程如下：对多个文件采用多路归并排序的方式，依次找出其中最小的key记录，也就是对多个文件中的所有记录重新进行排序。之后采取一定的标准判断这个key是否还需要保存，如果判断没有保存价值，那么直接抛掉，如果觉得还需要继续保存，那么就将其写入 level i+1 层中新生成的一个 SSTable 文件中。就这样对KV数据一一处理，形成了一系列新的 i+1 层数据文件，之前的 i 层文件和 i+1 层参与 compaction 的文件数据此时已经没有意义了，所以全部删除。这样就完成了 i 层和 i+1 层文件记录的合并过程。
 
@@ -196,13 +196,13 @@ LevelDB 中引入了两个不同的 Cache:Table Cache 和 Block Cache。其中 B
 
 下图是 table cache 的结构：
 
-![SSTable compaction](https://cdn.jsdelivr.net/gh/ravenxrz/PicBed/img/leveldb-02-14.png)
+![SSTable compaction](https://ravenxrz-blog.oss-cn-chengdu.aliyuncs.com/img/github_img/leveldb-02-14.png)
 
 在 Cache 中，key值是 SSTable 的文件名称，value 部分包含两部分，一个是指向磁盘打开的 SSTable 文件的文件指针，这是为了方便读取内容；另外一个是指向内存中这个 SSTable 文件对应的 Table 结构指针，table结构在内存中，保存了 SSTable 的 index 内容以及用来指示 block cache 用的 cache\_id ，当然除此外还有其它一些内容。
 
 比如在 get(key) 读取操作中，如果 LevelDB 确定了key在某个level下某个文件A的key range范围内，那么需要判断是不是文件A真的包含这个KV。此时，LevelDB 会首先查找 Table Cache，看这个文件是否在缓存里，如果找到了，那么根据 index 部分就可以查找是哪个 block 包含这个 key。如果没有在缓存中找到文件，那么打开 SSTable 文件，将其 index 部分读入内存，然后插入 Cache 里面，去 index 里面定位哪个 block 包含这个 key 。如果确定了文件哪个 block 包含这个 key，那么需要读入 block 内容，这是第二次读取。
 
-![SSTable compaction](https://cdn.jsdelivr.net/gh/ravenxrz/PicBed/img/leveldb-02-15.png)
+![SSTable compaction](https://ravenxrz-blog.oss-cn-chengdu.aliyuncs.com/img/github_img/leveldb-02-15.png)
 
 Block Cache是为了加快这个过程的。上图是block cache 的结构。其中的key是文件的cache\_id加上这个block在文件中的起始位置block\_offset。而value则是这个Block的内容。
 

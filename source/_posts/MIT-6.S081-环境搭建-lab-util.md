@@ -94,7 +94,7 @@ gdb-multiarch			// 一定要用gdb-multiarch, 否则无法挂上去
 2. pingpong，使用管道，在父子进程间来回传递一个byte。
 3. primes。这个非常有趣，使用多个进程流水线式的计算素数。如下图：
 
-![img](https://cdn.JsDelivr.net/gh/ravenxrz/PicBed/img/sieve.gif)
+![img](https://ravenxrz-blog.oss-cn-chengdu.aliyuncs.com/img/github_img/sieve.gif)
 
 第一个进程排除所有可以被2整除的数。其他数传递给下一个进程，下一个进程排除所有可以被3整除的数，其余数传递给下一个进程，依次类推。
 

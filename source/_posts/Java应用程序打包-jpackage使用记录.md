@@ -33,7 +33,7 @@ jpackage目前并不成熟，但是也算是可以使用。另外，虽然jpacka
 
 安装好，打开cmd，执行jpackage -h：
 
-![image-20200506083414289](https://cdn.jsdelivr.net/gh/ravenxrz/PicBed/img/image-20200506083414289.png)
+![image-20200506083414289](https://ravenxrz-blog.oss-cn-chengdu.aliyuncs.com/img/github_img/image-20200506083414289.png)
 
 如果有这样的显示，那说明安装成功。注意首行的WARNING，这个不用管，因为jpackage目前还属于一个孵化阶段，所有有这样的提示。
 
@@ -45,7 +45,7 @@ https://github.com/raven-misc/jpackage-demo
 
 先以**非模块程序**为例，新建一个java项目，得到如下目录：
 
-![image-20200506085408605](https://cdn.jsdelivr.net/gh/ravenxrz/PicBed/img/image-20200506085408605.png)
+![image-20200506085408605](https://ravenxrz-blog.oss-cn-chengdu.aliyuncs.com/img/github_img/image-20200506085408605.png)
 
 代码：
 
@@ -75,13 +75,13 @@ public class App {
 
 测试一下通过java -jar能否运行：
 
-![image-20200506090006946](https://cdn.jsdelivr.net/gh/ravenxrz/PicBed/img/image-20200506090006946.png)
+![image-20200506090006946](https://ravenxrz-blog.oss-cn-chengdu.aliyuncs.com/img/github_img/image-20200506090006946.png)
 
 好的，现在我们将这个jar包打成安装包：
 
 在根目录下建立一个lib，并把Non-modular-packging-demo.jar复制进lib目录下：
 
-![image-20200506090210470](https://cdn.jsdelivr.net/gh/ravenxrz/PicBed/img/image-20200506090210470.png)
+![image-20200506090210470](https://ravenxrz-blog.oss-cn-chengdu.aliyuncs.com/img/github_img/image-20200506090210470.png)
 
 
 
@@ -110,7 +110,7 @@ jpackage --name Non-modular-installer --input lib --main-class com.raven.App --m
 odular-packaging-demo.jar --vendor raven
 ```
 
-![image-20200506091042775](https://cdn.jsdelivr.net/gh/ravenxrz/PicBed/img/image-20200506091042775.png)
+![image-20200506091042775](https://ravenxrz-blog.oss-cn-chengdu.aliyuncs.com/img/github_img/image-20200506091042775.png)
 
 ok，已经打包成功，试试安装吧（提示，又会有想不到的效果）。
 
@@ -132,15 +132,15 @@ jpackage --name Non-modular-installer --input lib --main-class com.raven.App --m
 
 - --win-menu，添加到系统菜单中
 
-![image-20200506091723697](https://cdn.jsdelivr.net/gh/ravenxrz/PicBed/img/image-20200506091723697.png)
+![image-20200506091723697](https://ravenxrz-blog.oss-cn-chengdu.aliyuncs.com/img/github_img/image-20200506091723697.png)
 
-![image-20200506091759019](https://cdn.jsdelivr.net/gh/ravenxrz/PicBed/img/image-20200506091759019.png)
+![image-20200506091759019](https://ravenxrz-blog.oss-cn-chengdu.aliyuncs.com/img/github_img/image-20200506091759019.png)
 
-![image-20200506091808728](https://cdn.jsdelivr.net/gh/ravenxrz/PicBed/img/image-20200506091808728.png)
+![image-20200506091808728](https://ravenxrz-blog.oss-cn-chengdu.aliyuncs.com/img/github_img/image-20200506091808728.png)
 
 现在双击启动程序试试，应该就有beep了。再看看安装目录：
 
-![image-20200506092615980](https://cdn.jsdelivr.net/gh/ravenxrz/PicBed/img/image-20200506092615980.png)
+![image-20200506092615980](https://ravenxrz-blog.oss-cn-chengdu.aliyuncs.com/img/github_img/image-20200506092615980.png)
 
 ### 2.2 便携版（无需安装）
 
@@ -150,7 +150,7 @@ jpackage提供一个选项，可以用来生成镜像（image），而这个镜�
 jpackage --name Non-modular-installer --type app-image --input lib --main-class com.raven.App --main-jar Non-modular-packaging-demo.jar --vendor raven
 ```
 
-![image-20200506092833058](https://cdn.jsdelivr.net/gh/ravenxrz/PicBed/img/image-20200506092833058.png)
+![image-20200506092833058](https://ravenxrz-blog.oss-cn-chengdu.aliyuncs.com/img/github_img/image-20200506092833058.png)
 
 内部目录和安装包安装后的目录完全一致，所以直接压缩这个文件夹就有便携版了。
 
@@ -164,27 +164,27 @@ jpackage --name Non-modular-installer --type msi --app-image Non-modular-install
 
 这里打包成msi:
 
-![image-20200506093330774](https://cdn.jsdelivr.net/gh/ravenxrz/PicBed/img/image-20200506093330774.png)
+![image-20200506093330774](https://ravenxrz-blog.oss-cn-chengdu.aliyuncs.com/img/github_img/image-20200506093330774.png)
 
 ## 3. 模块程序打包
 
 通过maven新建JavaFX项目，得到如下目录：
 
-![image-20200506085023406](https://cdn.jsdelivr.net/gh/ravenxrz/PicBed/img/image-20200506085023406.png)
+![image-20200506085023406](https://ravenxrz-blog.oss-cn-chengdu.aliyuncs.com/img/github_img/image-20200506085023406.png)
 
 运行一下，看下效果：
 
-![image-20200506093953328](https://cdn.jsdelivr.net/gh/ravenxrz/PicBed/img/image-20200506093953328.png)
+![image-20200506093953328](https://ravenxrz-blog.oss-cn-chengdu.aliyuncs.com/img/github_img/image-20200506093953328.png)
 
 
 
 模块化程序打包就略微复杂一些了，首先明确一点，idea中，有maven在，所有的编译输出不在out目录下，而在target目录下：
 
-![image-20200506094133814](https://cdn.jsdelivr.net/gh/ravenxrz/PicBed/img/image-20200506094133814.png)
+![image-20200506094133814](https://ravenxrz-blog.oss-cn-chengdu.aliyuncs.com/img/github_img/image-20200506094133814.png)
 
 除此之外，还需要明确我们当前的模块名：
 
-![image-20200506094239319](https://cdn.jsdelivr.net/gh/ravenxrz/PicBed/img/image-20200506094239319.png)
+![image-20200506094239319](https://ravenxrz-blog.oss-cn-chengdu.aliyuncs.com/img/github_img/image-20200506094239319.png)
 
 当前模块名为app。
 
@@ -192,11 +192,11 @@ jpackage --name Non-modular-installer --type msi --app-image Non-modular-install
 
 首先确定依赖的modules，在module-info.java文件中，
 
-![image-20200506095324701](https://cdn.jsdelivr.net/gh/ravenxrz/PicBed/img/image-20200506095324701.png)
+![image-20200506095324701](https://ravenxrz-blog.oss-cn-chengdu.aliyuncs.com/img/github_img/image-20200506095324701.png)
 
 生成如下的依赖图：
 
-![image-20200506095350078](https://cdn.jsdelivr.net/gh/ravenxrz/PicBed/img/image-20200506095350078.png)
+![image-20200506095350078](https://ravenxrz-blog.oss-cn-chengdu.aliyuncs.com/img/github_img/image-20200506095350078.png)
 
 不用关注java开头和jdk开头的模块，因为它们是系统自带的。也就是所当前app模块直接或间接依赖了：
 
@@ -206,11 +206,11 @@ jpackage --name Non-modular-installer --type msi --app-image Non-modular-install
 
 三个模块，现在我们要找到这个三个模块jar包路径，如何找？
 
-![image-20200506095511115](https://cdn.jsdelivr.net/gh/ravenxrz/PicBed/img/image-20200506095511115.png)
+![image-20200506095511115](https://ravenxrz-blog.oss-cn-chengdu.aliyuncs.com/img/github_img/image-20200506095511115.png)
 
 在这上面右键-->Show in Exploer即可。
 
-![image-20200506095601116](https://cdn.jsdelivr.net/gh/ravenxrz/PicBed/img/image-20200506095601116.png)
+![image-20200506095601116](https://ravenxrz-blog.oss-cn-chengdu.aliyuncs.com/img/github_img/image-20200506095601116.png)
 
 可以看到导航到了我们的maven仓库中，分别记下这三个jar包的路径，如下：
 
@@ -234,7 +234,7 @@ jpackage --name "Modular-installer" --module-path classes;C:\Users\Raven\.m2\rep
 - --module-path: 也就是前面让你找的几个依赖模块的jar包路径（以;间隔）+classes（自己的模块）
 - -m: 指定主模块及主程序。 app/com.raven.App, "/"前是模块名，"/"后是主程序全路径。
 
-![image-20200506100019571](https://cdn.jsdelivr.net/gh/ravenxrz/PicBed/img/image-20200506100019571.png)
+![image-20200506100019571](https://ravenxrz-blog.oss-cn-chengdu.aliyuncs.com/img/github_img/image-20200506100019571.png)
 
 现在还会遇到的问题，在”非模块程序打包“下都已经作了说明，现在补全所有命令：
 
@@ -248,9 +248,9 @@ jpackage --name "Modular-installer" --module-path classes;C:\Users\Raven\.m2\rep
 
 有maven，打包就是再简单不过的事了，
 
-![image-20200506100337247](https://cdn.jsdelivr.net/gh/ravenxrz/PicBed/img/image-20200506100337247.png)
+![image-20200506100337247](https://ravenxrz-blog.oss-cn-chengdu.aliyuncs.com/img/github_img/image-20200506100337247.png)
 
-![image-20200506100405088](https://cdn.jsdelivr.net/gh/ravenxrz/PicBed/img/image-20200506100405088.png)
+![image-20200506100405088](https://ravenxrz-blog.oss-cn-chengdu.aliyuncs.com/img/github_img/image-20200506100405088.png)
 
 重新执行命令：
 
@@ -287,11 +287,11 @@ jpackage --name "Modular-installer" --module-path Modular-packaging-demo-1.0-SNA
 
 注意版本一定要是0.0.3+。然后点击：
 
-![image-20200506102259548](https://cdn.jsdelivr.net/gh/ravenxrz/PicBed/img/image-20200506102259548.png)
+![image-20200506102259548](https://ravenxrz-blog.oss-cn-chengdu.aliyuncs.com/img/github_img/image-20200506102259548.png)
 
 会得到：
 
-![image-20200506102410359](https://cdn.jsdelivr.net/gh/ravenxrz/PicBed/img/image-20200506102410359.png)
+![image-20200506102410359](https://ravenxrz-blog.oss-cn-chengdu.aliyuncs.com/img/github_img/image-20200506102410359.png)
 
 在image/bin中打开terminal，执行`java --list-modules`命令：
 
@@ -319,7 +319,7 @@ jpackage -n Modular-packaging-demo --type msi --runtime-image image --vendor rav
 
 老规矩，如果需要menu，shortcut，自己添加。
 
-![image-20200506102742159](https://cdn.jsdelivr.net/gh/ravenxrz/PicBed/img/image-20200506102742159.png)
+![image-20200506102742159](https://ravenxrz-blog.oss-cn-chengdu.aliyuncs.com/img/github_img/image-20200506102742159.png)
 
 细心的同学会发现一个问题，那就是我们手动打包的exe文件对比通过jre打包的文件，体积会小很多。这怎么办呢？
 
@@ -335,7 +335,7 @@ mvn clean -X javafx:jlink
 
 -X打开debug。最后会得到：
 
-![image-20200506103403094](https://cdn.jsdelivr.net/gh/ravenxrz/PicBed/img/image-20200506103403094.png)
+![image-20200506103403094](https://ravenxrz-blog.oss-cn-chengdu.aliyuncs.com/img/github_img/image-20200506103403094.png)
 
 这就是我们的依赖路径了，提取出来，再手动执行jpackage就ok了。
 

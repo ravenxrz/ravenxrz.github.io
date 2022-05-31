@@ -34,7 +34,7 @@ RecordType字段主要有以下四种类型：FULL/FIRST/MIDDLE/LAST。
 
 一个Record的逻辑结构如下：
 
-![](https://cdn.jsdelivr.net/gh/ravenxrz/PicBed/img/log-record逻辑结构.jpg)
+![](https://ravenxrz-blog.oss-cn-chengdu.aliyuncs.com/img/github_img/log-record逻辑结构.jpg)
 
 
 
@@ -178,7 +178,7 @@ Status Writer::AddRecord(const Slice& slice) {
 
 基本流程如下：
 
-![](https://cdn.jsdelivr.net/gh/ravenxrz/PicBed/img/AddRecord函数流程图-1600848090666.jpg)
+![](https://ravenxrz-blog.oss-cn-chengdu.aliyuncs.com/img/github_img/AddRecord函数流程图-1600848090666.jpg)
 
 #### EmitPhysicalRecord函数
 

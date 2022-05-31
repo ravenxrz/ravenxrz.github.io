@@ -741,7 +741,7 @@ find_free_buf(int *free_bkt_id) {
 
 一个示意图如下：
 
-![lock-lab-buffer-cache-bug示意图](https://cdn.JsDelivr.net/gh/ravenxrz/PicBed/img/lock-lab-buffer-cache-bug示意图.svg)
+![lock-lab-buffer-cache-bug示意图](https://ravenxrz-blog.oss-cn-chengdu.aliyuncs.com/img/github_img/lock-lab-buffer-cache-bug示意图.svg)
 
 到这里，持有了三个lock：
 
@@ -827,7 +827,7 @@ P2相反，持有黄色bucket锁，尝试获取红色bucket锁，以将黄色buf
 
 至此，完成所有task，测试结果如下：
 
-<img src="https://cdn.JsDelivr.net/gh/ravenxrz/PicBed/img/image-20220531110218384.png" alt="image-20220531110218384" style="zoom:67%;" />
+<img src="https://ravenxrz-blog.oss-cn-chengdu.aliyuncs.com/img/github_img/image-20220531110218384.png" alt="image-20220531110218384" style="zoom:67%;" />
 
 **注意，除了bcachetest以外，还需要通过usertests测试**
 

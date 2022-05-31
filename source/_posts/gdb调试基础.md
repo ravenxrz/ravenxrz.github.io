@@ -104,7 +104,7 @@ gdb gfg
 
 开启gdb:
 
-![image-20200621144320382](https://cdn.jsdelivr.net/gh/ravenxrz/PicBed/img/image-20200621144320382.png)
+![image-20200621144320382](https://ravenxrz-blog.oss-cn-chengdu.aliyuncs.com/img/github_img/image-20200621144320382.png)
 
 首先介绍的是break(b) 命令, 这是用来设置断点的命令, 它的使用格式如下:
 
@@ -122,7 +122,7 @@ b ***any of the above arguments***
 
 然后执行:`r 1 10 100`命令,把程序跑起来. `1 10 100`是要传入的参数
 
-![image-20200621151305820](https://cdn.jsdelivr.net/gh/ravenxrz/PicBed/img/image-20200621151305820.png)
+![image-20200621151305820](https://ravenxrz-blog.oss-cn-chengdu.aliyuncs.com/img/github_img/image-20200621151305820.png)
 
 可以看到,程序停在了Breakpoint 1这里, break point 1中的1是什么? gdb为每个断点设定了一个id. 
 
@@ -132,7 +132,7 @@ b ***any of the above arguments***
 info b
 ```
 
-![image-20200621150915280](https://cdn.jsdelivr.net/gh/ravenxrz/PicBed/img/image-20200621150915280.png)
+![image-20200621150915280](https://ravenxrz-blog.oss-cn-chengdu.aliyuncs.com/img/github_img/image-20200621150915280.png)
 
 第一列Num就是break point id.  Enb表示当前断点是enable的, 可以通过 `disable breakpoint id` disable一个断点. What字段表明了当前断点的位置.
 
@@ -144,17 +144,17 @@ ok, 现在我们做到了. 1. 设置断点.2. 查看断点. 3. 其中程序.
 
 值得说明的是, 执行一条命令后, 直接按回车, 会重复执行上一条命令.
 
-![image-20200621151435600](https://cdn.jsdelivr.net/gh/ravenxrz/PicBed/img/image-20200621151435600.png)
+![image-20200621151435600](https://ravenxrz-blog.oss-cn-chengdu.aliyuncs.com/img/github_img/image-20200621151435600.png)
 
 现在应该会单步调试了吧.
 
 使用 `bt`,可以查看函数调用堆栈:
 
-![image-20200621152801080](https://cdn.jsdelivr.net/gh/ravenxrz/PicBed/img/image-20200621152801080.png)
+![image-20200621152801080](https://ravenxrz-blog.oss-cn-chengdu.aliyuncs.com/img/github_img/image-20200621152801080.png)
 
 使用 `p a`可以打印a变量的值:
 
-![image-20200621152828266](https://cdn.jsdelivr.net/gh/ravenxrz/PicBed/img/image-20200621152828266.png)
+![image-20200621152828266](https://ravenxrz-blog.oss-cn-chengdu.aliyuncs.com/img/github_img/image-20200621152828266.png)
 
 p还可以使用格式符, 如 `p /x a`把a以hex格式打印, 对于数组,如 int arr[3]; 可以使用
 
@@ -170,7 +170,7 @@ p *arr@3
 
 gdb当然想到了这个问题, 我们可以通过 `l`命令, 展示最近的源代码.
 
-![image-20200621151620849](https://cdn.jsdelivr.net/gh/ravenxrz/PicBed/img/image-20200621151620849.png)
+![image-20200621151620849](https://ravenxrz-blog.oss-cn-chengdu.aliyuncs.com/img/github_img/image-20200621151620849.png)
 
 l 命令默认展示10行代码, 可以通过 l [start_line] [end_line] 展示start_line – end_line之间的代码.
 
@@ -180,7 +180,7 @@ ok, 接下来介绍一个必备的命令: layout
 
 执行 `h layout`可以查看layout的帮助:
 
-![image-20200621151826603](https://cdn.jsdelivr.net/gh/ravenxrz/PicBed/img/image-20200621151826603.png)
+![image-20200621151826603](https://ravenxrz-blog.oss-cn-chengdu.aliyuncs.com/img/github_img/image-20200621151826603.png)
 
 我们关注 LAYOUT-NAME即可.
 
@@ -188,7 +188,7 @@ ok, 接下来介绍一个必备的命令: layout
 
 - layout src. 展示源代码和命令窗口:
 
-  ![image-20200621151917633](https://cdn.jsdelivr.net/gh/ravenxrz/PicBed/img/image-20200621151917633.png)
+  ![image-20200621151917633](https://ravenxrz-blog.oss-cn-chengdu.aliyuncs.com/img/github_img/image-20200621151917633.png)
 
   这就搞定了我们在调试代码时,要查看同步查看源代码的需求. 上面展示了我们当前执行到了哪里. B+展示了我们的断点位置.
 
@@ -196,19 +196,19 @@ ok, 接下来介绍一个必备的命令: layout
 
   反汇编布局, 可以查看对应的反汇编代码.
 
-![image-20200621152053830](https://cdn.jsdelivr.net/gh/ravenxrz/PicBed/img/image-20200621152053830.png)
+![image-20200621152053830](https://ravenxrz-blog.oss-cn-chengdu.aliyuncs.com/img/github_img/image-20200621152053830.png)
 
 这个在bomblab中肯定是要用的. 平常基本不适用,毕竟汇编用得确实不多.
 
 - layout split
 
-![image-20200621152229097](https://cdn.jsdelivr.net/gh/ravenxrz/PicBed/img/image-20200621152229097.png)
+![image-20200621152229097](https://ravenxrz-blog.oss-cn-chengdu.aliyuncs.com/img/github_img/image-20200621152229097.png)
 
 这个就是同时展示, src和asm. 没什么好说的.
 
 - layout regs
 
-![image-20200621152325113](https://cdn.jsdelivr.net/gh/ravenxrz/PicBed/img/image-20200621152325113.png)
+![image-20200621152325113](https://ravenxrz-blog.oss-cn-chengdu.aliyuncs.com/img/github_img/image-20200621152325113.png)
 
 展示寄存器窗口. 这个在bomblab中也是必备的. 可以分析各寄存器当前的值. **值得注意的是,有时候终端会花屏, 这时执行refresh(或Ctrl+L)命令即可**
 
@@ -238,7 +238,7 @@ ok,  上面都是一些基础操作. 下面按照需求,一个个讲解.
 
 其实前文已经提到了, 每个断点都有一个id, 通过 `info b`查看, 然后执行d breakpointid即可.
 
-![image-20200621153643799](https://cdn.jsdelivr.net/gh/ravenxrz/PicBed/img/image-20200621153643799.png)
+![image-20200621153643799](https://ravenxrz-blog.oss-cn-chengdu.aliyuncs.com/img/github_img/image-20200621153643799.png)
 
 ### 问题4: 如何快速清除一个函数中的所有断点
 
@@ -252,15 +252,15 @@ ok,  上面都是一些基础操作. 下面按照需求,一个个讲解.
 
 比如上文的程序, 我可以当 a = 10时,生成一个快照, 然后下次直接从a=10启动程序.
 
-![image-20200621154337275](https://cdn.jsdelivr.net/gh/ravenxrz/PicBed/img/image-20200621154337275.png)
+![image-20200621154337275](https://ravenxrz-blog.oss-cn-chengdu.aliyuncs.com/img/github_img/image-20200621154337275.png)
 
 执行 c, run完当前进程. 会看到context自动切换到了下一个进程.
 
-![image-20200621154515768](https://cdn.jsdelivr.net/gh/ravenxrz/PicBed/img/image-20200621154515768.png)
+![image-20200621154515768](https://ravenxrz-blog.oss-cn-chengdu.aliyuncs.com/img/github_img/image-20200621154515768.png)
 
 或者手动执行 `restart checkpointid`, 手动切换.
 
-![image-20200621154556161](https://cdn.jsdelivr.net/gh/ravenxrz/PicBed/img/image-20200621154556161.png)
+![image-20200621154556161](https://ravenxrz-blog.oss-cn-chengdu.aliyuncs.com/img/github_img/image-20200621154556161.png)
 
 ### 问题6: 监听某个变量, 变量发生变化时, 自动打印该变量
 
@@ -268,7 +268,7 @@ ok,  上面都是一些基础操作. 下面按照需求,一个个讲解.
 
 比如监听i变量,只要i发生了变化, 就自动打印它.
 
-![image-20200621154853484](https://cdn.jsdelivr.net/gh/ravenxrz/PicBed/img/image-20200621154853484.png)
+![image-20200621154853484](https://ravenxrz-blog.oss-cn-chengdu.aliyuncs.com/img/github_img/image-20200621154853484.png)
 
 ### 问题7: 每次停顿, 都要打印一些想要监听的变量
 
@@ -282,7 +282,7 @@ display [var] 可以在每次程序debug中停顿时,打印你想知道的变量
 display i
 ```
 
-![image-20200621155215978](https://cdn.jsdelivr.net/gh/ravenxrz/PicBed/img/image-20200621155215978.png)
+![image-20200621155215978](https://ravenxrz-blog.oss-cn-chengdu.aliyuncs.com/img/github_img/image-20200621155215978.png)
 
 可以看到, 每次停下, i的值都打印了出来.
 
@@ -290,7 +290,7 @@ display i
 
 有时候, 我们进入到某个函数后, 想要重新查看另一个stack frame的局部变量.比如:
 
-![image-20200621155435491](https://cdn.jsdelivr.net/gh/ravenxrz/PicBed/img/image-20200621155435491.png)
+![image-20200621155435491](https://ravenxrz-blog.oss-cn-chengdu.aliyuncs.com/img/github_img/image-20200621155435491.png)
 
 当前在findSqure stack frame中, 想要切换到main frame中去.
 
@@ -388,7 +388,7 @@ r 1
 
 通过 disassemble命令进行反汇编.
 
-![image-20200621161232831](https://cdn.jsdelivr.net/gh/ravenxrz/PicBed/img/image-20200621161232831.png)
+![image-20200621161232831](https://ravenxrz-blog.oss-cn-chengdu.aliyuncs.com/img/github_img/image-20200621161232831.png)
 
 如果指向反汇编时,添加源代码和行号, 执行
 
@@ -396,7 +396,7 @@ r 1
 disassemble /s
 ```
 
-![image-20200621161438046](https://cdn.jsdelivr.net/gh/ravenxrz/PicBed/img/image-20200621161438046.png)
+![image-20200621161438046](https://ravenxrz-blog.oss-cn-chengdu.aliyuncs.com/img/github_img/image-20200621161438046.png)
 
 上面的命令用来临时看看汇编还可以, 但是要跟踪还是得使用layout命令.
 
@@ -404,7 +404,7 @@ disassemble /s
 layout asm
 ```
 
-![image-20200621161534374](https://cdn.jsdelivr.net/gh/ravenxrz/PicBed/img/image-20200621161534374.png)
+![image-20200621161534374](https://ravenxrz-blog.oss-cn-chengdu.aliyuncs.com/img/github_img/image-20200621161534374.png)
 
 ### 问题1: 为某个特定的指令地址加断点
 
@@ -415,7 +415,7 @@ b *(function_name + offset)
 
 如:
 
-![image-20200621161656224](https://cdn.jsdelivr.net/gh/ravenxrz/PicBed/img/image-20200621161656224.png)
+![image-20200621161656224](https://ravenxrz-blog.oss-cn-chengdu.aliyuncs.com/img/github_img/image-20200621161656224.png)
 
 ok, gdb的简单使用就到这里了.
 

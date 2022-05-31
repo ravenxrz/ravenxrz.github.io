@@ -86,7 +86,7 @@ UART芯片中含有多个控制寄存器，**每个寄存器大小为1B**，这�
 2. THR，发送持有寄存器，保存着UART芯片收到的输出，比如用户进程通过write调用，准备向外部设备输出字符。
 3. IER, 中断使能寄存器，含义如下图， 所以后面的 `IER_RX_ENABLE`和`IER_TX_ENABLE`分别代表接收到和发送完成的中断使能。
 
-![image-20220522112533331](https://cdn.JsDelivr.net/gh/ravenxrz/PicBed/img/image-20220522112533331.png)
+![image-20220522112533331](https://ravenxrz-blog.oss-cn-chengdu.aliyuncs.com/img/github_img/image-20220522112533331.png)
 
 > **T**he Interrupt Enable Register (IER) masks the incoming interrupts from receiver ready, transmitter empty, line status and modem status registers to the INT output pin.
 >
@@ -420,7 +420,7 @@ consoleread(int user_dst, uint64 dst, int n)
 
 至此，键盘输入到用户进程读取到该输入的流程分析完毕。总结整个如下图：
 
-![中断-键盘输入流程](https://cdn.JsDelivr.net/gh/ravenxrz/PicBed/img/中断-键盘输入流程.svg)
+![中断-键盘输入流程](https://ravenxrz-blog.oss-cn-chengdu.aliyuncs.com/img/github_img/中断-键盘输入流程.svg)
 
 ### 5. shell写入的整体流程分析
 

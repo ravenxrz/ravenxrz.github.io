@@ -23,11 +23,11 @@ checkpoint2 是在 checkpoint1的基础上，实现B+树的删除、迭代器和
 
 核心函数为以下三个：
 
-<img src="https://cdn.jsdelivr.net/gh/ravenxrz/PicBed/img/image-20211024164944749.png" alt="image-20211024164944749" style="zoom:50%;" />
+<img src="https://ravenxrz-blog.oss-cn-chengdu.aliyuncs.com/img/github_img/image-20211024164944749.png" alt="image-20211024164944749" style="zoom:50%;" />
 
 不过我在具体实现过程中，并没有使用 `Coalesce` 和 `Redistribute` 两个函数，而是自实现了以下几个函数:
 
-<img src="https://cdn.jsdelivr.net/gh/ravenxrz/PicBed/img/image-20211024165108398.png" alt="image-20211024165108398" style="zoom:50%;" />
+<img src="https://ravenxrz-blog.oss-cn-chengdu.aliyuncs.com/img/github_img/image-20211024165108398.png" alt="image-20211024165108398" style="zoom:50%;" />
 
 简单描述下删除的算法步骤：
 
@@ -73,17 +73,17 @@ checkpoint2 是在 checkpoint1的基础上，实现B+树的删除、迭代器和
 
 拿 `Insert`操作来说， 既然在寻找到叶节点的过程中，可能存在加锁和释放锁，那肯定需要一个数据结构来存放之前已经加过锁的page， 这个数据结构存放在`Transcation`这个类中的`page_set_`, 如下图：
 
-<img src="https://cdn.jsdelivr.net/gh/ravenxrz/PicBed/img/image-20211024171605862.png" alt="image-20211024171605862" style="zoom:50%;" />
+<img src="https://ravenxrz-blog.oss-cn-chengdu.aliyuncs.com/img/github_img/image-20211024171605862.png" alt="image-20211024171605862" style="zoom:50%;" />
 
 *`delte_page_set_`是给删除操作使用的*
 
 具体实现过程中，核心函数为 `FindLeafPage`， 在这个函数中，需要实现所有的加锁和释放锁过程，并把还未释放锁的 祖先节点们收集起来放到 `page_set_`中。问题是在从root节点到leaf节点的遍历过程中，什么时候能够释放祖先节点的锁？那就是判定当前所处的节点，是否`safe`。 什么是`safe`？不同的节点，有不同的的定义。我的`insert safe_checker`代码如下，注意`safe_checker`的实现与你之前的`Insert`操作和`Delete`操作强相关，所以我也不是标准答案：
 
-<img src="https://cdn.jsdelivr.net/gh/ravenxrz/PicBed/img/image-20211024172045696.png" alt="image-20211024172045696" style="zoom:50%;" />
+<img src="https://ravenxrz-blog.oss-cn-chengdu.aliyuncs.com/img/github_img/image-20211024172045696.png" alt="image-20211024172045696" style="zoom:50%;" />
 
 最后贴一下加锁和释放锁的核心代码：
 
-<img src="https://cdn.jsdelivr.net/gh/ravenxrz/PicBed/img/image-20211024172236751.png" alt="image-20211024172236751" style="zoom: 50%;" />
+<img src="https://ravenxrz-blog.oss-cn-chengdu.aliyuncs.com/img/github_img/image-20211024172236751.png" alt="image-20211024172236751" style="zoom: 50%;" />
 
 另外，需要思考下`UnpinPage`和 `UnLatch`操作的先后顺序是什么, 其实官网上已经给出了答案：
 
@@ -144,7 +144,7 @@ while ((leaf_page = reinterpret_cast<LeafPage *>(FindLeafPageLock(key, Operation
 
    2. 删除操作时，兄弟节点也应该加锁！考虑如下场景：
 
-      <img src="https://cdn.jsdelivr.net/gh/ravenxrz/PicBed/img/image-20211024174634054.png" alt="image-20211024174634054" style="zoom:50%;" />
+      <img src="https://ravenxrz-blog.oss-cn-chengdu.aliyuncs.com/img/github_img/image-20211024174634054.png" alt="image-20211024174634054" style="zoom:50%;" />
    
       T1执行插入，并加锁蓝色节点，T2执行删除操作，正在删除旁边的红色，由于红色节点删除元素后，size小于最小size，选择和蓝色节点合并，此时如果不对蓝色节点加锁，那么蓝色节点的数据将得不到一致性保证。T2很可能从T1中拿到错误的数据，这也会造成数据异常。
 
@@ -160,4 +160,4 @@ while ((leaf_page = reinterpret_cast<LeafPage *>(FindLeafPageLock(key, Operation
 
 最后，记录下checkpoint2满分：
 
-<img src="https://cdn.jsdelivr.net/gh/ravenxrz/PicBed/img/image-20211024182440733.png" alt="image-20211024182440733" style="zoom:50%;" />
+<img src="https://ravenxrz-blog.oss-cn-chengdu.aliyuncs.com/img/github_img/image-20211024182440733.png" alt="image-20211024182440733" style="zoom:50%;" />

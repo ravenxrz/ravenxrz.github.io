@@ -108,7 +108,7 @@ insert函数首先在当前hashtable中尝试找到与插入key具有相同key�
   }
 ```
 
-<img src="https://cdn.jsdelivr.net/gh/ravenxrz/PicBed/img/leveldb源码阅读-copy-第 23 页.png" style="zoom:33%;" />
+<img src="https://ravenxrz-blog.oss-cn-chengdu.aliyuncs.com/img/github_img/leveldb源码阅读-copy-第 23 页.png" style="zoom:33%;" />
 
 ### Remove
 
@@ -145,7 +145,7 @@ insert函数首先在当前hashtable中尝试找到与插入key具有相同key�
 
 leveldb的hashtable其实就是一个数组+链表的hashtable，只不过rehash操作做了优化，从而加快search的效率。
 
-<img src="https://cdn.jsdelivr.net/gh/ravenxrz/PicBed/img/绘图文件-第 3 页.png" style="zoom:50%;" />
+<img src="https://ravenxrz-blog.oss-cn-chengdu.aliyuncs.com/img/github_img/绘图文件-第 3 页.png" style="zoom:50%;" />
 
 
 
@@ -183,7 +183,7 @@ LRUHandle表示一个cache节点。其中next_hash字段用在hashtable中，表
 
 ### 总layout：
 
-<img src="https://cdn.jsdelivr.net/gh/ravenxrz/PicBed/img/绘图文件-第 4 页.png" style="zoom:50%;" />
+<img src="https://ravenxrz-blog.oss-cn-chengdu.aliyuncs.com/img/github_img/绘图文件-第 4 页.png" style="zoom:50%;" />
 
 HandleTable是用来找到某个cache entry的。但是无法实现LRU算法，现在来说一下实际的LRUCache。在LRUCache的实现里维护了两个链表：
 
@@ -310,7 +310,7 @@ Cache::Handle* LRUCache::Insert(const Slice& key, uint32_t hash, void* value,
          reinterpret_cast<LRUHandle*>(malloc(sizeof(LRUHandle) - 1 + key.size()));
    ```
 
-   <img src="https://cdn.jsdelivr.net/gh/ravenxrz/PicBed/img/绘图文件.png" style="zoom:33%;" />
+   <img src="https://ravenxrz-blog.oss-cn-chengdu.aliyuncs.com/img/github_img/绘图文件.png" style="zoom:33%;" />
 
 2. 新增一个cache entry到cache中：
 
@@ -573,7 +573,7 @@ Status TableCache::FindTable(uint64_t file_number, uint64_t file_size,
 }
 ```
 
-<img src="https://cdn.jsdelivr.net/gh/ravenxrz/PicBed/img/绘图文件-第 7 页.png" style="zoom:67%;" />
+<img src="https://ravenxrz-blog.oss-cn-chengdu.aliyuncs.com/img/github_img/绘图文件-第 7 页.png" style="zoom:67%;" />
 
 我们重点分析一下在cache中找不到handle的情况。
 
@@ -696,7 +696,7 @@ Status Table::InternalGet(const ReadOptions& options, const Slice& k, void* arg,
 
 ```
 
-<img src="https://cdn.jsdelivr.net/gh/ravenxrz/PicBed/img/绘图文件-第 8 页.png" style="zoom: 50%;" />
+<img src="https://ravenxrz-blog.oss-cn-chengdu.aliyuncs.com/img/github_img/绘图文件-第 8 页.png" style="zoom: 50%;" />
 
 ### 3. Evict
 
@@ -762,7 +762,7 @@ BlockCache用于cache sstable中的datablock。系统默认为8M.
 
 **value 为 data block的block封装（解压后）。**
 
-![](https://cdn.jsdelivr.net/gh/ravenxrz/PicBed/img/绘图文件-第 9 页 (1).png)
+![](https://ravenxrz-blog.oss-cn-chengdu.aliyuncs.com/img/github_img/绘图文件-第 9 页 (1).png)
 
 ### 1. BlockCache的初始化
 

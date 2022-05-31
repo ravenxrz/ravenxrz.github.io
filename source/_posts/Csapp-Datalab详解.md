@@ -400,13 +400,13 @@ x = (~(flag + negative_one) & x) | ((flag + negative_one) & reverse_x);
 
 为了更好的说明下面的算法，这里先贴一张图，以5bit数字进行说明：
 
-![image-20200619232328439](https://cdn.jsdelivr.net/gh/ravenxrz/PicBed/img/image-20200619232328439.png)
+![image-20200619232328439](https://ravenxrz-blog.oss-cn-chengdu.aliyuncs.com/img/github_img/image-20200619232328439.png)
 
 现在的关键是如何得到这个 **剩余3bit信息：**
 
 如果可以将当扫描位后的所有位置为1，我们就可以**将问题转化为统计 当前数字的二进制表示 有多少个1了。**（为什么要这么想，因为有**bitcount算法**啊）
 
-![image-20200619232535359](https://cdn.jsdelivr.net/gh/ravenxrz/PicBed/img/image-20200619232535359.png)
+![image-20200619232535359](https://ravenxrz-blog.oss-cn-chengdu.aliyuncs.com/img/github_img/image-20200619232535359.png)
 
 关键代码2：
 

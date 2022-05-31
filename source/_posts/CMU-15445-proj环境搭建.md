@@ -21,11 +21,11 @@ CMU15445是我调研后发现的数据库最佳入门课程（其实还有一门
 
 2. 现在是2021年了。。。即使是2020年的proj也有些过期，这个问题是我在clone下最新版本的bustub并做完proj0题交到autograde系统后，系统提示找不到一些函数。我感到特别纳闷，于是去了github上搜索commit历史，最终发现才发现了问题所在：
 
-   <img src="https://cdn.jsdelivr.net/gh/ravenxrz/PicBed/img/image-20210927150948279.png" alt="image-20210927150948279" style="zoom: 33%;" />
+   <img src="https://ravenxrz-blog.oss-cn-chengdu.aliyuncs.com/img/github_img/image-20210927150948279.png" alt="image-20210927150948279" style="zoom: 33%;" />
 
 查看这个commit会发现，函数签名已经发生了变化，所以按照最新版做是会出现问题：
 
-<img src="https://cdn.jsdelivr.net/gh/ravenxrz/PicBed/img/image-20210927151302395.png" alt="image-20210927151302395" style="zoom:50%;" />
+<img src="https://ravenxrz-blog.oss-cn-chengdu.aliyuncs.com/img/github_img/image-20210927151302395.png" alt="image-20210927151302395" style="zoom:50%;" />
 
 3. 提交到gradescore上的的压缩包，应该包含路径为`src/include/primer/xxx.h`，否则会出现问题
 4. 提交到gradescore后，不要手贱退出，否则很可能执行失败。

@@ -77,7 +77,7 @@ lab1需要我们手动实现一个简单的 MapReduce。 MapReduce由 Jeffrey De
 
 下图为MapReduce的架构图：
 
-![image-20220213190550211](https://cdn.JsDelivr.net/gh/ravenxrz/PicBed/img/image-20220213190550211.png)
+![image-20220213190550211](https://ravenxrz-blog.oss-cn-chengdu.aliyuncs.com/img/github_img/image-20220213190550211.png)
 
 用红框标出来的为本次实验我们需要实现的：
 

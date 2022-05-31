@@ -24,7 +24,7 @@ tags:
 3. leader raft在收到 **超过一半（包括自己)**的成功拷贝消息后，可以认为这个log entry已经被“安全”拷贝，于是**向上层应答第1步发来的命令(log entry)已经成功commit**， 与此同时发送commit消息给各个副本
 4. 各个副本收到raft发来commit消息，根据commit消息，将第2步收到的log entry标记为committed，同时也**向上层应答该log entry已经成功commit**。
 
-![raft框架](https://cdn.JsDelivr.net/gh/ravenxrz/PicBed/img/raft框架.svg)
+![raft框架](https://ravenxrz-blog.oss-cn-chengdu.aliyuncs.com/img/github_img/raft框架.svg)
 
 以上4个步骤为raft的最基本的工作流，但要进入该工作流，还有非常多的问题要思考并解决，如下几个：
 
@@ -45,13 +45,13 @@ raft的基本工作流非常简单，但是其底层的细节问题有非常多�
 
 现在抛开所有细节问题不谈，谈谈raft的基本框架（对应lab1）。对于一个raft实例来说，它对上提供了 **Start** 接口，对其他raft实例来说，可参与leader选举，心跳同步两个操作。正如raft paper figure 2所示，其实核心无非两个RPC handle.
 
-<img src="https://cdn.jsdelivr.net/gh/ravenxrz/PicBed/img/image-20220222145423023.png" alt="image-20220222145423023" style="zoom:50%;" />
+<img src="https://ravenxrz-blog.oss-cn-chengdu.aliyuncs.com/img/github_img/image-20220222145423023.png" alt="image-20220222145423023" style="zoom:50%;" />
 
 ### 2.1 三个状态
 
 所有的svr都可能有三个状态 {leader, candidate, follower}。 所有svr最开始的状态都是follower，每个svr都有一个选举定时器，当定时器到时，follower可转换为candidate，并开始向其他svr宣告自己想要称为leader，看其他svr是否统一，如果candiate能够收到超过一半的投票，那么它就可以转为leader。 
 
-![raft状态转换图](https://cdn.JsDelivr.net/gh/ravenxrz/PicBed/img/raft状态转换图.svg)
+![raft状态转换图](https://ravenxrz-blog.oss-cn-chengdu.aliyuncs.com/img/github_img/raft状态转换图.svg)
 
 **只有leader可以接收上层传来的命令。**
 
@@ -103,7 +103,7 @@ func (rf *Raft) electionTimer() {
 
 这部分我所采用的处理逻辑图如下：
 
-![raft_fireElectoin.excalidraw](https://cdn.JsDelivr.net/gh/ravenxrz/PicBed/img/raft_fireElectoin.excalidraw.png)
+![raft_fireElectoin.excalidraw](https://ravenxrz-blog.oss-cn-chengdu.aliyuncs.com/img/github_img/raft_fireElectoin.excalidraw.png)
 
 要向多个svr同时发起RPC请求，那么就开启多个线程（本文中线程和协程相同意义）， 该请求是耗时的，我们不能阻塞raft实例，所以对于接收部分，也开启了专用的collection线程。每个 routine x 收到响应后，通过通道回复 collection routine.
 
@@ -296,7 +296,7 @@ func (rf *Raft) RequestVote(args *RequestVoteArgs, reply *RequestVoteReply) {
 
 采用了和选举时相同的trick。
 
-![raft_fireAppendEntries.excalidraw](https://cdn.JsDelivr.net/gh/ravenxrz/PicBed/img/raft_fireAppendEntries.excalidraw.svg)
+![raft_fireAppendEntries.excalidraw](https://ravenxrz-blog.oss-cn-chengdu.aliyuncs.com/img/github_img/raft_fireAppendEntries.excalidraw.svg)
 
 ```go
 // replica log entires and used as heart beat

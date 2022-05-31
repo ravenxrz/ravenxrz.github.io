@@ -22,19 +22,19 @@ malloclab，简单明了的说就是实现一个自己的 malloc,free,realloc函
 
 首先，为了写一个alloctor,需要解决哪些问题。csapp本章的ppt中列出了一些关键问题：
 
-![Implementation Issues  How do we know how much memory to free given just a  pointer?  How do we keep track of the free blocks?  What do we do with the extra space when allocating a  structure that is smaller than the free block it is placed in?  How do we pick a block to use for allocation — many  might fit?  How do we reinsert freed block? ](https://cdn.jsdelivr.net/gh/ravenxrz/PicBed/img/clip_image001.png)
+![Implementation Issues  How do we know how much memory to free given just a  pointer?  How do we keep track of the free blocks?  What do we do with the extra space when allocating a  structure that is smaller than the free block it is placed in?  How do we pick a block to use for allocation — many  might fit?  How do we reinsert freed block? ](https://ravenxrz-blog.oss-cn-chengdu.aliyuncs.com/img/github_img/clip_image001.png)
 
 第一个问题，free(ptr)这样的routine是如何知道本次释放的block的大小的？
 
 很显然我们需要一些额外的信息来存放block的元信息。之类的具体做法是在block的前面添加一个word，存放分配的size和是否已分配状态。
 
-![image-20200826170802474](https://cdn.jsdelivr.net/gh/ravenxrz/PicBed/img/image-20200826170802474.png)
+![image-20200826170802474](https://ravenxrz-blog.oss-cn-chengdu.aliyuncs.com/img/github_img/image-20200826170802474.png)
 
 **注意：这里只是给出了最简单的情况，实际操作中，额外的元数据不仅只有这些**
 
 第二个问题，如何追踪free blocks?
 
-![image-20200826170901374](https://cdn.jsdelivr.net/gh/ravenxrz/PicBed/img/image-20200826170901374.png)
+![image-20200826170901374](https://ravenxrz-blog.oss-cn-chengdu.aliyuncs.com/img/github_img/image-20200826170901374.png)
 
 csapp一共给出了4种方案。其中implicit list在书上给出了源码，我个人实现了implicit list和explicit list。segregated free list感觉利用OO思想，把explicit list封装一下也是能够实现的，红黑树同理。
 
@@ -48,7 +48,7 @@ ok，下面就来看看implicit list(书上有）和explicit list两种方案是
 
 下面是一个implicit list的组织方式和一个block的具体情况，一个block采用了双边tag，保证可以前向和后向索引。
 
-![image-20200826171525409](https://cdn.jsdelivr.net/gh/ravenxrz/PicBed/img/image-20200826171525409.png)
+![image-20200826171525409](https://ravenxrz-blog.oss-cn-chengdu.aliyuncs.com/img/github_img/image-20200826171525409.png)
 
 这种方案的优点：实现简单。缺点：寻找free block的开销过大。
 
@@ -309,13 +309,13 @@ free block后要考虑前后是否也有free block, 如果存在free block需要
 
 
 
-![image-20200826205642747](https://cdn.jsdelivr.net/gh/ravenxrz/PicBed/img/image-20200826205642747.png)
+![image-20200826205642747](https://ravenxrz-blog.oss-cn-chengdu.aliyuncs.com/img/github_img/image-20200826205642747.png)
 
-![image-20200826205653451](https://cdn.jsdelivr.net/gh/ravenxrz/PicBed/img/image-20200826205653451.png)
+![image-20200826205653451](https://ravenxrz-blog.oss-cn-chengdu.aliyuncs.com/img/github_img/image-20200826205653451.png)
 
-![image-20200826205703127](https://cdn.jsdelivr.net/gh/ravenxrz/PicBed/img/image-20200826205703127.png)
+![image-20200826205703127](https://ravenxrz-blog.oss-cn-chengdu.aliyuncs.com/img/github_img/image-20200826205703127.png)
 
-![image-20200826205708948](https://cdn.jsdelivr.net/gh/ravenxrz/PicBed/img/image-20200826205708948.png)
+![image-20200826205708948](https://ravenxrz-blog.oss-cn-chengdu.aliyuncs.com/img/github_img/image-20200826205708948.png)
 
 
 

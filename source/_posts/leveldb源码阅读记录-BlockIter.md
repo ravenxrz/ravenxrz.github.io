@@ -14,7 +14,7 @@ tags:
 
 一个data block由多条record组成，且内部采用了前缀压缩机制：
 
-![](https://cdn.jsdelivr.net/gh/ravenxrz/PicBed/img/data_block_of_sstable.png)
+![](https://ravenxrz-blog.oss-cn-chengdu.aliyuncs.com/img/github_img/data_block_of_sstable.png)
 
 一条Record的layout如下：
 
@@ -119,7 +119,7 @@ Seek定位，看代码：
 
 1. 通过restart_point，进行二分查找，查找目标key(target)所在哪个重启点区间。所谓的重启点区间，举个例子：
 
-   ![](https://cdn.jsdelivr.net/gh/ravenxrz/PicBed/img/data_block_of_sstable.png)
+   ![](https://ravenxrz-blog.oss-cn-chengdu.aliyuncs.com/img/github_img/data_block_of_sstable.png)
 
    上面由restart_[0] 到 restart\_[1]之间的区间，也即Record0 – Record 16就是一个区间。
 

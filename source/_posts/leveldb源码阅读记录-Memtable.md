@@ -111,7 +111,7 @@ key: 用户提供的key，我们称之为user_key
 
 leveldb是如何表示这3种key的？看下图：
 
-![img](https://cdn.jsdelivr.net/gh/ravenxrz/PicBed/img/leveldb_key.png)
+![img](https://ravenxrz-blog.oss-cn-chengdu.aliyuncs.com/img/github_img/leveldb_key.png)
 
 leveldb用一种类LookupKey包含了这3种key，我们要用的memtable_key其实就是Lookupkey。这一点，也可以从MemTable类的成员函数中可以看出，如Get操作：
 

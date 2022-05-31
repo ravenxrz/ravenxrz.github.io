@@ -71,7 +71,7 @@ H
 
 即：
 
-![img](https://cdn.jsdelivr.net/gh/ravenxrz/PicBed/img/sstable_format.png)
+![img](https://ravenxrz-blog.oss-cn-chengdu.aliyuncs.com/img/github_img/sstable_format.png)
 
 首先SSTtable文件不是固定长度的，从上图中也可以看出，文件的内容要能够自解释，就需要有在固定位置有一定数据结构，顺藤摸瓜，理顺文件的内容。
 
@@ -81,7 +81,7 @@ H
 
 Footer的长度是固定的，因此对于SSTable文件的最后 sizeof(Footer)字节就是存放的Footer信息。 Footer固定48B，如下图所示：
 
-![img](https://cdn.jsdelivr.net/gh/ravenxrz/PicBed/img/footer-format.png)
+![img](https://ravenxrz-blog.oss-cn-chengdu.aliyuncs.com/img/github_img/footer-format.png)
 
 ```c++
 metaindex_handle: char[p];      // Block handle for metaindex
@@ -198,7 +198,7 @@ data block里面存放的东西很简单，就是一个个的key/value 数据对
 
 #### 处理流程图
 
-<img src="https://cdn.jsdelivr.net/gh/ravenxrz/PicBed/img/写入一个datablock的流程-1600853106778.png" style="zoom:25%;" />
+<img src="https://ravenxrz-blog.oss-cn-chengdu.aliyuncs.com/img/github_img/写入一个datablock的流程-1600853106778.png" style="zoom:25%;" />
 
 通过TableBuilder::Add函数，可以将一个pair加入到TableBuilder中，至于是否写入到sst中，则需要满足一定条件：
 
@@ -309,7 +309,7 @@ void TableBuilder::WriteBlock(BlockBuilder* block, BlockHandle* handle) {
 
 data N bytes <= 4k(图少写个=)
 
-![datablock格式](https://cdn.jsdelivr.net/gh/ravenxrz/PicBed/img/datablock格式1.png)
+![datablock格式](https://ravenxrz-blog.oss-cn-chengdu.aliyuncs.com/img/github_img/datablock格式1.png)
 
 最后，调用==TableBuilder::WriteRawBlock==
 
@@ -375,7 +375,7 @@ void TableBuilder::Add(const Slice& key, const Slice& value) {
 
 所以一个datablock内部是长这样的：
 
-![img](https://cdn.jsdelivr.net/gh/ravenxrz/PicBed/img/data_block_of_sstable.png)
+![img](https://ravenxrz-blog.oss-cn-chengdu.aliyuncs.com/img/github_img/data_block_of_sstable.png)
 
 现在来看看`data_block_Add(key,value)`里面到底是怎么做的：
 
@@ -435,7 +435,7 @@ void BlockBuilder::Add(const Slice& key, const Slice& value) {
 
 从上面的代码中，我们可以知道datablock里面一个key value pair的数据格式为：
 
-![137960002a18f2362555e](https://cdn.jsdelivr.net/gh/ravenxrz/PicBed/img/137960002a18f2362555e.jpg)
+![137960002a18f2362555e](https://ravenxrz-blog.oss-cn-chengdu.aliyuncs.com/img/github_img/137960002a18f2362555e.jpg)
 
 ## 4. Index Block
 
@@ -443,7 +443,7 @@ void BlockBuilder::Add(const Slice& key, const Slice& value) {
 
 index block中存放的是data block的索引。看看index block的类型：
 
-![image-20200923192147959](https://cdn.jsdelivr.net/gh/ravenxrz/PicBed/img/image-20200923192147959.png)
+![image-20200923192147959](https://ravenxrz-blog.oss-cn-chengdu.aliyuncs.com/img/github_img/image-20200923192147959.png)
 
 可以看到index block和data_block都是BlockBuilder类型，意味着index_block和data_block的存储格式是相同的。那index_block中一个entry中的key value分别是什么？
 
@@ -457,7 +457,7 @@ $$
 
 ok，画个图来说明一下:
 
-<img src="https://cdn.jsdelivr.net/gh/ravenxrz/PicBed/img/leveldb源码阅读 (2).png" style="zoom:50%;" />
+<img src="https://ravenxrz-blog.oss-cn-chengdu.aliyuncs.com/img/github_img/leveldb源码阅读 (2).png" style="zoom:50%;" />
 
 ### 2. 什么时候会生成一个Index entry?
 
@@ -599,7 +599,7 @@ void TableBuilder::Add(const Slice& key, const Slice& value) {
 
 这里解释一下上面的代码：
 
-<img src="https://cdn.jsdelivr.net/gh/ravenxrz/PicBed/img/leveldb源码阅读-index entry key计算方式.png" style="zoom:50%;" />
+<img src="https://ravenxrz-blog.oss-cn-chengdu.aliyuncs.com/img/github_img/leveldb源码阅读-index entry key计算方式.png" style="zoom:50%;" />
 
 这里分别说两点：
 
@@ -701,7 +701,7 @@ Status TableBuilder::Finish() {
 
 目前有3个地方都调用了 ==TableBuilder::Finish==
 
-![image-20200923203705354](https://cdn.jsdelivr.net/gh/ravenxrz/PicBed/img/image-20200923203705354.png)
+![image-20200923203705354](https://ravenxrz-blog.oss-cn-chengdu.aliyuncs.com/img/github_img/image-20200923203705354.png)
 
 只有持久化SSTable时，才会持久化index block. 从SSTable的layout也可以看出来，因为一个SSTable只有一个index block。
 
@@ -1090,7 +1090,7 @@ void FilterBlockBuilder::GenerateFilter() {
   policy_->CreateFilter(&tmp_keys_[0], static_cast<int>(num_keys), &result_);
 ```
 
-<img src="https://cdn.jsdelivr.net/gh/ravenxrz/PicBed/img/leveldb源码阅读-copy-filter block插入流程1 (1).png" style="zoom: 33%;" />
+<img src="https://ravenxrz-blog.oss-cn-chengdu.aliyuncs.com/img/github_img/leveldb源码阅读-copy-filter block插入流程1 (1).png" style="zoom: 33%;" />
 
 第二次：
 
@@ -1102,7 +1102,7 @@ void FilterBlockBuilder::GenerateFilter() {
   }
 ```
 
-<img src="https://cdn.jsdelivr.net/gh/ravenxrz/PicBed/img/1385d00007c1895116295.png" style="zoom:33%;" />
+<img src="https://ravenxrz-blog.oss-cn-chengdu.aliyuncs.com/img/github_img/1385d00007c1895116295.png" style="zoom:33%;" />
 
 
 
@@ -1116,7 +1116,7 @@ void FilterBlockBuilder::GenerateFilter() {
   }
 ```
 
-<img src="https://cdn.jsdelivr.net/gh/ravenxrz/PicBed/img/leveldb源码阅读-copy-filter block插入流程3.png" style="zoom:33%;" />
+<img src="https://ravenxrz-blog.oss-cn-chengdu.aliyuncs.com/img/github_img/leveldb源码阅读-copy-filter block插入流程3.png" style="zoom:33%;" />
 
 
 
@@ -1167,7 +1167,7 @@ void TableBuilder::Add(const Slice& key, const Slice& value) {
 
 #### 5. 生成filter的调用流程图
 
-![21314512](https://cdn.jsdelivr.net/gh/ravenxrz/PicBed/img/21314512.png)
+![21314512](https://ravenxrz-blog.oss-cn-chengdu.aliyuncs.com/img/github_img/21314512.png)
 
 #### 6. KeyMayMatch
 
@@ -1231,7 +1231,7 @@ bool FilterBlockReader::KeyMayMatch(uint64_t block_offset, const Slice& key) {
 
 假设之前写入了两个data block，一个6kb，一个4kb，则对应的data block和 filter block如下:
 
-<img src="https://cdn.jsdelivr.net/gh/ravenxrz/PicBed/img/leveldb源码阅读-copy-第 12 页 (5).png" style="zoom:33%;" />
+<img src="https://ravenxrz-blog.oss-cn-chengdu.aliyuncs.com/img/github_img/leveldb源码阅读-copy-第 12 页 (5).png" style="zoom:33%;" />
 
 现在判定一个key是否在data block1, 只用传入data block1起始地址0， 计算得到 index = 0, 则start= 0，limit=9， 所以得到filter的地址未0-9.
 
@@ -1313,7 +1313,7 @@ Slice FilterBlockBuilder::Finish() {
 
 #### 2. Meta Block（filter block）& Meta Index Block的布局
 
-<img src="https://cdn.jsdelivr.net/gh/ravenxrz/PicBed/img/leveldb源码阅读-copy-filter block的layout (1).png" style="zoom:50%;" />
+<img src="https://ravenxrz-blog.oss-cn-chengdu.aliyuncs.com/img/github_img/leveldb源码阅读-copy-filter block的layout (1).png" style="zoom:50%;" />
 
 #### 3. meta index block的写入
 

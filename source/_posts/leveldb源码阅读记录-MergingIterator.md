@@ -10,7 +10,7 @@ MergingIterator是用于merge sort的iterator。mergeiterator内部有多个有�
 
 举个例子：
 
-<img src="https://cdn.jsdelivr.net/gh/ravenxrz/PicBed/img/leveldb源码阅读-copy-第 22 页.png" style="zoom:33%;" />
+<img src="https://ravenxrz-blog.oss-cn-chengdu.aliyuncs.com/img/github_img/leveldb源码阅读-copy-第 22 页.png" style="zoom:33%;" />
 
 如果从小到大访问，则首先通过iter2访问块2的0， 接着通过iter1访问块1的1，iter2-块2-2， iter3-块3-3....
 

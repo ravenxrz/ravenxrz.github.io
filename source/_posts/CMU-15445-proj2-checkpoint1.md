@@ -23,7 +23,7 @@ proj2的checkpoint1要求实现B+ tree的节点class，包括internal page和lea
 
 虽然我之前说过所有projects都不会透漏代码，但是结合我的做题体验来说，我是参考了不少博文和代码才做出来的。所以本文除了记录坑点外，也会贴部分关键的代码或伪代码。对于才开始做的朋友来说，`checkpoint1`肯定是无从下手的，因为他只是提供了一些函数和注释，不明白具体该做什么。比如下面这个函数：
 
-![image-20211020163441531](https://cdn.jsdelivr.net/gh/ravenxrz/PicBed/img/image-20211020163441531.png)
+![image-20211020163441531](https://ravenxrz-blog.oss-cn-chengdu.aliyuncs.com/img/github_img/image-20211020163441531.png)
 
 如果没有做完整个proj，起手就写它的话，我是不知道如何下手的。建议阅读下整个`public`的函数作用，`leaf page`同理，然后从`b_plus_tree.h/cpp`入手。
 
@@ -148,7 +148,7 @@ leaf page是用于真实存储数据的。key和value的个数都=max\_size，�
 
 B+ tree的点查询还是相对简单的，贴一下书中提到的伪代码：
 
-<img src="https://cdn.jsdelivr.net/gh/ravenxrz/PicBed/img/image-20211020171734980.png" alt="image-20211020171734980" style="zoom:50%;" />
+<img src="https://ravenxrz-blog.oss-cn-chengdu.aliyuncs.com/img/github_img/image-20211020171734980.png" alt="image-20211020171734980" style="zoom:50%;" />
 
 为了实现`Search（GetValue)`，需要实现`FindLeafPage`, 实现 `FindLeafPage` 函数后，`GetValue`函数就非常简单了。
 
@@ -185,13 +185,13 @@ bool BPLUSTREE_TYPE::GetValue(const KeyType &key, std::vector<ValueType> *result
 
 贴一个伪代码：
 
-<img src="https://cdn.jsdelivr.net/gh/ravenxrz/PicBed/img/image-20211020172110639.png" alt="image-20211020172110639" style="zoom:50%;" />
+<img src="https://ravenxrz-blog.oss-cn-chengdu.aliyuncs.com/img/github_img/image-20211020172110639.png" alt="image-20211020172110639" style="zoom:50%;" />
 
 具体实现时，无需将整个旧节点都拷贝一份，然后再一半一半的分别拷贝到两个孩子节点。只用将原本满的节点当作左孩子，然后申请一个右孩子即可。
 
 然后是两个子函数：
 
-<img src="https://cdn.jsdelivr.net/gh/ravenxrz/PicBed/img/image-20211020172234281.png" alt="image-20211020172234281" style="zoom: 50%;" />
+<img src="https://ravenxrz-blog.oss-cn-chengdu.aliyuncs.com/img/github_img/image-20211020172234281.png" alt="image-20211020172234281" style="zoom: 50%;" />
 
 额外关注，proj中的B+ tree是不支持重复key插入的，所以在真正执行插入前，可以`Lookup`一次key是否已经存在叶节点中，如果已经存在则直接`return`。
 
@@ -216,7 +216,7 @@ buffer_pool_manager_->UnpinPage(right_page->GetPageId(), true);
 
 Split函数：
 
-![image-20211020172533942](https://cdn.jsdelivr.net/gh/ravenxrz/PicBed/img/image-20211020172533942.png)
+![image-20211020172533942](https://ravenxrz-blog.oss-cn-chengdu.aliyuncs.com/img/github_img/image-20211020172533942.png)
 
 **Split时，叶节点和内部节点需要单独处理。**
 
@@ -243,13 +243,13 @@ Split函数：
 
 首先这里的`parent_page`肯定内部节点。现在考虑如下的场景：如果tree初始化的leaf_max_size=2, internal_max_size=3。 之后依次插入1,2,3。 插入2时，[1,2]这个节点将分裂一次，得到root节点[2], 叶节点[1]和[2]。 然后插入3， 此时[2,3]这个节点会分裂一次，叶节点为[1],[2],[3]。 同时内部节点为[2,3], 此时内部节点因为达到了max_size=3(因为三个孩子），所以再次触发分裂，不过此时是没办法分裂的。结果如下图：
 
-<img src="https://cdn.jsdelivr.net/gh/ravenxrz/PicBed/img/image-20211020173046320.png" alt="image-20211020173046320" style="zoom:33%;" />
+<img src="https://ravenxrz-blog.oss-cn-chengdu.aliyuncs.com/img/github_img/image-20211020173046320.png" alt="image-20211020173046320" style="zoom:33%;" />
 
 [2,3]这个节点是不可能分裂出去的。
 
 此时你可能要问，强制要求`internal_max_size` 不能小于3，即必须>=4不就可以了吗。这个不行，因为官方提供的测试用例中，有一句：
 
-![image-20211020173208103](https://cdn.jsdelivr.net/gh/ravenxrz/PicBed/img/image-20211020173208103.png)
+![image-20211020173208103](https://ravenxrz-blog.oss-cn-chengdu.aliyuncs.com/img/github_img/image-20211020173208103.png)
 
 所以，实现中必须兼容`internal_max_size=3`的情况。
 

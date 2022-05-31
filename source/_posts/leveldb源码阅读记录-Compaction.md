@@ -231,7 +231,7 @@ Status DBImpl::WriteLevel0Table(MemTable* mem, VersionEdit* edit,
 
 下面这些 .ldb的文件就是sstable，可以看到它们都是一些由数字组成的文件名，这些数字是哪里来的？我们可以从源码中获得答案：
 
-![image-20200925153434477](https://cdn.jsdelivr.net/gh/ravenxrz/PicBed/img/image-20200925153434477.png)
+![image-20200925153434477](https://ravenxrz-blog.oss-cn-chengdu.aliyuncs.com/img/github_img/image-20200925153434477.png)
 
 ```c++
 Status BuildTable(const std::string& dbname, Env* env, const Options& options,
@@ -355,7 +355,7 @@ int Version::PickLevelForMemTableOutput(const Slice& smallest_user_key,
 
 引用一张流程图：
 
-![img](https://cdn.jsdelivr.net/gh/ravenxrz/PicBed/img/PickLevelForMemTableOutput.png)
+![img](https://ravenxrz-blog.oss-cn-chengdu.aliyuncs.com/img/github_img/PickLevelForMemTableOutput.png)
 
 
 
@@ -697,7 +697,7 @@ void DBImpl::BackgroundCompaction() {
 
 PickCompaction流程图：
 
-<img src="https://cdn.jsdelivr.net/gh/ravenxrz/PicBed/img/leveldb源码阅读-copy-PickCompaction.png" style="zoom: 33%;" />
+<img src="https://ravenxrz-blog.oss-cn-chengdu.aliyuncs.com/img/github_img/leveldb源码阅读-copy-PickCompaction.png" style="zoom: 33%;" />
 
 转到==PickCompaction==函数：
 

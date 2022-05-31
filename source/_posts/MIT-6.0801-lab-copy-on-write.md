@@ -28,17 +28,17 @@ tags:
 
 可以利用RISCV对PTE的保留bit，来标记当前PTE对应page是COW时的page。如下图中的`RSW`位，选择其一用于标记即可。
 
-<img src="https://cdn.JsDelivr.net/gh/ravenxrz/PicBed/img/image-20220521150426429.png" alt="image-20220521150426429" style="zoom:67%;" />
+<img src="https://ravenxrz-blog.oss-cn-chengdu.aliyuncs.com/img/github_img/image-20220521150426429.png" alt="image-20220521150426429" style="zoom:67%;" />
 
 3. 采用引用计数对每个可用物理进行计数，只有当引用计数变为0时，才回收page。问题是如何表示每个页的引用情况？
 
 这里有两种做法，一种是将引用计数内嵌到每个page中，修改`kalloc`，每次申请内存为4KB+引用计数所占字节的空间。这种做法类似csapp的malloclab。 
 
-![cow-引用计数-链表](https://cdn.JsDelivr.net/gh/ravenxrz/PicBed/img/cow-引用计数-链表.svg)
+![cow-引用计数-链表](https://ravenxrz-blog.oss-cn-chengdu.aliyuncs.com/img/github_img/cow-引用计数-链表.svg)
 
 另一种做法是将所有page的引用计数单独用一个连续内存空间来执行保存，形成类似数组的数据结构。之后可通过数组下标=物理地址/4K来进行索引。
 
-![cow-引用计数-数组](https://cdn.JsDelivr.net/gh/ravenxrz/PicBed/img/cow-引用计数-数组.svg)
+![cow-引用计数-数组](https://ravenxrz-blog.oss-cn-chengdu.aliyuncs.com/img/github_img/cow-引用计数-数组.svg)
 
 个人做法为数组类型做法。
 
@@ -139,7 +139,7 @@ if(p->killed)
 
 **修改walk函数，增加对VA超过MAXVA的处理，这部分原因未深入研究，在usertests中会存在这样的case：**
 
-<img src="https://cdn.JsDelivr.net/gh/ravenxrz/PicBed/img/image-20220521221211213.png" alt="image-20220521221211213" style="zoom:67%;" />
+<img src="https://ravenxrz-blog.oss-cn-chengdu.aliyuncs.com/img/github_img/image-20220521221211213.png" alt="image-20220521221211213" style="zoom:67%;" />
 
 
 
@@ -149,11 +149,11 @@ if(p->killed)
 
 我才用的方案示意图如下：
 
-![我的引用计数方案-3](https://cdn.JsDelivr.net/gh/ravenxrz/PicBed/img/我的引用计数方案-3.svg)
+![我的引用计数方案-3](https://ravenxrz-blog.oss-cn-chengdu.aliyuncs.com/img/github_img/我的引用计数方案-3.svg)
 
 再贴一个原xv6 kernel space映射，方便对比：
 
-<img src="https://cdn.JsDelivr.net/gh/ravenxrz/PicBed/img/image-20220521165355875.png" alt="image-20220521165355875" style="zoom: 33%;" />
+<img src="https://ravenxrz-blog.oss-cn-chengdu.aliyuncs.com/img/github_img/image-20220521165355875.png" alt="image-20220521165355875" style="zoom: 33%;" />
 
 可以看到我将原xv6 space的free memory做了分割，增加了 `ref array`和`padding`两个段，`ref array` 为引用计数数组，`padding`主要是为了新的`free memory`是4K对齐而作的padding。
 
@@ -311,7 +311,7 @@ kalloc(void)
 
 可能有同学会问，为什么需要单独处理 `copyout`， 而不是用page fault handler统一处理，因为此时处于内核空间，采用的是内核页表，对于 `dstva`的读写，并不会引起page fault。另外，即使引起了page fault，也不会采用`usertrap`处理，而是使用`kerneltrap`处理。所以此处需要单独做处理。
 
-<img src="https://cdn.JsDelivr.net/gh/ravenxrz/PicBed/img/image-20220521221358727.png" alt="image-20220521221358727" style="zoom:67%;" />
+<img src="https://ravenxrz-blog.oss-cn-chengdu.aliyuncs.com/img/github_img/image-20220521221358727.png" alt="image-20220521221358727" style="zoom:67%;" />
 
 ## 3. 总结
 

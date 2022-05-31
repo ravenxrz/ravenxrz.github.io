@@ -18,7 +18,7 @@ date: 2021-03-30 20:22:19
 
 建立文件目录如下：
 
-![image-20210330203443446](https://cdn.jsdelivr.net/gh/ravenxrz/PicBed/img/image-20210330203443446.png)
+![image-20210330203443446](https://ravenxrz-blog.oss-cn-chengdu.aliyuncs.com/img/github_img/image-20210330203443446.png)
 
 hello.h 和 hello.cpp 组成 hello lib.
 
@@ -99,7 +99,7 @@ ok，记住这三点。我们再来看`target_include_directories(hello PUBLIC $
 
 如下图，clion并没有报错。
 
-<img src="https://cdn.jsdelivr.net/gh/ravenxrz/PicBed/img/image-20210330205355736.png" alt="image-20210330205355736" style="zoom:50%;" />
+<img src="https://ravenxrz-blog.oss-cn-chengdu.aliyuncs.com/img/github_img/image-20210330205355736.png" alt="image-20210330205355736" style="zoom:50%;" />
 
 现在将`target_include_directories(hello PUBLIC ${PROJECT_SOURCE_DIR}/include)`的PUBLIC，改为PRIVATE.
 
@@ -109,13 +109,13 @@ target_include_directories(hello PRIVATE ${PROJECT_SOURCE_DIR}/include)
 
 也就相当于 hello lib中给别人吃的篮子中没有放任何东西。所以main driver找不到hello.h。也就会报错了。
 
-<img src="https://cdn.jsdelivr.net/gh/ravenxrz/PicBed/img/image-20210330205450620.png" alt="image-20210330205450620" style="zoom:50%;" />
+<img src="https://ravenxrz-blog.oss-cn-chengdu.aliyuncs.com/img/github_img/image-20210330205450620.png" alt="image-20210330205450620" style="zoom:50%;" />
 
 同理如果改为`target_include_directories(hello INTERFACE ${PROJECT_SOURCE_DIR}/include)`
 
 main.cpp是不会报错，但是hello.cpp会报错。因为自己吃的篮子中没有东西，只有给别人的篮子中才有东西。
 
-<img src="https://cdn.jsdelivr.net/gh/ravenxrz/PicBed/img/image-20210330205716314.png" alt="image-20210330205716314" style="zoom:50%;" />
+<img src="https://ravenxrz-blog.oss-cn-chengdu.aliyuncs.com/img/github_img/image-20210330205716314.png" alt="image-20210330205716314" style="zoom:50%;" />
 
 > 另外，细心的读者可能会发现，在CMakeLists.txt的最后一句`target_link_libraries(main hello)`没有指定关键字，这里补充一下`target_link_libraries`默认为``PUBLIC`, 为了避免和`target_include_directories`混淆，所以没写。
 
@@ -123,7 +123,7 @@ main.cpp是不会报错，但是hello.cpp会报错。因为自己吃的篮子中
 
 依然以一个例子来说明，目录结构如下:
 
-![image-20210330210016843](https://cdn.jsdelivr.net/gh/ravenxrz/PicBed/img/image-20210330210016843.png)
+![image-20210330210016843](https://ravenxrz-blog.oss-cn-chengdu.aliyuncs.com/img/github_img/image-20210330210016843.png)
 
 各文件内容：
 
@@ -228,7 +228,7 @@ target_link_libraries(world PRIVATE hello)
 
 则：
 
-<img src="https://cdn.jsdelivr.net/gh/ravenxrz/PicBed/img/image-20210330210755386.png" alt="image-20210330210755386" style="zoom:50%;" />
+<img src="https://ravenxrz-blog.oss-cn-chengdu.aliyuncs.com/img/github_img/image-20210330210755386.png" alt="image-20210330210755386" style="zoom:50%;" />
 
 原因在于，main依赖于world，而world private依赖于hello，也就意味着，world的篮子变为了:
 

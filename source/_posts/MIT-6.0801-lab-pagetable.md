@@ -76,7 +76,7 @@ walk(pagetable_t pagetable, uint64 va, int alloc)
 
 和内核地址不同，用户进程地址空间从0开始编址。最下面为文本段，而后为data段，stack/heap以及trap frame和tramepoline。这里主要关注stack内部的内容。当调用exec系统调用时，我们会传入要执行的程序名，程序运行所需参数。exec通过ELF加载必要的segment后，会分配该进程需要的用户栈，然后向栈中写入程序运行的参数信息。
 
-<img src="https://cdn.JsDelivr.net/gh/ravenxrz/PicBed/img/image-20220508130849006.png" alt="image-20220508130849006" style="zoom:50%;" />
+<img src="https://ravenxrz-blog.oss-cn-chengdu.aliyuncs.com/img/github_img/image-20220508130849006.png" alt="image-20220508130849006" style="zoom:50%;" />
 
 ### 4. 其他
 
@@ -603,7 +603,7 @@ swtch:
 
 p->context.sp初始化为p->kstack+PGSIZE，即指向进程内核栈的栈底（栈是从内存地址由上往下push), 而在上面的汇编中，加载了该值到sp寄存器中。那什么时候会使用到sp寄存器？其实就在上述p->context.ra地址处，对于 allocproc 调用后，ra将保存 forkret 函数的首行指令：
 
-![image-20220508203941573](https://cdn.JsDelivr.net/gh/ravenxrz/PicBed/img/image-20220508203941573.png)
+![image-20220508203941573](https://ravenxrz-blog.oss-cn-chengdu.aliyuncs.com/img/github_img/image-20220508203941573.png)
 
 **如果我们在switch前未切换到process的内核页表，那么此时 `satp`寄存器中的将是全局内核页表，全局内核页表中并不包含对每个进程的内核栈地址映射，所以在执行该条指令时，系统将会出现错误。**
 
@@ -622,7 +622,7 @@ p->context.sp初始化为p->kstack+PGSIZE，即指向进程内核栈的栈底（
 
 在`forkret`的最后一步中，有 `usertrapret`函数：
 
-<img src="https://cdn.JsDelivr.net/gh/ravenxrz/PicBed/img/image-20220508205202906.png" alt="image-20220508205202906" style="zoom: 67%;" />
+<img src="https://ravenxrz-blog.oss-cn-chengdu.aliyuncs.com/img/github_img/image-20220508205202906.png" alt="image-20220508205202906" style="zoom: 67%;" />
 
 该函数的最后会执行该操作。
 
@@ -722,7 +722,7 @@ ukvminit(struct proc* proc, uchar* src, uint sz)
 
 **再看fork函数：**
 
-<img src="https://cdn.JsDelivr.net/gh/ravenxrz/PicBed/img/image-20220508210856153.png" alt="image-20220508210856153" style="zoom:50%;" />
+<img src="https://ravenxrz-blog.oss-cn-chengdu.aliyuncs.com/img/github_img/image-20220508210856153.png" alt="image-20220508210856153" style="zoom:50%;" />
 
 其中 `copy_u2k_ptbl`的实现为：
 
@@ -848,21 +848,21 @@ kvmdealloc(pagetable_t pagetable, uint64 oldsz, uint64 newsz)
 
 **最后看看 exec 函数:**
 
-<img src="https://cdn.JsDelivr.net/gh/ravenxrz/PicBed/img/image-20220508214644027.png" alt="image-20220508214644027" style="zoom: 67%;" />
+<img src="https://ravenxrz-blog.oss-cn-chengdu.aliyuncs.com/img/github_img/image-20220508214644027.png" alt="image-20220508214644027" style="zoom: 67%;" />
 
 这里有一个比较容易出现bug的点，也是我注释中的代码。exec我原先的实现为释放kernel page table和user page table, 然后重新将新的user page table拷贝到kernel page table。这里的问题在于，os在执行exec函数时，执行的kernel page table就是当前的p->kpagetable, 如果将其释放，将无法或许需要执行的指令。于是会出现 `kerneltrap panic`。所以这里的正确方式是，不释放kernel page table，只做重映射即可（实际上我想user page table应该也可以这样做，不过暂时先这样改吧)。
 
 另外，记住在添加page table映射时，应该注意 PLIC的limit：
 
-<img src="https://cdn.JsDelivr.net/gh/ravenxrz/PicBed/img/image-20220508215045988.png" alt="image-20220508215045988" style="zoom:50%;" />
+<img src="https://ravenxrz-blog.oss-cn-chengdu.aliyuncs.com/img/github_img/image-20220508215045988.png" alt="image-20220508215045988" style="zoom:50%;" />
 
 由于向process kernel page table添加了user page table的映射项目，所以在freeproc时，应该对该部分映射项目做unmap：
 
-<img src="https://cdn.JsDelivr.net/gh/ravenxrz/PicBed/img/image-20220508215224672.png" alt="image-20220508215224672" style="zoom:67%;" />
+<img src="https://ravenxrz-blog.oss-cn-chengdu.aliyuncs.com/img/github_img/image-20220508215224672.png" alt="image-20220508215224672" style="zoom:67%;" />
 
 注意这里其实我修改了 `proc_kfreepagetable`的签名，所以还需要修改`freeproc`调用处：
 
-<img src="https://cdn.JsDelivr.net/gh/ravenxrz/PicBed/img/image-20220508215353188.png" alt="image-20220508215353188" style="zoom:67%;" />
+<img src="https://ravenxrz-blog.oss-cn-chengdu.aliyuncs.com/img/github_img/image-20220508215353188.png" alt="image-20220508215353188" style="zoom:67%;" />
 
 ## 3. 总结
 

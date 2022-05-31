@@ -77,7 +77,7 @@ Status DB::Open(const Options& options, const std::string& dbname, DB** dbptr) {
 
 4. 移除废旧文件
 
-<img src="https://cdn.jsdelivr.net/gh/ravenxrz/PicBed/img/leveldb源码阅读-copy-第 26 页 (2).png" style="zoom:33%;" />
+<img src="https://ravenxrz-blog.oss-cn-chengdu.aliyuncs.com/img/github_img/leveldb源码阅读-copy-第 26 页 (2).png" style="zoom:33%;" />
 
 我们分别来看看这几部分工作。
 

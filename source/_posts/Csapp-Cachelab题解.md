@@ -16,7 +16,7 @@ cachelab帮助我们理解计算机存储体系中的重要组成部分--cache�
 
 <!--more-->
 
-<img src="https://cdn.jsdelivr.net/gh/ravenxrz/PicBed/img/image-20200726101259903.png" style="zoom: 33%;" />
+<img src="https://ravenxrz-blog.oss-cn-chengdu.aliyuncs.com/img/github_img/image-20200726101259903.png" style="zoom: 33%;" />
 
 cache站立于整个存储体系的上端（低于寄存器），其重要性不言而喻了。
 
@@ -93,7 +93,7 @@ ok，知道这些了，题目还给了我们一个标准答案，csim-ref, 我�
 
 cache的组织方式：
 
-<img src="https://cdn.jsdelivr.net/gh/ravenxrz/PicBed/img/image-20200726102158585.png" style="zoom: 50%;" />
+<img src="https://ravenxrz-blog.oss-cn-chengdu.aliyuncs.com/img/github_img/image-20200726102158585.png" style="zoom: 50%;" />
 
 这张图，给出了cache的组织方式以及cacheline的read方式。
 
@@ -687,7 +687,7 @@ int main(int argc, char *argv[])
 
 本题能加强学生对cache的认识，编写cahce友好的代码。原题很简单，就是给一个矩阵A，求其转置。但是有一些额外说明，具体请读writeup。下面是本题的答案要求：
 
-![image-20200729141941145](https://cdn.jsdelivr.net/gh/ravenxrz/PicBed/img/image-20200729141941145.png)
+![image-20200729141941145](https://ravenxrz-blog.oss-cn-chengdu.aliyuncs.com/img/github_img/image-20200729141941145.png)
 
 m，代表miss次数。
 
@@ -700,7 +700,7 @@ m，代表miss次数。
 
 在正式解题前，先说下系统的一些参数，最重要的就是cache的组织方式了：
 
-![image-20200729142729751](https://cdn.jsdelivr.net/gh/ravenxrz/PicBed/img/image-20200729142729751.png)
+![image-20200729142729751](https://ravenxrz-blog.oss-cn-chengdu.aliyuncs.com/img/github_img/image-20200729142729751.png)
 
 s=5, S=32, 即32组
 
@@ -712,23 +712,23 @@ b=5，B=32， 即一个cacheline的block大小为32字节（后面简称cachelin
 
 blocking机制运用到矩阵转置来，即将A分成多个行条带，A行条带扫描。B分为多个块，每个块由多个条带组成，每个B条带按照列扫描。如图：
 
-![image-20200729144043920](https://cdn.jsdelivr.net/gh/ravenxrz/PicBed/img/image-20200729144043920.png)
+![image-20200729144043920](https://ravenxrz-blog.oss-cn-chengdu.aliyuncs.com/img/github_img/image-20200729144043920.png)
 
-![image-20200729144147785](https://cdn.jsdelivr.net/gh/ravenxrz/PicBed/img/image-20200729144439379.png)
+![image-20200729144147785](https://ravenxrz-blog.oss-cn-chengdu.aliyuncs.com/img/github_img/image-20200729144439379.png)
 
 ### 1. 32x32
 
 一个cacheline 32字节， 一个int 4字节， 则一个cacheline可以放8个int， 矩阵为32x32， 则矩阵一行需要4个cacheline。
 
-![image-20200729143546012](https://cdn.jsdelivr.net/gh/ravenxrz/PicBed/img/image-20200729143603293.png)
+![image-20200729143546012](https://ravenxrz-blog.oss-cn-chengdu.aliyuncs.com/img/github_img/image-20200729143603293.png)
 
 现在的问题是如何确定条带的长度。 
 
 我们知道cpu一次read，都会load一个cache line到cache中。一个cacheline是32字节。如何将条带设置低于32字节，比如12字节，那么32字节中会有20字节无法利用，浪费了一半的cache。如果大于32字节，那扫描一个条带就会触发至少2次load。那是不是设置成32字节就好了？也不是，我们还要考虑A，B的load，store交替过程中，会造成cacheline的overlap（冲突不命中）。为了让你理解这个概念，先看以下面这道题：
 
-<img src="https://cdn.jsdelivr.net/gh/ravenxrz/PicBed/img/image-20200729145230952.png" alt="image-20200729145230952" style="zoom:50%;" />
+<img src="https://ravenxrz-blog.oss-cn-chengdu.aliyuncs.com/img/github_img/image-20200729145230952.png" alt="image-20200729145230952" style="zoom:50%;" />
 
-<img src="https://cdn.jsdelivr.net/gh/ravenxrz/PicBed/img/image-20200729145241517.png" alt="image-20200729145241517" style="zoom:50%;" />
+<img src="https://ravenxrz-blog.oss-cn-chengdu.aliyuncs.com/img/github_img/image-20200729145241517.png" alt="image-20200729145241517" style="zoom:50%;" />
 
 现在回到我们的题目，我们想要cacheline的利用率高，又不想发生太多cacheline的冲突不命中。观察到在32x32的矩阵中，**每8行重复一个cache空间。**如果一个条带为32字节，即8个矩阵元素，刚好对应了一个cache line大小。所以我们可以设置， A的行扫描条带为8个元素， B的列扫描条带为8个元素，那一个块的宽度呢？显然一个cacheline是32字节，刚好也是8个元素，宽度为8肯定利用率高。
 
@@ -770,11 +770,11 @@ void trans32_v1(int A[32][32], int B[32][32])
 
 cachelab的writeup中，有这样一句话：
 
-![image-20200729150322560](https://cdn.jsdelivr.net/gh/ravenxrz/PicBed/img/image-20200729150322560.png)
+![image-20200729150322560](https://ravenxrz-blog.oss-cn-chengdu.aliyuncs.com/img/github_img/image-20200729150322560.png)
 
 对角线？ 是的，对角线上的元素，会发生冲突不命中问题。究其根本，在于我们对A进行了反复读。如何解决？把A的数据放到寄存器就行了。再次回到write u中：
 
-![](https://cdn.jsdelivr.net/gh/ravenxrz/PicBed/img/5f212d3314195aa594512d18.png)
+![](https://ravenxrz-blog.oss-cn-chengdu.aliyuncs.com/img/github_img/5f212d3314195aa594512d18.png)
 
 
 
@@ -910,7 +910,7 @@ void trans6761_v1(int A[67][61], int B[61][67])
 
 1. 如果BSIZE 依然取8会发生什么问题？
 
-![image-20200729151739512](https://cdn.jsdelivr.net/gh/ravenxrz/PicBed/img/5f212d5b14195aa594514cfb.png)
+![image-20200729151739512](https://ravenxrz-blog.oss-cn-chengdu.aliyuncs.com/img/github_img/5f212d5b14195aa594514cfb.png)
 
 上图给出了此时的矩阵内部cacheline分布，有个很严重的问题在于一个cache空间，在矩阵中仅4行就重复了。那如果条带继续为8， B列向扫描一个条带，后4个元素就会替换前4个元素所在的cacheline。造成过多**冲突不命中**。
 
@@ -926,7 +926,7 @@ void trans6761_v1(int A[67][61], int B[61][67])
 
 A条带长度为8，我们将一个A条带的前4列正常填入B的前4行，而**A条带的后4列填入到其他地方，**再等待某个时机，将这些临时填充的数据归还到正确位置即可。示意图：
 
-![image-20200729153035966](https://cdn.jsdelivr.net/gh/ravenxrz/PicBed/img/5f212d6b14195aa59451559a.png)
+![image-20200729153035966](https://ravenxrz-blog.oss-cn-chengdu.aliyuncs.com/img/github_img/5f212d6b14195aa59451559a.png)
 
 绿色代表正常填入区间。
 
@@ -936,7 +936,7 @@ A条带长度为8，我们将一个A条带的前4列正常填入B的前4行，�
 
 接着，在某个时机：
 
-![image-20200729153243973](https://cdn.jsdelivr.net/gh/ravenxrz/PicBed/img/5f212d7d14195aa594515d89.png)
+![image-20200729153243973](https://ravenxrz-blog.oss-cn-chengdu.aliyuncs.com/img/github_img/5f212d7d14195aa594515d89.png)
 
 几个问题：
 
@@ -960,7 +960,7 @@ A条带长度为8，我们将一个A条带的前4列正常填入B的前4行，�
 
 最终我选择方案为： BSIZE=8，临时填充区间示意图如下：
 
-![image-20200729153935817](https://cdn.jsdelivr.net/gh/ravenxrz/PicBed/img/5f212d8c14195aa5945163a2.png)
+![image-20200729153935817](https://ravenxrz-blog.oss-cn-chengdu.aliyuncs.com/img/github_img/5f212d8c14195aa5945163a2.png)
 
 为什么会这样选？如果像之前示意图那样选，依然会存在很多冲突映射，甚至不如不做映射。仔细分析了下trace file,手动模拟了cache line的load store过程，选择的这样的临时填充映射。
 

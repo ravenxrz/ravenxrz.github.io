@@ -128,7 +128,7 @@ sub $0x28,%rsp
 
 好的,知道这两点,我们就可以写攻击代码了, 在写之前, 先画个示意图:
 
-![image-20200720231159598](https://cdn.jsdelivr.net/gh/ravenxrz/PicBed/img/image-20200720231159598.png)
+![image-20200720231159598](https://ravenxrz-blog.oss-cn-chengdu.aliyuncs.com/img/github_img/image-20200720231159598.png)
 
 说明:
 
@@ -191,7 +191,7 @@ Your task is to get CTARGET to execute the code for touch2 rather than returning
 
 但是这里存在两个跳转, 1.跳转我们的注入代码的首地址.2.跳转到touch2. 画个图看看:
 
-![image-20200720232843852](https://cdn.jsdelivr.net/gh/ravenxrz/PicBed/img/image-20200720232843852.png)
+![image-20200720232843852](https://ravenxrz-blog.oss-cn-chengdu.aliyuncs.com/img/github_img/image-20200720232843852.png)
 
 也就是说,我们首先应该跳转到我们注入的代码的首地址, 然后注入代码执行过程中(红色的区域的某个部分),又跳转到touch2. 
 
@@ -304,11 +304,11 @@ cooike的ascii码很简单, 对照ascii码表即可得:
 
 - 说第二想法之前, 我们先看看后续的程序会对stack空间做些什么:
 
-  ![image-20200721090502836](https://cdn.jsdelivr.net/gh/ravenxrz/PicBed/img/image-20200721090502836.png)
+  ![image-20200721090502836](https://ravenxrz-blog.oss-cn-chengdu.aliyuncs.com/img/github_img/image-20200721090502836.png)
 
   那字符串到底放在哪里? 我尝试了将字符串放在了buf的stack顶端和低端, 如下两图:
 
-  ![image-20200721090628772](https://cdn.jsdelivr.net/gh/ravenxrz/PicBed/img/image-20200721090628772.png)
+  ![image-20200721090628772](https://ravenxrz-blog.oss-cn-chengdu.aliyuncs.com/img/github_img/image-20200721090628772.png)
 
   经过gdb调试,两者都会被覆盖, 所以这个方案也被pass掉了.
 
@@ -322,7 +322,7 @@ cooike的ascii码很简单, 对照ascii码表即可得:
 
   所以我们可以直接继续覆盖, 看示意图:
 
-![image-20200721091909441](https://cdn.jsdelivr.net/gh/ravenxrz/PicBed/img/5f16832c14195aa594b36a03.png)
+![image-20200721091909441](https://ravenxrz-blog.oss-cn-chengdu.aliyuncs.com/img/github_img/5f16832c14195aa594b36a03.png)
 
 可以得到注入代码:
 
@@ -359,9 +359,9 @@ byte 0x90. Its only effect is to cause the program counter to be incremented by 
 
 
 
-![image-20200721093742135](https://cdn.jsdelivr.net/gh/ravenxrz/PicBed/img/image-20200721093742135.png)
+![image-20200721093742135](https://ravenxrz-blog.oss-cn-chengdu.aliyuncs.com/img/github_img/image-20200721093742135.png)
 
-![image-20200721093753166](https://cdn.jsdelivr.net/gh/ravenxrz/PicBed/img/image-20200721093753166.png)
+![image-20200721093753166](https://ravenxrz-blog.oss-cn-chengdu.aliyuncs.com/img/github_img/image-20200721093753166.png)
 
 所有可用指令, 我都高亮了.
 
@@ -575,7 +575,7 @@ pop $rax
 
 pop是将\$rsp当前指向的数据  pop 到 \$rax 上, 所以我们可得gaddget如下图:
 
-![image-20200721093518556](https://cdn.jsdelivr.net/gh/ravenxrz/PicBed/img/image-20200721093518556.png)
+![image-20200721093518556](https://ravenxrz-blog.oss-cn-chengdu.aliyuncs.com/img/github_img/image-20200721093518556.png)
 
 知道这些, 我们只用到 rtaget的gaddgets_farm中找到对应的指令字节码即可, 最终可得:
 
@@ -620,7 +620,7 @@ lea指令, 实现了相加功能, 一旦能实现相加功能, 我们就能使 r
 
 回忆以下我们在phase3中是怎么做的?看看下面的示意图.
 
-![image-20200721091909441](https://cdn.jsdelivr.net/gh/ravenxrz/PicBed/img/5f16832c14195aa594b36a03.png)
+![image-20200721091909441](https://ravenxrz-blog.oss-cn-chengdu.aliyuncs.com/img/github_img/5f16832c14195aa594b36a03.png)
 
 从这张图中, 我们可以考虑一下如果运用aop , string到底放在哪里合适? 我们的前提是任何时候都不能覆盖string.
 
@@ -671,7 +671,7 @@ rax = rdi + rsi
 
 画个示意图:
 
-![image-20200721100554201](https://cdn.jsdelivr.net/gh/ravenxrz/PicBed/img/image-20200721100554201.png)
+![image-20200721100554201](https://ravenxrz-blog.oss-cn-chengdu.aliyuncs.com/img/github_img/image-20200721100554201.png)
 
 于是可以有攻击代码:
 

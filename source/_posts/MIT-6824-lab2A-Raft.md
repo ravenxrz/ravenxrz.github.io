@@ -34,11 +34,11 @@ tags:
 
 raft实现是相对复杂的，不过好在**raft paper figure 2**给出了算法的详细描述。lab2A的所有实现，都参考自paper的figure:
 
-<img src="https://cdn.jsdelivr.net/gh/ravenxrz/PicBed/img/image-20220222145423023.png" alt="image-20220222145423023" style="zoom:50%;" />
+<img src="https://ravenxrz-blog.oss-cn-chengdu.aliyuncs.com/img/github_img/image-20220222145423023.png" alt="image-20220222145423023" style="zoom:50%;" />
 
 ### 状态转换
 
-![](https://cdn.jsdelivr.net/gh/ravenxrz/PicBed/img/raft状态转换.svg)
+![](https://ravenxrz-blog.oss-cn-chengdu.aliyuncs.com/img/github_img/raft状态转换.svg)
 
 ### 数据结构
 
@@ -233,7 +233,7 @@ func (rf *Raft) heartBeatTimer() {
 
 对应论文中的：
 
-![image-20220222152021461](https://cdn.jsdelivr.net/gh/ravenxrz/PicBed/img/image-20220222152021461.png)
+![image-20220222152021461](https://ravenxrz-blog.oss-cn-chengdu.aliyuncs.com/img/github_img/image-20220222152021461.png)
 
 所以代码如下：
 
@@ -309,7 +309,7 @@ func (rf *Raft) fireElection() {
 
 逻辑如下图所示：
 
-![raft_fireElectoin.excalidraw](https://cdn.jsdelivr.net/gh/ravenxrz/PicBed/img/raft_fireElectoin.excalidraw-1645516183030.svg)
+![raft_fireElectoin.excalidraw](https://ravenxrz-blog.oss-cn-chengdu.aliyuncs.com/img/github_img/raft_fireElectoin.excalidraw-1645516183030.svg)
 
 定时器到时后， 开启多个 子routine, 多个routine通过rpc发起 `RequstVote` RPC请求，当routine收到回复后，通过 ch 通道返回到 collection routine， 当collection routine收到半数以上的票数后，立即通过 done 通道返回给外层 go routine (也就是fireElection函数中的go关键中的匿名函数)。
 
@@ -397,7 +397,7 @@ if curTerm != rf.currentTerm || rf.role != CANDIDATE {
 
 > 后期更新，实际上这里的done通道多余了，直接在collection routine执行 fireElection中的后续逻辑即可。后期的逻辑图如下：
 >
-> ![raft_fireElectoin.excalidraw](https://cdn.JsDelivr.net/gh/ravenxrz/PicBed/img/raft_fireElectoin.excalidraw.png)
+> ![raft_fireElectoin.excalidraw](https://ravenxrz-blog.oss-cn-chengdu.aliyuncs.com/img/github_img/raft_fireElectoin.excalidraw.png)
 
 ### RequestVote handler
 
