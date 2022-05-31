@@ -882,7 +882,7 @@ vendors:
   _internal: lib
 
   # Internal version: 3.1.0
-  anime: //cdn.jsdelivr.net/npm/animejs@3.1.0/lib/anime.min.js
+  anime: //raw.githubusercontent.com/juliangarnier/anime/master/lib/anime.min.js
   # anime:
 
   # Internal version: 5.13.0
