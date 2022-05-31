@@ -328,7 +328,7 @@ int steal_mem(int cur_cpuid)
 
 有一个注意点：在 `steal_mem`的第一行中，执行了 ` release(&kmem[cur_cpuid].lock);`即释放了当前cpuid的lock，为什么需要释放？查看下面这张图：
 
-![内存分配器死锁问题](https://raw.githubusercontent.com/ravenxrz/PicBed/master/img/%E5%86%85%E5%AD%98%E5%88%86%E9%85%8D%E5%99%A8%E6%AD%BB%E9%94%81%E9%97%AE%E9%A2%98.svg)
+![内存分配器死锁问题](https://ravenxrz-blog.oss-cn-chengdu.aliyuncs.com/img/github_img/%E5%86%85%E5%AD%98%E5%88%86%E9%85%8D%E5%99%A8%E6%AD%BB%E9%94%81%E9%97%AE%E9%A2%98.svg)
 
 如果同时存在两个cpu在向其它cpu偷取内存，那么可能死锁问题。所以，第一行做了释放操作。
 
@@ -429,7 +429,7 @@ int steal_mem(int cur_cpuid)
 
 对于这种情况，我们要做的是尽可能的降低锁的粒度，原版是对整个buffer cache双链表采用一个大锁，只要能降低该锁粒度，也就能提升并发性。具体而言，采用了链式冲突方案式的hash table来解决。如下图：
 
-![hash table](https://raw.githubusercontent.com/ravenxrz/PicBed/master/img/hash%20table.svg)
+![hash table](https://ravenxrz-blog.oss-cn-chengdu.aliyuncs.com/img/github_img/hash%20table.svg)
 
 如上为一个hash table，采用挂链的方式解决hash冲突的问题，每一个chan上的entry都是一个buffer cache entry。每个hash bucket都有一个lock，这样在访问buffer cache时，首先定位到要访问的buffer cache entry所处的hash table bucket，对该bucket加锁即可。所以锁粒度降到了bucket级别。
 
@@ -447,7 +447,7 @@ int steal_mem(int cur_cpuid)
 
    2. 初始化时直接挂接，由于初始化的时候每个buffer cache entry都没有 `blockno`信息，不能随意挂接，我采用的trick是，为hash table多分配的一个 bucket， 这个bucket只在初始化的时候使用，用于挂接还没有 `blockno`信息的buffer cache entry.如下图：
 
-      ![hash table-多余一个bucket-2](https://raw.githubusercontent.com/ravenxrz/PicBed/master/img/hash%20table-%E5%A4%9A%E4%BD%99%E4%B8%80%E4%B8%AAbucket-2.svg)
+      ![hash table-多余一个bucket-2](https://ravenxrz-blog.oss-cn-chengdu.aliyuncs.com/img/github_img/hash%20table-%E5%A4%9A%E4%BD%99%E4%B8%80%E4%B8%AAbucket-2.svg)
 
 3. 没有双向链表，如何采用lru？这里改用了 time-stamp 的lru方式。每次释放 buffer cache entry时，更新其当前的 time (或者称为tick)字段为系统的时钟，之后按照tick大小来采用lru算法。 缺点是，每次都需要遍历所有buffer cache entry，时间更长，不过xv6中，buffer cache entry的个数仅为30个，所以速度还是很快的。
 
@@ -813,7 +813,7 @@ bucket_insert(struct buf** bkt, struct buf* node)
 
 如下图：
 
-![lock-lab-buffer-cache-移动死锁问题](https://raw.githubusercontent.com/ravenxrz/PicBed/master/img/lock-lab-buffer-cache-%E7%A7%BB%E5%8A%A8%E6%AD%BB%E9%94%81%E9%97%AE%E9%A2%98.svg)
+![lock-lab-buffer-cache-移动死锁问题](https://ravenxrz-blog.oss-cn-chengdu.aliyuncs.com/img/github_img/lock-lab-buffer-cache-%E7%A7%BB%E5%8A%A8%E6%AD%BB%E9%94%81%E9%97%AE%E9%A2%98.svg)
 
 P1持有红色bucket的锁，尝试获取黄色bucket的锁，以将红色buffer cache entry移动到黄色bucket中。
 
