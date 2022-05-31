@@ -176,7 +176,7 @@ site_state: true
 # Key is the link label showing to end users.
 # Value before `||` delimiter is the target permalink, value after `||` delimiter is the name of Font Awesome icon.
 social:
-  GitHub: https://github.com/ravenxrz || fab fa-github
+  GitHub: https://github.com/ravenxrz || fa-brands fa-github-alt
   E-Mail: mailto:zhagn.xingrui@foxmail.com || fa fa-envelope
   # Bilibili: https://space.bilibili.com/26319956 || fa fa-video
   #Weibo: https://weibo.com/yourname || fab fa-weibo
