@@ -891,7 +891,7 @@ vendors:
   # fontawesome:
 
   # MathJax
-  mathjax: //ravenxrz-blog.oss-cn-chengdu.aliyuncs.com/img/blog_cdn/vendor/tex-mml-chtml.js
+  mathjax: //unpkg.com/mathjax@3/es5/tex-mml-chtml.js
   # mathjax:
 
   # KaTeX
