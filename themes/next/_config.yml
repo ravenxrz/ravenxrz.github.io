@@ -894,6 +894,7 @@ vendors:
   # fontawesome:
 
   # MathJax
+  # version 3
   mathjax: //ravenxrz-blog.oss-cn-chengdu.aliyuncs.com/img/blog_cdn/vendor/tex-mml-chtml.js
   # mathjax:
 
