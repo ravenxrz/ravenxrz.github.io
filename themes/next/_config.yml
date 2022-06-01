@@ -711,7 +711,7 @@ firestore:
 # Show Views / Visitors of the website / page with busuanzi.
 # Get more information on http://ibruce.info/2015/04/04/busuanzi
 busuanzi_count:
-  enable: true
+  enable: false
   total_visitors: true
   total_visitors_icon: fa-solid fa-user
   total_views: true
@@ -886,8 +886,8 @@ vendors:
   # anime:
 
   # Internal version: 5.13.0
-  # fontawesome: //ravenxrz-blog.oss-cn-chengdu.aliyuncs.com/img/blog_cdn/vendor/all.min.css
-  fontawesome: //unpkg.com/font-awesome@4.7.0/css/font-awesome.min.css
+  fontawesome: //cdnjs.cloudflare.com/ajax/libs/font-awesome/5.13.0/css/all.min.css
+  # fontawesome: //unpkg.com/font-awesome@5.13.0/css/font-awesome.min.css
   # fontawesome:
 
   # MathJax
