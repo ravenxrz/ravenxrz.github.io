@@ -178,7 +178,7 @@ site_state: true
 social:
   GitHub: https://github.com/ravenxrz || fa-brands fa-github-alt
   E-Mail: mailto:zhagn.xingrui@foxmail.com || fa fa-envelope
-  Bilibili: https://space.bilibili.com/26319956 || fa fa-video
+  Bilibili: https://space.bilibili.com/26319956 || fa-solid fa-play
   #Weibo: https://weibo.com/yourname || fab fa-weibo
   #Google: https://plus.google.com/yourname || fab fa-google
   #Twitter: https://twitter.com/yourname || fab fa-twitter
@@ -711,7 +711,7 @@ firestore:
 # Show Views / Visitors of the website / page with busuanzi.
 # Get more information on http://ibruce.info/2015/04/04/busuanzi
 busuanzi_count:
-  enable: false
+  enable: true
   total_visitors: true
   total_visitors_icon: fa fa-user
   total_views: true
