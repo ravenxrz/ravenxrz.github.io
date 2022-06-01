@@ -115,9 +115,9 @@ darkmode: false
 # When running the site in a subdirectory (e.g. yoursite.com/blog), remove the leading slash from link value (/archives -> archives).
 # External url should start with http:// or https://
 menu:
-  home: / || fa fa-home
-  archives: /archives/ || fa fa-archive
-  categories: /categories/ || fa fa-th
+  home: / || fa-solid fa-house
+  archives: /archives/ || fa-solid fa-signs-post
+  categories: /categories/ || fa-solid fa-chart-simple
   # tags: /tags/ || fa fa-tags
   # about: /about/ || fa fa-user
   # schedule: /schedule/ || fa fa-calendar
@@ -177,7 +177,7 @@ site_state: true
 # Value before `||` delimiter is the target permalink, value after `||` delimiter is the name of Font Awesome icon.
 social:
   GitHub: https://github.com/ravenxrz || fa-brands fa-github-alt
-  E-Mail: mailto:zhagn.xingrui@foxmail.com || fa fa-envelope
+  E-Mail: mailto:zhagn.xingrui@foxmail.com || fa-solid fa-envelope-dot
   Bilibili: https://space.bilibili.com/26319956 || fa-solid fa-play
   #Weibo: https://weibo.com/yourname || fab fa-weibo
   #Google: https://plus.google.com/yourname || fab fa-google
@@ -195,7 +195,7 @@ social_icons:
 
 # Blog rolls
 links_settings:
-  icon: fa fa-link
+  icon: fa-solid fa-link
   title: Links
   # Available values: block | inline
   layout: block
@@ -713,11 +713,11 @@ firestore:
 busuanzi_count:
   enable: true
   total_visitors: true
-  total_visitors_icon: fa fa-user
+  total_visitors_icon: fa-solid fa-user
   total_views: true
-  total_views_icon: fa fa-eye
+  total_views_icon: fas fa-eye
   post_views: true
-  post_views_icon: fa fa-eye
+  post_views_icon: fas fa-eye
 
 
 # ---------------------------------------------------------------
