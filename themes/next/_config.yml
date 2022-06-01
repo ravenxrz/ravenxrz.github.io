@@ -48,7 +48,7 @@ favicon:
   #ms_browserconfig: /images/browserconfig.xml
 
 # Show multilingual switcher in footer.
-language_switcher: true
+language_switcher: false
 
 footer:
   # Specify the date when the site was setup. If not defined, current year will be used.
@@ -67,7 +67,7 @@ footer:
   copyright:
 
   # Powered by Hexo & NexT
-  powered: true
+  powered: false
 
   # Beian ICP and gongan information for Chinese users. See: http://www.beian.miit.gov.cn, http://www.beian.gov.cn
   beian:
@@ -86,7 +86,7 @@ footer:
 # You can set a language value if you prefer a translated version of CC license, e.g. deed.zh
 # CC licenses are available in 39 languages, you can find the specific and correct abbreviation you need on https://creativecommons.org
 creative_commons:
-  license: by-nc-sa
+  license: zero
   sidebar: true
   post: true
   language:
@@ -118,8 +118,8 @@ menu:
   home: / || fa fa-home
   archives: /archives/ || fa fa-archive
   categories: /categories/ || fa fa-th
-  tags: /tags/ || fa fa-tags
-  about: /about/ || fa fa-user
+  # tags: /tags/ || fa fa-tags
+  # about: /about/ || fa fa-user
   # schedule: /schedule/ || fa fa-calendar
   # sitemap: /sitemap.xml || fa fa-sitemap
   # commonweal: /404/ || fa fa-heartbeat
@@ -162,7 +162,7 @@ sidebar:
 # Sidebar Avatar
 avatar:
   # Replace the default image and set the url here.
-  url: # https://pic.downk.cc/item/5e907515504f4bcb04b6f798.jpg
+  url: https://ravenxrz-blog.oss-cn-chengdu.aliyuncs.com/img/oss_img/44746032.jfif
   # If true, the avatar will be dispalyed in circle.
   rounded: true
   # If true, the avatar will be rotated with the cursor.
@@ -178,7 +178,7 @@ site_state: true
 social:
   GitHub: https://github.com/ravenxrz || fa-brands fa-github-alt
   E-Mail: mailto:zhagn.xingrui@foxmail.com || fa fa-envelope
-  # Bilibili: https://space.bilibili.com/26319956 || fa fa-video
+  Bilibili: https://space.bilibili.com/26319956 || fa fa-video
   #Weibo: https://weibo.com/yourname || fab fa-weibo
   #Google: https://plus.google.com/yourname || fab fa-google
   #Twitter: https://twitter.com/yourname || fab fa-twitter
@@ -243,7 +243,7 @@ post_meta:
   item_text: true
   created_at: true
   updated_at:
-    enable: true
+    enable: false
     another_day: true
   categories: true
 
@@ -266,8 +266,8 @@ reward_settings:
   comment: 文章对你有帮助?打赏一下作者吧
 
 reward:
-  wechatpay: https://pic.downk.cc/item/5d064208451253d178a15b27.png
-  alipay: https://pic.downk.cc/item/5d0641c7451253d178a15376.png
+  wechatpay: https://ravenxrz-blog.oss-cn-chengdu.aliyuncs.com/img/oss_img/wechatpay.png
+  alipay: https://ravenxrz-blog.oss-cn-chengdu.aliyuncs.com/img/oss_img/alipay.png
   #paypal: /images/paypal.png
   #bitcoin: /images/bitcoin.png
 
@@ -478,7 +478,7 @@ yandex_site_verification:
 baidu_site_verification:
 
 # Enable baidu push so that the blog will push the url to baidu automatically which is very helpful for SEO.
-baidu_push: false
+baidu_push: true
 
 
 # ---------------------------------------------------------------
