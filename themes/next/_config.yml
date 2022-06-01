@@ -887,7 +887,7 @@ vendors:
 
   # Internal version: 5.13.0
   # fontawesome: //ravenxrz-blog.oss-cn-chengdu.aliyuncs.com/img/blog_cdn/vendor/all.min.css
-  fontawesome: //cdnjs.cloudflare.com/ajax/libs/font-awesome/5.13.0/css/all.min.css
+  fontawesome: //unpkg.com/font-awesome@4.7.0/css/font-awesome.min.css
   # fontawesome:
 
   # MathJax
