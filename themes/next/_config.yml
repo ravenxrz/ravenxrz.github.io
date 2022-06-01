@@ -115,9 +115,9 @@ darkmode: false
 # When running the site in a subdirectory (e.g. yoursite.com/blog), remove the leading slash from link value (/archives -> archives).
 # External url should start with http:// or https://
 menu:
-  home: / || fa-solid fa-house
-  archives: /archives/ || fa-solid fa-signs-post
-  categories: /categories/ || fa-solid fa-chart-simple
+  home: / || fa fa-home
+  archives: /archives/ || fa fa-archive
+  categories: /categories/ || fa fa-th
   # tags: /tags/ || fa fa-tags
   # about: /about/ || fa fa-user
   # schedule: /schedule/ || fa fa-calendar
@@ -176,8 +176,8 @@ site_state: true
 # Key is the link label showing to end users.
 # Value before `||` delimiter is the target permalink, value after `||` delimiter is the name of Font Awesome icon.
 social:
-  GitHub: https://github.com/ravenxrz || fa-brands fa-github-alt
-  E-Mail: mailto:zhagn.xingrui@foxmail.com || fa-solid fa-envelope-dot
+  GitHub: https://github.com/ravenxrz || fab fa-github
+  E-Mail: mailto:zhagn.xingrui@foxmail.com || fa fa-envelope
   Bilibili: https://space.bilibili.com/26319956 || fa-solid fa-play
   #Weibo: https://weibo.com/yourname || fab fa-weibo
   #Google: https://plus.google.com/yourname || fab fa-google
@@ -713,11 +713,11 @@ firestore:
 busuanzi_count:
   enable: false
   total_visitors: true
-  total_visitors_icon: fa-solid fa-user
+  total_visitors_icon: fa fa-user
   total_views: true
-  total_views_icon: fas fa-eye
+  total_views_icon: fa fa-eye
   post_views: true
-  post_views_icon: fas fa-eye
+  post_views_icon: fa fa-eye
 
 
 # ---------------------------------------------------------------
@@ -887,6 +887,7 @@ vendors:
 
   # Internal version: 5.13.0
   # see: https://cdnjs.com/libraries/font-awesome
+  # ravenxrz --> 版本采用的是5.13.0
   fontawesome: //ravenxrz-blog.oss-cn-chengdu.aliyuncs.com/img/blog_cdn/vendor/all.min.css
 
   # fontawesome: //unpkg.com/font-awesome@5.13.0/css/font-awesome.min.css
