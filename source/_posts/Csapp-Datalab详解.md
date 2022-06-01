@@ -4,6 +4,7 @@ categories: Csapp
 tags: Datalab
 abbrlink: 2d758396
 date: 2020-06-19 21:58:03
+mathjax: true
 ---
 
 准备把csapp详细看一遍，所有lab都做一遍，加深理解。

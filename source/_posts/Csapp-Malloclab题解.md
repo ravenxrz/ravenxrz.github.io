@@ -4,6 +4,7 @@ categories: Csapp
 abbrlink: '36920455'
 date: 2020-08-26 16:45:31
 tags:
+mathjax: true
 ---
 
 本次lab，malloclab，自己手写一个内存分配器。

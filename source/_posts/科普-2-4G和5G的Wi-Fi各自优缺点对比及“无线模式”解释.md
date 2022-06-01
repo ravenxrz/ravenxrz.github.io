@@ -5,6 +5,7 @@ toc: true
 abbrlink: bf94a76e
 date: 2019-08-11 13:59:08
 tags:
+mathjax: true
 ---
 
 以下信息均为个人理解，如有错误，还请指正。

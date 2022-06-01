@@ -4,6 +4,7 @@ categories: Csapp
 tags: Bomblab
 abbrlink: 7915569e
 date: 2020-06-21 23:06:10
+mathjax: true
 ---
 
 今天继续学习csapp.
