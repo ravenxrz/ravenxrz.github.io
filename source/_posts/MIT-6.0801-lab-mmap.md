@@ -445,9 +445,9 @@ sys_munmap(void)
 
 **调整 allocproc**， 完成proc vma的初始化：
 
-<img src="C:\Users\Raven\AppData\Roaming\Typora\typora-user-images\image-20220609135450269.png" alt="image-20220609135450269" style="zoom:50%;" />
+<img src="https://ravenxrz-blog.oss-cn-chengdu.aliyuncs.com/img/oss_img/image-20220609135450269.png" alt="image-20220609135450269" style="zoom:50%;" />
 
-**调整 uvmcopy**, 完成fork时的页表复制：
+**调整 uvmcopy**, 以支持fork时的页表复制。
 
 <img src="https://ravenxrz-blog.oss-cn-chengdu.aliyuncs.com/img/oss_img/image-20220609135558496.png" alt="image-20220609135558496" style="zoom:50%;" />
 
@@ -455,7 +455,7 @@ sys_munmap(void)
 
 <img src="https://ravenxrz-blog.oss-cn-chengdu.aliyuncs.com/img/oss_img/image-20220609135338868.png" alt="image-20220609135338868" style="zoom:50%;" />
 
-**添加main，**完成对全局vma_table的初始化：
+**修改main，**完成对全局vma_table的初始化：
 
 <img src="https://ravenxrz-blog.oss-cn-chengdu.aliyuncs.com/img/oss_img/image-20220609135707246.png" alt="image-20220609135707246" style="zoom:50%;" />
 
