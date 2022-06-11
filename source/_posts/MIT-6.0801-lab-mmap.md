@@ -212,7 +212,7 @@ sys_mmap(void)
 
 1. 获取传入参数，因为本labaddr始终为0，所以从第一个参数开始获取。
 2. 做一系列的合法性检查。比如传入的prot包含PROT_READ,则打开的文件也必须支持read。 唯一的注意点是，**如果file为readonly, 但是map的flag为MAP_PRIVATE，prot为 PROT_WRITE， 此时也可以写入的。**因为这样的映射组合，并不会修改到底层的文件，所有的修改都在进程自己的拷贝副本上进行。
-3. 分配vma，并执行初始化。内核需要在进程空间中找到一个合适的连续地址空间，用于完成本次映射请求，**找到的地址空间首地址应该是 page-aligned 的**， 如果不是page-aglined的，后续的page_fault_handler中会出现错误。比如当前映射的首地址为2K， 现在要访问的地址也是2K， 对于第一次load page来说，会出现page fault， 在page_fault_hanlder中，懒加载的page需要按照page-aligned的方式加载page, 所以懒加载的页地址为 0K~4K-1。其中0K~2K-1这部分并没有做任何映射，所以会出现问题。
+3. 分配vma，并执行初始化。内核需要在进程空间中找到一个合适的连续地址空间，用于完成本次映射请求，**找到的地址空间首地址应该是 page-aligned 的**， 如果不是page-aglined的，后续的page_fault_handler中会出现错误。比如当前映射的首地址为2K， 现在要访问的地址也是2K， 对于第一次load page来说，会出现page fault， 在page_fault_hanlder中，懒加载的page需要按照page-aligned的方式加载page, 所以懒加载的页地址为 0K-4K-1。其中0K-2K-1这部分并没有做任何映射，所以会出现问题。
 4. 最后在proc中找到合适的vma slot,存放vma结构即可。
 
 第三步中，寻找合适的连续地址空间，采用的是 lazy_growproc的方式来完成：
