@@ -123,15 +123,15 @@ You'll need locks to cope with the possibility that xv6 might use the E1000 from
 
 <img src="https://ravenxrz-blog.oss-cn-chengdu.aliyuncs.com/img/oss_img/image-20220616145246522.png" alt="image-20220616145246522" style="zoom: 50%;" />
 
-**NIC：**网卡硬件，在本实验中，特制E1000网卡
+**NIC：**网卡硬件，在本实验中，特指E1000网卡
 
 **LAN：** local area network, 局域网。
 
 现在简述下packet的收发过程：
 
-当应用程序想要发送一个网络packet时，该packet经过各层协议逐层封装，到达host的NIC driver，NIC driver和NIC硬件通过固定好的协议，将packet发送出去。反过来，当NIC接收到packet时，和NIC driver通过协议将接收到的数据转换为packet, 通过DMA的方式存放在host的内存中。
+当应用程序想要发送一个网络packet时，该packet经过各层协议逐层封装，到达host的NIC driver，NIC driver和NIC硬件通过通信协议，将packet发送出去。反过来，当NIC接收到packet时，和NIC driver通过协议将接收到的数据转换为packet, 通过DMA的方式存放在host的内存中。
 
-在本实验中，`应用程序数据<->sockets<->udp<->ip<->arp<->NIC driver`这些逻辑处理已经提前实现，我们唯一需要完成的即NIC driver与NIC之间的通信。而这个通信过程中，最为重要的部分是，**driver如何存放和处理来自应用程序和NIC硬件的packet数据。**
+在本实验中，`应用程序数据<->sockets<->udp<->ip<->arp<->NIC driver`这些逻辑处理已经提前实现，我们唯一需要完成的是NIC driver与NIC之间的通信。而这个通信过程中，最为重要的部分是，**driver如何存放和处理来自应用程序和NIC硬件的packet数据。**
 
 ### 2. tx_ring 和 rx_ring
 
@@ -143,7 +143,7 @@ You'll need locks to cope with the possibility that xv6 might use the E1000 from
 
 <img src="https://ravenxrz-blog.oss-cn-chengdu.aliyuncs.com/img/oss_img/image-20220616210438091.png" alt="image-20220616210438091" style="zoom:50%;" />
 
-这里使用的是典型的发送者和消费者模型，队列的写者为上层应用程序，读者为E1000硬件（硬件将读取到的数据转为电信号发送出去）。该队列有**HEAD**和TAIL两**个**指针，上层应用写时，写入至TAIL指针所指位置（写完后TAIL+1），E1000硬件读时，从HEAD开始读（读完HEAD+1），当HEAD=TAIL时，硬件认为无可读数据。
+这里使用的是典型的生产者和消费者模型，队列的写者为上层应用程序，读者为E1000硬件（硬件将读取到的数据转为电信号发送出去）。该队列有**HEAD**和**TAIL**两个指针，上层应用写时，写入至TAIL指针所指位置（写完后TAIL+1），E1000硬件读时，从HEAD开始读（读完HEAD+1），当HEAD=TAIL时，硬件认为无可读数据。
 
 每个队列item称为Transmit Descriptor, Descriptor的结构为如下（先了解即可，不用完全理解其含义，可在看完后续的逻辑处理后，再回到此部分查看各字段含义会更清晰）：
 
@@ -432,5 +432,5 @@ e1000_init(uint32 *xregs)
 
 本lab虽说是网卡驱动相关的lab，不过只关心了网卡驱动的核心处理逻辑，这部分需要阅读手册，学习了现代网卡（其实也比较老了）的处理方式(通过rx_ring和tx_ring), DMA处理等。也算不错的体验。
 
-至此，整个MIT 6.s081的所有lab均已完成。休息调整，即将毕业了，祝自己毕业快乐。
+至此，MIT 6.s081的所有lab均已完成。休息调整，即将毕业了，祝自己毕业快乐。
 
