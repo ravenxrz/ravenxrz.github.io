@@ -185,7 +185,7 @@ select {
 
 当service收到raft log commit消息（即applyMsg后），需要找到指定reply channel回传给rpc，并在最后删除此log index channel。此部分逻辑如下，唯一需要注意的是，对于通过log index channel的回传，我也添加了超时检测。
 
-```
+```go
 kv.mu.Lock()
 if kv.lastAppliedIndex < applyMsg.CommandIndex {
     kv.lastAppliedIndex = applyMsg.CommandIndex
