@@ -362,7 +362,7 @@ struct Node {
 
 > 个人认为 _M_client_data 其实也没必要。因为`_M_free_list_link`既代表`next_node`,也代表下一个可用内存单元
 
-**第二级配置器采用了常见的union trick 来避免多于开销。**
+**第二级配置器采用了常见的union trick 来避免多余开销。**
 
 ok，现在介绍几个辅助函数：
 
@@ -378,7 +378,7 @@ ok，现在介绍几个辅助函数：
 
 ```
 
-同理，给定一个请求size，要寻找恰当的list（比如传入的size=1， 则在 list#0中分配，传入size=9, 则找到lsit#1)来分配内存，过逻辑如下:
+同理，给定一个请求size，要寻找恰当的list（比如传入的size=8， 则在 list#0中分配，传入size=16, 则找到lsit#1)来分配内存，过逻辑如下:
 
 ```cpp
   //根据申请数据块大小找到相应空闲链表的下标，n 从 0 起算
@@ -441,7 +441,7 @@ ok，现在介绍几个辅助函数：
 
 流程图如下：
 
-<img src="https://ravenxrz-blog.oss-cn-chengdu.aliyuncs.com/img/oss_imgstl_chunk_alloc%E6%B5%81%E7%A8%8B.svg" alt="stl_chunk_alloc流程" style="zoom:125%;" />
+![stl_chunk_alloc流程](https://ravenxrz-blog.oss-cn-chengdu.aliyuncs.com/img/oss_imgstl_chunk_alloc%E6%B5%81%E7%A8%8B.svg)
 
 ```cpp
 /* Returns an object of size __n, and optionally adds to size __n free list.*/
@@ -558,7 +558,7 @@ __default_alloc_template<__threads, __inst>::_S_chunk_alloc(size_t __size,
 
 这里用到了两个指针： `_S_start_free`, `_S_end_free`, 两个指针指向了现在内存池（所谓内存池，不过是由malloc分配的一大片chunk罢了）的可用空间起点和终点。代码逻辑如下：
 
-1. 如果内存池剩余空间能够满足20个内存单元（__total_bytes)大小，直接返回，更新`_S_start_free`
+1. 如果内存池剩余空间能够满足20个内存单元（`__total_bytes`)大小，直接返回，更新`_S_start_free`
 2. 否则，查看内存池剩余空间是否至少满足一个内存单元，如果满足，则尽可能将所有剩余的空间都分配出去，`__nobjs` 更新为最终分配了多少个内存单元。
 3. 否则，如果内存池剩余空间连一个内存单元都无法满足:
    1. 将内存池剩余的空间交给合适的list使用，相当于清空了内存池。 （注意由于我们分配的粒度和释放的粒度都是8的倍数，所以剩余的空间肯定也是8的倍数，也就是说一定能找到恰当的list来插入）。
