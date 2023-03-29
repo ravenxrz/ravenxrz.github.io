@@ -496,7 +496,7 @@ struct iterator_traits<const _Tp*> {
 
 - `pointer`： 就是相应的指针类型。
 
-- `iterator_category`： 的作用是标识迭代器的移动特性和可以对迭代器执行的操作，从 `iterator_category` 上，可将迭代器分为 `Input Iterator、Output Iterator、Forward Iterator、Bidirectional Iterator、Random Access Iterator` 五类，这样分可以尽可能地提高效率。在stl中，分别定义为：
+- `iterator_category`： 的作用是标识迭代器的移动特性和可以对迭代器执行的操作，从 `iterator_category` 上，可将迭代器分为 `Input Iterator、Output Iterator、Forward Iterator、Bidirectional Iterator、Random Access Iterator` 五类，**为什么需要定义这么多种类的迭代器？主要是为了算法可以针对特定的迭代器使用特定的算法，从而提高算法效率**。在stl中，分别定义为：
 
   ```cpp
   // iterator_category 五种迭代器类型
@@ -567,9 +567,7 @@ struct iterator_traits<const _Tp*> {
 
   ![](https://ravenxrz-blog.oss-cn-chengdu.aliyuncs.com/img/oss_img011.png)
 
-  
 
->  TODO: 暂时还未看到这些迭代器分类是如何在代码中使用中，目前仅在cpp reference doc中见到这些名词。待补充。
 
 ## 5. iterator
 
