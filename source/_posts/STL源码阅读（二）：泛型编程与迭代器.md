@@ -5,13 +5,13 @@ date: 2023-03-29 15:34:31
 tags:
 ---
 
-这是stl源码阅读系列的第二篇，这一篇来看看stl中中迭代器traits的实现。
+这是stl源码阅读系列的第二篇，这一篇来看看stl中迭代器traits的实现。
 
 在stl中，有三个彼此关联的组件：
 
 <img src="https://ravenxrz-blog.oss-cn-chengdu.aliyuncs.com/img/oss_imgstl%E5%AE%B9%E5%99%A8-%E8%BF%AD%E4%BB%A3%E5%99%A8-%E7%AE%97%E6%B3%95%E5%85%B3%E8%81%94.svg" alt="stl容器-迭代器-算法关联" style="zoom:150%;" />
 
-Containers(即我们常用的vector, list, deque等)装载数据结构，Algorithms状态数据操作，两者相互独立，Iterator作为中间人，将两者联系起来。iterator提供公有访问容器数据成员的接口，隐藏了每个容器的具体存储实现（即迭代器设计模式）。每个容量都会提供一份iterator实现，所以在分析容器前，先看看iterator。
+Containers(即我们常用的vector, list, deque等)装载数据结构，Algorithms装载数据操作，两者相互独立，Iterator作为中间人，将两者联系起来。iterator提供访问容器数据成员的接口，隐藏了每个容器的具体存储实现（即迭代器设计模式）。每个容量都会提供一份iterator实现，所以在分析容器前，先看看iterator。
 
 另外，整个stl可以看做泛型编程的最佳实践，所以在本篇中也会介绍一些泛型（模板）编程的概念。
 
@@ -114,7 +114,7 @@ inline const Student & Max<Student>(const Student & stu1, const Student & stu2)
 
 是不是和前文的编译后的 **模板实例化** 很类似。是的，只不过是我们人为告诉编译器，对于这种`Student`类型，请按照这种方式处理。
 
-实际上，这种方式的全称为 **全特化**, 还有种特化方式，称为 **偏特化**。首先模板参数可以不只一个，全特化代表指定了所有模板参数，而偏特化则是只指定了部分参数。例子如下:
+实际上，这种方式的全称为 **全特化**, 还有种特化方式，称为 **偏特化**。模板参数可以不只一个，全特化代表指定了所有模板参数，而偏特化则是只指定了部分参数。例子如下:
 
 ```cpp
 #include <iostream>
@@ -210,7 +210,7 @@ int main() {
 
 ## 4. Iterator Tratis
 
-ok，前面把背景知识都铺垫了，现在开始步入正题。首先stl的每个容器都是模板容器，每个容器也实现了各自的迭代器。现在问一个问题：**算法族函数是如何透过迭代器知道容器内部元素的类型的？** 比如:
+ok，前面把背景知识都铺垫了，现在开始步入正题。stl的每个容器都是模板容器，每个容器也实现了各自的迭代器。现在问一个问题：**算法族函数是如何透过迭代器知道容器内部元素的类型的？** 比如:
 
 ```cpp
 #include <iostream>
@@ -231,11 +231,11 @@ int main() {
 }
 ```
 
-对于random_one算法来说，它只知道自己接收的是一个iterator类，但是由于不知道Iterator内代表元素类型是什么，我们无法写出注释出的代码（实际上c++ 14/17之后是可以有办法写出的，后文会给出答案，这里专注老版本的写法)，那该怎么做？
+对于random_one算法来说，它只知道自己接收的是一个iterator类，但是由于不知道Iterator内代表元素类型是什么，我们无法写出注释处的代码（实际上c++ 14/17之后是可以有办法写出的，后文会给出答案，这里专注老版本的写法)，那该怎么做？
 
 ### 1. 内嵌类型声明
 
-实际上是利用到 **内嵌类型声明**的trick。听起来挺复杂的，给个例子：
+为了解决上述问题，需要利用到 **内嵌类型声明**的trick。听起来挺高级的术语，但给个例子就懂了：
 
 ```cpp
 class MyClass {
@@ -284,7 +284,7 @@ typename RandomAccessIterator::value_type random_one(RandomAccessIterator begin,
 
 ### 2. 特化
 
-有了内嵌类型声明，实际上我们的`random_one`算法已经能够处理一些标准容器的迭代器了。但是如果是如下代码：
+有了内嵌类型声明，我们的`random_one`算法已经能够处理一些标准容器的迭代器了。但是如果是如下代码：
 
 ```cpp
 #include <iostream>
@@ -309,7 +309,7 @@ int main() {
 
 一种容易想到的解决方案是，使用特例化方式，为 `int *` 类型生成特例化版本的`random_one`算法。但是难道我们要为所有类型都生成一个重载吗? 这也是不现实的。
 
-那stl是如何处理的？ stl的做法是引入了一个中间层，称为 `iterator_traits`
+stl是如何处理的？ stl的做法是引入了一个中间层，称为 `iterator_traits`
 
 ```cpp
 template <class _Iterator>
@@ -586,13 +586,13 @@ struct iterator {
 };
 ```
 
-这是迭代器的基类， 以看到这里就定义了`iterator_traits`中要使用的各种类型，符合前文的分析。同时注意，`Distance = ptrdiff_t, class _Pointer = _Tp*, class _Reference = _Tp&`这三个模板是有默认值的。所以之后使用时，可以只传入 `_Category`与`_Tp`即可。
+这是迭代器的基类， 可以以看到这里定义了`iterator_traits`中要使用的各种类型，符合前文的分析。同时注意，`Distance = ptrdiff_t, class _Pointer = _Tp*, class _Reference = _Tp&`这三个模板是有默认值的。所以之后使用时，可以只传入 `_Category`与`_Tp`即可。
 
 
 
 ## 6. 总结
 
-本文介绍了什么是模板，模板特例化，同时从 **算法从如何透过迭代器知道迭代器解引用后的元素类型** 问题出发，一步步引出了 `iterator traits`的实现。
+本文介绍了什么是模板，模板特例化，同时从**算法从如何透过迭代器知道迭代器解引用后的元素类型** 问题出发，一步步引出了 `iterator traits`的实现。
 
 
 
