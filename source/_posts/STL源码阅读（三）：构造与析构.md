@@ -5,7 +5,7 @@ date: 2023-03-29 15:34:31
 tags:
 ---
 
-这是stl源码阅读系列的第三篇，这一篇来看看stl中对象的构造与析构是如何处理的。由于构造与析构和分配器、traits技术强相关，相信经过前两篇的介绍，看本篇也就没那么困难了。
+这是stl源码阅读系列的第三篇，这一篇来看看stl中对象的构造与析构是如何处理的。
 
 <!--more-->
 
@@ -14,9 +14,9 @@ tags:
 通常来说new操作分为两步：
 
 1. 分配内存buffer
-2. 在buffer构造对象（调用构造函数）
+2. 在buffer上构造对象（调用构造函数）
 
-其中第一步成称为`operator new`， 第二步称为`placement new`。两者的使用例子如下：
+其中第一步称为`operator new`， 第二步称为`placement new`。两者的使用例子如下：
 
 ```cpp
 #include <iostream>
@@ -121,7 +121,7 @@ inline void _Destroy(_Tp* __pointer) {
 
 > 如果是builtin的类型，无对应的析构函数，也未发现特例化版本，是否不应该直接调用第一个版本的`destroy`
 >
-> TODO: 需要再后文分析容器时，查看`destroy`的具体用法
+> TODO: 需要在后文分析容器时，查看`destroy`的具体用法
 
 **第二版本 `_Destroy`:**
 
@@ -163,7 +163,7 @@ __destroy(_ForwardIterator __first, _ForwardIterator __last, _Tp*)
 }
 ```
 
-这里又用到了内置类型声明技术，实际上是去看 `_Tp`的 `has_trivial_destructor`是什么, 看下 `__type_traits`类：
+这里又用到了内置类型声明技术，实际上是去看 `_Tp`的 `has_trivial_destructor`是什么类型, 看下 `__type_traits`类：
 
 ```cpp
 template <class _Tp>
