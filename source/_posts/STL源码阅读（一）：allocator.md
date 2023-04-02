@@ -603,3 +603,29 @@ __default_alloc_template<__threads, __inst>::_S_chunk_alloc(size_t __size,
 
 
 
+## 3. simple_alloc
+
+除了如上配置器外，stl还封装了一个 `simple_alloc` 类：
+
+```cpp
+// 单纯地转调用，调用传递给配置器(第一级或第二级)；多一层包装，使 _Alloc 具备标准接口
+template<class _Tp, class _Alloc>
+class simple_alloc {
+
+public:
+    // 配置 n 个元素
+    static _Tp* allocate(size_t __n)
+      { return 0 == __n ? 0 : (_Tp*) _Alloc::allocate(__n * sizeof (_Tp)); }
+    static _Tp* allocate(void)
+      { return (_Tp*) _Alloc::allocate(sizeof (_Tp)); }
+    static void deallocate(_Tp* __p, size_t __n)
+      { if (0 != __n) _Alloc::deallocate(__p, __n * sizeof (_Tp)); }
+    static void deallocate(_Tp* __p)
+      { _Alloc::deallocate(__p, sizeof (_Tp)); }
+};
+```
+
+实际上，`simple_alloc`只是做了非常浅的一层包装，使得 `_Alloc`具有标准分配接口，什么是标准分配接口？个人理解是，前面提到的第一级别和第二级别分配器，每次分配都需要精确计算到分配多少个字节，但实际上容器中使用时，分配总是以“对象”为粒度的，即每次分配的大小都是“对象”大小的倍数。`simple_alloc`对外暴露的接口即为 **要分配多少个对象**，而不是要分配多少个字节。
+
+
+
