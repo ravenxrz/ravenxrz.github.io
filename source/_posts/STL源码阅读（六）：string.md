@@ -228,7 +228,9 @@ basic_string<_Tp, _Traits, _Alloc>::append(const _Tp* __first,
 
 **上面的实现是非常老的版本了，实际上现代std::string 已经进化了两个版本，一是COW机制，另一个是SSO 短字符串优化**。
 
-cow机制是对`std::string `增加了 `ref_count`原子变量，若个字符串变量可以共享存储，只有在有“修改”时才做实际拷贝。 **但实际上cow是有一些缺点的：**
+![07001538_63b8492ac460e30177](https://ravenxrz-blog.oss-cn-chengdu.aliyuncs.com/img/oss_img07001538_63b8492ac460e30177.webp)
+
+cow机制是对`std::string `增加了 `ref_count`原子变量，若字符串变量可以共享存储，只有在有“修改”时才做实际拷贝。 **但实际上cow是有一些缺点的：**
 
 1. 可能造成野指针：
 
@@ -276,7 +278,7 @@ b.push_back("x");
 
 sso短字符串优化考虑到大部分字符串是比较短的，那么可以在栈上预分配一些内存，短字符串字符在栈上存储，达到一定阈值后，才在堆上分配。
 
-> 这种思想在c++11后挺多的，比如 std::function的视线。
+> 这种思想在c++11后挺多的，比如 std::function。
 
 一种实现方式是：
 
@@ -300,21 +302,21 @@ class sso_string // __gun_ext::__sso_string
 
 **短字符串:**
 
-![浅谈 C++ 字符串：std::string 与它的替身们_c++_14](https://s2.51cto.com/images/blog/202301/07001539_63b8492b06d1e81831.png?x-oss-process=image/watermark,size_16,text_QDUxQ1RP5Y2a5a6i,color_FFFFFF,t_30,g_se,x_10,y_10,shadow_20,type_ZmFuZ3poZW5naGVpdGk=/format,webp/resize,m_fixed,w_1184)
+![07001539_63b8492b06d1e81831](https://ravenxrz-blog.oss-cn-chengdu.aliyuncs.com/img/oss_img07001539_63b8492b06d1e81831.webp)
 
 **长字符串**
 
-![浅谈 C++ 字符串：std::string 与它的替身们_string_15](https://s2.51cto.com/images/blog/202301/07001539_63b8492b30f0e64872.png?x-oss-process=image/watermark,size_16,text_QDUxQ1RP5Y2a5a6i,color_FFFFFF,t_30,g_se,x_10,y_10,shadow_20,type_ZmFuZ3poZW5naGVpdGk=/format,webp/resize,m_fixed,w_1184)
+![07001539_63b8492b30f0e64872](https://ravenxrz-blog.oss-cn-chengdu.aliyuncs.com/img/oss_img07001539_63b8492b30f0e64872.webp)
 
 扩容和前面的扩容方式一致，2倍扩容。
 
-![浅谈 C++ 字符串：std::string 与它的替身们_#include_16](https://s2.51cto.com/images/blog/202301/07001539_63b8492b5001f59037.png?x-oss-process=image/watermark,size_16,text_QDUxQ1RP5Y2a5a6i,color_FFFFFF,t_30,g_se,x_10,y_10,shadow_20,type_ZmFuZ3poZW5naGVpdGk=/format,webp/resize,m_fixed,w_1184)
 
 
+![07001539_63b8492b5001f59037](https://ravenxrz-blog.oss-cn-chengdu.aliyuncs.com/img/oss_img07001539_63b8492b5001f59037.webp)
 
 ## 3. 总结
 
-老版本`std::string`和 `vector`存储方式很相似，只不过需要在默认多存一个`\0`, 在功能上多了很多function。新版包括 `cow` （实际上也被遗弃）和 `sso_string`,  这种小空间占用先放在 stack， 大空间占用再放在 `heap` 的思想在c++标准库中被反复用到，是个可以借鉴的idea.
+老版本`std::string`和 `vector`存储方式很相似，只不过默认多存一个`\0`, 在功能上多了很多function。新版包括 `cow` （实际上也被遗弃）和 `sso_string`,  这种小空间占用先放在 stack， 大空间占用再放在 `heap` 的思想在c++标准库中被反复用到，是个可以借鉴的idea.
 
 ## 4. 参考
 
