@@ -5,7 +5,9 @@ date: 2023-04-15 20:11:31
 tags:
 ---
 
-本文分析 unique_ptr 的实现原理，介绍其为什么其默认size仅为一个 raw pointer size； 接着分析 shared_ptr 的实现原理，从两种构造方式入手，分析两种构造方式所带来的不同内存布局，最终通过`shared_ptr`的拷贝，简述了其线程安全性。
+本文首先分析 unique_ptr 的实现原理，介绍其为什么其默认size仅为一个 raw pointer size； 接着分析了 shared_ptr 的实现原理，从两种构造方式入手，分析两种构造方式所带来的不同内存布局，最终通过`shared_ptr`的拷贝分析，简述了其线程安全性。
+
+<!--more-->
 
 ## unique_ptr
 
