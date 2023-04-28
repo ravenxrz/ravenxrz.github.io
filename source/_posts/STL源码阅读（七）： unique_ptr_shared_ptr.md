@@ -5,7 +5,7 @@ date: 2023-04-15 20:11:31
 tags:
 ---
 
-本文首先分析 unique_ptr 的实现原理，介绍其为什么其默认size仅为一个 raw pointer size； 接着分析了 shared_ptr 的实现原理，从两种构造方式入手，分析两种构造方式所带来的不同内存布局，最终通过`shared_ptr`的拷贝分析，简述了其线程安全性。
+本文首先分析 unique_ptr 的实现原理，介绍为什么其默认size仅为一个 raw pointer size； 接着分析了 shared_ptr 的实现原理，从两种构造方式入手，分析两种构造方式所带来的不同内存布局，最终通过分析`shared_ptr`的拷贝源码，简述了`shared_ptr`的线程安全性。
 
 <!--more-->
 
@@ -117,7 +117,7 @@ typename conditional<is_reference<deleter_type>::value,
       __tuple_type                                      _M_t;
 ```
 
-`tuple_type`为一个二元元组类型。不过需要注意的是，若采用默认deleter, `_M_t`的大小仅为 8 Bytes(64位程序)。  **这是为何呢？按道理存储一个指针+deleter应该是大于一个指针的大小的， 计算deleter是一个empty class，其size也至少为1。**
+`tuple_type`为一个二元元组类型。不过需要注意的是，若采用默认deleter, `_M_t`的大小仅为 8 Bytes(64位程序)。  **这是为何呢？按道理存储一个指针+deleter应该是大于一个指针的大小的， 就算deleter是一个empty class，其size也至少为1。**
 
 这是因为tuple应用了 Empty Class Optimization (EBO) 技术。对于空基类其大小可以优化为 0 bytes. 具体可参考：[从tuple谈起-浅谈c++中空基类优化的使用 - 知乎 (zhihu.com)](https://zhuanlan.zhihu.com/p/588929645)
 
