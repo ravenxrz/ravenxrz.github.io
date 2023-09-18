@@ -19,17 +19,17 @@ date: 2023-09-18 13:59:08
 
 我们都知道，为了充分利用程序的locality，当前的CPU架构基本包含L1, L2， L3 cache + Memory，如下图：
 
-![CPU_cache_memory](https://ravenxrz-blog.oss-cn-chengdu.aliyuncs.com/img/oss_imgoss_imgCPU_cache_memory.png)
+![CPU_cache_memory](https://ravenxrz-blog.oss-cn-chengdu.aliyuncs.com/img/oss_imgCPU_cache_memory.svg)
 
 暂时抛开多级cache和memory，假设cpu之间共有一个Memory，自身有一个私有cache：
 
-<img src="https://ravenxrz-blog.oss-cn-chengdu.aliyuncs.com/img/oss_imgCPU_one_cache.png" alt="CPU_one_cache" style="zoom:150%;" />
+<img src="https://ravenxrz-blog.oss-cn-chengdu.aliyuncs.com/img/oss_imgoss_imgCPU_one_cache-20230916200924730.svg" alt="CPU_one_cache" style="zoom:150%;" />
 
 ### Cache coherence
 
 在多核架构下，针对同一个变量x，每个cpu内部cache都有可能有x的一份副本（比如每个cpu都执行 load x指令）。接着cpu0执行store x指令，即更新了x，如何保证更新x后，之后所有cpu都能读到这份更改，是本节要探讨的问题。
 
-<img src="https://ravenxrz-blog.oss-cn-chengdu.aliyuncs.com/img/oss_imgoss_imgCPU_one_cache_sync.png" alt="CPU_one_cache_sync" style="zoom:150%;" />
+<img src="https://ravenxrz-blog.oss-cn-chengdu.aliyuncs.com/img/oss_imgoss_imgCPU_one_cache_sync-20230916200805095.svg" alt="CPU_one_cache_sync" style="zoom:150%;" />
 
 可以把解决这个问题的方式分为两类，一种是软件解决方式（通常需要结合compiler和os），称为Cache coherency schema。另一种是硬件解决方式，称为Cache coherency protocol. 本节仅探讨硬件解决方式。
 
@@ -62,7 +62,7 @@ line ...
 
 在单线程下，永远都是line 1 -> line 2 -> line 3 -> line N。换成多核多线程, 希望代码依然能**”顺序执行“**：
 
-<img src="https://ravenxrz-blog.oss-cn-chengdu.aliyuncs.com/img/oss_imgoss_img%E5%A4%9A%E7%BA%BF%E7%A8%8B%E7%BA%BF%E6%80%A7%E6%A8%A1%E5%9E%8B.png" alt="多线程线性模型" style="zoom:150%;" />
+<img src="https://ravenxrz-blog.oss-cn-chengdu.aliyuncs.com/img/oss_img%E5%A4%9A%E7%BA%BF%E7%A8%8B%E7%BA%BF%E6%80%A7%E6%A8%A1%E5%9E%8B.svg" alt="多线程线性模型" style="zoom:150%;" />
 
 **如何理解这里的”顺序执行“：**
 
@@ -93,7 +93,7 @@ TSO主要是为了优化写操作而设计的。想象一下，系统上电后�
 
 显然从内存中load value的时间比cpu执行指令的时间高得多。为了更快执行写指令，硬件工程师们为CPU增加了==**”Store Buffer“**==。 如下图所示：
 
-![Store Buffer](https://ravenxrz-blog.oss-cn-chengdu.aliyuncs.com/img/oss_imgoss_imgStore%20Buffer.png)
+![Store Buffer](https://ravenxrz-blog.oss-cn-chengdu.aliyuncs.com/img/oss_imgoss_imgStore%20Buffer.svg)
 
 
 
@@ -109,7 +109,7 @@ assert(b == 2);
 
 假设只有一个cpu，cache最开始为空，执行 `a=1`时，由于cache为空，该指令进入Store Buffer, 接着执行`b=a+1`, 此时cache加载出a的旧值为0，但store buffer中`a=1`的指令并未执行，`b=a+1`将拿着cache中a的旧值0进行计算，计算出`b=1`，最终`assert`掉了。 这样看来仿佛 `a=1`与 `b=a+1`两行发生重排序。 出现的原因在于，a的值有两份，一份在cache中，一份在store buffer中，为了解决这个问题，硬件工程师们对上图做了微调：
 
-![Store Buffer-forward](https://ravenxrz-blog.oss-cn-chengdu.aliyuncs.com/img/oss_imgoss_imgStore%20Buffer-forward.png)
+![Store Buffer-forward](https://ravenxrz-blog.oss-cn-chengdu.aliyuncs.com/img/oss_imgoss_imgStore%20Buffer-forward.svg)
 
 cpu在执行load指令时，除了从cache中load数据，也会从store buffer中load数据。这样保证了 `a=1` 一定会被cpu看到。这种读方式叫做  ==**Store Forwarding**==。
 
@@ -251,7 +251,7 @@ void bar()
 
 **CPU承诺：如果一个invalidate请求在invalidate queue中，那么对于这个请求相关的cacheline，在该请求被处理完成前，cpu不会再发送任何与该cacheline相关的MESI消息。**
 
-![Invalidate Queue](https://ravenxrz-blog.oss-cn-chengdu.aliyuncs.com/img/oss_imgoss_imgInvalidate%20Queue.png)
+![Invalidate Queue](https://ravenxrz-blog.oss-cn-chengdu.aliyuncs.com/img/oss_imgoss_imgInvalidate%20Queue.svg)
 
 回到主题，读读重排是如何发生的：
 
@@ -784,7 +784,7 @@ int main()
 
 我们可以识别上述的4组同步点：
 
-![同步点](https://ravenxrz-blog.oss-cn-chengdu.aliyuncs.com/img/oss_imgoss_img%E5%90%8C%E6%AD%A5%E7%82%B9.png)
+![同步点](https://ravenxrz-blog.oss-cn-chengdu.aliyuncs.com/img/oss_imgoss_img%E5%90%8C%E6%AD%A5%E7%82%B9.svg)
 
 **但是1,3,6和2,4,5之间没有任何同步关系。我们可以将3,4重排，5和6重排。这样z是可能为0的。** 另外一种理解方式是，acquire-release对于曾经在其他地方发生过同步的原子变量没有任何约束。
 
@@ -889,7 +889,7 @@ T6:  // 6, x 必然等于1， 因为T1时刻的store，一定会被read_y_then_x
 7. 注意，浮点原子类型在使用`compare_exchange`等函数时可能会出错，因为浮点数的表示形式可能不一样。此外，浮点原子类型没有任何算数运算操作(比如+=，-=等)；
 
 
-
+   
 
 
 
