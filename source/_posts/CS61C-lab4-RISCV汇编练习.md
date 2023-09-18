@@ -1,8 +1,9 @@
 ---
-title:  CS61C-lab4-RISCV汇编练习
+title: CS61C-lab4-RISCV汇编练习
 categories: CS61C
+abbrlink: a1e407f
 date: 2022-05-11 13:58:06
-tags: 
+tags:
 ---
 
 ## 前言

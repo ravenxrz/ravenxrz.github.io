@@ -1,6 +1,7 @@
 ---
 title: MIT6.S081-lazy-allocation
 categories: MIT-6.S081
+abbrlink: 100258ad
 date: 2022-05-17 22:10:31
 tags:
 ---

@@ -1,6 +1,7 @@
 ---
 title: MIT6.S081-pagetable
 categories: MIT-6.S081
+abbrlink: cb35a459
 date: 2022-05-08 22:10:31
 tags:
 ---

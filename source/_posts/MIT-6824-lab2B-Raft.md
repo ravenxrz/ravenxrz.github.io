@@ -1,6 +1,7 @@
 ---
 title: MIT-6824-lab2B-Raft
 categories: MIT6824
+abbrlink: 94f1bab5
 date: 2022-02-23 22:10:31
 tags:
 ---

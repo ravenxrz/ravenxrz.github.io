@@ -1,6 +1,7 @@
 ---
-title: STL源码阅读（八）： std::function源码分析
+title: 'STL源码阅读（八）： std::function源码分析'
 categories: stl
+abbrlink: 643c15cb
 date: 2023-05-24 20:11:31
 tags:
 ---

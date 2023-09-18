@@ -1,6 +1,7 @@
 ---
 title: STL源码阅读（四）： copy & fill & uninitialized
 categories: stl
+abbrlink: aa03b5d7
 date: 2023-04-02 15:34:31
 tags:
 ---

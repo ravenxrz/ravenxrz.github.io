@@ -1,7 +1,8 @@
 ---
 title: CMU-15445-proj3(QueryExecutor)
-date: 2022-01-20 15:54:14
 categories: CMU15445
+abbrlink: 2fda900
+date: 2022-01-20 15:54:14
 tags:
 ---
 

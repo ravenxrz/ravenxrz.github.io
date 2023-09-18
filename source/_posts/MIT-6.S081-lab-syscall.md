@@ -1,6 +1,7 @@
 ---
 title: MIT-6.S081-lab-syscall
 categories: MIT-6.S081
+abbrlink: 79d63091
 date: 2022-05-04 22:10:31
 tags:
 ---

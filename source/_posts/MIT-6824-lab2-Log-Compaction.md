@@ -1,6 +1,7 @@
 ---
 title: MIT-6824-lab2-Raft-LogCompaction
 categories: MIT6824
+abbrlink: ed71d080
 date: 2022-04-20 22:10:31
 tags:
 ---

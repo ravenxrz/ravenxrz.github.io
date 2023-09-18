@@ -1,7 +1,8 @@
 ---
 title: CMU-15445-proj4(Concurrency Control)
-date: 2022-01-27 15:54:14
 categories: CMU15445
+abbrlink: a0062847
+date: 2022-01-27 15:54:14
 tags:
 ---
 

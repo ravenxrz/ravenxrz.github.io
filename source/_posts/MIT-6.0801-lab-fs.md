@@ -1,7 +1,7 @@
 ---
-
 title: MIT6.S081-lab-fs
 categories: MIT-6.S081
+abbrlink: 64032a5e
 date: 2022-06-05 22:10:31
 tags:
 ---

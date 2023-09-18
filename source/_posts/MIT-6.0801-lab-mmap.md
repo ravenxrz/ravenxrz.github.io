@@ -1,7 +1,7 @@
 ---
-
 title: MIT6.S081-lab-mmap
 categories: MIT-6.S081
+abbrlink: 5300ed51
 date: 2022-06-09 22:10:31
 tags:
 ---

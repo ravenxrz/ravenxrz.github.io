@@ -1,6 +1,7 @@
 ---
 title: STL源码阅读（六）： string
 categories: stl
+abbrlink: d5de65a3
 date: 2023-04-10 20:11:31
 tags:
 ---

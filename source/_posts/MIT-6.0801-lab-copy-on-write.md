@@ -1,10 +1,10 @@
 ---
-
 title: MIT6.S081-copy-on-write
 categories: MIT-6.S081
+mathjax: true
+abbrlink: 9f5039ff
 date: 2022-05-21 22:10:31
 tags:
-mathjax: true
 ---
 
 ## 0. 前言

@@ -1,6 +1,7 @@
 ---
 title: STL源码阅读（二）： 泛型编程，iterator traits与iterator
 categories: stl
+abbrlink: 3ed36fb7
 date: 2023-03-29 15:34:31
 tags:
 ---

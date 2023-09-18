@@ -1,6 +1,7 @@
 ---
 title: MIT-6824-lab3B-Snapshot/Log Compaction
 categories: MIT6824
+abbrlink: 42ec804e
 date: 2022-04-29 22:10:31
 tags:
 ---

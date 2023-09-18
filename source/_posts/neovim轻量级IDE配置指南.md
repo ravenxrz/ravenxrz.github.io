@@ -1,7 +1,8 @@
 ---
 title: Neovim轻量级IDE配置指南
 categories: neovim
-date: 2022-04-8 22:10:31
+abbrlink: 35a336e5
+date: 2022-04-08 22:10:31
 tags:
 ---
 

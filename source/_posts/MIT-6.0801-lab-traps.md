@@ -1,6 +1,7 @@
 ---
 title: MIT6.S081-traps
 categories: MIT-6.S081
+abbrlink: 155ab3d5
 date: 2022-05-13 22:10:31
 tags:
 ---

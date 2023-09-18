@@ -1,7 +1,8 @@
 ---
 title: CMU-15445-proj2-checkpoint2(B+ tree index)
-date: 2021-10-23 21:53:14
 categories: CMU15445
+abbrlink: a38f1b1e
+date: 2021-10-23 21:53:14
 tags:
 ---
 

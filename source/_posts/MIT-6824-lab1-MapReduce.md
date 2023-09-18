@@ -1,6 +1,7 @@
 ---
 title: MIT-6824-lab1-MapReduce
 categories: MIT6824
+abbrlink: 417f7aba
 date: 2022-02-13 14:50:31
 tags:
 ---

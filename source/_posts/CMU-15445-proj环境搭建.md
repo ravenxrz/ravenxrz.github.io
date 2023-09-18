@@ -1,6 +1,7 @@
 ---
 title: CMU-15445-proj环境搭建&proj0
 categories: CMU15445
+abbrlink: 1b7fd99d
 date: 2021-09-27 14:50:31
 tags:
 ---

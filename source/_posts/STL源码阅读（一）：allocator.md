@@ -1,6 +1,7 @@
 ---
 title: STL源码阅读（一）： 内存分配器
 categories: stl
+abbrlink: 7d6e76e6
 date: 2023-03-27 20:34:31
 tags:
 ---

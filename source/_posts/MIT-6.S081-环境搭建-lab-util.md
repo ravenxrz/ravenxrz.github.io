@@ -1,6 +1,7 @@
 ---
 title: MIT6.S081-环境搭建-lab-util
 categories: MIT-6.S081
+abbrlink: 6d9b6e95
 date: 2022-05-03 22:10:31
 tags:
 ---

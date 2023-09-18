@@ -1,7 +1,7 @@
 ---
-
 title: MIT6.S081-lab-thread
 categories: MIT-6.S081
+abbrlink: be830941
 date: 2022-05-22 22:10:31
 tags:
 ---

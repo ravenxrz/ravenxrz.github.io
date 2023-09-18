@@ -1,7 +1,8 @@
 ---
 title: MIT-6824-lab3A-KvRaft
 categories: MIT6824
-date: 2022-03-8 22:10:31
+abbrlink: 9d59fa69
+date: 2022-03-08 22:10:31
 tags:
 ---
 

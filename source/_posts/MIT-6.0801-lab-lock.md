@@ -1,7 +1,7 @@
 ---
-
 title: MIT6.S081-lab-lock
 categories: MIT-6.S081
+abbrlink: 506bf534
 date: 2022-05-31 22:10:31
 tags:
 ---

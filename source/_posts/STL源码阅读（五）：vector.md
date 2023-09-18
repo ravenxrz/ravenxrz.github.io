@@ -1,6 +1,7 @@
 ---
 title: STL源码阅读（五）： vector
 categories: stl
+abbrlink: 63c9d778
 date: 2023-04-06 20:11:31
 tags:
 ---

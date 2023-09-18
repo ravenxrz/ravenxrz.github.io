@@ -1,7 +1,8 @@
 ---
 title: MIT-6824-lab2-Raft总结
 categories: MIT6824
-date: 2022-03-7 22:10:31
+abbrlink: d16f195
+date: 2022-03-07 22:10:31
 tags:
 ---
 

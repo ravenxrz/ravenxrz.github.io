@@ -1,7 +1,7 @@
 ---
-
 title: MIT6.S081-lab-network
 categories: MIT-6.S081
+abbrlink: '15618765'
 date: 2022-06-16 22:10:31
 tags:
 ---

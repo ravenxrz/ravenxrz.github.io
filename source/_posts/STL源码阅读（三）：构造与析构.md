@@ -1,6 +1,7 @@
 ---
 title: STL源码阅读（三）： 构造与析构
 categories: stl
+abbrlink: d611d50f
 date: 2023-03-29 15:34:31
 tags:
 ---
