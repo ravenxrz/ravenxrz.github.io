@@ -9,7 +9,7 @@ date: 2023-09-18 13:59:08
 
 
 
-一直以来对“并发”相关的主题都蛮感兴趣的，但这一块也确实非常复杂，因为同时涉及了硬件设计和软件协议。比如再看c++ memory order时，一定见过这些词语：重排序、乱序执行，分支预测、预测执行、MSEI、volatile，内存屏障、store buffer, invalidate queue, sequential order(SC)、TSO、PSO内存模型、happens before, synchronized-with、sequenced-before、program order等等名词。作为一个非科班的开发人员，大概率是会被绕晕的。这篇文章，就来谈谈这些概念，当然最终目标是理解c++11中提出的几大常见内存序该如何使用。由于水平有限，难免出错，也希望指正。
+一直以来对"并发"相关的主题都蛮感兴趣的，但这一块也确实非常复杂，因为同时涉及了硬件设计和软件协议。比如再看c++ memory order时，一定见过这些词语：重排序、乱序执行，分支预测、预测执行、MSEI、volatile，内存屏障、store buffer, invalidate queue, sequential order(SC)、TSO、PSO内存模型、happens before, synchronized-with、sequenced-before、program order等等名词。作为一个非科班的开发人员，大概率是会被绕晕的。这篇文章，就来谈谈这些概念，当然最终目标是理解c++11中提出的几大常见内存序该如何使用。由于水平有限，难免出错，也希望指正。
 
 <!--more-->
 
@@ -21,7 +21,7 @@ date: 2023-09-18 13:59:08
 
 ![CPU_cache_memory](https://ravenxrz-blog.oss-cn-chengdu.aliyuncs.com/img/oss_imgCPU_cache_memory.svg)
 
-暂时抛开多级cache和memory，假设cpu之间共有一个Memory，自身有一个私有cache：
+暂时抛开多级cache，假设cpu之间共有一个Memory，自身有一个私有cache：
 
 <img src="https://ravenxrz-blog.oss-cn-chengdu.aliyuncs.com/img/oss_imgoss_imgCPU_one_cache-20230916200924730.svg" alt="CPU_one_cache" style="zoom:150%;" />
 
@@ -35,15 +35,98 @@ date: 2023-09-18 13:59:08
 
 #### Snooping-based Cache Coherency Protocol
 
-==TODO:待补充==
+Snooping-based 方案，即各CPU的cache controller需要对共享的总线进行监测，当监测总线上有属于自身cache line的更新时，需要做出一些更新动作。根据更新动作的不同，分为两类：
+
+1. Write-update
+
+当处理器写入Cache块时，其他Cache监听到后把自己Cache中的数据副本进行更新。该方法通过总线向所有缓存广播写入数据。==**它比写无效协议（另一种更新动作）产生更大的总线流量**==，所有这种方式不常见。Dragon和firefly属于这一类协议。
+
+![img](https://ravenxrz-blog.oss-cn-chengdu.aliyuncs.com/img/oss_imgdc8246bb0835b8d826273b16d05d1d6e.gif)
+
+2. Write-Invalidate
+
+这是最常用的监听协议。当处理器写入Cache块时，其他Cache监听到后把自己Cache中的数据副本标记为无效状态。这样处理器只能读取和写入数据的一个副本，其他缓存中的副本都是无效的。
+
+![img](https://ravenxrz-blog.oss-cn-chengdu.aliyuncs.com/img/oss_imgbf0263de7294fd1bcec8a40c337563db.gif)
+
+除了各核心内部的cache更新外，还要考虑写回到内存，根据写回内存的机制不同，又分为两类：
+
+1. write through
+
+CPU向cache写入数据时，同时也写入memory，使cache和memory的数据保持一致。
+
+优点是简单，缺点是每次都要访问memory，速度比较慢。但是读数据时还是能够享受Cache带来的快速优点的。
+
+2. write back
+
+CPU向cache写入数据时，只是把更新的cache区标记一下(cache line 被标为dirty)，并不同步写入memory。
+
+只是在cache区要被刷入新的数据时，才更新memory。
+
+优点是CPU执行的效率提高，缺点是实现起来技术比较复杂。
+
+其中write back可以减少不必要的内存写入，减轻总线压力。现在大部分场景下，cache多采用write back的方式，本文的介绍都是基于write back的方式。
+
+如上两两组合，共有**4种 snooping-based cache 一致性协议**。
+
+1. Write-update + write through
+
+2. Write-update + write back
+3. Write-Invalidate + write through
+4. Write-Invalidate  + write back
 
 
 
+##### MESI Protocol
+
+MESI协议属于Write-invalidate协议中的一种。MESI协议又叫Illinois协议，MESI，"M", "E", "S", "I"这4个字母代表了一个cache line的四种状态，分别是Modified,Exclusive,Shared和Invalid。
+
+- Modified (M)
+
+cache line只被当前cache所有，并且是dirty的。
+
+- Exclusive (E)
+
+cache line仅存在于当前缓存中，并且是clean的。
+
+- Shared (S)
+
+cache line在其他Cache中也存在并且都是clean的。
+
+- Invalid (I)
+
+cache line无效，即没有被任何Cache加载。
+
+有了状态，就可以考虑下状态之间的转换，下图是一个状态转换图：
+
+![img](https://ravenxrz-blog.oss-cn-chengdu.aliyuncs.com/img/oss_imgv2-5bd2b5e4b4bc9239f75ab94128fefcb7_1440w.webp)
+
+从上图也可以看出状态转换有时是需要CPU之间互传消息的，CPU之间的沟通协议有如下几种消息体：
+
+- Read ：带上数据的物理内存地址发起的读请求消息；
+- Read Response：Read 请求的响应信息，内部包含了读请求指向的数据；
+- Invalidate：该消息包含数据的内存物理地址，意思是要让其他如果持有该数据缓存行的 CPU 直接失效对应的缓存行；
+- Invalidate Acknowledge：CPU 对Invalidate 消息的响应，目的是告知发起 Invalidate 消息的CPU，这边已经失效了这个缓存行啦；
+- Read Invalidate：这个消息其实是 Read 和 Invalidate 的组合消息，与之对应的响应自然就是一个Read Response 和 一系列的 Invalidate Acknowledge；
+- Writeback：该消息包含一个物理内存地址和数据内容，目的是把这块数据通过总线写回内存里。
+
+举个例子，现在有 cpu0 cpu1 变量a，cpu0对a赋值 a=1：
+
+假如变量a不在cpu0 缓存中，则需要发送 Read Invalidate 信号，再等待此信号返回Read Response和Invalidate Acknowledge，之后再写入量到缓存中。
+
+假如变量a在cpu0 缓存中，如果该量的状态是 Modified 则直接更改发送Writeback 最后修改成Exclusive。而如果是 Shared 则需要发送 Invalidate 消息让其它 CPU 感知到这一更改后再更改。
+
+- 一般情况下，CPU 在对某个缓存行修改之前务必得让其他 CPU 持有的相同数据缓存行失效，这是基于 Invalidate Acknowledge 消息反馈来判断的；
+- 缓存行为 M 状态，意味着该缓存行指向的物理内存里的数据，一定不是最新；
+- 在修改变量之前，如果CPU持有该变量的缓存，且为 E 状态，直接修改；若状态为 S ，需要在总线上广播 Invalidate；若CPU不持有该缓存行，则需要广播 Read Invalidate。
+
+>  给一个MESI交互网站，可以动态观察MESI协议：https://www.scss.tcd.ie/Jeremy.Jones/VivioJS/caches/MESI.htm
 
 
-### MESI Protocol
 
-==TODO: 待补充==
+### Directory-based Coherency Protocol
+
+略，本文不关心这种协议。提出该类协议的原因是因为 Snooping-Based协议依赖于总线带宽，处理器越多，消耗带宽越多，可扩展性不好。感兴趣可参考：[Cache一致性的那些事儿 (3)--Directory方案](https://zhuanlan.zhihu.com/p/419722803)
 
 
 
@@ -60,13 +143,13 @@ line 3
 line ...
 ```
 
-在单线程下，永远都是line 1 -> line 2 -> line 3 -> line N。换成多核多线程, 希望代码依然能**”顺序执行“**：
+在单线程下，永远都是line 1 -> line 2 -> line 3 -> line N。换成多核多线程, 希望代码依然能**"顺序执行"**：
 
 <img src="https://ravenxrz-blog.oss-cn-chengdu.aliyuncs.com/img/oss_img%E5%A4%9A%E7%BA%BF%E7%A8%8B%E7%BA%BF%E6%80%A7%E6%A8%A1%E5%9E%8B.svg" alt="多线程线性模型" style="zoom:150%;" />
 
-**如何理解这里的”顺序执行“：**
+**如何理解这里的 "顺序执行"：**
 
-从每个线程自身视角来看，执行的代码流都是符合progrom order的，即对于T0来说，执行流是1,2,3；对于T1来说，执行流是4,5,6. 但是线程可以并行、交互执行。最终的执行序列无法提前知道，即可以是 1,2,3,4,5,6. 可以是 1,4,2,5,6,3 也可以是 1,4,2,5,3,6。 但是绝不会是 2,1,3,4,5,6. 因为2一定在1之后。除了这个特性外，一个个线程执行流产生的作用会被另一个线程锁看到，即T0执行2处后(a=1),在之后的T1的5处一定会被观察到（print(a)为1）。
+从每个线程自身视角来看，执行的代码流都是符合progrom order的，即对于T0来说，执行流是1,2,3；对于T1来说，执行流是4,5,6. 但是线程可以并行、交互执行。最终的执行序列无法提前知道，可以是 1,2,3,4,5,6. 可以是 1,4,2,5,6,3 也可以是 1,4,2,5,3,6。 但是绝不会是 2,1,3,4,5,6. 因为2一定在1之后。除了这个特性外，一个个线程执行流产生的作用会被另一个线程锁看到，即T0执行2处后(a=1),在之后的T1的5处一定会被观察到（print(a)为1）。
 
 这是我们的理想内存一致性模型，这种模型也被称为 ==**顺序一致性（Sequential Consistency**）==。更学术的定义为：
 
@@ -91,13 +174,13 @@ line ...
 TSO主要是为了优化写操作而设计的。想象一下，系统上电后，cache内没有任何东西，cpu要执行 `a = 1`： 首先要从内存里将a的值缓存在cache中，再执行写操作。 比较下这里的cpu执行时间和从内存中取值时间， 下图是Jeff Dean给出的一些经验值：
 ![img](https://ravenxrz-blog.oss-cn-chengdu.aliyuncs.com/img/oss_imgv2-165d6e72cedf6775cef876fe82196440_1440w.webp)
 
-显然从内存中load value的时间比cpu执行指令的时间高得多。为了更快执行写指令，硬件工程师们为CPU增加了==**”Store Buffer“**==。 如下图所示：
+显然从内存中load value的时间比cpu执行指令的时间高得多。为了更快执行写指令，硬件工程师们为CPU增加了==**"Store Buffer"**==。 如下图所示：
 
 ![Store Buffer](https://ravenxrz-blog.oss-cn-chengdu.aliyuncs.com/img/oss_imgoss_imgStore%20Buffer.svg)
 
 
 
-它的作用是暂存committed的store指令，直到内存系统能够处理它。其优化store指令的原理在于当发起store指令时，**即使cache未持有目标值（即store miss），也可以立即对当前cpu commit store指令，减少了stall时间**。等待 cache 持有该值并处于 read-write coherence state（E或者S状态）时，指令离开store buffer并得到真正执行。
+它的作用是暂存store指令，直到内存系统能够处理它。其优化store指令的原理在于当发起store指令时，**即使cache未持有目标值（即store miss），也可以立即对当前cpu commit store指令，减少了stall时间**。等待 cache 持有该值并处于 read-write coherence state（E或者S状态）时，指令离开store buffer并得到真正执行。
 
 天下没有免费的午餐，得到优化的同时也带来了新的问题，看下面代码：
 
@@ -208,7 +291,7 @@ void foo()
 void bar() 
 {
 while(b == 0) continue; // 3
-    assert(a == 1); // 4
+assert(a == 1); // 4
 }
 ```
 
@@ -221,11 +304,11 @@ step3: CPU1 执行语句4，由于此时a=1还未执行，所以assert fire
 step4: CPU0 执行语句1， a=1
 ```
 
-> 实际上，上述执行是简化后的执行序列。 
+> 上述执行是简化后的执行序列。 
 >
 > 实际情况可能是， CPU0 执行 a=1, b=1（都进入store buffer），由于b所在的cache line先加载进来，所以b=1的指令先退出store buffer。CPU1再执行3和4语句。 单从CPU0的角度看，a=1和b=1都已经执行。但是从CPU1的角度看，它只能看到落在cache中的数据，由于a=1还在CPU0的store buffer中，CPU1无法感知，所以发生了重排。
 
-作为软件开发人员，我们肯定不希望发生这样的重排。这就是 **”内存屏障(fence或barrier)“** 该发挥作用的时候了:
+作为软件开发人员，我们肯定不希望发生这样的重排。这就是 **"内存屏障(fence或barrier)"** 该发挥作用的时候了:
 
 ```c
 void foo()
@@ -247,7 +330,7 @@ void bar()
 
 也就是说插入内存屏障后，上面的代码不能往下走，下面的代码不能往上走。对于foo函数，保证a=1和b=1一定不重排。从硬件角度讲，a=1和b=1都进入store buffer后，即使 b 的数据先在cache中就位，也要保证先刷a=1再刷b=1。**显然加入屏障后的代码执行效率会比没加入前低**。
 
-**有写写重排问题，是否有读读重排呢？答案是有的**。考虑这样一个场景，假设cpu执行的store指令都在store miss。这些指令都会转存在store buffer中，但是store buffer的容量是有限的，如果load data的速度跟不上填充store buffer的速度，那么store buffer总有一天会被填充满。那么后续的指令将会stall住。硬件工程师们当然不愿意cpu被stall住，于是提出了 **==invalidate queue==** 的结构。回忆MESI协议，多核结构下，假设变量X在各CPU中处于S状态，现在CPU0要对X进行写操作，需要发送Invalidate消息给其他CPU，对端CPU收到消息后，invalidte 自身 cache line回复源CPU invalidate ack消息。这里的耗时主要体现在 **”对端CPU收到消息后invalidate自身cache line"** 过程中，如果能**让消息先暂存在对端CPU**，立即回复ack，源CPU也就能更快执行store指令了。  **invalidate queue** 的工作就是这个，暂存invalidate消息, 等待处理。 
+**有写写重排问题，是否有读读重排呢？答案是有的**。考虑这样一个场景，假设cpu执行的store指令都在store miss。这些指令都会转存在store buffer中，但是store buffer的容量是有限的，如果load data的速度跟不上填充store buffer的速度，那么store buffer总有一天会被填充满。那么后续的指令将会stall住。硬件工程师们当然不愿意cpu被stall住，于是提出了 **==invalidate queue==** 的结构。回忆MESI协议，多核结构下，假设变量X在各CPU中处于S状态，现在CPU0要对X进行写操作，需要发送Invalidate消息给其他CPU，对端CPU收到消息后，invalidte 自身 cache line回复源CPU invalidate ack消息。这里的耗时主要体现在 **"对端CPU收到消息后invalidate自身cache line"** 过程中，如果能**让消息先暂存在对端CPU**，立即回复ack，源CPU也就能更快执行store指令了。  **invalidate queue** 的工作就是这个，暂存invalidate消息, 等待处理。 
 
 **CPU承诺：如果一个invalidate请求在invalidate queue中，那么对于这个请求相关的cacheline，在该请求被处理完成前，cpu不会再发送任何与该cacheline相关的MESI消息。**
 
@@ -301,7 +384,7 @@ void bar()
 }
 ```
 
-5处加的屏障，对于CPU1来说，表现为**“处理完invalidate queue”**。 所以当执行到6时，CPU1已经感知到a失效，重新走MESI协议，从CPU0中获取a的最新值1，最终assert不会fire。
+5处加的屏障，对于CPU1来说，表现为 **"处理完invalidate queue"**。 所以当执行到6时，CPU1已经感知到a失效，重新走MESI协议，从CPU0中获取a的最新值1，最终assert不会fire。
 
 如上我们介绍了屏障的两方面作用：
 
@@ -339,7 +422,7 @@ void bar()
 
 ## 5. c/c++ volatile 关键字
 
-上文主要围绕着Memory（Cache） System展开谈了些指令“重排”的问题。但是除了内存（缓存）影响着重排外，还有编译器优化重排。本节不会详细说明编译器优化技术（实际上我也没学过编译原理），只会举例编译器优化例子，同时最重要的，介绍volatile关键字。
+上文主要围绕着Memory（Cache） System展开谈了些指令"重排"的问题。但是除了内存（缓存）影响着重排外，还有编译器优化重排。本节不会详细说明编译器优化技术（实际上我也没学过编译原理），只会举例编译器优化例子，同时最重要的，介绍volatile关键字。
 
 ### 编译器优化
 
@@ -503,7 +586,7 @@ thread2(Type* value) {
 
 首先启动thread1， 在thread1中启动thread2，thread1中使用死循环等待`flag = true`, 期待thread2更改flag为true，然后执行后面的代码。
 
-但很明显，上述代码时有问题的。问题有两个：1. thread1中，由于编译器不知道flag还可能会被其它线程修改，所以可能直接将if语句优化掉，变成一个死循环。2. thread2中，flag=true可能被**“指令重排”**到`update`前面。（`update`函数本身可以作为一个编译屏障，也就是说编译器生成的代码中，flag=true一定在update函数后，但是不要忘了CPU可是可以乱序执行的）。
+但很明显，上述代码是问题的。问题有两个：1. thread1中，由于编译器不知道flag还可能会被其它线程修改，所以可能直接将if语句优化掉，变成一个死循环。2. thread2中，flag=true可能被**"指令重排"**到`update`前面。（`update`函数本身可以作为一个编译屏障，也就是说编译器生成的代码中，flag=true一定在update函数后，但是不要忘了CPU可是可以乱序执行的）。
 
 前面说了，`volatile`可以避免编译器优化，那加上volatile后呢？
 
@@ -675,7 +758,7 @@ int main()
 
 `acquire-release` order或许是最常见的内存序了。当原子变量同步点的store操作是`memory_order_release`或`memory_order_acq_rel`时，而对应的另一个同步点的load操作是`memory_order_acquire`或`memory_order_acq_rel`或`memory_order_consume`时，此时就是`acquire-release`内存序模型。
 
-可以将`acquire-release`的同步点组合看成一把锁， **夹在锁中间的是临界区，临界区中的代码不能逃处锁的范围内，但是临界区外的代码可以跑进临界区。**
+可以将`acquire-release`的同步点组合看成一把锁， **夹在锁中间的是临界区，临界区中的代码不能逃出锁的范围内，但是临界区外的代码可以跑进临界区。**
 
 ![image-20230918163952615](https://ravenxrz-blog.oss-cn-chengdu.aliyuncs.com/img/oss_imgoss_imgimage-20230918163952615.png)
 
@@ -803,7 +886,7 @@ T6:  // 6, x 依然为0，即使在T1时刻x = 1, 但是read_y_then_x所在线�
 
 ### seq_cst order
 
-最强，但是性能最差的内存序, 也是默认的内存序。`seq_cst`修饰的变量，对其做的任何操作，都可想象在其前加入了`rmb`在之后加入了`smb`内存屏障，这样`seq_cst`上面的代码无法移动到下，下面的代码无法移动到上。相比acquire-release order, `seq_cst order`保证**曾经在其他地方发生过同步的原子变量也能继续参与本次的同步** 再看下面代码：
+最强，但是性能最差的内存序, 也是默认的内存序。`seq_cst`修饰的变量，对其做的任何操作，都可想象在其前加入了`smb`在之后加入了`rmb`内存屏障，这样`seq_cst`上面的代码无法移动到下，下面的代码无法移动到上。相比acquire-release order, `seq_cst order`保证**曾经在其他地方发生过同步的原子变量也能继续参与本次的同步** 再看下面代码：
 
 ```cpp
 #include <atomic>
@@ -889,14 +972,12 @@ T6:  // 6, x 必然等于1， 因为T1时刻的store，一定会被read_y_then_x
 7. 注意，浮点原子类型在使用`compare_exchange`等函数时可能会出错，因为浮点数的表示形式可能不一样。此外，浮点原子类型没有任何算数运算操作(比如+=，-=等)；
 
 
-   
-
 
 
 ## 参考
 
 - [为什么需要内存屏障](https://zhuanlan.zhihu.com/p/55767485)
-- [[后端](https://www.dazhuanlan.com/topics/node2) 硬件角度看内存屏障](https://www.dazhuanlan.com/hesanp/topics/1138508)
+- [硬件角度看内存屏障](https://www.dazhuanlan.com/hesanp/topics/1138508)
 - [Computer Organization & Architecture (COA)](https://www.youtube.com/playlist?list=PLBlnK6fEyqRgLLlzdgiTUKULKJPYc0A4q)
 - [为什么在 CPU 中要用 Cache 从内存中快速提取数据？](https://www.zhihu.com/question/22431522)
 - [C++11内存模型完全解读-从硬件层面和内存模型规则层面双重解读](https://blog.csdn.net/weixin_43376501/article/details/108006586)
@@ -909,4 +990,5 @@ T6:  // 6, x 必然等于1， 因为T1时刻的store，一定会被read_y_then_x
 - [CMU-15418 Memory Consistency](https://www.bilibili.com/video/BV1Tj411z7U1/?spm_id_from=333.999.0.0)
 - [清华大学-高级操作系统](https://www.bilibili.com/video/BV1pC4y1x7iw?p=37&vd_source=d23f1827dad64db7a3c4e984a81c19fc)
 - [Sequential Consistency & TSO](https://www.cis.upenn.edu/~devietti/classes/cis601-spring2016/sc_tso.pdf)
+- [图解 CPU-Cache 一致性](https://www.51cto.com/article/669200.html)
 
