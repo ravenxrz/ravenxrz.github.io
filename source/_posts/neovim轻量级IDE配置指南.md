@@ -375,7 +375,7 @@ end)
 
 packer常见的命令包括：
 
-![image-20220408175005981](https://ravenxrz-blog.oss-cn-chengdu.aliyuncs.com/img/github_img/image-20220408175005981.png)
+![](https://ravenxrz-blog.oss-cn-chengdu.aliyuncs.com/img/github_img/image-20220408175005981.png)
 
 **通常只用使用PackerSync(插件同步，下载新插件+更新插件), PackerInstall (安装新插件), PackerStatus(查看目前插件的状态)**
 
@@ -394,11 +394,11 @@ packer常见的命令包括：
 
 darkplus
 
-![image-20220411102359755](https://ravenxrz-blog.oss-cn-chengdu.aliyuncs.com/img/github_img/image-20220411102359755.png)
+![](https://ravenxrz-blog.oss-cn-chengdu.aliyuncs.com/img/github_img/image-20220411102359755.png)
 
 onedark 的dark子主题:
 
-![image-20220411102445355](https://ravenxrz-blog.oss-cn-chengdu.aliyuncs.com/img/github_img/image-20220411102445355.png)
+![](https://ravenxrz-blog.oss-cn-chengdu.aliyuncs.com/img/github_img/image-20220411102445355.png)
 
 其中onedark可进行详细配置, 建立config/onedark.lua文件
 
@@ -551,11 +551,11 @@ configs.setup {
 
 配置前：
 
-![image-20220411103654262](https://ravenxrz-blog.oss-cn-chengdu.aliyuncs.com/img/github_img/image-20220411103654262.png)
+![](https://ravenxrz-blog.oss-cn-chengdu.aliyuncs.com/img/github_img/image-20220411103654262.png)
 
 配置后：
 
-![image-20220411103616348](https://ravenxrz-blog.oss-cn-chengdu.aliyuncs.com/img/github_img/image-20220411103616348.png)
+![](https://ravenxrz-blog.oss-cn-chengdu.aliyuncs.com/img/github_img/image-20220411103616348.png)
 
 为了让配置生效，需要在config/init.lua下添加：
 
@@ -577,11 +577,11 @@ require "user.conf.vim-match"				-- 这部分配置文章贴出，参考github�
 
 比如， 我输入 “/” ，就可以补全根目录下路径：
 
-![image-20220420180331694](https://ravenxrz-blog.oss-cn-chengdu.aliyuncs.com/img/github_img/image-20220420180331694.png)
+![](https://ravenxrz-blog.oss-cn-chengdu.aliyuncs.com/img/github_img/image-20220420180331694.png)
 
 比如说输入vim命令，可以自动补全相关命令：
 
-![image-20220411104204256](https://ravenxrz-blog.oss-cn-chengdu.aliyuncs.com/img/github_img/image-20220411104204256.png)
+![](https://ravenxrz-blog.oss-cn-chengdu.aliyuncs.com/img/github_img/image-20220411104204256.png)
 
 在特定语言里面，可以根据LSP补全。
 
@@ -979,13 +979,13 @@ return M
 
 基本上只用在 lsp_keymaps 函数里面修改相应快捷键。 额外关注 `virtual_text` 选项，如果为true，诊断信息将直接显示在代码后面：
 
-![image-20220411105635422](https://ravenxrz-blog.oss-cn-chengdu.aliyuncs.com/img/github_img/image-20220411105635422.png)
+![](https://ravenxrz-blog.oss-cn-chengdu.aliyuncs.com/img/github_img/image-20220411105635422.png)
 
 为false则只有一个图标。
 
 至此，所有lsp配置完成，但是如果你打开代码，依然会发现没有代码提示，这是因为我们还需要安装 lsp server. 不过安装就很简单了，执行 LspInstallInfo, 安装需要的语言服务器即可。移动到对应项目，按i键即可一键安装。
 
-![image-20220411105903925](https://ravenxrz-blog.oss-cn-chengdu.aliyuncs.com/img/github_img/image-20220411105903925.png)
+![](https://ravenxrz-blog.oss-cn-chengdu.aliyuncs.com/img/github_img/image-20220411105903925.png)
 
 如上，c++语言使用clangd，golang使用gopls， python使用pylsp等等。
 
@@ -997,7 +997,7 @@ return M
 
 一直以来，终端的调试始终比ide差很多，不能像ide那样点点点，比如c/c++，基本上只能使用gdb或者cgdb等工具来调试。直到发现了dap相关的插件。效果如下：
 
-![image-20220411110509473](https://ravenxrz-blog.oss-cn-chengdu.aliyuncs.com/img/github_img/image-20220411110509473.png)
+![](https://ravenxrz-blog.oss-cn-chengdu.aliyuncs.com/img/github_img/image-20220411110509473.png)
 
 基本上和vscode的调试界面一致。但是用起来肯定是更快捷的。
 
@@ -1203,7 +1203,7 @@ keymap("n", "K", "<cmd>lua require'dapui'.eval()<cr>", opts)
 
 不过和lsp配置章节相同，即使配置至此，依然无法开始调试，因为我们还需要安装 debugger adapter，但是这个过程DapInstall.nvim已经帮我们解决了。执行 :DIInstall xxx 即可。
 
-![image-20220411111400135](https://ravenxrz-blog.oss-cn-chengdu.aliyuncs.com/img/github_img/image-20220411111400135.png)
+![](https://ravenxrz-blog.oss-cn-chengdu.aliyuncs.com/img/github_img/image-20220411111400135.png)
 
 ## 6. 文件目录+搜索增强
 
@@ -1378,7 +1378,7 @@ require"nvim-tree.events".on_file_created(function(file) vim.cmd("edit "..file.f
 
 安装完成后，可通过NvimTree相关命令操作目录导航：
 
-![image-20220411111645080](https://ravenxrz-blog.oss-cn-chengdu.aliyuncs.com/img/github_img/image-20220411111645080.png)
+![](https://ravenxrz-blog.oss-cn-chengdu.aliyuncs.com/img/github_img/image-20220411111645080.png)
 
 当然，也可自定义快捷键。
 
@@ -1386,25 +1386,25 @@ require"nvim-tree.events".on_file_created(function(file) vim.cmd("edit "..file.f
 
 文件搜索：
 
-![image-20220411111809362](https://ravenxrz-blog.oss-cn-chengdu.aliyuncs.com/img/github_img/image-20220411111809362.png)
+![](https://ravenxrz-blog.oss-cn-chengdu.aliyuncs.com/img/github_img/image-20220411111809362.png)
 
 文字搜索：
 
-![image-20220411111835916](https://ravenxrz-blog.oss-cn-chengdu.aliyuncs.com/img/github_img/image-20220411111835916.png)
+![](https://ravenxrz-blog.oss-cn-chengdu.aliyuncs.com/img/github_img/image-20220411111835916.png)
 
 项目符号搜索：
 
-![image-20220411111925245](https://ravenxrz-blog.oss-cn-chengdu.aliyuncs.com/img/github_img/image-20220411111925245.png)
+![](https://ravenxrz-blog.oss-cn-chengdu.aliyuncs.com/img/github_img/image-20220411111925245.png)
 
 git相关：
 
-![image-20220411112009597](https://ravenxrz-blog.oss-cn-chengdu.aliyuncs.com/img/github_img/image-20220411112009597.png)
+![](https://ravenxrz-blog.oss-cn-chengdu.aliyuncs.com/img/github_img/image-20220411112009597.png)
 
 还有太多。。。无法一一展示。
 
 可通过Telescope命令补全来看支持哪些命令：
 
-![image-20220411112100761](https://ravenxrz-blog.oss-cn-chengdu.aliyuncs.com/img/github_img/image-20220411112100761.png)
+![](https://ravenxrz-blog.oss-cn-chengdu.aliyuncs.com/img/github_img/image-20220411112100761.png)
 
 现在来配置它，新建config/telescope.lua文件：
 
@@ -1599,15 +1599,15 @@ telescope.load_extension('dap')
 
 diff hunk:
 
-![image-20220411112650228](https://ravenxrz-blog.oss-cn-chengdu.aliyuncs.com/img/github_img/image-20220411112650228.png)
+![](https://ravenxrz-blog.oss-cn-chengdu.aliyuncs.com/img/github_img/image-20220411112650228.png)
 
 diff file：
 
-![image-20220411112617303](https://ravenxrz-blog.oss-cn-chengdu.aliyuncs.com/img/github_img/image-20220411112617303.png)
+![](https://ravenxrz-blog.oss-cn-chengdu.aliyuncs.com/img/github_img/image-20220411112617303.png)
 
 file history:
 
-![image-20220411112724466](https://ravenxrz-blog.oss-cn-chengdu.aliyuncs.com/img/github_img/image-20220411112724466.png)
+![](https://ravenxrz-blog.oss-cn-chengdu.aliyuncs.com/img/github_img/image-20220411112724466.png)
 
 xxx
 

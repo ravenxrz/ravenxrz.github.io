@@ -53,7 +53,7 @@ Task1要求实现一个 Lock Manager，并且支持不同的隔离级别（对pr
 
 除此外，还需要了解什么是 2 Phase-Lock, 一个2 Phase-Lock 的示意图如下：
 
-![image-20220127172155885](https://ravenxrz-blog.oss-cn-chengdu.aliyuncs.com/img/github_img/image-20220127172155885.png)
+![](https://ravenxrz-blog.oss-cn-chengdu.aliyuncs.com/img/github_img/image-20220127172155885.png)
 
 >  也就是说，一旦一个txn开始unlock，那它就进入到了 SHRINKING 阶段，不能再获取锁。
 
@@ -150,7 +150,7 @@ bool LockManager::LockShared(Transaction *txn, const RID &rid) {
 
 所以在我的实现中，`lock_table_` 为：
 
-![image-20220127204334231](https://ravenxrz-blog.oss-cn-chengdu.aliyuncs.com/img/github_img/image-20220127204334231.png)
+![](https://ravenxrz-blog.oss-cn-chengdu.aliyuncs.com/img/github_img/image-20220127204334231.png)
 
 当某个txn想要获取lock时，首先加入到waitting_set 中，只有真正获取到锁时，才加入到 request_queue_中， 加入 waitting_set的目的主要是为了防止发生写饥饿，也是为了后面upgrade更容易实现而准备。
 
@@ -308,7 +308,7 @@ Task2实现死锁检测算法，通过开启一个专用死锁检测线程，在
 
 下面是一个wait-for graph的示意图：
 
-![image-20220127192432964](https://pic.imgdb.cn/item/61f293452ab3f51d91e009f7.png)
+![](https://pic.imgdb.cn/item/61f293452ab3f51d91e009f7.png)
 
 这个任务中，我们需要具体的API为：
 

@@ -60,7 +60,7 @@ i> 那么这个网络的思想可这样来表达：生成网络G吃一张雾图�
 
 - [Keras-GAN](https://github.com/eriklindernoren/Keras-GAN)
 
-- [Image-to-Image Translation with Conditional Adversarial Nets的介绍与应用Demo](https://phillipi.github.io/pix2pix/)
+- [](https://phillipi.github.io/pix2pix/)
 
 - [Isola et al_2016_Image-to-Image Translation with Conditional Adversarial Networks](Isola et al_2016_Image-to-Image Translation with Conditional Adversarial Networks.pdf)
 - [Patch-GAN Image-to-Image Translation with Conditional Adversarial Networks超细致解析：使用条件Gan经行图像的转换](https://www.jianshu.com/p/57ff6f96ce4c)

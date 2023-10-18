@@ -29,13 +29,13 @@ malloclab，简单明了的说就是实现一个自己的 malloc,free,realloc函
 
 很显然我们需要一些额外的信息来存放block的元信息。之类的具体做法是在block的前面添加一个word，存放分配的size和是否已分配状态。
 
-![image-20200826170802474](https://ravenxrz-blog.oss-cn-chengdu.aliyuncs.com/img/github_img/image-20200826170802474.png)
+![](https://ravenxrz-blog.oss-cn-chengdu.aliyuncs.com/img/github_img/image-20200826170802474.png)
 
 **注意：这里只是给出了最简单的情况，实际操作中，额外的元数据不仅只有这些**
 
 第二个问题，如何追踪free blocks?
 
-![image-20200826170901374](https://ravenxrz-blog.oss-cn-chengdu.aliyuncs.com/img/github_img/image-20200826170901374.png)
+![](https://ravenxrz-blog.oss-cn-chengdu.aliyuncs.com/img/github_img/image-20200826170901374.png)
 
 csapp一共给出了4种方案。其中implicit list在书上给出了源码，我个人实现了implicit list和explicit list。segregated free list感觉利用OO思想，把explicit list封装一下也是能够实现的，红黑树同理。
 
@@ -49,7 +49,7 @@ ok，下面就来看看implicit list(书上有）和explicit list两种方案是
 
 下面是一个implicit list的组织方式和一个block的具体情况，一个block采用了双边tag，保证可以前向和后向索引。
 
-![image-20200826171525409](https://ravenxrz-blog.oss-cn-chengdu.aliyuncs.com/img/github_img/image-20200826171525409.png)
+![](https://ravenxrz-blog.oss-cn-chengdu.aliyuncs.com/img/github_img/image-20200826171525409.png)
 
 这种方案的优点：实现简单。缺点：寻找free block的开销过大。
 
@@ -310,13 +310,13 @@ free block后要考虑前后是否也有free block, 如果存在free block需要
 
 
 
-![image-20200826205642747](https://ravenxrz-blog.oss-cn-chengdu.aliyuncs.com/img/github_img/image-20200826205642747.png)
+![](https://ravenxrz-blog.oss-cn-chengdu.aliyuncs.com/img/github_img/image-20200826205642747.png)
 
-![image-20200826205653451](https://ravenxrz-blog.oss-cn-chengdu.aliyuncs.com/img/github_img/image-20200826205653451.png)
+![](https://ravenxrz-blog.oss-cn-chengdu.aliyuncs.com/img/github_img/image-20200826205653451.png)
 
-![image-20200826205703127](https://ravenxrz-blog.oss-cn-chengdu.aliyuncs.com/img/github_img/image-20200826205703127.png)
+![](https://ravenxrz-blog.oss-cn-chengdu.aliyuncs.com/img/github_img/image-20200826205703127.png)
 
-![image-20200826205708948](https://ravenxrz-blog.oss-cn-chengdu.aliyuncs.com/img/github_img/image-20200826205708948.png)
+![](https://ravenxrz-blog.oss-cn-chengdu.aliyuncs.com/img/github_img/image-20200826205708948.png)
 
 
 
@@ -388,11 +388,11 @@ ok, 以上就是implicit list的所有内容, 下面我们开始讲解explicit l
 
 explicit list和implicit list的区别在于前者在 **逻辑空间** 中维护一个free list, 里面只保存free的blocks, 而后者则是在 **虚拟地址空间**中维护整个list,里面即包含了free blocks也包含了allocated blocks. 当然了, explicit list底层也是虚拟地址空间.下面这张图给出了explicit list的上层结构:
 
-![image-20200826210834218](https://pic.downk.cc/item/5f465f2f160a154a67918a70.png)
+![](https://pic.downk.cc/item/5f465f2f160a154a67918a70.png)
 
 下面给出implicit和explicit的每一块的具体结构对比:
 
-![image-20200826211059458](https://pic.downk.cc/item/5f465f75160a154a6791b829.png)
+![](https://pic.downk.cc/item/5f465f75160a154a6791b829.png)
 
 可以看到,explicit比较implicit,每一个块只是多了两个字段,用于保存下一个free block的地址(next)和上一个free block的地址(prev).
 
@@ -780,13 +780,13 @@ void mm_free(void *ptr)
 
 coalesce是每种分配器的重点,需要考虑如何合并在虚拟地址空间中的相邻blocks之间的关系, 和implicit一样,explicit也有4种情况:
 
-![image-20200826214359077](https://pic.downk.cc/item/5f466750160a154a6795783c.png)
+![](https://pic.downk.cc/item/5f466750160a154a6795783c.png)
 
-![image-20200826214409356](https://pic.downk.cc/item/5f46675f160a154a67957e67.png)
+![](https://pic.downk.cc/item/5f46675f160a154a67957e67.png)
 
-![image-20200826214415780](https://pic.downk.cc/item/5f466771160a154a6795847c.png)
+![](https://pic.downk.cc/item/5f466771160a154a6795847c.png)
 
-![image-20200826214426686](https://pic.downk.cc/item/5f46677a160a154a679586f3.png)
+![](https://pic.downk.cc/item/5f46677a160a154a679586f3.png)
 
 ```c
 /**

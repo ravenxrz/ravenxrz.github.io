@@ -247,7 +247,7 @@ Version::~Version() {
 
 RemoveFile函数调用，有两个函数caller:
 
-![image-20201006194127291](https://ravenxrz-blog.oss-cn-chengdu.aliyuncs.com/img/github_img/image-20201006194127291.png)
+![](https://ravenxrz-blog.oss-cn-chengdu.aliyuncs.com/img/github_img/image-20201006194127291.png)
 
 AddInputDeletions， 在常规compaction中，加入所有选中了的compaction文件。
 
@@ -311,7 +311,7 @@ new_files_在==**AddFile**==中增加：‘
 
 AddFile被下图中的3各函数call：
 
-![image-20201006194516231](https://ravenxrz-blog.oss-cn-chengdu.aliyuncs.com/img/github_img/image-20201006194516231.png)
+![](https://ravenxrz-blog.oss-cn-chengdu.aliyuncs.com/img/github_img/image-20201006194516231.png)
 
 WriteLevel0Table中是memtable dump 到level0所生成的新文件。
 

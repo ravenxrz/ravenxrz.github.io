@@ -147,7 +147,7 @@ You'll need locks to cope with the possibility that xv6 might use the E1000 from
 
 每个队列item称为Transmit Descriptor, Descriptor的结构为如下（先了解即可，不用完全理解其含义，可在看完后续的逻辑处理后，再回到此部分查看各字段含义会更清晰）：
 
-![image-20220616211808315](https://ravenxrz-blog.oss-cn-chengdu.aliyuncs.com/img/oss_img/image-20220616211808315.png)
+![](https://ravenxrz-blog.oss-cn-chengdu.aliyuncs.com/img/oss_img/image-20220616211808315.png)
 
 对应xv6代码的tx_desc结构体：
 
@@ -175,7 +175,7 @@ struct tx_desc
 
 **CMD字段：**
 
-![image-20220616212006382](https://ravenxrz-blog.oss-cn-chengdu.aliyuncs.com/img/oss_img/image-20220616212006382.png)
+![](https://ravenxrz-blog.oss-cn-chengdu.aliyuncs.com/img/oss_img/image-20220616212006382.png)
 
 对于完成本实验，只用关注如上红框所选字段，对应代码：
 
@@ -187,9 +187,9 @@ struct tx_desc
 
 两字段含义如下：
 
-![image-20220616212047291](https://ravenxrz-blog.oss-cn-chengdu.aliyuncs.com/img/oss_img/image-20220616212047291.png)
+![](https://ravenxrz-blog.oss-cn-chengdu.aliyuncs.com/img/oss_img/image-20220616212047291.png)
 
-![image-20220616212053220](https://ravenxrz-blog.oss-cn-chengdu.aliyuncs.com/img/oss_img/image-20220616212053220.png)
+![](https://ravenxrz-blog.oss-cn-chengdu.aliyuncs.com/img/oss_img/image-20220616212053220.png)
 
 当设置descriptor的cmd的RS时，每当网卡完成数据传输，将设置Descriptor Done bit（该bit在Status字段中）。
 
@@ -199,7 +199,7 @@ struct tx_desc
 
 只用关注DD字段：
 
-![image-20220616212324993](https://ravenxrz-blog.oss-cn-chengdu.aliyuncs.com/img/oss_img/image-20220616212324993.png)
+![](https://ravenxrz-blog.oss-cn-chengdu.aliyuncs.com/img/oss_img/image-20220616212324993.png)
 
 #### 2. 发送过程
 

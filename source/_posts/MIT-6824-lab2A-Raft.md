@@ -234,7 +234,7 @@ func (rf *Raft) heartBeatTimer() {
 
 对应论文中的：
 
-![image-20220222152021461](https://ravenxrz-blog.oss-cn-chengdu.aliyuncs.com/img/github_img/image-20220222152021461.png)
+![](https://ravenxrz-blog.oss-cn-chengdu.aliyuncs.com/img/github_img/image-20220222152021461.png)
 
 所以代码如下：
 

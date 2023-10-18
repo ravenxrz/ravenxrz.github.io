@@ -22,7 +22,7 @@ tags:
 
 首先依然是贴出整部分的逻辑架构图：
 
-![image-20220308144908922](https://ravenxrz-blog.oss-cn-chengdu.aliyuncs.com/img/github_img/image-20220308144908922.png)
+![](https://ravenxrz-blog.oss-cn-chengdu.aliyuncs.com/img/github_img/image-20220308144908922.png)
 
 从上面图可以看出，如果raft已经完成了log compaction部分，现在要完成的工作包括如下几个：
 

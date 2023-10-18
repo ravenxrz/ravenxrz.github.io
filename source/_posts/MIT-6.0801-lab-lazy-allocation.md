@@ -38,7 +38,7 @@ tags:
 
 page fault属于exception。所以在xv6中，可在 `usertrap` 函数中做识别处理。那如何区分page fault和其它exception呢？在ricsv中， `scause`寄存器保存了出现trap的原因，具体见下表：
 
-![image-20220517124439957](https://ravenxrz-blog.oss-cn-chengdu.aliyuncs.com/img/github_img/image-20220517124439957.png)
+![](https://ravenxrz-blog.oss-cn-chengdu.aliyuncs.com/img/github_img/image-20220517124439957.png)
 
 **可以看到13和15都和page fault相关。**
 

@@ -444,7 +444,7 @@ void BlockBuilder::Add(const Slice& key, const Slice& value) {
 
 index block中存放的是data block的索引。看看index block的类型：
 
-![image-20200923192147959](https://ravenxrz-blog.oss-cn-chengdu.aliyuncs.com/img/github_img/image-20200923192147959.png)
+![](https://ravenxrz-blog.oss-cn-chengdu.aliyuncs.com/img/github_img/image-20200923192147959.png)
 
 可以看到index block和data_block都是BlockBuilder类型，意味着index_block和data_block的存储格式是相同的。那index_block中一个entry中的key value分别是什么？
 
@@ -702,7 +702,7 @@ Status TableBuilder::Finish() {
 
 目前有3个地方都调用了 ==TableBuilder::Finish==
 
-![image-20200923203705354](https://ravenxrz-blog.oss-cn-chengdu.aliyuncs.com/img/github_img/image-20200923203705354.png)
+![](https://ravenxrz-blog.oss-cn-chengdu.aliyuncs.com/img/github_img/image-20200923203705354.png)
 
 只有持久化SSTable时，才会持久化index block. 从SSTable的layout也可以看出来，因为一个SSTable只有一个index block。
 

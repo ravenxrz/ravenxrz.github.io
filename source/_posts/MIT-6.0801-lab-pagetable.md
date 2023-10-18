@@ -604,7 +604,7 @@ swtch:
 
 p->context.sp初始化为p->kstack+PGSIZE，即指向进程内核栈的栈底（栈是从内存地址由上往下push), 而在上面的汇编中，加载了该值到sp寄存器中。那什么时候会使用到sp寄存器？其实就在上述p->context.ra地址处，对于 allocproc 调用后，ra将保存 forkret 函数的首行指令：
 
-![image-20220508203941573](https://ravenxrz-blog.oss-cn-chengdu.aliyuncs.com/img/github_img/image-20220508203941573.png)
+![](https://ravenxrz-blog.oss-cn-chengdu.aliyuncs.com/img/github_img/image-20220508203941573.png)
 
 **如果我们在switch前未切换到process的内核页表，那么此时 `satp`寄存器中的将是全局内核页表，全局内核页表中并不包含对每个进程的内核栈地址映射，所以在执行该条指令时，系统将会出现错误。**
 

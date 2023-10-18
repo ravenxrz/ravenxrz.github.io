@@ -687,7 +687,7 @@ int main(int argc, char *argv[])
 
 本题能加强学生对cache的认识，编写cahce友好的代码。原题很简单，就是给一个矩阵A，求其转置。但是有一些额外说明，具体请读writeup。下面是本题的答案要求：
 
-![image-20200729141941145](https://ravenxrz-blog.oss-cn-chengdu.aliyuncs.com/img/github_img/image-20200729141941145.png)
+![](https://ravenxrz-blog.oss-cn-chengdu.aliyuncs.com/img/github_img/image-20200729141941145.png)
 
 m，代表miss次数。
 
@@ -700,7 +700,7 @@ m，代表miss次数。
 
 在正式解题前，先说下系统的一些参数，最重要的就是cache的组织方式了：
 
-![image-20200729142729751](https://ravenxrz-blog.oss-cn-chengdu.aliyuncs.com/img/github_img/image-20200729142729751.png)
+![](https://ravenxrz-blog.oss-cn-chengdu.aliyuncs.com/img/github_img/image-20200729142729751.png)
 
 s=5, S=32, 即32组
 
@@ -712,15 +712,15 @@ b=5，B=32， 即一个cacheline的block大小为32字节（后面简称cachelin
 
 blocking机制运用到矩阵转置来，即将A分成多个行条带，A行条带扫描。B分为多个块，每个块由多个条带组成，每个B条带按照列扫描。如图：
 
-![image-20200729144043920](https://ravenxrz-blog.oss-cn-chengdu.aliyuncs.com/img/github_img/image-20200729144043920.png)
+![](https://ravenxrz-blog.oss-cn-chengdu.aliyuncs.com/img/github_img/image-20200729144043920.png)
 
-![image-20200729144147785](https://ravenxrz-blog.oss-cn-chengdu.aliyuncs.com/img/github_img/image-20200729144439379.png)
+![](https://ravenxrz-blog.oss-cn-chengdu.aliyuncs.com/img/github_img/image-20200729144439379.png)
 
 ### 1. 32x32
 
 一个cacheline 32字节， 一个int 4字节， 则一个cacheline可以放8个int， 矩阵为32x32， 则矩阵一行需要4个cacheline。
 
-![image-20200729143546012](https://ravenxrz-blog.oss-cn-chengdu.aliyuncs.com/img/github_img/image-20200729143603293.png)
+![](https://ravenxrz-blog.oss-cn-chengdu.aliyuncs.com/img/github_img/image-20200729143603293.png)
 
 现在的问题是如何确定条带的长度。 
 
@@ -770,7 +770,7 @@ void trans32_v1(int A[32][32], int B[32][32])
 
 cachelab的writeup中，有这样一句话：
 
-![image-20200729150322560](https://ravenxrz-blog.oss-cn-chengdu.aliyuncs.com/img/github_img/image-20200729150322560.png)
+![](https://ravenxrz-blog.oss-cn-chengdu.aliyuncs.com/img/github_img/image-20200729150322560.png)
 
 对角线？ 是的，对角线上的元素，会发生冲突不命中问题。究其根本，在于我们对A进行了反复读。如何解决？把A的数据放到寄存器就行了。再次回到write u中：
 
@@ -910,7 +910,7 @@ void trans6761_v1(int A[67][61], int B[61][67])
 
 1. 如果BSIZE 依然取8会发生什么问题？
 
-![image-20200729151739512](https://ravenxrz-blog.oss-cn-chengdu.aliyuncs.com/img/github_img/5f212d5b14195aa594514cfb.png)
+![](https://ravenxrz-blog.oss-cn-chengdu.aliyuncs.com/img/github_img/5f212d5b14195aa594514cfb.png)
 
 上图给出了此时的矩阵内部cacheline分布，有个很严重的问题在于一个cache空间，在矩阵中仅4行就重复了。那如果条带继续为8， B列向扫描一个条带，后4个元素就会替换前4个元素所在的cacheline。造成过多**冲突不命中**。
 
@@ -926,7 +926,7 @@ void trans6761_v1(int A[67][61], int B[61][67])
 
 A条带长度为8，我们将一个A条带的前4列正常填入B的前4行，而**A条带的后4列填入到其他地方，**再等待某个时机，将这些临时填充的数据归还到正确位置即可。示意图：
 
-![image-20200729153035966](https://ravenxrz-blog.oss-cn-chengdu.aliyuncs.com/img/github_img/5f212d6b14195aa59451559a.png)
+![](https://ravenxrz-blog.oss-cn-chengdu.aliyuncs.com/img/github_img/5f212d6b14195aa59451559a.png)
 
 绿色代表正常填入区间。
 
@@ -936,7 +936,7 @@ A条带长度为8，我们将一个A条带的前4列正常填入B的前4行，�
 
 接着，在某个时机：
 
-![image-20200729153243973](https://ravenxrz-blog.oss-cn-chengdu.aliyuncs.com/img/github_img/5f212d7d14195aa594515d89.png)
+![](https://ravenxrz-blog.oss-cn-chengdu.aliyuncs.com/img/github_img/5f212d7d14195aa594515d89.png)
 
 几个问题：
 
@@ -960,7 +960,7 @@ A条带长度为8，我们将一个A条带的前4列正常填入B的前4行，�
 
 最终我选择方案为： BSIZE=8，临时填充区间示意图如下：
 
-![image-20200729153935817](https://ravenxrz-blog.oss-cn-chengdu.aliyuncs.com/img/github_img/5f212d8c14195aa5945163a2.png)
+![](https://ravenxrz-blog.oss-cn-chengdu.aliyuncs.com/img/github_img/5f212d8c14195aa5945163a2.png)
 
 为什么会这样选？如果像之前示意图那样选，依然会存在很多冲突映射，甚至不如不做映射。仔细分析了下trace file,手动模拟了cache line的load store过程，选择的这样的临时填充映射。
 

@@ -19,7 +19,7 @@ proxylab, 从最终目的来看，我们实现的是一个代理服务器。prox
 
 下面是整个处理流程图：
 
-![image-20200906094312362](https://ravenxrz-blog.oss-cn-chengdu.aliyuncs.com/img/github_img/image-20200906094312362.png)
+![](https://ravenxrz-blog.oss-cn-chengdu.aliyuncs.com/img/github_img/image-20200906094312362.png)
 
 client向proxy请求数据，proxy将请求放入到一个任务队列中，交由子线程处理。线程负责参数解析，首先看cache中是否有满足的数据，有则直接返回给client，没有则向server请求，server返回数据后，线程将数据插入到cache中，并返回给client。
 
@@ -415,7 +415,7 @@ cache_item *cache_get(cache *cp, char *key)
 
 其实cache最开始我是准备用Log-Strucutre的实现，但是发现实现起来很复杂，而且csapp的测试跑不了太久，Log-Sturcutre的优点没法充分利用。下面简单说一下思路。Log-Strucutre的特点就是Only-Append. 题目的要求是缓存从server返回的数据，而这些数据的大小不一，如果按照上文的实现，**必然会导致很多内部碎片**。而采用only-append的思想，则不存在内部碎片的问题，如下图：
 
-![image-20200906101718082](https://ravenxrz-blog.oss-cn-chengdu.aliyuncs.com/img/github_img/image-20200906101718082.png)
+![](https://ravenxrz-blog.oss-cn-chengdu.aliyuncs.com/img/github_img/image-20200906101718082.png)
 
 但是这样又会存在一个新问题，那就是cache空间是有限的，我们最后总会evict掉某些块，**那就很容产生外部碎片问题，**这该怎么解决呢？开启一个compact线程就好了，compact线程可以周期性的对整个内存空间做压缩处理，去掉外部碎片问题。compact的触发点可以有两个：
 

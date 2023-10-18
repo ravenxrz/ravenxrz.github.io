@@ -45,7 +45,7 @@ gdb的使用可参考: [gdb 调试基础 ](https://ravenxrz.github.io/archives/3
 
 所以,我们需要查看内存地址 0x402400的字符串是什么, 通过 `x /100cb 0x402400`命令,可得:
 
-![image-20200621205547340](https://ravenxrz-blog.oss-cn-chengdu.aliyuncs.com/img/github_img/image-20200621205547340.png)
+![](https://ravenxrz-blog.oss-cn-chengdu.aliyuncs.com/img/github_img/image-20200621205547340.png)
 
 找到 `\0`的位置, 之前所有的字符组成的字符串即为答案:
 
@@ -303,7 +303,7 @@ void func4(int x, int y, int z) {
 
 另外,值得注意的是, 以字符的低4bit作为坐标, 这样会有多个字符有相同的低4bit. 查看acsii码表.
 
-![image-20200621224830418](https://ravenxrz-blog.oss-cn-chengdu.aliyuncs.com/img/github_img/image-20200621224830418.png)
+![](https://ravenxrz-blog.oss-cn-chengdu.aliyuncs.com/img/github_img/image-20200621224830418.png)
 
 如果以数字表示坐标,则坐标为:
 
@@ -484,7 +484,7 @@ phase 6是bomblab中最难的题, 我对代码做了详细的解释:
 
 至于题目中的链表是什么, 查看内存地址空间**0x6032d0**即可知道.
 
-![image-20200621225834535](https://ravenxrz-blog.oss-cn-chengdu.aliyuncs.com/img/github_img/image-20200621225834535.png)
+![](https://ravenxrz-blog.oss-cn-chengdu.aliyuncs.com/img/github_img/image-20200621225834535.png)
 
 即:
 

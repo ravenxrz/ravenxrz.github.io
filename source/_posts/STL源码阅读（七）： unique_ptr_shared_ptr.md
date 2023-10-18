@@ -225,7 +225,7 @@ return *this;
 
 shared_ptr的相关类图为：
 
-![image-20230416212536528](https://ravenxrz-blog.oss-cn-chengdu.aliyuncs.com/img/oss_imgimage-20230416212536528.png)
+![](https://ravenxrz-blog.oss-cn-chengdu.aliyuncs.com/img/oss_imgimage-20230416212536528.png)
 
 `shared_ptr` 继承自 `__shared_ptr`，`__shared_ptr` 内部有指向 要管理的指针`_M_ptr`和一个 `_shared_count`用于计数（实际上也就是shared_ptr的控制块)。 `_shared_count`实际组合了`_Sp_counted_base`， 该类为基类，有三个继承类：
 

@@ -8,7 +8,7 @@ tags:
 
 vector可以说用到最多的容器了。今天来分析它。
 
-![image-20230410165416561](https://ravenxrz-blog.oss-cn-chengdu.aliyuncs.com/img/oss_imgimage-20230410165416561.png)
+![](https://ravenxrz-blog.oss-cn-chengdu.aliyuncs.com/img/oss_imgimage-20230410165416561.png)
 
 <!--more-->
 

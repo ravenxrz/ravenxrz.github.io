@@ -18,7 +18,7 @@ date: 2021-03-30 20:22:19
 
 建立文件目录如下：
 
-![image-20210330203443446](https://ravenxrz-blog.oss-cn-chengdu.aliyuncs.com/img/github_img/image-20210330203443446.png)
+![](https://ravenxrz-blog.oss-cn-chengdu.aliyuncs.com/img/github_img/image-20210330203443446.png)
 
 hello.h 和 hello.cpp 组成 hello lib.
 
@@ -123,7 +123,7 @@ main.cpp是不会报错，但是hello.cpp会报错。因为自己吃的篮子中
 
 依然以一个例子来说明，目录结构如下:
 
-![image-20210330210016843](https://ravenxrz-blog.oss-cn-chengdu.aliyuncs.com/img/github_img/image-20210330210016843.png)
+![](https://ravenxrz-blog.oss-cn-chengdu.aliyuncs.com/img/github_img/image-20210330210016843.png)
 
 各文件内容：
 

@@ -14,7 +14,7 @@ tags:
 
 运行leveldb程序一段时间后，我们会发现在系统给中，存在很多由数字编号的文件：
 
-![image-20201009111936923](https://ravenxrz-blog.oss-cn-chengdu.aliyuncs.com/img/github_img/image-20201009111936923.png)
+![](https://ravenxrz-blog.oss-cn-chengdu.aliyuncs.com/img/github_img/image-20201009111936923.png)
 
 这篇文章从整体上谈一谈leveldb的文件命令和文件编号的来源。
 

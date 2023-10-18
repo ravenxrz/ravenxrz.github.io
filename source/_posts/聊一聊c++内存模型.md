@@ -153,7 +153,7 @@ line ...
 
 这是我们的理想内存一致性模型，这种模型也被称为 ==**顺序一致性（Sequential Consistency**）==。更学术的定义为：
 
-![image-20230915155248844](https://ravenxrz-blog.oss-cn-chengdu.aliyuncs.com/img/oss_imgoss_imgimage-20230915155248844.png)
+![](https://ravenxrz-blog.oss-cn-chengdu.aliyuncs.com/img/oss_imgoss_imgimage-20230915155248844.png)
 
 最终它能保证，所有操作都是ordered。
 
@@ -161,7 +161,7 @@ line ...
 
 要实现顺序一致性，最粗暴的做法就是cpu一次只发射一个指令，等待这个指令完成后再执行下一条。但很明显这样性能太差了。下图展示了它到底有多慢：
 
-![image-20230915153751553](https://ravenxrz-blog.oss-cn-chengdu.aliyuncs.com/img/oss_imgoss_imgimage-20230915153751553.png)
+![](https://ravenxrz-blog.oss-cn-chengdu.aliyuncs.com/img/oss_imgoss_imgimage-20230915153751553.png)
 
 横轴是不同的应用，纵轴是cpu耗时拆分的百分比。Busy部分是指令实际生效的时间，Synch是同步开销，Read和Write分别是Read和Write的stall时间。从结论上看，如果采用这种顺序一致性模型，**cpu的利用率仅17%~42%**。 这当然不是硬件工程师们想要的。
 
@@ -207,13 +207,13 @@ load b
 
 
 
-![image-20230916171415083](https://ravenxrz-blog.oss-cn-chengdu.aliyuncs.com/img/oss_imgoss_imgimage-20230916171415083.png)
+![](https://ravenxrz-blog.oss-cn-chengdu.aliyuncs.com/img/oss_imgoss_imgimage-20230916171415083.png)
 
 即 ==Read-Read无重排，Read-Write不重排，**Write-Read可能重排**，Write-Write不重排。Intel采用了这种内存一致性模型==。
 
 TSO更为学术的定位为：
 
-![image-20230916171320293](https://ravenxrz-blog.oss-cn-chengdu.aliyuncs.com/img/oss_imgoss_imgimage-20230916171320293.png)
+![](https://ravenxrz-blog.oss-cn-chengdu.aliyuncs.com/img/oss_imgoss_imgimage-20230916171320293.png)
 
 
 
@@ -235,7 +235,7 @@ CPU0执行 a = 1后，b=2。 CPU1等待b直到b=2，然后assert(a==1)。 由于
 
 有了TSO模型，再来比较下它与SC（顺序一致性）的性能：
 
-![image-20230916172421785](https://ravenxrz-blog.oss-cn-chengdu.aliyuncs.com/img/oss_imgoss_imgimage-20230916172421785.png)
+![](https://ravenxrz-blog.oss-cn-chengdu.aliyuncs.com/img/oss_imgoss_imgimage-20230916172421785.png)
 
 可以看到绿色的Write耗时极大减少了。
 
@@ -243,7 +243,7 @@ CPU0执行 a = 1后，b=2。 CPU1等待b直到b=2，然后assert(a==1)。 由于
 
 PSO是比TSO模型更宽松的内存一致性模型。其特点如下：
 
-![image-20230916173332511](https://ravenxrz-blog.oss-cn-chengdu.aliyuncs.com/img/oss_imgoss_imgimage-20230916173332511.png)
+![](https://ravenxrz-blog.oss-cn-chengdu.aliyuncs.com/img/oss_imgoss_imgimage-20230916173332511.png)
 
 除了允许Write-Read重排外，还允许Write-Write重排。这样的收益是什么？考虑如下两条指令：
 
@@ -262,7 +262,7 @@ SPARC 支持这种模型。
 
 下图总结了各种硬件架构的各种重排情况
 
-![image-20230916191728267](https://ravenxrz-blog.oss-cn-chengdu.aliyuncs.com/img/oss_imgoss_imgimage-20230916191728267.png)
+![](https://ravenxrz-blog.oss-cn-chengdu.aliyuncs.com/img/oss_imgoss_imgimage-20230916191728267.png)
 
 
 
@@ -272,9 +272,9 @@ Cache Coherence: 强调对 **==同一个==** 内存地址的读写行为。
 
 Memory Consistency： 强调对 **==不同==** 内存地址的读写行为。
 
-![image-20230918093820711](https://ravenxrz-blog.oss-cn-chengdu.aliyuncs.com/img/oss_imgoss_imgimage-20230918093820711.png)
+![](https://ravenxrz-blog.oss-cn-chengdu.aliyuncs.com/img/oss_imgoss_imgimage-20230918093820711.png)
 
-![image-20230918093836085](https://ravenxrz-blog.oss-cn-chengdu.aliyuncs.com/img/oss_imgoss_imgimage-20230918093836085.png)
+![](https://ravenxrz-blog.oss-cn-chengdu.aliyuncs.com/img/oss_imgoss_imgimage-20230918093836085.png)
 
 
 
@@ -760,7 +760,7 @@ int main()
 
 可以将`acquire-release`的同步点组合看成一把锁， **夹在锁中间的是临界区，临界区中的代码不能逃出锁的范围内，但是临界区外的代码可以跑进临界区。**
 
-![image-20230918163952615](https://ravenxrz-blog.oss-cn-chengdu.aliyuncs.com/img/oss_imgoss_imgimage-20230918163952615.png)
+![](https://ravenxrz-blog.oss-cn-chengdu.aliyuncs.com/img/oss_imgoss_imgimage-20230918163952615.png)
 
 **lock 对于 acuiqre, unlock 对应 release。** `acquire-release`除外保证原子性外，最重要的功能就是同步了，**同步的目标是同步非原子变量本身以外的变量。**（如何理解这句话，看下面代码）
 

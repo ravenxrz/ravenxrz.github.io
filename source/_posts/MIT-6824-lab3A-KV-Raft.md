@@ -24,7 +24,7 @@ tags:
 
 让我们不要一下陷入各种细节，思考下整个系统的的架构，下图是官网给出的架构图：
 
-![image-20220308144908922](https://ravenxrz-blog.oss-cn-chengdu.aliyuncs.com/img/github_img/image-20220308144908922.png)
+![](https://ravenxrz-blog.oss-cn-chengdu.aliyuncs.com/img/github_img/image-20220308144908922.png)
 
 对于lab3A来说，不用关注任何和持久化相关的问题。
 

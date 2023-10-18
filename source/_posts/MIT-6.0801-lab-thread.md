@@ -22,7 +22,7 @@ tags:
 
 做task 1前，弄懂xv6的线程切换原理即可。下面贴出xv6的线程切换outline：
 
-![image-20220524141615397](https://ravenxrz-blog.oss-cn-chengdu.aliyuncs.com/img/github_img/image-20220524141615397.png)
+![](https://ravenxrz-blog.oss-cn-chengdu.aliyuncs.com/img/github_img/image-20220524141615397.png)
 
 假设当前shell因为需要等待I/O或者因为定时器中断来临，内核决定切换shell进程到cat进程，则过程大体如下：
 
@@ -160,7 +160,7 @@ thread_switch:
 
 **caller-registers和callee-registers内容如下：**
 
-![image-20220524143344114](https://ravenxrz-blog.oss-cn-chengdu.aliyuncs.com/img/github_img/image-20220524143344114.png)
+![](https://ravenxrz-blog.oss-cn-chengdu.aliyuncs.com/img/github_img/image-20220524143344114.png)
 
 ### 2. Using threads
 

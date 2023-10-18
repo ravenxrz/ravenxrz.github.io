@@ -46,7 +46,7 @@ class basic_string;
 
 `basic_string`的类图如下：
 
-![image-20230411174547291](https://ravenxrz-blog.oss-cn-chengdu.aliyuncs.com/img/oss_imgimage-20230411174547291.png)
+![](https://ravenxrz-blog.oss-cn-chengdu.aliyuncs.com/img/oss_imgimage-20230411174547291.png)
 
 看起来和`vector`的继承关系基本一样。
 

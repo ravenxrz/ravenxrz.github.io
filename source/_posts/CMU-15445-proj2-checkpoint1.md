@@ -24,7 +24,7 @@ proj2的checkpoint1要求实现B+ tree的节点class，包括internal page和lea
 
 虽然我之前说过所有projects都不会透漏代码，但是结合我的做题体验来说，我是参考了不少博文和代码才做出来的。所以本文除了记录坑点外，也会贴部分关键的代码或伪代码。对于才开始做的朋友来说，`checkpoint1`肯定是无从下手的，因为他只是提供了一些函数和注释，不明白具体该做什么。比如下面这个函数：
 
-![image-20211020163441531](https://ravenxrz-blog.oss-cn-chengdu.aliyuncs.com/img/github_img/image-20211020163441531.png)
+![](https://ravenxrz-blog.oss-cn-chengdu.aliyuncs.com/img/github_img/image-20211020163441531.png)
 
 如果没有做完整个proj，起手就写它的话，我是不知道如何下手的。建议阅读下整个`public`的函数作用，`leaf page`同理，然后从`b_plus_tree.h/cpp`入手。
 
@@ -217,7 +217,7 @@ buffer_pool_manager_->UnpinPage(right_page->GetPageId(), true);
 
 Split函数：
 
-![image-20211020172533942](https://ravenxrz-blog.oss-cn-chengdu.aliyuncs.com/img/github_img/image-20211020172533942.png)
+![](https://ravenxrz-blog.oss-cn-chengdu.aliyuncs.com/img/github_img/image-20211020172533942.png)
 
 **Split时，叶节点和内部节点需要单独处理。**
 
@@ -250,7 +250,7 @@ Split函数：
 
 此时你可能要问，强制要求`internal_max_size` 不能小于3，即必须>=4不就可以了吗。这个不行，因为官方提供的测试用例中，有一句：
 
-![image-20211020173208103](https://ravenxrz-blog.oss-cn-chengdu.aliyuncs.com/img/github_img/image-20211020173208103.png)
+![](https://ravenxrz-blog.oss-cn-chengdu.aliyuncs.com/img/github_img/image-20211020173208103.png)
 
 所以，实现中必须兼容`internal_max_size=3`的情况。
 

@@ -165,9 +165,9 @@ uservec:
 
 回忆user process的page table layout和kernel page table layout：
 
-![image-20220508130849006](https://ravenxrz-blog.oss-cn-chengdu.aliyuncs.com/img/github_img/image-20220508130849006.png)
+![](https://ravenxrz-blog.oss-cn-chengdu.aliyuncs.com/img/github_img/image-20220508130849006.png)
 
-![image-20220508131437202](https://pic.imgdb.cn/item/6277ce800947543129504076.jpg)
+![](https://pic.imgdb.cn/item/6277ce800947543129504076.jpg)
 
 可以发现有个trampoline page，用户进程页表和内核页表都在相同地址处映射了这段指令代码（即上文的trampoline.S)，所以即使使用用户进程页表也可以执行这部分代码。
 
@@ -516,7 +516,7 @@ backtrace()
 
 启动qemu，执行 `bttest`，或者三行地址，退出qemu，执行 `addr2line -e kernel/kernel`，然后粘贴刚才的三行地址，输出
 
-![image-20220513114010492](https://ravenxrz-blog.oss-cn-chengdu.aliyuncs.com/img/github_img/image-20220513114010492.png)
+![](https://ravenxrz-blog.oss-cn-chengdu.aliyuncs.com/img/github_img/image-20220513114010492.png)
 
 说明通过。
 

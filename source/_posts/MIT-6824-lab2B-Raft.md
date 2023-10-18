@@ -712,5 +712,5 @@ lab2B的单元测试更多，也更复杂，特别是涉及到网络分区后，
 
 至此，lab2B通过：
 
-![image-20220224194848472](https://ravenxrz-blog.oss-cn-chengdu.aliyuncs.com/img/github_img/image-20220224194848472.png)
+![](https://ravenxrz-blog.oss-cn-chengdu.aliyuncs.com/img/github_img/image-20220224194848472.png)
 

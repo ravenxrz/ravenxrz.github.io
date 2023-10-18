@@ -231,7 +231,7 @@ Status DBImpl::WriteLevel0Table(MemTable* mem, VersionEdit* edit,
 
 下面这些 .ldb的文件就是sstable，可以看到它们都是一些由数字组成的文件名，这些数字是哪里来的？我们可以从源码中获得答案：
 
-![image-20200925153434477](https://ravenxrz-blog.oss-cn-chengdu.aliyuncs.com/img/github_img/image-20200925153434477.png)
+![](https://ravenxrz-blog.oss-cn-chengdu.aliyuncs.com/img/github_img/image-20200925153434477.png)
 
 ```c++
 Status BuildTable(const std::string& dbname, Env* env, const Options& options,

@@ -396,11 +396,11 @@ malloc:
 
 课堂上给出的一个基础结构为：
 
-![image-20220511180603469](https://ravenxrz-blog.oss-cn-chengdu.aliyuncs.com/img/github_img/image-20220511180603469.png)
+![](https://ravenxrz-blog.oss-cn-chengdu.aliyuncs.com/img/github_img/image-20220511180603469.png)
 
 我们知道riscv中一共有32个寄存器，如下：
 
-![image-20220511180657392](https://ravenxrz-blog.oss-cn-chengdu.aliyuncs.com/img/github_img/image-20220511180657392.png)
+![](https://ravenxrz-blog.oss-cn-chengdu.aliyuncs.com/img/github_img/image-20220511180657392.png)
 
 **其中的Saver列指明了我们在哪里需要保存些什么寄存器**，比如 `s开头一系列寄存器和sp`需要在callee中保存，而 `t开头的寄存器和ra`需要在caller中保存。**保持这种 calling convention是非常重要的**，能够得到更好的可读的汇编，而不是滥用各类寄存器，到头备受折磨。
 

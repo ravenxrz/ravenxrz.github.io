@@ -24,7 +24,7 @@ tags:
 
 LevelDB 作为存储系统，数据记录的存储介质包括内存以及磁盘文件，当 LevelDB 运行了一段时间，此时我们给 LevelDB 进行透视拍照，会看到如下一番景象，这也就是 LevelDB 的结构图。
 
-![image-20210223202631155](https://ravenxrz-blog.oss-cn-chengdu.aliyuncs.com/img/github_img/image-20210223202631155.png)从图中可以看出，构成 LevelDB 静态结构的包括六个主要部分：内存中的 **MemTable** 和 **Immutable MemTable** 以及磁盘上的几种主要文件：**Current文件**，**Manifest文件**，**log文件**以及 **SSTable 文件**。当然，LevelDB 除了这六个主要部分还有一些辅助的文件，但是以上六个文件和数据结构是 LevelDB 的主体构成元素。
+![](https://ravenxrz-blog.oss-cn-chengdu.aliyuncs.com/img/github_img/image-20210223202631155.png)从图中可以看出，构成 LevelDB 静态结构的包括六个主要部分：内存中的 **MemTable** 和 **Immutable MemTable** 以及磁盘上的几种主要文件：**Current文件**，**Manifest文件**，**log文件**以及 **SSTable 文件**。当然，LevelDB 除了这六个主要部分还有一些辅助的文件，但是以上六个文件和数据结构是 LevelDB 的主体构成元素。
 
 当应用写入一条Key:Value记录的时候，LevelDb会先往log文件里写入，成功后将记录插进Memtable中，这样基本就算完成了写入操作，因为一次写入操作只涉及一次磁盘顺序写和一次内存写入，所以这是为何说LevelDb写入速度极快的主要原因。
 
