@@ -99,32 +99,6 @@ deploy:
     # coding: git@git.dev.tencent.com:ravenxrz/ravenxrz.coding.me.git,master
     # gitee: git@gitee.com:ravenxrz/ravenxrz.git
 
-# 自定义
-# hexo-neat
-# 博文压缩
-neat_enable: true
-# 压缩html
-neat_html:
-  enable: true
-  exclude:
-# 压缩css  
-neat_css:
-  enable: true
-  exclude:
-    - '**/*.min.css'
-# 压缩js
-neat_js:
-  enable: true
-  mangle: true
-  output:
-  compress:
-  exclude:
-    - '**/*.min.js'
-    - '**/jquery.fancybox.pack.js'
-    - '**/index.js' 
-    - '**/clicklove.js'
-    - '**/fireworks.js'
-
 markdown:
   preset: "default" # 渲染器默认预设 # "commonmark": 使用严格 CommandMark 规定. # "default": 默认配置, 类似于 GFM # "zero": 禁用所有预设.
 # 以下为 render 选项
@@ -170,3 +144,28 @@ markdown:
     # 标题固定锚点到此结束
     case: 0 # 转换锚点 ID 中的字母为大写或小写 # "0" 不转换, "1" 为小写, "2" 为大写.
     separator: '-' # 用于替换空格的符号. # 默认为 "-"
+
+# minifier
+all_minifier: true
+html_minifier:
+  enable: true
+  ignore_error: false
+  exclude:
+css_minifier:
+  enable: true
+  exclude:
+    - '*.min.css'
+js_minifier:
+  enable: false
+  mangle: true
+  output:
+  compress:
+  exclude:
+    - '*.min.js'
+image_minifier:
+  enable: false
+  interlaced: false
+  multipass: false
+  optimizationLevel: 2
+  pngquant: false
+  progressive: false
