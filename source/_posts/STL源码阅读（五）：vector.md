@@ -6,13 +6,15 @@ date: 2023-04-06 20:11:31
 tags:
 ---
 
-vector可以说用到最多的容器了。今天来分析它。
-
-![](https://ravenxrz-blog.oss-cn-chengdu.aliyuncs.com/img/oss_imgimage-20230410165416561.png)
+vector可以说用到最多的容器了。今天来从源码分析它。
 
 <!--more-->
 
 ## 1. `_Vector_base`
+
+先看类图：
+
+<img src="https://ravenxrz-blog.oss-cn-chengdu.aliyuncs.com/img/oss_imgimage-20230410165416561.png" style="zoom:50%;" />
 
 `_Vector_base`是 `vector` 的模板基类，模板接收一个值类型`_Tp`, 和一个分配器类型`_Alloc`， 成员变量有三个 `_M_start`, `_M_finish`, `_M_end_of_storage`。 示意图如下：
 
