@@ -6,8 +6,6 @@ date: 2023-10-14 22:10:31
 tags:
 ---
 
-
-
 最近在读[《深入理解分布式系统》](https://book.douban.com/subject/35794814/)，书中所描述的Multi-Paxos个人觉得不太好理解。本文结合书和网络上的资料，记录下Paxos的基本流程。
 
 <!--more-->
@@ -31,16 +29,15 @@ Paxos是实现上述目标的一种算法，值得一提的是Paxos是非拜占�
 学习Paxos算法可以分为两部分：
 
 1. Basic Paxos
-
+   
    Basic Paxos的目标如下：
-
+   
    1. 允许一个或多个server 提出提案(proposal， 什么是proposal，下文会说)
    2. 整个系统最终仅允许单个value被批准（chosen，什么是chosen下文会说）
 
 2. Multi-Paxos
-
+   
    将多个Basic paxos实例结合起来，即可以形成状态机log
-
 
 让我们先从Basic Paxos开始。
 
@@ -191,7 +188,7 @@ S1提出3.1 提案，被S5的3.5提案拦截，3.5发起Accept请求时，S1由�
 
 ### 1. 选择日志索引
 
-显然，不能允许多个Basic Paxos实例随意运行，因为要保证每个Server的日志完成一致，不能说Server 1上的日志为1 2 3, 而Server 2上的日志为1 3 2，这样虽然实例决定出的值都为1 2 3， 但是顺序不一致。为了解决这个问题，需要**为每个Basic Paxos实例所决策的value在日志中的位置添加index**。
+显然，不能允许多个Basic Paxos实例随意运行，因为要保证每个Server的日志完全一致，不能说Server 1上的日志为1 2 3, 而Server 2上的日志为1 3 2，这样虽然实例决定出的值都为1 2 3， 但是顺序不一致。为了解决这个问题，需要**为每个Basic Paxos实例所决策的value在日志中的位置添加index**。
 
 **新的问题是如何为每个实例选择日志索引？** Paxos采用如下规则：
 
@@ -209,7 +206,7 @@ S1提出3.1 提案，被S5的3.5提案拦截，3.5发起Accept请求时，S1由�
 
 Step 1: 找到第一个未被chosen的日志索引，3。
 
-Step 2: 使用Basic Paxos算法，广播到S1和S2。
+Step 2: 使用Basic Paxos算法，广播到S1,S2,S3(S3不能回复)。
 
 Step 3：S1的Promise回复中带有acceptedValue cmp， 故采用cmp做Accept。
 
@@ -250,7 +247,7 @@ Step 6: 回到Step 1重试，发现index 5, 由于S1和S2上都没有acceptedVal
 
 先看第1点，原Prepare阶段可以屏蔽一个log index上的老提案，每个log index都需要prepare。为了避免每个log index都prepare，可以**将提案编号按照整个log单调递增。acceptor只用记录一个minProposal(而不是每个log index一个)，后续各个log index的Prepare请求（如果需要的话）只用和这个minProposal比较即可**。
 
-再看第2点，Prepare返回阶段时，**Acceptor要返回两个信息**： 1. 对于当前log entry(idx)，如果有acceptedValue，返回minProposal 和 acceptedValue； 2. 增加一个标识noMoreAccepted，标识从当前log idx开始，往后查看本节点是否有accepted的value，如果没有，该标识为true，如果有，该标识为false。**当Proposer收到来自Acceptor的noMoreAccepted标志为true时，之后对该Acceptor不再需要发起prepare请求**， **当Proposer收到超过半数以上的noMoreAccepted，则之后整个log都不需要发送Prepare请求（除非换了leader，或者因为某种原理存在多个leader(proposoer))**。
+再看第2点，Prepare返回阶段时，**Acceptor要返回两个信息**： 1. 对于当前log entry(idx)，如果有acceptedValue，返回minProposal 和 acceptedValue； 2. 增加一个标识noMoreAccepted，标识从当前log idx开始，往后查看本节点是否有accepted的value，如果没有，该标识为true，如果有，该标识为false。**当Proposer收到来自Acceptor的noMoreAccepted标志为true时，之后对该Acceptor不再需要发起prepare请求**， **当Proposer收到超过半数以上的noMoreAccepted，则之后整个log都不需要发送Prepare请求（除非换了leader，或者因为某种原因存在多个leader(proposoer))**。
 
 通过如上两个优化，即可以减少大量的Prepare请求。至此，我们解决了 [Basic Paxos的问题](#Basic Paxos的问题)中的问题2。
 
