@@ -488,7 +488,7 @@ eg:
 
 ### previous_entry_length
 
-已字节为单位，记录ziplist中前一个节点的长度。 previous_entry_length的长度可以是1字节或者5字节:
+以字节为单位，记录ziplist中前一个节点的长度。 previous_entry_length的长度可以是1字节或者5字节:
 
 - 如果前一个节点的长度小于254字节，那么previous_entry_length的长度为1字节。
 - 如果前一个字节的长度大于等于254字节，那么previous_entry_length长度为5字节：其中第一个字节设置为0xFE(254)，而之后的四个字节则用来保存前一节点的长度。
