@@ -1,12 +1,10 @@
----
-title: redis源码-ziplist
-categories: redis
-date: 2024-06-9 11:58:55
----
+______________________________________________________________________
 
-# 0. 前言
+## title: redis源码-ziplist categories: redis date: 2024-06-9 11:58:55
 
-上文中介绍了redis内部的各个数据结构，个人对ziplist比较感兴趣，本篇详细分析其源码。
+## 前言
+
+上文中介绍了redis内部的各个数据结构，由于ziplist 是为节约内存而设计，个人t比较感兴趣，本篇详细分析其源码。
 
 <!--more-->
 
@@ -23,7 +21,7 @@ ziplist的基本结构图：
 
 ## ziplist API
 
-ziplist 是为节约内存而设计， 其api如下:
+api如下:
 
 ```c
 unsigned char *ziplistNew(void);
@@ -131,7 +129,7 @@ zipListPush用于向zipList中插入一个节点, 一个节点(entry) 的结构�
 
    可以看到encoding不仅代码了本entry的编码类型，同时也包含了具体的entry length
 
-![](https://ravenxrz-blog.oss-cn-chengdu.aliyuncs.com/img/oss_img20240609220002.png)
+!\[\](https://ravenxrz-blog.oss-cn-chengdu.aliyuncs.com/img/oss_img20240609220002.png =400x)
 
 ok, 有了这些基础知识，看下源码：
 
@@ -150,7 +148,7 @@ unsigned char *ziplistPush(unsigned char *zl, unsigned char *s, unsigned int sle
 
 ```
 
-这里我们仅分析向表尾插入, 所以结合 ZIPLIST_ENTRY_END 宏分析:
+这里我们先分析向表尾插入, 所以结合 ZIPLIST_ENTRY_END 宏分析:
 
 ```cpp
 #define ZIPLIST_ENTRY_END(zl)   ((zl)+intrev32ifbe(ZIPLIST_BYTES(zl))-1)
@@ -310,7 +308,7 @@ static unsigned char *__ziplistInsert(unsigned char *zl, unsigned char *p, unsig
 
 ```
 
-假设是新插入, 则prevLen为0，否则找到表尾最后一个节点，获取其长度：
+如果新插入, 则prevLen为0; 否则找到表尾最后一个节点，获取其长度：
 
 ```c
 // 如果 p 指向表尾末端，那么程序需要检查列表是否为：
@@ -423,22 +421,24 @@ static unsigned int zipIntSize(unsigned char encoding) {
 
 如果编码失败，则 reqLen直接等于传入的slen，即raw string len.
 
-计算前置节点的长度：
+计算前置节点的**编码**长度：
 
 ```c
 reqlen += zipPrevEncodeLength(NULL,prevlen);
 ```
 
-对于空列表， prevLen为0， 该函数返回1:
+对于空列表， prevLen 要么等于1，要等等于5，根据ZIP_BIGLEN的关系决定。
 
 ```c
 // -- func: zipPrevEncodeLength
 // 仅返回编码 len 所需的字节数量
 if (p == NULL) {
     return (len < ZIP_BIGLEN) ? 1 : sizeof(len)+1;
+
+#define ZIP_BIGLEN 254
 ```
 
-再计算encoding的len， 对于整数编码，encoding len总是1B（前面那些magic number 都是1字节），对于非整数编码: 1. 如果传入slen\<=(2^4 - 1), 则编码长度为1B； 如果\<=(2^14 - 1), 编码长度为2B； 其他情况，都是5B。
+再计算encoding的编码len， 对于整数编码，encoding 编码len总是1B（前面那些magic number 都是1字节），对于非整数编码: 1. 如果传入slen\<=(2^4 - 1), 则编码长度为1B； 如果\<=(2^14 - 1), 编码长度为2B； 其他情况，都是5B。
 
 ```c
 static unsigned int zipEncodeLength(unsigned char *p, unsigned char encoding, unsigned int rawlen) {
@@ -483,9 +483,10 @@ static unsigned int zipEncodeLength(unsigned char *p, unsigned char encoding, un
 
 ```
 
-**重新分配ziplist内存:**
+**完成prevlen和encoding编码len的计算后，本entry的所有信息长度都已经计算出，开始为本节点分配内存**:
 
 ```c
+// reqlen = cur entry encoded size = prevLen encoded size + encoding encoded size + string encoded size
 zl = ziplistResize(zl,curlen+reqlen+nextdiff);
 ```
 
@@ -513,44 +514,40 @@ static unsigned char *ziplistResize(unsigned char *zl, unsigned int len) {
 
 1. 首先写入 prevLen:
 
-```c
+   ```c
 
-p += zipPrevEncodeLength(p,prevlen);
---
-static unsigned int zipPrevEncodeLength(unsigned char *p, unsigned int len) {
+   p += zipPrevEncodeLength(p,prevlen);
+   --
+   static unsigned int zipPrevEncodeLength(unsigned char *p, unsigned int len) {
+       ... 
+       {
 
-    // 仅返回编码 len 所需的字节数量
-    if (p == NULL) {
-        return (len < ZIP_BIGLEN) ? 1 : sizeof(len)+1;
+           // 1 字节
+           if (len < ZIP_BIGLEN) {
+               p[0] = len;
+               return 1;
 
-    // 写入并返回编码 len 所需的字节数量
-    } else {
+           // 5 字节
+           } else {
+               // 添加 5 字节长度标识
+               p[0] = ZIP_BIGLEN;
+               // 写入编码
+               memcpy(p+1,&len,sizeof(len));
+               // 如果有必要的话，进行大小端转换
+               memrev32ifbe(p+1);
+               // 返回编码长度
+               return 1+sizeof(len);
+           }
+       }
+   }
 
-        // 1 字节
-        if (len < ZIP_BIGLEN) {
-            p[0] = len;
-            return 1;
+   ```
 
-        // 5 字节
-        } else {
-            // 添加 5 字节长度标识
-            p[0] = ZIP_BIGLEN;
-            // 写入编码
-            memcpy(p+1,&len,sizeof(len));
-            // 如果有必要的话，进行大小端转换
-            memrev32ifbe(p+1);
-            // 返回编码长度
-            return 1+sizeof(len);
-        }
-    }
-}
+   1.1 如果prevLen的编码长度小于`ZIP_BIGLEN(254)`, 则一字节足够编码
 
-```
+   1.2 否则，用5字节编码prevLen，其中第一个字节为ZIP_BIGLEN, 剩余四字节为实际长度。
 
-1.1 如果prevLen的编码长度小于`ZIP_BIGLEN(254)`, 则一字节足够编码
-1.2 否则，用5字节编码prevLen，其中第一个字节为ZIP_BIGLEN, 剩余四字节为实际长度。
-
-2. 接着编码 `encoding`：
+1. 接着编码 `encoding`：
 
 ```c
 // 将节点值的长度写入新节点的 header
@@ -581,19 +578,110 @@ ZIPLIST_INCR_LENGTH(zl,1);
 
 #### 级联更新
 
-再回头看看 `nextdiff` 处的逻辑,  对于非表尾的插入，需要计算该值:
+前面介绍了向表尾的插入逻辑，现在分析向表中间插入一个节点:
+
+1. 先获取 prevLen 信息:
+
+```c
+/* Find out prevlen for the entry that is inserted. */
+if (p[0] != ZIP_END) {
+    // 如果 p[0] 不指向列表末端，说明列表非空，并且 p 正指向列表的其中一个节点
+    // 那么取出 p 所指向节点的信息，并将它保存到 entry 结构中
+    // 然后用 prevlen 变量记录前置节点的长度
+    // （当插入新节点之后 p 所指向的节点就成了新节点的前置节点）
+    // T = O(1)
+    entry = zipEntry(p);
+    prevlen = entry.prevrawlen;
+ }
+```
+
+这里的zipEnry:
+
+```c
+/*
+ * 保存 ziplist 节点信息的结构
+ */
+typedef struct zlentry {
+
+    // prevrawlen ：前置节点的长度
+    // prevrawlensize ：编码 prevrawlen 所需的字节大小
+    unsigned int prevrawlensize, prevrawlen;
+
+    // len ：当前节点值的长度
+    // lensize ：编码 len 所需的字节大小
+    unsigned int lensize, len;
+
+    // 当前节点 header 的大小
+    // 等于 prevrawlensize + lensize
+    unsigned int headersize;
+
+    // 当前节点值所使用的编码类型
+    unsigned char encoding;
+
+    // 指向当前节点的指针
+    unsigned char *p;
+
+} zlentry;
+
+/* Return a struct with all information about an entry. 
+ *
+ * 将 p 所指向的列表节点的信息全部保存到 zlentry 中，并返回该 zlentry 。
+ *
+ * T = O(1)
+ */
+static zlentry zipEntry(unsigned char *p) {
+    zlentry e;
+
+    // e.prevrawlensize 保存着编码前一个节点的长度所需的字节数
+    // e.prevrawlen 保存着前一个节点的长度
+    // T = O(1)
+    ZIP_DECODE_PREVLEN(p, e.prevrawlensize, e.prevrawlen);
+
+    // p + e.prevrawlensize 将指针移动到列表节点本身
+    // e.encoding 保存着节点值的编码类型
+    // e.lensize 保存着编码节点值长度所需的字节数
+    // e.len 保存着节点值的长度
+    // T = O(1)
+    ZIP_DECODE_LENGTH(p + e.prevrawlensize, e.encoding, e.lensize, e.len);
+
+    // 计算头结点的字节数
+    e.headersize = e.prevrawlensize + e.lensize;
+
+    // 记录指针
+    e.p = p;
+
+    return e;
+}
+
+```
+
+2. 计算 `nextdiff`:
 
 ```c
 /* When the insert position is not equal to the tail, we need to
-* make sure that the next entry can hold this entry's length in
-* its prevlen field. */
+ * make sure that the next entry can hold this entry's length in
+ * its prevlen field. */
 // 只要新节点不是被添加到列表末端，
 // 那么程序就需要检查看 p 所指向的节点（的 header）能否编码新节点的长度。
 // nextdiff 保存了新旧编码之间的字节大小差，如果这个值大于 0 
 // 那么说明需要对 p 所指向的节点（的 header ）进行扩展
 // T = O(1)
 nextdiff = (p[0] != ZIP_END) ? zipPrevLenByteDiff(p,reqlen) : 0;
+```
 
+> 值得一提的是，如果nextdiff不为0，再为插入节点分配内存的时候，也要加上nextdiff的size:
+
+```c
+// curlen 是 ziplist 原来的长度
+// reqlen 是整个新节点的长度
+// nextdiff 是新节点的后继节点扩展 header 的长度（要么 0 字节，要么 4 个字节）
+// T = O(N)
+zl = ziplistResize(zl,curlen+reqlen+nextdiff);
+```
+
+接着往后移动p所指向的entry, 更新后一个entry的prevLen, 更新整个ziplist的offset
+
+```c
 // 新元素之后还有节点，因为新元素的加入，需要对这些原有节点进行调整
 
 /* Subtract one because of the ZIP_END bytes */
