@@ -1,11 +1,15 @@
-______________________________________________________________________
-
-## title: redis源码-ziplist categories: redis date: 2024-06-14 11:58:55
+---
+title: redis读书笔记（二）-redis对象和类型编码结构
+categories: redis
+date: 2024-06-18 11:58:54
+---
 
 
 # 1. redisObj
 
 redis 在实现kv数据库时，并不直接使用前一章提到的数据结构，而是在其上封装了一个redisObject:
+
+<!--more-->
 
 ```c
 /* A redis object, that is a type able to hold a string / list / set */
@@ -37,7 +41,7 @@ typedef struct redisObject {
 } robj;
 ```
 
-### 1. type
+## 1. type
 
 type 4bits, 包含如下:
 
@@ -50,7 +54,7 @@ type 4bits, 包含如下:
 > kv中，key总是字符串type，redisObject中的type总是说value的type
 > 笔者注:实际上3bits已经够了，可能是多预留?
 
-### 2. encoding
+## 2. encoding
 
 ptr指向实际的对象，而具体的对象类型，由encoding决定：
 
@@ -66,7 +70,7 @@ ptr指向实际的对象，而具体的对象类型，由encoding决定：
 #define REDIS_ENCODING_EMBSTR 8  /* Embedded sds string encoding */
 ```
 
-#### 不同type可对应的底层encoding
+### 不同type可对应的底层encoding
 
 ![](https://ravenxrz-blog.oss-cn-chengdu.aliyuncs.com/img/oss_img20240602204047.png)
 
@@ -88,14 +92,14 @@ ptr指向实际的对象，而具体的对象类型，由encoding决定：
 
 ![](https://ravenxrz-blog.oss-cn-chengdu.aliyuncs.com/img/oss_img20240602210135.png)
 
-### 编码转换条件
+## 编码转换条件
 
 - int -> embstr/raw: 只要出现不是数字，或者长度超过一定阈值(TODO(zhangxingrui): 阈值是多少？)
 - embsr -> raw： 长度超过32位，或者原本是embstr，但是对embstr对象做了修改, 如:
 
 ![](https://ravenxrz-blog.oss-cn-chengdu.aliyuncs.com/img/oss_img20240602210656.png)
 
-### 字符串命令的实现
+## 字符串命令的实现
 
 ![](https://ravenxrz-blog.oss-cn-chengdu.aliyuncs.com/img/oss_img20240602210820.png)
 
@@ -195,6 +199,108 @@ ziplist条件:
 
 ![](https://ravenxrz-blog.oss-cn-chengdu.aliyuncs.com/img/oss_img20240614210523.png)
 
+# 思考
+
+上述内容很简单，唯一让我思考的地方在于某个类型从一个数据结构转换到另一个数据结构时的开销，毕竟数据转移+内存分配时耗时的。 在实际使用上就可能出现毛刺。 得看看源码的实现。下面结合list实现的ziplist -> linkedlist 的源码分析：
+
+分析函数 `listTypePush`:
+
+```c
+void listTypePush(robj *subject, robj *value, int where) {
+
+    /* Check if we need to convert the ziplist */
+    // 是否需要转换编码？
+    listTypeTryConversion(subject,value);
+
+    if (subject->encoding == REDIS_ENCODING_ZIPLIST &&
+        ziplistLen(subject->ptr) >= server.list_max_ziplist_entries)
+            listTypeConvert(subject,REDIS_ENCODING_LINKEDLIST);
+...
+}
+```
+
+函数`listTypeTryConversion`:
+
+```
+void listTypeTryConversion(robj *subject, robj *value) {
+
+    // 确保 subject 为 ZIPLIST 编码
+    if (subject->encoding != REDIS_ENCODING_ZIPLIST) return;
+
+    if (sdsEncodedObject(value) &&// 如果是raw_str或者emstr 
+        // 看字符串是否过长
+        sdslen(value->ptr) > server.list_max_ziplist_value)
+            // 将编码转换为双端链表
+            listTypeConvert(subject,REDIS_ENCODING_LINKEDLIST);
+}
+
+```
+
+这里可以看到：
+
+1. 如果已经不是ziplist编码，直接返回
+
+2. 检查当前sds对象的长度是否比 `list_max_zilist_value` 还长，如果满足则转换
+
+   ```
+   list_max_ziplist_value -> #define REDIS_LIST_MAX_ZIPLIST_VALUE 64
+   ```
+
+另一个条件是:
+
+```cpp
+if (subject->encoding == REDIS_ENCODING_ZIPLIST &&
+        ziplistLen(subject->ptr) >= server.list_max_ziplist_entries)
+            listTypeConvert(subject,REDIS_ENCODING_LINKEDLIST);
+
+#define REDIS_LIST_MAX_ZIPLIST_ENTRIES 512
+```
+
+如果整个ziplist的个数大于 `list_max_ziplist_entries` ， 那么则转换。
+
+再来分析 `listTypeConvert`:
+
+```c
+void listTypeConvert(robj *subject, int enc) {
+
+    listTypeIterator *li;
+
+    listTypeEntry entry;
+
+    redisAssertWithInfo(NULL,subject,subject->type == REDIS_LIST);
+
+    // 转换成双端链表
+    if (enc == REDIS_ENCODING_LINKEDLIST) {
+
+        list *l = listCreate();
+
+        listSetFreeMethod(l,decrRefCountVoid);
+
+        /* listTypeGet returns a robj with incremented refcount */
+        // 遍历 ziplist ，并将里面的值全部添加到双端链表中
+        li = listTypeInitIterator(subject,0,REDIS_TAIL);
+        while (listTypeNext(li,&entry)) listAddNodeTail(l,listTypeGet(&entry));
+        listTypeReleaseIterator(li);
+
+        // 更新编码
+        subject->encoding = REDIS_ENCODING_LINKEDLIST;
+
+        // 释放原来的 ziplist
+        zfree(subject->ptr);
+
+        // 更新对象值指针
+        subject->ptr = l;
+
+    } else {
+        redisPanic("Unsupported list conversion");
+    }
+}
+```
+
+很明显，一个迭代器+while循环，将原ziplist -> linkedlist。 所以没什么特别的优化。
+
+
+
 # 对象共享
 
 redis对整数0-9999之间的整数对象做了内存池，后续用引用技术共享。 这10k个对象是在redis服务初始化时就创建的。
@@ -209,9 +315,6 @@ redis对整数0-9999之间的整数对象做了内存池，后续用引用技术
 
 > 使用 OBJECT IDLETIME obj_name 查询一个对象的空闲时间， 该时间为 当前时间 - lru记录的值
 
-# 思考
-
-本篇很简单，唯一让我思考的地方在于某个类型从一个数据结构转换到另一个数据结构时的开销，毕竟数据转移+内存分配时耗时的。 在实际使用上就可能出现毛刺。 得看看源码的实现。
 
 
 
