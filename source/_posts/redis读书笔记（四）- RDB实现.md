@@ -1,3 +1,9 @@
+---
+title: redis读书笔记（四）- RDB 实现
+categories: redis
+date: 2024-07-18 11:58:54
+---
+
 RDB 是redis持久化方式的一种。 本文介绍其实现原理，内容包括：
 
 - redis 保存 RDB和 加载RDB的方式，SAVE和BGSAVE的实现原理
@@ -145,3 +151,5 @@ redis RDB文件内容：
 - key_value_paris: 保存了db的所有键值对，如果键值对有过期时间，过期时间一起保存。
 
 key
+
+TODO(zhangxingrui): 未完
