@@ -1,6 +1,6 @@
 ---
 title: flare协程框架（一）-协程上下文切换分析
-categories: Linux
+categories: 协程
 tags: gdb
 date: 2024-07-20 16:24:32
 ---
@@ -413,7 +413,7 @@ make_context:
     movq  %rdi, %rax
 
     /* shift address in RAX to lower 16 byte boundary */
-    andq  $-16, %rax  // 低4bit置0， 这里应该是为了stack高地址limit处是16B对齐的， 为什么是16B对齐，不是8B对齐？没做过硬件，不理解
+    andq  $-16, %rax  // 低4bit置0， 这里应该是为了stack高地址limit处是16B对齐的， 为什么是16B对齐，不是8B对齐？因为一些寄存器操作需要16B对齐，如xmm寄存器（和浮点数相关）
 
     /* reserve space for context-data on context-stack */
     /* on context-function entry: (RSP -0x8) % 16 == 0 */
