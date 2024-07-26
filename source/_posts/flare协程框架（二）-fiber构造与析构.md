@@ -1,11 +1,11 @@
 ---
 title: flare协程框架（二）- fiber构造与析构
 categories: 协程
-tags: gdb
-date: 2024-07-26 16:24:32
+tags:
+date: 2024-07-21 16:24:32
 ---
 
-## 背景
+## 前言
 
 本文分析 flare中，fiber是如何构造析构以及如何它的两种launch策略。
 
@@ -313,6 +313,26 @@ FiberEntity* InstantiateFiberEntity(SchedulingGroup* scheduling_group,
   return fiber;
 }
 ```
+
+> 额外说下，fiber的stack空间布局如下:
+>
+> ```
+> +--------------------------+  <- Stack bottom
+> | fiber control block      |
+> +--------------------------+  <- 512 byte
+> | ...                      |
+> | ...                      |  <- (Used stack space)
+> | ...                      |
+> +--------------------------+  <- Stack top.
+> | ...                      |
+> | ...                      |  <- (Unused stack space)
+> | ...                      |
+> +--------------------------+  <- Stack limit
+> | guard page (opt)         |  <- (User fiber only)
+> +--------------------------+  <- Stack limit + PAGE_SIZE
+> ```
+>
+> 参考：https://github.com/Tencent/flare/blob/master/flare/doc/fiber.md
 
 新生成一个fiber entity，使用desc来构造。
 
