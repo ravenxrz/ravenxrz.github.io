@@ -1,5 +1,5 @@
 ---
-title: redis读书笔记（二）-redis对象和类型编码结构
+title: redis(2)-redis对象和类型编码结构
 categories: redis
 date: 2024-06-18 11:58:54
 ---

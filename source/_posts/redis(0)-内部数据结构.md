@@ -1,5 +1,5 @@
 ---
-title: redis读书笔记(一) - 常用数据结构介绍
+title: redis(0)-内部数据结构
 categories: redis
 date: 2024-06-02 20:48
 ---

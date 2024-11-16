@@ -1,5 +1,5 @@
 ---
-title: redis读书笔记(三) - 数据库
+title: redis(3) - 数据库
 categories: redis
 date: 2024-06-27 20:48
 ---

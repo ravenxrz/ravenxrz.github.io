@@ -1,5 +1,5 @@
 ---
-title: redis源码-ziplist
+title: redis(1)-ziplist
 categories: redis
 date: 2024-06-09 11:58:54
 ---

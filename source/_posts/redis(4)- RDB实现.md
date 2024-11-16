@@ -1,5 +1,5 @@
 ---
-title: redis读书笔记（四）- RDB 实现
+title: redis(4)- RDB 实现
 categories: redis
 date: 2024-07-18 11:58:54
 ---
