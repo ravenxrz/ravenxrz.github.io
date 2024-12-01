@@ -1,635 +1,458 @@
 ---
-title: STL源码阅读（七）： unique_ptr & shared_ptr
+title: STL源码阅读（七）： unique_ptr
 categories: stl
-abbrlink: ee137bcd
-date: 2023-04-15 20:11:31
+date: 2024-12-01 17:50:31
 tags:
 ---
 
-本文首先分析 unique_ptr 的实现原理，介绍为什么其默认size仅为一个 raw pointer size； 接着分析了 shared_ptr 的实现原理，从两种构造方式入手，分析两种构造方式所带来的不同内存布局，最终通过分析`shared_ptr`的拷贝源码，简述了`shared_ptr`的线程安全性。
+# std::unique\_ptr
 
-<!--more-->
+> 📌本文使用wolai制作，原文链接：[std::unique\_ptr](https://www.wolai.com/5kf4Mci5ETPySzSafqkAiS "std::unique_ptr")
 
-## unique_ptr
+unique\_ptr是c++11引入的智能指针之一，对所wrap的对象具有独一管理权。本文做详细分析。
 
-`unique_ptr ` 是 c++ 11引入的智能之一，其特点是：
+分析环境: gcc 8.3.0
 
-1. 对管理对象具有独占权，在`unique_ptr`析构时自动释放对象
-2. 不可复制，但可移动
-3. 支持自定义deleter
-4. 零开销，`unique_ptr`和`raw pointer`一样大，不引入额外开销。
+# 1. 类图
 
-`unique_ptr` 定义如下：
+```mermaid
+classDiagram
+    
+  class Deleter{
+  }
+  
+  
+  class __uniq_ptr_impl~_Tp,_Dp~{
+    // 内部定义了pointer类型
+    - _M_t: std::tuple< pointer, deleter >
+  }
+  
+  class unique_ptr~_Tp, _Dp=default_delete<_Tp>~ {
+    // 使用 __uniq_ptr_impl 的pointer类型，作为pointer类型
+    - _M_t: __uniq_ptr_impl< _Tp, _Dp >
+  }
 
-```cpp
-  template <typename _Tp, typename _Dp = default_delete<_Tp> >
-    class unique_ptr 
+  Deleter <.. __uniq_ptr_impl~_Tp,_Dp~
+  __uniq_ptr_impl~_Tp,_Dp~ <.. unique_ptr~_Tp, _Dp=default_delete<_Tp>~
+  
+  
+
 ```
 
-`_Tp`为要管理的对象指针对象类型，`_Dp`为删除器类型，其默认值为 `default_delete`:
+# 2. 基本声明
 
-```cpp
-  /// Primary template, default_delete.
+```c++
+  template <typename _Tp, typename _Dp = default_delete<_Tp>>
+    class unique_ptr
+    
+  template<typename _Tp, typename _Dp>
+class unique_ptr<_Tp[], _Dp>
+
+
+```
+
+`unique_ptr` 的 primary template具有两个模板参数，一个是要管理的类型`_Tp`一个是删除器，默认参数为`default_delete<_Tp>`. 还有一个偏特化，接受数组类型，此时的删除器需要user自定义类型。
+
+# 3. deleter
+
+先看删除器的实现。 非数组类型的:
+
+```c++
+  /// Primary template of default_delete, used by unique_ptr
   template<typename _Tp>
     struct default_delete
     {
+      /// Default constructor
       constexpr default_delete() noexcept = default;
 
+      /** @brief Converting constructor.
+       *
+       * Allows conversion from a deleter for arrays of another type, @p _Up,
+       * only if @p _Up* is convertible to @p _Tp*.
+       */
       template<typename _Up, typename = typename
-	       enable_if<is_convertible<_Up*, _Tp*>::value>::type>
+         enable_if<is_convertible<_Up*, _Tp*>::value>::type>
         default_delete(const default_delete<_Up>&) noexcept { }
 
+      /// Calls @c delete @p __ptr
       void
       operator()(_Tp* __ptr) const
       {
-	static_assert(sizeof(_Tp)>0,
-		      "can't delete pointer to incomplete type");
-	delete __ptr;
+  static_assert(!is_void<_Tp>::value,
+          "can't delete pointer to incomplete type");
+  static_assert(sizeof(_Tp)>0,
+          "can't delete pointer to incomplete type");
+  delete __ptr;
       }
     };
+
 ```
 
-一个针对数组类型的特例化版本为:
+本质上是一个functor，有一个默认构造函数和一个拷贝构造函数，但是拷贝构造函数是一个模板成员函数，enable的条件是，能从`_Up*`类型转换为`_Tp*`类型。这是什么意思？举个例子：
 
-```cpp
-  template<typename _Tp, typename _Dp>
-    class unique_ptr<_Tp[], _Dp>
+```c++
+std::unique_ptr<int> intPtr(new int(10));
+std::unique_ptr<double> doublePtr(new double(3.14));
 
-    template<typename _Tp>
-struct default_delete<_Tp[]>
-{
+//  你可以使用 default_delete<void*> 来管理这两个指针，因为 int* 和 double* 都可以转换为 void*
+std::unique_ptr<int, default_delete<void*>> intPtr2(intPtr.release());
+std::unique_ptr<double, default_delete<void*>> doublePtr2(doublePtr.release());
+
+//  但是你不能使用 default_delete<int> 来管理 doublePtr，因为 double* 不能转换为 int*
+// std::unique_ptr<double, default_delete<int>> doublePtr3(doublePtr.release()); //编译错误
+```
+
+functor的实现是直接`delete __ptr`。
+
+另一个是数组类型的deleter:
+
+```c++
+  template<typename _Tp>
+    struct default_delete<_Tp[]>
+    {
+    public:
+      /// Default constructor
+      constexpr default_delete() noexcept = default;
+
+      /** @brief Converting constructor.
+       *
+       * Allows conversion from a deleter for arrays of another type, such as
+       * a const-qualified version of @p _Tp.
+       *
+       * Conversions from types derived from @c _Tp are not allowed because
+       * it is unsafe to @c delete[] an array of derived types through a
+       * pointer to the base type.
+       */
+      template<typename _Up, typename = typename
+         enable_if<is_convertible<_Up(*)[], _Tp(*)[]>::value>::type>
+        default_delete(const default_delete<_Up[]>&) noexcept { }
+
+      /// Calls @c delete[] @p __ptr
+      template<typename _Up>
+      typename enable_if<is_convertible<_Up(*)[], _Tp(*)[]>::value>::type
+  operator()(_Up* __ptr) const
+      {
+  static_assert(sizeof(_Tp)>0,
+          "can't delete pointer to incomplete type");
+  delete [] __ptr;
+      }
+    };
+
+
+```
+
+和非数组类型基本一样，只不过删除调用的是`delete[]`
+
+# `4. __uniq_ptr_impl`
+
+本类是`unique_ptr`实现的核心类，先分析:
+
+## 4.1. 构造函数
+
+构造函数1：
+
+```c++
+      __uniq_ptr_impl(pointer __p) : _M_t() { _M_ptr() = __p; }
+      
+      pointer&   _M_ptr() { return std::get<0>(_M_t); }
+      
+      _Dp&       _M_deleter() { return std::get<1>(_M_t); }
+
 private:
-  template<typename _Up>
-using __remove_cv = typename remove_cv<_Up>::type;
+      tuple<pointer, _Dp> _M_t;  // 待会解释这个pointer类型
 
-  // Like is_base_of<_Tp, _Up> but false if unqualified types are the same
-  template<typename _Up>
-using __is_derived_Tp
-= __and_< is_base_of<_Tp, _Up>,
-    __not_<is_same<__remove_cv<_Tp>, __remove_cv<_Up>>> >;
-
-public:
-  constexpr default_delete() noexcept = default;
-
-  template<typename _Up, typename = typename
-     enable_if<!__is_derived_Tp<_Up>::value>::type>
-    default_delete(const default_delete<_Up[]>&) noexcept { }
-
-  void
-  operator()(_Tp* __ptr) const
-  {
-static_assert(sizeof(_Tp)>0,
-      "can't delete pointer to incomplete type");
-delete [] __ptr;
-  }
-
-  template<typename _Up>
-typename enable_if<__is_derived_Tp<_Up>::value>::type
-operator()(_Up*) const = delete;
-};
 
 ```
 
-本文仅讨论泛化版本。
+本质上`__uniq_ptr_impl`就是一个tuple，tuple 0 index是指针，1 index是`_Dp`。
 
-首先看其**构造函数**:
+> TODO(zhangxingrui)为什么不用pair？ tuple有优化?
 
-```cpp
+基本构造函数中，初始化`tuple，`并把index 0复制为`__p`.
+
+> 📌初始化tuple的时候，会调用deleter的默认构造函数
+
+构造函数2:
+
+```c++
+      template<typename _Del>
+      __uniq_ptr_impl(pointer __p, _Del&& __d)
+  : _M_t(__p, std::forward<_Del>(__d)) { }
+
+```
+
+直接把`deleter`传入并转发给`_M_t`（tuple）构造。
+
+> TODO(zhangxingrui): 暂不清楚tuple 构造函数是如何实现。
+
+## 4.2. pointer类型
+
+`__uniq_ptr_Impl`有个相对复杂的类型，即tuple的pointer类型。
+
+```c++
+  template <typename _Tp, typename _Dp>
+    class __uniq_ptr_impl
+    {
+      template <typename _Up, typename _Ep, typename = void>
+  struct _Ptr
+  {
+    using type = _Up*;
+  };
+
+      template <typename _Up, typename _Ep>
+  struct
+  _Ptr<_Up, _Ep, __void_t<typename remove_reference<_Ep>::type::pointer>>
+  {
+    using type = typename remove_reference<_Ep>::type::pointer;
+  };
+
+    public:
+
+      using pointer = typename _Ptr<_Tp, _Dp>::type;
+
+```
+
+这是一个class template.  且有一个偏特化的版本。
+
+对于primary template来说，type 就是` _Up*`
+
+对于偏特化版本，如果传入的`_Dp`在`remote_reference`后持有`pointer`类型，则使用自定义deleter的pointer类型作为整个`__uniq_ptr_impl` pointer类型。
+
+也就是说：
+
+- **有自定义删除器且自定义删除器有**\*\*`pointer类型`:\*\* 使用自定义删除器提供的`pointer` 类型作为指针类型。
+- **否则** 使用 `_Up*` 作为指针类型。
+
+# 5. unique\_ptr非数组类型实现
+
+先看成员变量和type：
+
+```c++
+      template <class _Up>
+      using _DeleterConstraint =
+  typename __uniq_ptr_impl<_Tp, _Up>::_DeleterConstraint::type;
+
+      __uniq_ptr_impl<_Tp, _Dp> _M_t;
+
+```
+
+内部持有了一个别名模板，引用自`__uniq_ptr_impl`，看下实现:
+
+```c++
+using _DeleterConstraint = enable_if<
+  __and_<__not_<is_pointer<_Dp>>,
+   is_default_constructible<_Dp>>::value>;   // _Dp 就是传入的deleter的类型
+
+```
+
+这句话的意思是，检测传入的deleter类型不能是一个指针，并且持有默认构造器。
+
+## 5.1. 构造函数
+
+只看常用的构造函数：
+
+```c++
+      /** Takes ownership of a pointer.
+       *
+       * @param __p  A pointer to an object of @c element_type
+       *
+       * The deleter will be value-initialized.
+       */
+      template <typename _Up = _Dp,
+    typename = _DeleterConstraint<_Up>>
   explicit
   unique_ptr(pointer __p) noexcept
-  : _M_t(__p, deleter_type())
-  { static_assert(!is_pointer<deleter_type>::value,
-     "constructed with null function pointer deleter"); }
+  : _M_t(__p)
+        { }
 
-  unique_ptr(pointer __p,
-typename conditional<is_reference<deleter_type>::value,
-  deleter_type, const deleter_type&>::type __d) noexcept
-  : _M_t(__p, __d) { }
 
 ```
 
-1. 直接使用默认deleter构造
-2. 如果传入deleter为引用，则为引用类型的`__d`, 否则为 `const deleter_type&`的 `_d`
+也是一个模板构造函数，SFINA机制保证，传入的`_Dp`类型不能是指针，同时具有默认构造函数。
 
-两个构造函数，均是初始化 `_M_t`。其定义为：
+再看移动构造：
 
-```cpp
-      typedef std::tuple<typename _Pointer::type, _Dp>  __tuple_type;
-      __tuple_type                                      _M_t;
+```c++
+    /// Move constructor.
+    unique_ptr(unique_ptr&& __u) noexcept
+    : _M_t(__u.release(), std::forward<deleter_type>(__u.get_deleter())) { }
+
 ```
 
-`tuple_type`为一个二元元组类型。不过需要注意的是，若采用默认deleter, `_M_t`的大小仅为 8 Bytes(64位程序)。  **这是为何呢？按道理存储一个指针+deleter应该是大于一个指针的大小的， 就算deleter是一个empty class，其size也至少为1。**
+把rhs只有的指针释放，同时把deleter转发。
 
-这是因为tuple应用了 Empty Class Optimization (EBO) 技术。对于空基类其大小可以优化为 0 bytes. 具体可参考：[从tuple谈起-浅谈c++中空基类优化的使用 - 知乎 (zhihu.com)](https://zhuanlan.zhihu.com/p/588929645)
+## 5.2. 析构函数
 
-但是若传入的deleter为一个函数指针，则 unique_ptr 为2个指针大小，若传入的为 lambda 表达式，则需视 lambda 的捕获列表情况而定， 若无任何捕获value，则 unique_ptr 依然为一个指针大小（因为 lambda 表达式本质上也是一个struct functor)
-
-**再看析构函数:**
-
-```cpp
-      // Destructor.
+```c++
+      /// Destructor, invokes the deleter if the stored pointer is not null.
       ~unique_ptr() noexcept
       {
-	auto& __ptr = std::get<0>(_M_t);
-	if (__ptr != nullptr)
-	  get_deleter()(__ptr);
-	__ptr = pointer();
+  auto& __ptr = _M_t._M_ptr();
+  if (__ptr != nullptr)
+    get_deleter()(__ptr);  // 析构
+  __ptr = pointer();  // 置空pointer，用{}是不是就行了？
       }
-```
+      
+            /// Return a reference to the stored deleter.
+      deleter_type&
+      get_deleter() noexcept
+      { return _M_t._M_deleter(); }  // 获取 __uniq_ptr_impl 的deleter
 
-获取raw pointer, 若不为`nullptr`，调用`deleter`删除，同时将 raw pointer指向一个空`pointer`，通常也即为`nullptr`，避免野指针出现。
-
-**unique_ptr如何实现对raw pointer的独占权？**，很简单，删除copy construct/assignment 即可：
-
-```cpp
-      // Disable copy from lvalue.
-      unique_ptr(const unique_ptr&) = delete;
-      unique_ptr& operator=(const unique_ptr&) = delete;
-
-      // Disable construction from convertible pointer types.
-      template<typename _Up, typename = _Require<is_pointer<pointer>,
-	       is_convertible<_Up*, pointer>, __is_derived_Tp<_Up>>>
-	unique_ptr(_Up*, typename
-		   conditional<is_reference<deleter_type>::value,
-		   deleter_type, const deleter_type&>::type) = delete;
-
-      template<typename _Up, typename = _Require<is_pointer<pointer>,
-	       is_convertible<_Up*, pointer>, __is_derived_Tp<_Up>>>
-	unique_ptr(_Up*, typename
-		   remove_reference<deleter_type>::type&&) = delete;
 
 ```
 
-但**仍然保留`move`语义：**
+## 5.3. operator=(&&) move 持有权
 
-```cpp
-  // Move constructor.
-  unique_ptr(unique_ptr&& __u) noexcept
-  : _M_t(__u.release(), std::forward<deleter_type>(__u.get_deleter())) { }
+```c++
+      // Assignment.
 
-        // Assignment.
-    unique_ptr&
-    operator=(unique_ptr&& __u) noexcept
-    {
-reset(__u.release());
-get_deleter() = std::forward<deleter_type>(__u.get_deleter());
-return *this;
-    }
-
-    template<typename _Up, typename _Ep>
-typename
-enable_if<__safe_conversion<_Up, _Ep>::value, unique_ptr&>::type
-operator=(unique_ptr<_Up, _Ep>&& __u) noexcept
-{
+      /** @brief Move assignment operator.
+       *
+       * @param __u  The object to transfer ownership from.
+       *
+       * Invokes the deleter first if this object owns a pointer.
+       */
+      unique_ptr&
+      operator=(unique_ptr&& __u) noexcept
+      {
   reset(__u.release());
-  get_deleter() = std::forward<_Ep>(__u.get_deleter());
+  get_deleter() = std::forward<deleter_type>(__u.get_deleter());
   return *this;
-}
+      }
 
-    unique_ptr&
-    operator=(nullptr_t) noexcept
-    {
-reset();
-return *this;
-    }
-
+      /** @brief Replace the stored pointer.
+       *
+       * @param __p  The new pointer to store.
+       *
+       * The deleter will be invoked if a pointer is already owned.
+       */
       void
       reset(pointer __p = pointer()) noexcept
       {
-	using std::swap;
-	swap(std::get<0>(_M_t), __p);
-	if (__p != pointer())
-	  get_deleter()(__p);
+  using std::swap;
+  swap(_M_t._M_ptr(), __p);
+  if (__p != pointer())
+    get_deleter()(__p);
       }
 
-      void
-      swap(unique_ptr& __u) noexcept
+
+
+```
+
+通过reset，将pointer所有权从rhs转移到this指针。重新复制deleter。
+
+> 📌注意：这个过程不是原子的。 如果在move unique\_ptr过程中，出现并发，是可能有问题的。
+
+## 5.4. 判空
+
+unique\_ptr 重载了bool，所以可以直接拿`unique_ptr`对象在if语句中判空:
+
+```c++
+      /// Return @c true if the stored pointer is not null.
+      explicit operator bool() const noexcept
+      { return get() == pointer() ? false : true; }
+
+```
+
+实际上就是看内部指针是否为空。
+
+## `5.5. *`和`→`
+
+```c++
+      /// Dereference the stored pointer.
+      typename add_lvalue_reference<element_type>::type
+      operator*() const
       {
-      using std::swap;
-      swap(_M_t, __u._M_t);
+  __glibcxx_assert(get() != pointer());
+  return *get();
       }
 
+      /// Return the stored pointer.
+      pointer
+      operator->() const noexcept
+      {
+  _GLIBCXX_DEBUG_PEDASSERT(get() != pointer());
+  return get();
+      }
 
 ```
 
-## shared_ptr
+# 6. unique\_ptr 数组类型实现
 
-`std::shared_ptr` 是一种智能指针，它提供了对动态分配内存的共享所有权的特点包括：
+偏特化声明:
 
-- 引用计数：`std::shared_ptr` 使用引用计数来跟踪有多少个 `std::shared_ptr` 对象共享同一个内存块。当最后一个 `std::shared_ptr` 超出作用域时，它所管理的对象将被自动删除。
-- 共享所有权：多个 `std::shared_ptr` 对象可以共享对同一个对象的所有权。这意味着，当其中一个 `std::shared_ptr` 超出作用域时，它所管理的对象不会被删除，只有当最后一个 `std::shared_ptr` 超出作用域时，对象才会被删除。
-- 自定义删除器：`std::shared_ptr` 允许你指定自定义删除器来删除所管理的对象。这在管理非内存资源（如文件描述符或数据库连接）时非常有用。
-- 弱指针支持：`std::shared_ptr` 支持弱指针（`std::weak_ptr`）。弱指针允许你观察共享对象，而不增加引用计数。这在解决循环引用问题时非常有用。
+```c++
+  template<typename _Tp, typename _Dp>
+    class unique_ptr<_Tp[], _Dp>
 
-### 1. 类图
+```
 
-shared_ptr的相关类图为：
+这样接收的类型为数组类型时，会有限匹配此特化版本。如:
 
-![](https://ravenxrz-blog.oss-cn-chengdu.aliyuncs.com/img/oss_imgimage-20230416212536528.png)
+```c++
+  std::unique_ptr<int[]> b(new int[10]);
 
-`shared_ptr` 继承自 `__shared_ptr`，`__shared_ptr` 内部有指向 要管理的指针`_M_ptr`和一个 `_shared_count`用于计数（实际上也就是shared_ptr的控制块)。 `_shared_count`实际组合了`_Sp_counted_base`， 该类为基类，有三个继承类：
+```
 
-- `_Sp_counted_deleter` 是一个辅助类，用于管理 `std::shared_ptr` 的自定义删除器。它负责在引用计数变为零时调用删除器来删除所管理的对象。
-- `_Sp_counted_ptr_inplace` 是一个辅助类，用于在 `std::make_shared` 中分配内存。它负责在同一块内存中分配引用计数和所管理的对象。 （猜想为make_shared)
-- `_Sp_counted_ptr` 是一个辅助类，用于管理 `std::shared_ptr` 的指针。它负责维护指向所管理对象的指针，并在引用计数变为零时调用删除器来删除所管理的对象。 （关注此类即可）
+实际上匹配展开为:
 
-> 问题：shared_ptr的大小是多少？ (假设在64位平台)
+```c++
+  std::unique_ptr<int[], std::default_delete<int[]> > b = std::unique_ptr<int[], std::default_delete<int[]> >(new int[10]);
+
+```
+
+> 为什么数组类型的`_Dp`没有默认值，也能自定匹配到`default_delete[]`?
+> 模板默认值只用在primary template中声明即可。因为primary template声明为：
 >
-> 答： 16Bytes， 一个 raw pointer, 一个指向 `_Sp_counted_base`的指针
+> ```c++
+>   template <typename _Tp, typename _Dp = default_delete<_Tp>>
+>     class unique_ptr
 >
-> 问题： shared_ptr的控制块大小是多少？
+> ```
 >
-> 答：8（vtable) + 4 (`_M_use_count`) + 4 (`_M_weak_count`) + 8 (`_M_ptr`)
+> 所以能自动匹配。
 
+unique\_ptr数组类型的实现和非数组类型基本完全一致。区别在于多提供一些数组访问符号。如
 
-### 2. 两种构造方式
-
-`shared_ptr` 的使用有两种方式：
-
-1. `shared_ptr<T>(new T)`
-2. `make_shared<T>()`
-
-两者实现不同, 一个个看：
-
-**方式一：`shared_ptr<T>(new T)` 方式：**
-
-```cpp
-      template<typename _Tp1>
-	explicit __shared_ptr(_Tp1* __p)
-        : _M_ptr(__p), _M_refcount(__p) // 关注 _M_refcount 构造
-	{
-	  __glibcxx_function_requires(_ConvertibleConcept<_Tp1*, _Tp*>)
-	  static_assert( sizeof(_Tp1) > 0, "incomplete type" );
-	  __enable_shared_from_this_helper(_M_refcount, __p, __p);
-	}
-```
-
-`_M_refcount`初始化:
-
-```cpp
-      template<typename _Ptr>
-        explicit
-	__shared_count(_Ptr __p) : _M_pi(0)
-	{
-	  __try
-	    {
-	      _M_pi = new _Sp_counted_ptr<_Ptr, _Lp>(__p);  // 此处
-	    }
-	  __catch(...)
-	    {
-	      delete __p;
-	      __throw_exception_again;
-	    }
-	}
+```c++
+      /// Access an element of owned array.
+      typename std::add_lvalue_reference<element_type>::type
+      operator[](size_t __i) const
+      {
+  __glibcxx_assert(get() != pointer());
+  return get()[__i];
+      }
 
 ```
 
-构造 `_Sp_counted_ptr` 时，需首先构造其父类：
+# 7. make\_unique
 
-```cpp
-      _Sp_counted_base() noexcept
-      : _M_use_count(1), _M_weak_count(1) { }
-```
-
-至此引用计数+1。
-
->**强调：此种方式构造，原有被管理指针和控制块分属两块内存。**
-
-**方式二：`make_shared<T>()`**
-
-`make_shared`相对复杂， 简化版本的 `make_shared` 可如下:
-
-```cpp
-template<typename T, typename... Args>
-std::shared_ptr<T> make_shared(Args&&... args)
-{
-    // 分配内存，用于存储对象和控制块
-    auto memory = new char[sizeof(T) + sizeof(std::shared_ptr<T>::_ControlBlock)];
-
-    // 在分配的内存中构造对象
-    T* object = new(memory) T(std::forward<Args>(args)...);
-
-    // 在分配的内存中构造控制块
-    auto controlBlock = new(memory + sizeof(T)) std::shared_ptr<T>::_ControlBlock(object);
-
-    // 返回 shared_ptr 对象
-    return std::shared_ptr<T>(object, controlBlock);
-}
-```
-
-**即对象和控制块在连续内存空间中。**
-
-实际源码如下：
-
-```cpp
- 
- /**
-   *  @brief  Create an object that is owned by a shared_ptr.
-   *  @param  __args  Arguments for the @a _Tp object's constructor.
-   *  @return A shared_ptr that owns the newly created object.
-   *  @throw  std::bad_alloc, or an exception thrown from the
-   *          constructor of @a _Tp.
-   */
+```c++
+  /// std::make_unique for single objects
   template<typename _Tp, typename... _Args>
-    inline shared_ptr<_Tp>
-    make_shared(_Args&&... __args)
-    {
-      typedef typename std::remove_const<_Tp>::type _Tp_nc;
-      return std::allocate_shared<_Tp>(std::allocator<_Tp_nc>(),
-				       std::forward<_Args>(__args)...);
-    }
-    
-     /**
-   *  @brief  Create an object that is owned by a shared_ptr.
-   *  @param  __a     An allocator.
-   *  @param  __args  Arguments for the @a _Tp object's constructor.
-   *  @return A shared_ptr that owns the newly created object.
-   *  @throw  An exception thrown from @a _Alloc::allocate or from the
-   *          constructor of @a _Tp.
-   *
-   *  A copy of @a __a will be used to allocate memory for the shared_ptr
-   *  and the new object.
-   */
-  template<typename _Tp, typename _Alloc, typename... _Args>
-    inline shared_ptr<_Tp>
-    allocate_shared(const _Alloc& __a, _Args&&... __args)
-    {
-      return shared_ptr<_Tp>(_Sp_make_shared_tag(), __a,
-			     std::forward<_Args>(__args)...);  // 调用 shared_ptr 构造函数
-    }
+    inline typename _MakeUniq<_Tp>::__single_object
+    make_unique(_Args&&... __args)
+    { return unique_ptr<_Tp>(new _Tp(std::forward<_Args>(__args)...)); }
+
+  /// std::make_unique for arrays of unknown bound
+  template<typename _Tp>
+    inline typename _MakeUniq<_Tp>::__array
+    make_unique(size_t __num)
+    { return unique_ptr<_Tp>(new remove_extent_t<_Tp>[__num]()); }
 
 ```
 
-将走到这里：
+make\_unique 提供了single object和arrary类型的快速make函数。但是和调用构造函数+new object的方式没什么不同。（shared\_ptr就不一样）。
 
-```cpp
-      template<typename _Alloc, typename... _Args>
-	shared_ptr(_Sp_make_shared_tag __tag, const _Alloc& __a,
-		   _Args&&... __args)
-	: __shared_ptr<_Tp>(__tag, __a, std::forward<_Args>(__args)...) // __shared_ptr 构造
-	{ }
+# 8. 总结
 
-```
+本文档深入分析了C++11标准库中的`unique_ptr`智能指针，重点探讨了其内部实现、使用场景以及与之相关的概念，包括`deleter`、`__uniq_ptr_impl`核心类等。`unique_ptr`是一种独占所有权的智能指针，它通过`__uniq_ptr_impl`类来实现对资源的管理，确保每个被管理的对象都只有一个所有者。
 
-而后：
+`unique_ptr`的基本声明包含一个模板参数`_Tp`表示要管理的对象类型，以及可选的第二个模板参数`_Dp`用于指定删除器类型，默认值为`default_delete<_Tp>`。这种灵活性允许用户根据需要提供自定义的删除逻辑。
 
-```cpp
-      template<typename _Alloc, typename... _Args>
-	__shared_ptr(_Sp_make_shared_tag __tag, const _Alloc& __a,
-		     _Args&&... __args)
-    : _M_ptr(), _M_refcount(__tag, (_Tp*)0, __a,
-				std::forward<_Args>(__args)...)  // 关注 _M_refcount 构造，待会马上分析
-	{
-	  // _M_ptr needs to point to the newly constructed object.
-	  // This relies on _Sp_counted_ptr_inplace::_M_get_deleter.
-	  void* __p = _M_refcount._M_get_deleter(typeid(__tag)); // 获取管理的对象内存地址， 后文分析
-	  _M_ptr = static_cast<_Tp*>(__p);
-	  __enable_shared_from_this_helper(_M_refcount, _M_ptr, _M_ptr);
-	}
-```
+文章首先介绍了`deleter`的概念，它是`unique_ptr`中用于处理资源释放的部分。非数组类型的`deleter`实现了一个简单的析构函数，而数组类型的`deleter`则提供了对整个数组进行安全释放的方法。
 
-**内存分配逻辑在：**
+`__uniq_ptr_impl`是`unique_ptr`实现的核心类，它内部封装了一个指向对象的指针和一个用于删除该对象的`deleter`。通过`_M_t`成员变量，该类实现了对指针和删除器的管理。此外，还讨论了`__uniq_ptr_impl`的构造函数、`pointer`类型和`unique_ptr`的成员函数（包括赋值运算符、析构函数和各种访问操作符），以及如何使用`make_unique`辅助函数创建新的`unique_ptr`实例。
 
-```cpp
-      template<typename _Tp, typename _Alloc, typename... _Args>
-	__shared_count(_Sp_make_shared_tag, _Tp*, const _Alloc& __a,
-		       _Args&&... __args)
-	: _M_pi(0)
-	{
-	  typedef _Sp_counted_ptr_inplace<_Tp, _Alloc, _Lp> _Sp_cp_type;  //  采用_Sp_counted_ptr_inplace的控制块类型
-	  typedef typename allocator_traits<_Alloc>::template
-	    rebind_traits<_Sp_cp_type> _Alloc_traits;
-	  typename _Alloc_traits::allocator_type __a2(__a);
-	  _Sp_cp_type* __mem = _Alloc_traits::allocate(__a2, 1);
-	  __try
-	    {
-	      _Alloc_traits::construct(__a2, __mem, std::move(__a),
-		    std::forward<_Args>(__args)...); // 在 __mem 处构造 _Sp_counted_ptr_inplace 对象
-	      _M_pi = __mem;   
-	    }
-	  __catch(...)
-	    {
-	      _Alloc_traits::deallocate(__a2, __mem, 1);
-	      __throw_exception_again;
-	    }
-	}
+整体而言，文档全面地概述了`unique_ptr`的设计思想、用法及其在现代C++开发中的重要作用，为读者提供了一种高效、安全地管理动态分配资源的方式。
 
-```
-
-上述函数实际上为构造 `_Sp_counted_ptr_inplace` 对象，该对象包含了所要分配的类型内存和控制块。
-
-```cpp
-    // class members
-    private:
-      _Impl _M_impl; // 指向所需要对象的内存地址
-      typename aligned_storage<sizeof(_Tp), alignment_of<_Tp>::value>::type
-	_M_storage;  // 所要构造的对象内存
-
-    
-    //  构造函数
-    template<typename... _Args>
-	_Sp_counted_ptr_inplace(_Alloc __a, _Args&&... __args)
-	: _M_impl(__a)
-	{
-	  _M_impl._M_ptr = static_cast<_Tp*>(static_cast<void*>(&_M_storage));
-	  // _GLIBCXX_RESOLVE_LIB_DEFECTS
-	  // 2070.  allocate_shared should use allocator_traits<A>::construct
-	  allocator_traits<_Alloc>::construct(__a, _M_impl._M_ptr,
-	      std::forward<_Args>(__args)...); // might throw 
-	}
-
-
-```
-
-从上述代码分析来看：
-
-1. 所要构造的对象存储在 `_M_storage`， 同时`_M_impl`指向了该片内存
-2. `_Sp_counted_ptr_inplace` 本身继承了 `_Sp_counted_base`, 则包含控制块信息(计数器)
-
-回到此函数：
-
-```cpp
-    template<typename _Alloc, typename... _Args>
-	__shared_ptr(_Sp_make_shared_tag __tag, const _Alloc& __a,
-		     _Args&&... __args)
-    : _M_ptr(), _M_refcount(__tag, (_Tp*)0, __a,
-				std::forward<_Args>(__args)...)  // 关注 _M_refcount 构造，待会马上分析
-	{
-	  // _M_ptr needs to point to the newly constructed object.
-	  // This relies on _Sp_counted_ptr_inplace::_M_get_deleter.
-	  void* __p = _M_refcount._M_get_deleter(typeid(__tag)); // 获取管理的对象内存地址， 后文分析
-	  _M_ptr = static_cast<_Tp*>(__p);
-	  __enable_shared_from_this_helper(_M_refcount, _M_ptr, _M_ptr);
-	}
-```
-
-`__shared_ptr` 中也有个需要指向所需对象内存的指针`_M_ptr`， 其调用了`_Sp_counted_ptr_inplace`的 `_M_get_deleter`:
-
-```cpp
-      void*
-      _M_get_deleter(const std::type_info& __ti) const noexcept
-      { return _M_pi ? _M_pi->_M_get_deleter(__ti) : 0; }
-
-      // Sneaky trick so __shared_ptr can get the managed pointer
-      virtual void*
-      _M_get_deleter(const std::type_info& __ti) noexcept
-      {
-	return __ti == typeid(_Sp_make_shared_tag)
-	       ? static_cast<void*>(&_M_storage) // 返回此地址
-	       : 0;
-      }
-```
-
-至此，`make_shared`的源码分析完成。 实际上总结一句话： **make_shared所构造的对象和其控制块绑定在一起，减少了一次内存分配，同时对cache更为友好**
-
-**接下来分析当ref降为0时的逻辑**
-
-析构流程： `shared_ptr` -> `__shared_ptr` -> `_M_refcount` :
-
-```cpp
-      ~__shared_count() // nothrow
-      {
-	if (_M_pi != 0)
-	  _M_pi->_M_release();
-      }
-
-      void
-      _M_release() noexcept
-      {
-        // Be race-detector-friendly.  For more info see bits/c++config.
-        _GLIBCXX_SYNCHRONIZATION_HAPPENS_BEFORE(&_M_use_count);
-	if (__gnu_cxx::__exchange_and_add_dispatch(&_M_use_count, -1) == 1)
-	  {
-            _GLIBCXX_SYNCHRONIZATION_HAPPENS_AFTER(&_M_use_count);
-	    _M_dispose();
-	    // There must be a memory barrier between dispose() and destroy()
-	    // to ensure that the effects of dispose() are observed in the
-	    // thread that runs destroy().
-	    // See http://gcc.gnu.org/ml/libstdc++/2005-11/msg00136.html
-	    if (_Mutex_base<_Lp>::_S_need_barriers)
-	      {
-	        _GLIBCXX_READ_MEM_BARRIER;
-	        _GLIBCXX_WRITE_MEM_BARRIER;
-	      }
-
-            // Be race-detector-friendly.  For more info see bits/c++config.
-            _GLIBCXX_SYNCHRONIZATION_HAPPENS_BEFORE(&_M_weak_count);
-	    if (__gnu_cxx::__exchange_and_add_dispatch(&_M_weak_count,
-						       -1) == 1)
-              {
-                _GLIBCXX_SYNCHRONIZATION_HAPPENS_AFTER(&_M_weak_count);
-	        _M_destroy();
-              }
-	  }
-      }
-```
-
-1. 如果`_M_use_count`减为0， 调用 `_M_dispose`释放对象内存
-2. 如果 `_M_weak_count` 减为0， 调用 `_M_destroy`释放控制块
-
-**对于第一种构造方式(new xxx)， 走 `_S_counted_ptr`**:
-
-```cpp
-      virtual void
-      _M_dispose() noexcept
-      { delete _M_ptr; } // 析构释放内存对象
-
-      // Called when _M_weak_count drops to zero.
-      virtual void
-      _M_destroy() noexcept
-      { delete this; }  // 析构释放控制块
-```
-
-**对于第二种构造方式（make_shared), 走 `_Sp_counted_ptr_inplace`** :
-
-```cpp
-      virtual void
-      _M_dispose() noexcept
-      { allocator_traits<_Alloc>::destroy(_M_impl, _M_impl._M_ptr); } // 析构内存对象
-
-      // Override because the allocator needs to know the dynamic type
-      virtual void
-      _M_destroy() noexcept
-      {
-	typedef typename allocator_traits<_Alloc>::template
-	  rebind_traits<_Sp_counted_ptr_inplace> _Alloc_traits;
-	typename _Alloc_traits::allocator_type __a(_M_impl);
-	_Alloc_traits::destroy(__a, this);  // 析构控制块
-	_Alloc_traits::deallocate(__a, this, 1); // 释放整块内存
-      }
-```
-
-### 3. 拷贝与线程安全性
-
-**构造析构介绍完成，接着看看拷构造/赋值**，毕竟 `shared_ptr` 是共享的：
-
-```cpp
-shared_ptr(const shared_ptr&) noexcept = default;
-
-shared_ptr& operator=(const shared_ptr&) noexcept = default;
-
-```
-
-走的默认，看其父类拷贝构造：
-
-```cpp
-__shared_ptr(const __shared_ptr&) noexcept = default;
-
-template<typename _Tp1>  
-__shared_ptr&  
-operator=(const __shared_ptr<_Tp1, _Lp>& __r) noexcept  
-{  
-_M_ptr = __r._M_ptr;  
-_M_refcount = __r._M_refcount; // __shared_count::op= doesn't throw  
-return *this;  
-}
-```
-
-也就是说 `__shared_ptr` 中的`_M_ptr`和`_M_refcount`会被分别拷贝。
-
-**从这点可以看出， `shared_ptr` 本身的拷贝绝不是线程安全的。** 也就如下case是不正确的：
-
-```cpp
-std::shared_ptr<xx> g_ptr(new xx);
-
-// thread 1
-auto t1_ptr = g_ptr;
-
-// thread 2
-g_ptr = t2_ptr;
-
-```
-
-那对 **shared_ptr** 解引用是否线程安全？ 
-
-```cpp
-  // Allow class instantiation when _Tp is [cv-qual] void.
-  typename std::add_lvalue_reference<_Tp>::type
-  operator*() const noexcept
-  {
-_GLIBCXX_DEBUG_ASSERT(_M_ptr != 0);
-return *_M_ptr;
-  }
-
-```
-
-**答案依然是否**， 直接返回指向对象的引用。
-
-那对 **控制块** 的操作是否线程安全？
-
-**答案是 YES**， 控制块本身的++，--赋值等操作都是原子的。 具体给个hint，不做详细分析。
-
-控制块基类为 `_Sp_counted_base`, 其内部成员为:
-
-```
-_Atomic_word  _M_use_count;     // #shared
-_Atomic_word  _M_weak_count;    // #weak + (#shared != 0)
-```
-
-对它们的操作都是原子的。
-
-至此 `shared_ptr`分析完成。
-
-## 总结
-
-本文较详细地分析了 `unique_ptr` 以及 `shared_ptr` 的关键源码，知道了 `unique_ptr` 大小默认情况下仅为 `raw_pointer` 的大小，这是因为编译器采用了EBO的优化技术（当然不同编译器可能优化方式不一）。 同时了解了 `shared_ptr` 的两种构造方式所带来的不同内存布局。 `new xx`方式，会导致两次内存申请，而 `make_shared` 方式，指针和控制块均在同一片内存，只有一次内存申请，最后还解释了为什么 `shared_ptr` 不是线程安全的。
