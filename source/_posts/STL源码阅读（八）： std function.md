@@ -10,17 +10,6 @@ tags:
 
 本文原文link: https://www.wolai.com/8FYKXwcp1ozZnwXc6ThL75#rZ6NcsSCroiH83XhoKSaGB
 
-> 📌AI 生成总结：
-> 本文档介绍了C++标准库中的`std::function`类及其相关概念。`std::function`提供了一种通用的方式来包装任何可调用的对象，并支持动态绑定。文档首先定义了一个基础类`_Function_base`，用于存储可调用的对象或其指针，同时提供管理其生命周期的函数。接着，`function`类作为`_Function_base`的子类，提供了对可调用对象的操作，如调用和传递参数。
->
-> `_Function_base`包含两个主要成员变量：`_M_functor`用于存储可调用的对象或其指针，而`_M_manager`则指向管理`_M_functor`生命周期的管理类。管理类`_Base_manager`提供了诸如创建、复制、销毁和查询类型信息等功能。
->
-> `_Function_handler`是一个简单的代理类，用于在调用时转发给定的`_M_functor`。它从`_Function_base`继承并添加了一个仅有的成员函数`_M_invoke`，该函数通过`_M_get_pointer`获取`_M_functor`的指针，然后调用相应的函数。
->
-> 文档还详细讨论了`function`类的常见构造方式，特别是当传入一个调用对象（例如函数指针或成员函数指针）时的情况。
->
-> 总体来说，`std::function`的设计允许用户以一种类型安全的方式处理可调用对象，同时也提供了一套机制来确保这些对象能够在运行时正确地进行动态绑定和管理。
-
 <!--more-->
 
 
@@ -527,3 +516,11 @@ ffunction本身没有析构函数, 查看其基类 `Function_base` 的析构:
 ```
 
 我们在 [这里](https://www.wolai.com/8FYKXwcp1ozZnwXc6ThL75#prskJUKrK4u83EdCTxdgRU "这里") 提到了 `_M_manager`， 实际上最终进入 `_M_destroy`
+
+## 8 总结
+
+本文档介绍了C++标准库中的std::function类及其相关概念。std::function提供了一种通用的方式来包装任何可调用的对象，并支持动态绑定。文档首先定义了一个基础类_Function_base，用于存储可调用的对象或其指针，同时提供管理其生命周期的函数。接着，function类作为_Function_base的子类，提供了对可调用对象的操作，如调用和传递参数。
+_Function_base包含两个主要成员变量：_M_functor用于存储可调用的对象或其指针，而_M_manager则指向管理_M_functor生命周期的管理类。管理类_Base_manager提供了诸如创建、复制、销毁和查询类型信息等功能。
+_Function_handler是一个简单的代理类，用于在调用时转发给定的_M_functor。它从_Function_base继承并添加了一个仅有的成员函数_M_invoke，该函数通过_M_get_pointer获取_M_functor的指针，然后调用相应的函数。
+文档还详细讨论了function类的常见构造方式，特别是当传入一个可调用对象（例如函数指针或成员函数指针）时的情况。
+总体来说，std::function的设计允许用户以一种类型安全的方式处理可调用对象，同时也提供了一套机制来确保这些对象能够在运行时正确地进行动态绑定和管理。
