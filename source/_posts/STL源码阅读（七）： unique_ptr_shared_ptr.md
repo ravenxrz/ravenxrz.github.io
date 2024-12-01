@@ -53,7 +53,7 @@ class unique_ptr<_Tp[], _Dp>
 
 ```
 
-`unique_ptr` 的 primary template具有两个模板参数，一个是要管理的类型`_Tp`一个是删除器，默认参数为`default_delete<_Tp>`. 还有一个偏特化，接受数组类型，此时的删除器需要user自定义类型。
+`unique_ptr` 的 primary template具有两个模板参数，一个是要管理的类型`_Tp`一个是删除器，默认参数为`default_delete<_Tp>`. 还有一个偏特化，接受数组类型。
 
 # 3. deleter
 
