@@ -9,6 +9,10 @@ tags:
 
 > 📌本文使用wolai制作，原文链接： [std::tuple](https://www.wolai.com/Hjvft6ngqzZCouWeNywar)
 
+分析环境: gcc 8.3.0
+
+<!--more-->
+
 # 1 类图
 
 ```mermaid
@@ -31,7 +35,6 @@ classDiagram
 
 ```
 
-<!--more-->
 
 # 2 定义
 

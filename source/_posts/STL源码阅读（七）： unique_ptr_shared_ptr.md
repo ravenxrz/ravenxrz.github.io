@@ -53,7 +53,7 @@ class unique_ptr<_Tp[], _Dp>
 
 ```
 
-`unique_ptr` 的 primary template具有两个模板参数，一个是要管理的类型`_Tp`一个是删除器，默认参数为`default_delete<_Tp>`. 还有一个偏特化，接受数组类型。
+`unique_ptr` 的 primary template具有两个模板参数，一个是要管理的类型`_Tp`一个是删除器，默认参数为`default_delete<_Tp>`. 还有一个偏特化，接受数组类型，此时的删除器需要user自定义类型。
 
 # 3. deleter
 
@@ -168,7 +168,9 @@ private:
 
 本质上`__uniq_ptr_impl`就是一个tuple，tuple 0 index是指针，1 index是`_Dp`。
 
-> TODO(zhangxingrui)为什么不用pair？ tuple有优化?
+> 为什么不用pair？ tuple有优化? 
+>
+> **std::tuple采用了EBO技术， _Dp类型通常是个空struct，这样std::tuple就退化为一个指针，所以， std::unique_ptr + 默认deleter（或自定义了deleter，但是是个empty class) 它的内存占用开销和raw pointer是一样的！**
 
 基本构造函数中，初始化`tuple，`并把index 0复制为`__p`.
 
@@ -184,8 +186,6 @@ private:
 ```
 
 直接把`deleter`传入并转发给`_M_t`（tuple）构造。
-
-> TODO(zhangxingrui): 暂不清楚tuple 构造函数是如何实现。
 
 ## 4.2. pointer类型
 
